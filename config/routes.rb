@@ -22,15 +22,9 @@ Hkerp::Application.routes.draw do
   resources :states
   resources :countries
   resources :autotask_details
-
   resources :autotasks
-
-
-
-
-
-  default_url_options :host => "27.0.15.181:3000"
   
+  default_url_options :host => "27.0.15.181:3000"
 
   resources :payment_records do
     collection do
@@ -149,6 +143,9 @@ Hkerp::Application.routes.draw do
         get :backup
         post :backup
         
+        get :restore
+        post :restore
+        
         get :download_backup
         get :delete_backup
         
@@ -226,9 +223,6 @@ Hkerp::Application.routes.draw do
       get :statistic_purchase
     end
   end
-
-  get '/accountings', to: 'accounting#index', as: 'accountings'
-  get '/accountings/orders', to: 'accounting#orders', as: 'orders_accountings'
 
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".
