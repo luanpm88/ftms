@@ -1,0 +1,112 @@
+                <ul class="breadcrumb">
+                    <li>
+                        <p>YOU ARE HERE</p>
+                    </li> 
+                    <li>
+			<%= link_to 'Users', {controller: "users", action: "index"} %>
+                    </li>
+		    
+                </ul>
+                <div class="page-title">	<i class="icon-folder-open"></i>
+
+                    	<h3>Users - <span class="semi-bold"> Activity Logs</span></h3>	
+                </div>
+                <div class="row">
+                    <div class="col-md-12">
+			
+					<div class="grid simple ">
+						<div class="grid-body no-border filters" method="get">
+						<form id="accounting-statistics-filters-form" action="<%= url_for({controller: "users", action: "activity_log"})%>">
+                          
+                          <% if params[:tab_page] %>
+								<%= hidden_field_tag "tab_page", 1 %>
+						   <% end %>
+                        <input type="hidden" name="id" value="<%= @user.id %>" />
+							<div class="row accounting-statistics-filters">
+								<div class="col-md-4">
+									<h4>From Date</h4>
+									<div class="date_select_filter">
+									<div class="input-with-icon  right">
+										<div class="input-append success date col-md-10 no-padding">
+											<%= text_field_tag :from_date, @from_date.strftime("%Y-%m-%d"), :class => "datetime form-control" %>
+											<span class="add-on"><span class="arrow"></span><i class="icon-th"></i></span>
+										</div>
+										<br style="clear: both" />
+										
+									</div>
+									</div>
+								</div>
+								<div class="col-md-4">
+									<h4>To Date</h4>
+									<div class="date_select_filter">
+									<div class="input-with-icon  right">
+										<div class="input-append success date col-md-10 no-padding">
+											<%= text_field_tag :to_date, @to_date.strftime("%Y-%m-%d"), :class => "datetime form-control" %>
+											<span class="add-on"><span class="arrow"></span><i class="icon-th"></i></span>
+										</div>
+										<br style="clear: both" />
+									</div>
+									</div>
+								</div>
+								
+								<div class="col-md-2 pull-right">
+									<div class="">
+										<h4 style="color:#fff">...</h4>
+										
+											<input type="submit" value="Send" class="pull-right btn btn-primary text-center" />
+										
+									</div>
+								</div>
+							</div>
+						</form>
+						</div>		    
+					</div>
+			
+			
+                    
+                    
+                    <div class="grid simple ">
+			    <div class="grid-body no-border filters" method="get">
+					<h4>Product History - <span class="semi-bold"><%= @from_date.strftime("%Y-%m-%d") %> -> <%= @to_date.strftime("%Y-%m-%d") %></span></h4>
+					
+					<h3><%= @user.name %></h3>
+					<table class="table datatable-products-statistics">
+						<thead>
+							<tr>
+								<th>Date</th>
+								<th>Note</th>
+                                <th>Link</th>
+								<th>User</th>
+								<th class="text-center">Quantity</th>								
+							</tr>
+						</thead>
+                        
+                        <% @history.each do |line| %>
+                        
+                          <tr class="quantity">
+                            <td><%= line[:date].strftime("%Y-%m-%d, %H:%M") %></td>
+                            <td><%= line[:note].html_safe %></td>
+                            <td><%= line[:link].html_safe %></td>
+							<td><%= line[:user].name if line[:user].present? %></td>
+                            <td class="text-center"><%= line[:quantity] %></td>
+                          </tr>
+                        
+                        <% end %>
+						
+						
+						
+					</table>
+				</div>
+			</div>
+                    
+                    
+			
+			</div>
+                </div>
+<script>
+    $(document).ready(function() {
+		<% if @month_val.nil? %>
+			$("#order_order_date_2i").select2("val", "");
+		<% end %>
+    });
+</script>

@@ -1,0 +1,68 @@
+<p id="notice"><%= notice %></p>
+
+<div>
+    <p>
+      <strong>Name:</strong>
+      <%= @contact.name %>
+    </p>
+    
+    <p>
+      <strong>Address:</strong>
+      <%= @contact.full_address %>
+    </p>
+    
+    <p>
+      <strong>Type:</strong>
+      <%= @contact.contact_types.map{|t| t.name}.join(", ") %>
+    </p>
+    
+    <p>
+      <strong>Tax Code:</strong>
+      <%= @contact.tax_code %>
+    </p>   
+    
+    
+    <p>
+      <strong>Phone:</strong>
+      <%= @contact.phone %>
+    </p>
+    
+    <p>
+      <strong>Mobile:</strong>
+      <%= @contact.mobile %>
+    </p>
+    
+    <p>
+      <strong>Fax:</strong>
+      <%= @contact.fax %>
+    </p>
+    
+    <p>
+      <strong>Email:</strong>
+      <%= @contact.email %>
+    </p>
+    
+    
+    
+    <p>
+      <strong>Account Number:</strong>
+      <%= @contact.account_number %>
+    </p>
+    
+    <p>
+      <strong>Bank:</strong>
+      <%= @contact.bank %>
+    </p>
+    
+    <p>
+      <strong>Website:</strong>
+      <%= @contact.website %>
+    </p>
+    
+    <p>
+      <strong>Note:</strong>
+      <%= @contact.note %>
+    </p>
+    
+</div>
+

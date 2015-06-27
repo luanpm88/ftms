@@ -1,0 +1,15 @@
+<ul class="breadcrumb">
+        <li>
+          <p>YOU ARE HERE</p>
+        </li>
+                    <li>
+			<%= link_to 'Users', users_url %>
+                    </li>
+      </ul>
+      <div class="page-title"> <i class="icon-edit"></i>
+        <h3>Edit User - <span class="semi-bold"><%= @user.name %></span></h3>
+      </div>
+      
+
+	  
+<%= render 'form' %>

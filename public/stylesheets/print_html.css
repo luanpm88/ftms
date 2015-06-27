@@ -1,0 +1,171 @@
+  body {
+    background: #f9f9f9;
+  }
+  * {
+    color: #333;
+  }
+  label {
+    display: inline;
+  }
+  .page {
+      background: #fff none repeat scroll 0 0;
+      border: 1px solid #ccc;
+      margin-right: 1px;
+      padding: 20px;
+  }
+  .page * {
+    font-family: "Times New Roman";
+    font-size: 18px;    
+  }
+  p {
+    margin-bottom: 0;
+  }
+  .cominfo h2 {
+    font-size: 26px;
+    margin-bottom: 0;
+    margin-top: 0;
+  }
+  p {
+    margin-bottom: 0;
+    margin-top: 0;
+  }
+  .cominfo img {
+    margin-top: 10px !important;
+    width: 145px !important;
+  }
+  .top-info {
+    margin-top: 20px;
+  }
+  .top-info h1 {
+    font-size: 30px;
+    margin-bottom: 0;
+  }
+  .top-info h3 {
+      font-size: 20px;
+      margin-top: 5px;
+  }
+  .maintitle {
+    width: 65%;
+    padding-bottom: 20px !important;
+  }
+  
+    .mid label {
+        display: block;
+        float: left;
+        font-weight: 700;
+        padding-right: 10px;
+        text-align: right;
+        width: 140px;
+        margin-left: -150px;
+    }
+    .mid p {
+        clear: both;
+        padding-left: 150px;
+        min-height: 22px;
+        line-height: 20px;
+    }
+  
+  .middle2 label {
+    margin-left: -120px;
+    width: 110px;
+  }
+  .middle2 p {
+    padding-left: 120px;
+  }
+  
+  .middle3 label {
+    margin-left: -120px;
+    width: 110px;
+  }
+  .middle3 p {
+    padding-left: 120px;
+  }
+  
+  .list {
+    width: 100%;
+    margin-top: 20px;
+    border-left: 1px solid #000000;
+    border-top: 1px solid #000000;
+    border-bottom: none;
+    border-right: none;
+  }
+  .list th {
+      background: none repeat scroll 0 0 #EFEFEF;
+      border-bottom: 1px solid #000000;
+      border-right: 1px solid #000000;
+      border-top: none;
+      border-left: none;
+      padding: 5px;
+  }
+  .list td {
+      border-bottom: 1px solid #000000;
+      border-right: 1px solid #000000;
+      border-top: none;
+      border-left: none;
+      padding: 5px;
+      text-align: center;
+  }
+  
+ 
+.paid-box label {
+    display: block;
+    float: left;
+    height: 40px;
+    width: 160px;
+}
+
+.btn-cons {
+    margin-bottom: 8px;
+    margin-right: 5px;
+    min-width: 120px;
+}
+
+  .btn-success {
+    background-color: #0090D9;
+    color: #FFFFFF;
+}
+.btn-info {
+    background-color: #1f3853;
+    color: #FFFFFF;
+}
+.btn:hover {
+  opacity: 0.9;
+}
+
+table {
+    width: 100%;
+}
+.delivery-page {
+    
+}
+.delivery-page h1 {
+    font-size: 30px;
+}
+.delivery-page .maintitle {
+    width: 100%;
+}
+.point2 {
+    float: right;
+}
+.print_group h4 {
+    margin: 0;
+}
+.print_group {
+    float: left;
+    margin-right: 20px;
+}
+.hidden, .quantity-0 {
+    position: absolute;
+    top: -9000px;
+    display: block;
+}
+
+.show_order_page {
+    margin: auto;
+    max-width: 995px;
+    min-width: 700px;
+}
+body {
+  margin: 0;
+  background: #fff;
+}
