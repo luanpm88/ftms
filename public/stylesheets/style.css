@@ -8066,3 +8066,12 @@ tr.block_commission_header h3 {
 .login-logo {
     width: 100%;
 }
+.login-msg h2 {
+    display: none;
+}
+.login-msg h5 li {
+    list-style: none;
+}
+.login-msg h5 ul {
+    padding: 0;
+}

@@ -137,6 +137,7 @@ Hkerp::Application.routes.draw do
   end
 
   devise_for :users, :controllers => { :registrations => "registrations" }
+  
   scope "/admin" do
     resources :users do
       collection do
@@ -228,7 +229,17 @@ Hkerp::Application.routes.draw do
   # See how all your routes lay out with "rake routes".
 
   # You can have the root of your site routed with "root"
-  root 'home#index'
+  # root 'devise/sessions#new'
+  
+  devise_scope :user do
+    authenticated :user do
+      root 'home#index', as: :authenticated_root
+    end
+  
+    unauthenticated do
+      root 'devise/sessions#new', as: :unauthenticated_root
+    end
+  end
 
   # Example of regular route:
   #   get 'products/:id' => 'catalog#view'
