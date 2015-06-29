@@ -1,0 +1,15 @@
+<ul class="breadcrumb">
+        <li>
+          <p>YOU ARE HERE</p>
+        </li>
+                    <li>
+			<%= link_to 'Subjects', subjects_url %>
+                    </li>
+      </ul>
+      <div class="page-title"> <i class="icon-edit"></i>
+        <h3>Edit Subject - <span class="semi-bold"><%= @subject.name %></span></h3>
+      </div>
+      
+
+	  
+<%= render 'form' %>

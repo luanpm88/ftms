@@ -10,15 +10,20 @@ ContactType.create(name: "Student")
 ContactType.create(name: "Agent")
 
 User.create(:email => "admin@ftmsglobal.edu.vn", :password => "aA456321@", :password_confirmation => "aA456321@",:first_name => "Super",:last_name => "Admin")
+User.create(:email => "manager@ftmsglobal.edu.vn", :password => "aA456321@", :password_confirmation => "aA456321@",:first_name => "System",:last_name => "Manager")
 
 Role.create(name: "admin")
 Role.create(name: "user")
+Role.create(name: "manager")
 
 # Default role for user
 User.all.each do |user|
-    user.add_role Role.where(name: "user").first
+    user.add_role Role.where(name: "user").first if !user.has_role?("admin")
 end
 
 # Default Role for Admin
-admin = User.where(:email => "admin@ftmsglobal.edu.vn").first
-admin.add_role Role.where(name: "admin").first
+user = User.where(:email => "admin@ftmsglobal.edu.vn").first
+user.add_role Role.where(name: "admin").first
+
+user = User.where(:email => "manager@ftmsglobal.edu.vn").first
+user.add_role Role.where(name: "manager").first

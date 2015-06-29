@@ -1,0 +1,41 @@
+                <ul class="breadcrumb">
+                    <li>
+                        <p>YOU ARE HERE</p>
+                    </li> 
+                    <li><%= link_to 'Users', course_types_url, :class => "active" %></li>
+                </ul>
+                <div class="page-title">
+                        <i class="icon-archive"></i>
+                    	<h3>Course Types - <span class="semi-bold"> Management</span></h3>	
+                </div>
+                <div class="row">
+                    <div class="col-md-12">
+                        <%= link_to 'New Course Type', new_course_type_path(tab_page: 1), psrc: course_types_path(tab_page:1), title: "New Course Type", :class => 'btn btn-primary btn-cons tab_page' %>
+                        <div class="grid simple ">
+                            <div class="grid-title no-border">
+                                <h4>Listing  <span class="semi-bold">Course Types</span></h4>
+                                
+                            </div>
+                            <div class="grid-body no-border">
+                                 
+                                    <table class="table table-striped no-more-tables datatable-course-types no-filter">
+                                        <thead>
+                                            <tr>                                                
+												<th>Short Name</th>
+												<th>Name</th>
+                                                <th class="text-center">Created At</th>
+												<th class="text-center" width="1%">Creator</th>
+												<th class="text-right" width="1%">Actions</th>
+                                            </tr>
+                                        </thead>                                        
+                                    </table>
+                            </div>
+                        </div>
+			
+                    </div>
+		    
+                </div>
+
+
+
+

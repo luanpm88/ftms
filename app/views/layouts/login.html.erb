@@ -28,26 +28,16 @@
   <div class="row login-container column-seperation">
     
     <div class="col-md-5 col-md-offset-1">
-          <h2>Sign in to FTMS</h2>
+          <h2>Welcome to</h2>
 		  <br />
 		  <img src="<%= url_for("/img/FTMSGlobalNew.png") %>" class="login-logo" />
-          <!--<p>Use Facebook, Twitter or your email to sign in.<br>
-            <a href="#">Sign up Now!</a> for a webarch account,It's free and always will be..</p>
-          <br>
-
-		   <button class="btn btn-block btn-info col-md-8" type="button">
-            <span class="pull-left"><i class="icon-facebook"></i></span>
-            <span class="bold">Login with Facebook</span> </button>
-		   <button class="btn btn-block btn-success col-md-8" type="button">
-            <span class="pull-left"><i class="icon-twitter"></i></span>
-            <span class="bold">Login with Twitter</span>
-		    </button>-->
+          
         </div>
         <div class="col-md-5 "> <br>
     
     
-        <% if notice %><p class="notice"><%= notice %></p><% end %>
-	<% if alert %><p class="alert"><%= alert %></p><% end %>
+        <% if notice %><p class="alert alert-success notice"><%= notice %></p><% end %>
+		<% if alert %><p class="alert"><%= alert %></p><% end %>
     
         <%= yield %> 
   

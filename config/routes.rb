@@ -1,15 +1,19 @@
 Hkerp::Application.routes.draw do
-  resources :product_images do
+  resources :courses do
     collection do
-      get :image
+      get :datatable
     end
   end
-  resources :commission_programs do
+  
+  resources :subjects do
     collection do
-      get :start
-      get :stop
-      
-      get :statistics
+      get :datatable
+    end
+  end
+  
+  resources :course_types do
+    collection do
+      get :datatable
     end
   end
   
@@ -26,44 +30,6 @@ Hkerp::Application.routes.draw do
   
   default_url_options :host => "27.0.15.181:3000"
 
-  resources :payment_records do
-    collection do
-      get :download_pdf
-      get :pay_tip
-      post :do_pay_tip
-      
-      get :pay_custom
-      post :do_pay_custom
-      
-      get :trash
-      get :custom_payments
-      get :datatable
-      
-      get :edit_pay_custom
-      get :statistics
-      
-      get :pay_commission
-      post :do_pay_commission
-    end
-  end
-
-
-  resources :deliveries do
-    collection do
-      get :deliver
-      get :download_pdf
-      get :trash
-    end
-  end
-
-
-  resources :sales_deliveries do
-    collection do
-      get :deliver
-      get :download_pdf
-    end
-  end
-
   resources :notifications do
     collection do
       get :read_notification
@@ -71,70 +37,10 @@ Hkerp::Application.routes.draw do
     end
   end
 
-
-  resources :checkinout_requests do
-    collection do
-      get :approve
-    end
-  end
-
   get 'home/index'
   get 'home/close_tab'
 
-  resources :checkinouts do
-    collection do
-      post :import
-      get :import
-      get :detail
-    end
-  end
-
-
   resources :roles
-
-
-  resources :order_details do
-    collection do
-      get :ajax_new
-      post :ajax_create
-      delete :ajax_destroy
-      get :ajax_edit
-      patch :ajax_update
-    end
-  end
-
-
-  resources :orders do
-    collection do
-      get :download_pdf
-      get :print_order
-      get :print_order_fix1
-      get :purchase_orders
-      get :confirm_order
-      get :datatable
-      get :pdf_preview
-      get :change
-      patch :do_change
-      get :confirm_items
-      
-      get :pricing_orders
-      get :update_price
-      patch :do_update_price
-      get :confirm_price
-      
-      get :update_info
-      patch :do_update_info
-      
-      get :finish_order
-      
-      get :order_log
-      
-      get :update_tip
-      patch :do_update_tip
-      
-      get :order_actions
-    end
-  end
 
   devise_for :users, :controllers => { :registrations => "registrations" }
   
@@ -184,47 +90,8 @@ Hkerp::Application.routes.draw do
     end
   end
 
-  resources :parent_categories
-
-
   get 'admin' => 'admin#index'
   
-  controller :sessions do
-    get 'login' => :new
-    post 'login' => :create
-    delete 'logout' => :destroy
-  end
-
-  resources :products do
-    collection do
-      get :ajax_show
-      get :ajax_new
-      post :ajax_create
-      get :datatable
-      get :sales_delivery
-      get :update_price
-      patch :do_update_price
-      
-      patch :trash
-      patch :un_trash
-      
-      get :statistics
-      get :ajax_product_prices
-      
-      get :product_log
-    end
-  end
-  
-  resources :accounting do
-    collection do
-      get :orders
-      get :pay
-      
-      get :statistic_sales
-      get :statistic_purchase
-    end
-  end
-
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".
 

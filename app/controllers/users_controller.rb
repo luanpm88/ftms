@@ -11,7 +11,7 @@ class UsersController < ApplicationController
     @users = User.all
     
     respond_to do |format|
-      format.html
+      format.html { render layout: "content" if params[:tab_page].present? }
       format.json {
         render json: User.full_text_search(params[:q])
       }
@@ -49,10 +49,10 @@ class UsersController < ApplicationController
     
     respond_to do |format|
       if @user.save
-        format.html { redirect_to users_path, notice: 'User was successfully created.' }
+        format.html { redirect_to params[:tab_page].present? ? "/home/close_tab" : users_path, notice: 'User was successfully created.' }
         format.json { render action: 'show', status: :created, location: @user }
       else
-        format.html { render action: 'new' }
+        format.html { render action: 'new', tab_page: params[:tab_page] }
         format.json { render json: @user.errors, status: :unprocessable_entity }
       end
     end
@@ -70,10 +70,10 @@ class UsersController < ApplicationController
     
     respond_to do |format|
       if @user.update(new_params)
-        format.html { redirect_to users_path, notice: 'User was successfully updated.' }
+        format.html { redirect_to params[:tab_page].present? ? "/home/close_tab" : users_path, notice: 'User was successfully updated.' }
         format.json { head :no_content }
       else
-        format.html { render action: 'edit' }
+        format.html { render action: 'edit', tab_page: params[:tab_page] }
         format.json { render json: @user.errors, status: :unprocessable_entity }
       end
     end
@@ -86,7 +86,7 @@ class UsersController < ApplicationController
     
     @user.destroy
     respond_to do |format|
-      format.html { redirect_to users_url }
+      format.html { redirect_to users_url(tab_page: 1) }
       format.json { head :no_content }
     end
   end

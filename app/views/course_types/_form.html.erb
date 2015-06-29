@@ -1,0 +1,92 @@
+       <div class="row">
+            <div class="col-md-6">
+              <div class="grid simple">
+                <div class="grid-title no-border">
+                  <h4>Course Type <span class="semi-bold">Details</span></h4>
+                  
+                </div>     
+                
+                
+                
+                
+                <div class="grid-body no-border">
+                  
+                  
+                  <% if @course_type.errors.any? %>
+                    <div class="alert alert-error">
+                      <button data-dismiss="alert" class="close"></button>
+                      <div id="error_explanation">
+                        <h5><%= pluralize(@course_type.errors.count, "error") %> prohibited this course type from being saved:</h5>
+                  
+                        <ul>
+                        <% @course_type.errors.full_messages.each do |msg| %>
+                          <li><%= msg %></li>
+                        <% end %>
+                        </ul>
+                      </div>
+                    </div>
+                  <% end %>
+                    
+                 
+                  
+                  
+                  <%= form_for(@course_type) do |f| %>
+					
+					<%= hidden_field_tag("tab_page", 1) if params[:tab_page] %>
+					
+					<div class="row">
+						 <div class="col-md-12">
+							  
+							  <div class="form-group">
+								<label class="form-label"><%= f.label :short_name %></label>
+								<span class="help">(required)</span>
+								<div class="input-with-icon  right">                                       
+									<i class=""></i>
+									  <%= f.text_field :short_name, :class => "form-control required" %>
+								</div>
+							  </div>
+							  
+							  <div class="form-group">
+								<label class="form-label"><%= f.label :name %></label>
+								<span class="help">(required)</span>
+								<div class="input-with-icon  right">                                       
+									<i class=""></i>
+									  <%= f.text_field :name, :class => "form-control required" %>
+								</div>
+							  </div>
+							  
+							  <div class="form-group">
+								<label class="form-label"><%= f.label :description %></label>
+								<span class="help"></span>
+								<div class="input-with-icon  right">                                       
+									<i class=""></i>
+									  <%= f.text_area :description, :class => "form-control" %>
+								</div>
+							  </div>
+							  
+							  
+							  
+						 </div>
+						 
+						 
+						 
+					</div>
+						 
+					<div class="form-actions">  
+						 <div class="pull-right">
+						 <button type="submit" class="btn btn-success btn-cons"><i class="icon-ok"></i> Save</button>
+						  <%= link_to 'Cancel', users_path, :class => "btn btn-white btn-cons cancel-but" %>
+					   </div>
+					</div>
+							  
+						<% end %>
+			   </div>
+			 </div>
+            </div>
+			
+      </div>
+
+
+
+
+

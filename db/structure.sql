@@ -367,6 +367,74 @@ ALTER SEQUENCE countries_id_seq OWNED BY countries.id;
 
 
 --
+-- Name: course_types; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE TABLE course_types (
+    id integer NOT NULL,
+    name character varying,
+    short_name character varying,
+    description text,
+    user_id integer,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL
+);
+
+
+--
+-- Name: course_types_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE course_types_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: course_types_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE course_types_id_seq OWNED BY course_types.id;
+
+
+--
+-- Name: courses; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE TABLE courses (
+    id integer NOT NULL,
+    description text,
+    user_id integer,
+    course_type_id integer,
+    intake date,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL
+);
+
+
+--
+-- Name: courses_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE courses_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: courses_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE courses_id_seq OWNED BY courses.id;
+
+
+--
 -- Name: notifications; Type: TABLE; Schema: public; Owner: -; Tablespace: 
 --
 
@@ -508,6 +576,39 @@ ALTER SEQUENCE states_id_seq OWNED BY states.id;
 
 
 --
+-- Name: subjects; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE TABLE subjects (
+    id integer NOT NULL,
+    name character varying,
+    description text,
+    user_id integer,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL
+);
+
+
+--
+-- Name: subjects_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE subjects_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: subjects_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE subjects_id_seq OWNED BY subjects.id;
+
+
+--
 -- Name: users; Type: TABLE; Schema: public; Owner: -; Tablespace: 
 --
 
@@ -626,6 +727,20 @@ ALTER TABLE ONLY countries ALTER COLUMN id SET DEFAULT nextval('countries_id_seq
 -- Name: id; Type: DEFAULT; Schema: public; Owner: -
 --
 
+ALTER TABLE ONLY course_types ALTER COLUMN id SET DEFAULT nextval('course_types_id_seq'::regclass);
+
+
+--
+-- Name: id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY courses ALTER COLUMN id SET DEFAULT nextval('courses_id_seq'::regclass);
+
+
+--
+-- Name: id; Type: DEFAULT; Schema: public; Owner: -
+--
+
 ALTER TABLE ONLY notifications ALTER COLUMN id SET DEFAULT nextval('notifications_id_seq'::regclass);
 
 
@@ -648,6 +763,13 @@ ALTER TABLE ONLY roles ALTER COLUMN id SET DEFAULT nextval('roles_id_seq'::regcl
 --
 
 ALTER TABLE ONLY states ALTER COLUMN id SET DEFAULT nextval('states_id_seq'::regclass);
+
+
+--
+-- Name: id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY subjects ALTER COLUMN id SET DEFAULT nextval('subjects_id_seq'::regclass);
 
 
 --
@@ -738,6 +860,22 @@ ALTER TABLE ONLY countries
 
 
 --
+-- Name: course_types_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+--
+
+ALTER TABLE ONLY course_types
+    ADD CONSTRAINT course_types_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: courses_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+--
+
+ALTER TABLE ONLY courses
+    ADD CONSTRAINT courses_pkey PRIMARY KEY (id);
+
+
+--
 -- Name: notifications_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
 --
 
@@ -767,6 +905,14 @@ ALTER TABLE ONLY roles
 
 ALTER TABLE ONLY states
     ADD CONSTRAINT states_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: subjects_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+--
+
+ALTER TABLE ONLY subjects
+    ADD CONSTRAINT subjects_pkey PRIMARY KEY (id);
 
 
 --
@@ -871,4 +1017,10 @@ INSERT INTO schema_migrations (version) VALUES ('20150521030440');
 INSERT INTO schema_migrations (version) VALUES ('20150604092249');
 
 INSERT INTO schema_migrations (version) VALUES ('20150625041353');
+
+INSERT INTO schema_migrations (version) VALUES ('20150629031144');
+
+INSERT INTO schema_migrations (version) VALUES ('20150629074251');
+
+INSERT INTO schema_migrations (version) VALUES ('20150629081809');
 

@@ -296,7 +296,10 @@
     <div class="user-info">
       <div class="greeting" style="font-weight: normal">Welcome</div>
       <div class="username"><span class="semi-bold"><%= current_user.short_name %></span></div>
-      <div class="status">Status<a href="#"><div class="status-icon green"></div>Online</a></div>
+		<div class="status">
+		<%= current_user.roles_name %>
+			<!--<a href="#"><div class="status-icon green"></div>Online</a>-->
+		</div>
     </div>
    </div>
   <!-- END MINI-PROFILE -->
@@ -308,6 +311,22 @@
    <!-- BEGIN SIDEBAR MENU -->	
     <p class="menu-title">BROWSE <span class="pull-right"><a href="javascript:;"><i class="icon-refresh"></i></a></span></p>
     <ul>
+		
+		
+		<% if can? :course_features, User %>
+			<li <% if ["course_types","subjects","courses"].include?(params[:controller]) %> class="active open"<% end %>>
+					<%= link_to "#" do %>
+						<i class="icon-briefcase"></i>
+						<span class="title">Course</span>
+						<span class="arrow<% if ["course_types","subjects","courses"].include?(params[:controller]) %> open<% end %>"></span>
+					<% end %>
+					<ul class="sub-menu">
+						<li<% if params[:controller] == "courses" && params[:action] == "index" %> class="active"<% end %>><%= link_to 'Courses', courses_path(tab_page:1), class: "tab_page" %></li>
+						<li<% if params[:controller] == "course_types" && params[:action] == "index" %> class="active"<% end %>><%= link_to 'Course Types', course_types_path(tab_page:1), class: "tab_page" %></li>
+						<li<% if params[:controller] == "subjects" && params[:action] == "index" %> class="active"<% end %>><%= link_to 'Subjects', subjects_path(tab_page:1), class: "tab_page" %></li>
+					</ul>
+			</li>
+		<% end %>
 	
 	
 		<% if can? :read, Contact %>
@@ -323,7 +342,8 @@
 			  </ul>
 			</li>
 		<% end %>
-	
+		
+		
 	
 		<% if current_user.has_role? "admin" %>
 			<li <% if params[:controller] == "users" %> class="active open"<% end %>>
@@ -333,9 +353,10 @@
 					  <span class="arrow<% if params[:controller] == "users" %> open<% end %>"></span>
 					<% end %>
 					<ul class="sub-menu">
-					  <li<% if params[:controller] == "users" && params[:action] == "index" %> class="active"<% end %>><%= link_to 'Users', users_path(tab_page:1), class: "tab_page" %></li>
-					  <li<% if ["backup"].include?(params[:action]) %> class="active"<% end %>><%= link_to 'Backup', "/admin/users/backup?tab_page=1", class: "tab_page" %></li>
-					  <li<% if ["restore"].include?(params[:action]) %> class="active"<% end %>><%= link_to 'Restore', "/admin/users/restore?tab_page=1", class: "tab_page" %></li>
+						
+						<li<% if params[:controller] == "users" && params[:action] == "index" %> class="active"<% end %>><%= link_to 'Users', users_path(tab_page:1), class: "tab_page" %></li>
+						<li<% if ["backup"].include?(params[:action]) %> class="active"<% end %>><%= link_to 'Backup', "/admin/users/backup?tab_page=1", class: "tab_page" %></li>
+						<li<% if ["restore"].include?(params[:action]) %> class="active"<% end %>><%= link_to 'Restore', "/admin/users/restore?tab_page=1", class: "tab_page" %></li>
 					</ul>
 			</li>
 		<% end %>

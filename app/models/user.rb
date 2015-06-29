@@ -15,6 +15,9 @@ class User < ActiveRecord::Base
   
   has_many :notifications, :dependent => :destroy, :foreign_key => "user_id"
   
+  has_many :course_types
+  has_many :subjects
+  
   validates :first_name, presence: true
   validates :last_name, presence: true
   validates :email, :presence => true, :uniqueness => true
@@ -163,14 +166,17 @@ class User < ActiveRecord::Base
     if !params["order"].nil?
       case params["order"]["0"]["column"]
       when "1"
-        order = "users.first_name, users.last_name"
+        order = "users.first_name #{params["order"]["0"]["dir"]}, users.last_name #{params["order"]["0"]["dir"]}"
       when "3"
-        order = "users.created_at"      
+        order = "users.created_at"
+      else
+        order = "users.first_name, users.last_name"
       end
-      order += " "+params["order"]["0"]["dir"]
+      order += " "+params["order"]["0"]["dir"] if params["order"]["0"]["column"] == 3
     else
       order = "users.first_name, users.last_name"
     end
+    
     @records = @records.order(order) if !order.nil?
     
     total = @records.count
@@ -204,9 +210,9 @@ class User < ActiveRecord::Base
   def roles_name
     names = []
     roles.order("name").each do |r|
-      names << "<span class=\"badge badge-info #{r.name}\">#{r.name}</span>"
+      names << "<span class=\"badge user-role badge-info #{r.name}\">#{r.name}</span>"
     end
-    return names.join("<br />").html_safe
+    return names.join(" ").html_safe
   end
   
   def quick_info

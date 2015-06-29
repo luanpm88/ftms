@@ -2616,7 +2616,7 @@ form legend,
     border:0px;
     margin-bottom: 20px;
     margin-top: 20px;
-    padding: 19px 20px 20px;
+    padding: 19px 10px 10px;
 }
 .form-actions:before, .form-actions:after {
     content: "";
@@ -5480,10 +5480,6 @@ ul.progress-list li  .progress{
 	color: #A7ABB1;
     font-size: 12px;
 }
-
-.form-group .controls{
-	margin-top:8px;
-}
 .form-control{
 	border:1px solid #E5E9EC;
 	font-size: 13px;
@@ -7938,7 +7934,7 @@ tr.block_commission_header h3 {
 .badge.admin {
     background: #ce4844;
 }
-.badge.attendance_manager, .badge.sales_manager, .badge.accountant_manager, .badge.storage_manager {
+.badge.attendance_manager, .badge.sales_manager, .badge.accountant_manager, .badge.storage_manager, .badge.manager {
     background: #aa6708;
 }
 .width140px {
@@ -8074,4 +8070,11 @@ tr.block_commission_header h3 {
 }
 .login-msg h5 ul {
     padding: 0;
+}
+.date-group .select2-choice, .date-group-my .select2-choice {
+    min-width: 120px;
+}
+.date-group #s2id_course_intake_3i, .date-group-my #s2id_filter_intake_3i {
+    position: absolute;
+    top: -9000px;
 }
