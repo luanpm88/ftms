@@ -3,8 +3,8 @@ class Contact < ActiveRecord::Base
   
   include PgSearch
   
-  validates :name, presence: true
-  validates :contact_types, presence: true
+  # validates :name, presence: true
+  # validates :contact_types, presence: true
   
   has_many :parent_contacts, :dependent => :destroy
   has_many :parent, :through => :parent_contacts, :source => :parent
@@ -20,6 +20,8 @@ class Contact < ActiveRecord::Base
   
   belongs_to :contact_type
   belongs_to :user
+  
+  belongs_to :referrer, :class_name => "Contact", :foreign_key => "referrer_id"
 
   belongs_to :city
   has_one :state, :through => :city
@@ -30,21 +32,41 @@ class Contact < ActiveRecord::Base
   
   def self.datatable(params, user)
     ActionView::Base.send(:include, Rails.application.routes.url_helpers)
-    link_helper = ActionController::Base.helpers    
+    link_helper = ActionController::Base.helpers
     
     @records = self.main_contacts
+    
+    if !params["order"].nil?
+      case params["order"]["0"]["column"]
+      when "1"
+        order = "contacts.first_name #{params["order"]["0"]["dir"]}, contacts.last_name #{params["order"]["0"]["dir"]}"
+      else
+        order = "contacts.first_name"
+      end
+      order += " "+params["order"]["0"]["dir"] if params["order"]["0"]["column"] == 3
+    else
+      order = "contacts.first_name, contacts.last_name"
+    end
+    @records = @records.order(order) if !order.nil?
+    
+    
     @records = @records.where_by_types(params[:types].split(",")) if params[:types].present?
+    @records = @records.where("contacts.is_individual IN (#{params[:individual_statuses]})") if params[:individual_statuses].present?
+    @records = @records.where("contacts.referrer_id IN (#{params[:companies]})") if params[:companies].present?
     
     # Areas filter
-    if params[:area_id].present?
-      area_type = params[:area_id].split("_")[0]
-      area_id = params[:area_id].split("_")[1]
-      if area_type == "c"
-        @records = @records.where(city_id: area_id)
-      elsif area_type == "s"
-        city_ids = State.find(area_id.to_i).cities.map{|c| c.id}
-        @records = @records.where(city_id: city_ids)
-      end      
+    cities_ids = []
+    if params[:area_ids].present?
+      params[:area_ids].split(",").each do |area|
+        area_type = area.split("_")[0]
+        area_id = area.split("_")[1]
+        if area_type == "c"
+          cities_ids << area_id
+        elsif area_type == "s"
+          cities_ids << State.find(area_id.to_i).cities.map{|c| c.id}          
+        end
+      end
+      @records = @records.where(city_id: cities_ids)
     end
     
     @records = @records.search(params["search"]["value"]) if !params["search"]["value"].empty?
@@ -53,13 +75,14 @@ class Contact < ActiveRecord::Base
     @records = @records.limit(params[:length]).offset(params["start"])
     data = []
     
-    actions_col = 4
+    actions_col = 5
     @records.each do |item|
       item = [
-              link_helper.link_to("<img width='60' src='#{item.logo(:thumb)}' />".html_safe, {controller: "contacts", action: "show", id: item.id, tab_page: 1}, class: "main-title tab_page", title: item.short_name),
-              link_helper.link_to(item.name, {controller: "contacts", action: "show", id: item.id, tab_page: 1}, class: "main-title tab_page", title: item.short_name)+item.html_info_line.html_safe,
+              link_helper.link_to(item.display_picture(:thumb), {controller: "contacts", action: "edit", id: item.id, tab_page: 1}, class: "main-title tab_page", title: item.display_name),
+              item.contact_link,
+              '<div class="text-left">'+item.html_info_line.html_safe+"</div>",
               '<div class="text-center nowrap">'+item.city_name+"</div>",
-              '<div class="text-left">'+item.agent_list_html+"</div>",              
+              '<div class="text-left nowrap">'+item.referrer_link+"</div>",
               '',
             ]
       data << item
@@ -74,6 +97,17 @@ class Contact < ActiveRecord::Base
     result["data"] = data
     
     return {result: result, items: @records, actions_col: actions_col}
+  end
+  
+  def referrer_link
+    referrer.nil? ? "" : referrer.contact_link
+  end
+  
+  def contact_link
+    ActionView::Base.send(:include, Rails.application.routes.url_helpers)
+    link_helper = ActionController::Base.helpers
+    
+    link_helper.link_to(display_name, {controller: "contacts", action: "edit", id: id, tab_page: 1}, class: "tab_page", title: display_name)
   end
   
   def city_name
@@ -97,7 +131,7 @@ class Contact < ActiveRecord::Base
   end
   
   def self.main_contacts
-    self.where.not(:id => ParentContact.select(:contact_id).map(&:contact_id))
+    self.all
   end
   
   def self.import(file)
@@ -193,18 +227,21 @@ class Contact < ActiveRecord::Base
   
   def html_info_line
     line = "";
-    if !address.nil? && !address.empty?
-      line += "<p>" + full_address + "</p>"
+    line += "<p class=\"address_info_line\">" + address + "</p>" if !address.nil? && !address.empty?
+    line += "<i class=\"icon-envelope\"></i> " + email + "; " if !email.nil? && !email.empty?
+    
+    if is_individual
+      line += "<i class=\"icon-phone\"></i> " + mobile + "; " if !mobile.nil? && !mobile.empty?       
+    else
+      line += "<i class=\"icon-phone\"></i> " + phone + "; " if !phone.nil? && !phone.empty?
+      line += "<i class=\"icon-print\"></i> " + fax + "; " if !fax.nil? && !fax.empty?
+      line += "<strong>Tax code:</strong> " + tax_code + "; " if !tax_code.nil? && !tax_code.empty?
     end
-    if !phone.nil? && !phone.empty?
-      line += "<strong>Phone:</strong> " + phone + " "
-    end
-    if !fax.nil? && !fax.empty?
-      line += "<strong>Fax:</strong> " + fax + " "
-    end
-    if !tax_code.nil? && !tax_code.empty?
-      line += "<strong>MST:</strong> " + tax_code + " "
-    end
+    
+      
+        
+    
+      
     
     return line
   end
@@ -262,8 +299,12 @@ class Contact < ActiveRecord::Base
                   }
                 }
   
-  def self.full_text_search(q)
-    self.search(q).limit(50).map {|model| {:id => model.id, :text => model.short_name} }
+  def self.full_text_search(params)
+    records = self.all
+    if params[:is_individual].present? && params[:is_individual] == "false"
+      records = records.where(is_individual: false)
+    end    
+    records.search(params[:q]).limit(50).map {|model| {:id => model.id, :text => model.short_name} }
   end
   
   def short_name
@@ -314,6 +355,14 @@ class Contact < ActiveRecord::Base
     link_helper = ActionController::Base.helpers
     
     link_helper.url_for(controller: "contacts", action: "logo", id: self.id, type: version)
+  end
+  
+  def display_name
+    is_individual ? first_name+" "+last_name : name
+  end
+  
+  def display_picture(version = nil)
+    self.image_url.nil? ? "<i class=\"icon-picture icon-nopic-60\"></i>".html_safe : "<img width='60' src='#{logo(version)}' />".html_safe
   end
   
 end

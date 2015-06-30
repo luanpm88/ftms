@@ -2,7 +2,7 @@
             <div class="col-md-12">
               <div class="grid simple">
                 <div class="grid-title no-border">
-                  <h4>Contact <span class="semi-bold">Details</span></h4>
+                  
                   
                 </div>     
                 
@@ -39,257 +39,280 @@
                     <div class="row column-seperation">
                            
                             <div class="col-md-6">
-                              
 							  
-													   <div class="form-group">
-															<label class="form-label"><%= f.label :contact_type %></label>
-															<span class="help">(required)</span>
-                                                            <div class="input-with-icon  right">                                       
-                                                                    <i class=""></i>
-																	  <% ContactType.all.each do |ct| %>
-																		   <div class="row-fluid contact_types">
-																				<div class="checkbox check-success">
-																					 <%= check_box_tag "contact[contact_type_ids][]", ct.id, @contact.contact_types.include?(ct), {id: "checkbox"+ct.id.to_s, class: "required"} %>
-																				  <label for="checkbox<%= ct.id %>"><%= ct.name %></label>
-																				</div>
-																		   </div>
-																	  <% end %>
-																	  <br style="clear: both" />
-                                                            </div>
-                                                        </div>
-							  
-							  
-                                                        
-                                                        
-                                                        
-                              
-                                                        <div class="form-group">
-                                                          <label class="form-label"><%= f.label :name %></label>
-                                                          <span class="help">(required)</span>
-                                                                                  <div class="input-with-icon  right">                                       
-                                                                                          <i class=""></i>
-                                                                                          <%= f.text_field :name, :class => "form-control required" %>
-                                                                                  </div>
-                                                        </div>
-														
-														
-														
-													   <div class="form-group">
-															<label class="form-label"><%= f.label :logo %></label>
-															<span class="help"></span>
-															<div class="right">                                       
-																<i class=""></i>
-																<!--<div class="nice"><%= f.file_field :image %></div>-->
-																
-																 <ul id="sortable" class="image-boxes">
-																	  
-																	  <li class="image-box ui-state-default">
-																		   <div class="img-actions">
-																				<i class="icon-minus-sign delete-but<% if !@contact.image.present? %> hidden<% end %>"></i>
-																		   </div>
-																		   <a href="#" class="">
-																				<% if @contact.image.present? %>
-																					 <img class="current_img current_image_pic" src="<%= @contact.logo(:thumb2x) %>" />
-																				<% end %>
-																				<i class="icon-picture current_img current_image_icon<% if @contact.image.present? %> hidden<% end %>"></i>
-																				<img src="" class="new_picture hidden" />										
-																		   </a>
-																		   <%= f.file_field :image, :class => "hidden" %>
-																	  </li>
-											  
-																 </ul>
-																 <br style="clear:both" />
-															</div>
-														</div>
-														
-														
-														
-														<div class="row">                           
-															<div class="col-md-12">
-																 <div class="form-group">
-																	  <label class="form-label"><%= f.label :city %></label>
-																	  <span class="help"></span>
-																	  <div class="input-with-icon  right">                                       
-																			 <i class=""></i>
-																			 
-																			 <input style="width:100%;margin-bottom: 5px;" name="contact[city_id]" data="<%= cities_path(format: "json") %>" class="select2-ajax-states" value="<%= @contact.city_id %>" text="<%= @contact.city.name_with_state if !@contact.city.nil? %>" />
-																			 
-																	   
-																	  </div>
+								   <h4><span class="semi-bold">General Infomation</span></h4>
+								   
+								   <div class="row">
+										<div class="col-md-6">
+											 <div class="form-group">
+												  <label class="form-label">Contact Type</label>
+												  <span class="help"></span>
+												  <div class="input-with-icon right">                                       
+													   <div class="radio radio-success" style="padding: 5px">
+															<input id="yes" type="radio" name="contact[is_individual]" value="true"  <% if @contact.is_individual %>checked="checked"<% end %>>
+															<label for="yes">Individual</label>
+															<input id="no" type="radio" name="contact[is_individual]" value="false" <% if !@contact.is_individual %>checked="checked"<% end %>>
+															<label for="no">Company/Organization</label>
+													   </div>
+												  </div>
+											 </div>
+												  
+											 
+											 						
+										</div>
+											 
+										<div class="col-md-6">											 
+											 <div class="form-group">
+												  <label class="form-label"><%= f.label :picture %></label>
+												  <span class="help"></span>
+												  <div class="right">                                       
+													  <i class=""></i>
+													  <!--<div class="nice"><%= f.file_field :image %></div>-->
+													  
+													   <ul id="sortable" class="image-boxes">
+															
+															<li class="image-box ui-state-default">
+																 <div class="img-actions">
+																	  <i class="icon-minus-sign delete-but<% if !@contact.image.present? %> hidden<% end %>"></i>
 																 </div>
-															</div>
-															<div class="col-md-6">
-																 
-															</div>
-														</div>
-														
-                                                        
-                                                        <div class="form-group">
-                                                          <label class="form-label"><%= f.label :address %></label>
-                                                          <span class="help"></span>
-                                                                                  <div class="input-with-icon  right">                                       
-                                                                                          <i class=""></i>
-                                                                                          <%= f.text_field :address, :class => "form-control" %>
-                                                                                  </div>
-                                                        </div>
-                                                        
-                                                        <div class="form-group">
-                                                          <label class="form-label"><%= f.label :phone %></label>
-                                                          <span class="help"></span>
-                                                                                  <div class="input-with-icon  right">                                       
-                                                                                          <i class=""></i>
-                                                                                          <%= f.text_field :phone, :class => "form-control" %>
-                                                                                  </div>
-                                                        </div>
-                                                        
-                                                        <div class="form-group">
-                                                          <label class="form-label"><%= f.label :mobile %></label>
-                                                          <span class="help"></span>
-                                                                                  <div class="input-with-icon  right">                                       
-                                                                                          <i class=""></i>
-                                                                                          <%= f.text_field :mobile, :class => "form-control" %>
-                                                                                  </div>
-                                                        </div>
-                                                        
-                                                        <div class="form-group">
-                                                          <label class="form-label"><%= f.label :fax %></label>
-                                                          <span class="help"></span>
-                                                                                  <div class="input-with-icon  right">                                       
-                                                                                          <i class=""></i>
-                                                                                          <%= f.text_field :fax, :class => "form-control" %>
-                                                                                  </div>
-                                                        </div>
-                                                        
-                                                        <div class="form-group">
-                                                            <label class="form-label"><%= f.label :email %></label>
-                                                            <span class="help"></span>
-                                                                                    <div class="input-with-icon  right">                                       
-                                                                                            <i class=""></i>
-                                                                                            <%= f.text_field :email, :class => "form-control" %>
-                                                                                    </div>
-                                                          </div>
-                                                          
-                                                          <div class="form-group">
-                                                            <label class="form-label"><%= f.label :website %></label>
-                                                            <span class="help"></span>
-                                                                                    <div class="input-with-icon  right">                                       
-                                                                                            <i class=""></i>
-                                                                                            <%= f.text_field :website, :class => "form-control" %>
-                                                                                    </div>
-                                                          </div>
-                                                          
-                                                          <div class="form-group">
-                                                            <label class="form-label"><%= f.label :tax_code %></label>
-                                                            <span class="help"></span>
-                                                                                    <div class="input-with-icon  right">                                       
-                                                                                            <i class=""></i>
-                                                                                            <%= f.text_field :tax_code, :class => "form-control" %>
-                                                                                    </div>
-                                                          </div>
-                                                        
-                                                        
+																 <a href="#" class="">
+																	  <% if @contact.image.present? %>
+																		   <img class="current_img current_image_pic" src="<%= @contact.logo(:thumb2x) %>" />
+																	  <% end %>
+																	  <i class="icon-picture current_img current_image_icon<% if @contact.image.present? %> hidden<% end %>"></i>
+																	  <img src="" class="new_picture hidden" />										
+																 </a>
+																 <%= f.file_field :image, :class => "hidden" %>
+															</li>
+									
+													   </ul>
+													   <br style="clear:both" />
+												  </div>
+											 </div>										
+										</div>
+								   </div>
+										
+								   <div class="row">
+										<div class="col-md-6">													   
+											 <div class="form-group">
+												  <label class="form-label"><%= f.label :address %></label>
+												  <span class="help">(required)</span>
+												  <div class="input-with-icon  right">                                       
+														  <i class=""></i>
+														  <%= f.text_field :address, :class => "form-control required" %>
+												  </div>
+											 </div>							
+										</div>
+										<div class="col-md-6">
+											 <div class="form-group">
+												  <label class="form-label"><%= f.label :area %></label>
+												  <span class="help">(required)</span>
+												  <div class="input-with-icon  right">                                       
+													   <i class=""></i>
+													   <input style="width:100%;margin-bottom: 5px;" name="contact[city_id]" data="<%= cities_path(format: "json") %>" class="select2-ajax-states required" value="<%= @contact.city_id %>" text="<%= @contact.city.name_with_state if !@contact.city.nil? %>" />
+												  </div>
+											 </div>							
+										</div>
+								   </div>
+										
+								   <div class="row">
+										<div class="col-md-6">													   
+											 <div class="form-group">
+												  <label class="form-label"><%= f.label :email %></label>
+												  <span class="help">(required)</span>
+												  <div class="input-with-icon  right">                                       
+														  <i class=""></i>
+														  <%= f.text_field :email, :class => "form-control required" %>
+												  </div>
+											 </div>						
+										</div>
+										<div class="col-md-6">
+											 <div class="form-group">
+												  <label class="form-label"><%= f.label :email_2 %></label>
+												  <span class="help"></span>
+												  <div class="input-with-icon  right">                                       
+														  <i class=""></i>
+														  <%= f.text_field :email_2, :class => "form-control" %>
+												  </div>
+											 </div>					
+										</div>
+								   </div>
+										
+								   <div class="form-group">
+										<label class="form-label"><%= f.label :note %></label>
+										<span class="help"></span>
+										<div class="input-with-icon  right">                                       
+												<i class=""></i>
+												<%= f.text_area :note, :class => "form-control" %>
+										</div>
+								   </div>
+										                                                        
                             </div>
                             
                             
-          <div class="col-md-6">
+							  <div class="col-md-6">
+								   
+								   <div class="personal-box">
+										
+										<h4><span class="semi-bold">Personal Infomation</span></h4>							   
+										
+										<div class="row">
+											 <div class="col-md-6">													   
+												  <div class="form-group">
+													   <label class="form-label"><%= f.label :first_name %></label>
+													   <span class="help">(required)</span>
+													   <div class="input-with-icon  right">                                       
+															   <i class=""></i>
+															   <%= f.text_field :first_name, :class => "form-control required" %>
+													   </div>
+												  </div>										
+											 </div>
+											 <div class="col-md-6">
+												  <div class="form-group">
+													   <label class="form-label"><%= f.label :last_name %></label>
+													   <span class="help">(required)</span>
+													   <div class="input-with-icon  right">                                       
+															   <i class=""></i>
+															   <%= f.text_field :last_name, :class => "form-control required" %>
+													   </div>
+												  </div>										
+											 </div>
+										</div>							   
+										
+										
+											 
+										<div class="row">
+											 <div class="col-md-6">													   
+												  <div class="form-group">
+													   <label class="form-label"><%= f.label :mobile %></label>
+													   <span class="help">(required)</span>
+													   <div class="input-with-icon  right">                                       
+															   <i class=""></i>
+															   <%= f.text_field :mobile, :class => "form-control required" %>
+													   </div>
+												  </div>					
+											 </div>
+											 <div class="col-md-6">
+												  <div class="form-group">
+													   <label class="form-label"><%= f.label :mobile_2 %></label>
+													   <span class="help"></span>
+													   <div class="input-with-icon  right">                                       
+															   <i class=""></i>
+															   <%= f.text_field :mobile_2, :class => "form-control" %>
+													   </div>
+												  </div>							
+											 </div>
+										</div>
+										
+																				
+										
+										<div class="form-group">
+											 <label class="form-label"><%= f.label :company %></label>
+											 <span class="help"></span>
+											 <div class="input-with-icon  right">                                       
+												  <i class=""></i>
+												  <div class="input-with_add_but">
+													   <%= link_to '<i class="icon-plus"></i>'.html_safe, new_contact_path(:is_individual => false, tab_page: 1), title: "New Company", :class => 'btn btn-sm btn-small btn-white add-agent-button tab_page' %>
+													   <input style="width:100%;margin-bottom: 5px;" name="contact[referrer_id]" data="<%= contacts_path(is_individual: false, format: "json") %>" class="select2-ajax-contacts" value="<%= @contact.referrer_id %>" text="<%= @contact.referrer.name if !@contact.referrer.nil? %>" />
+												  </div>
+											 </div>
+										</div>
             
-              
-              
-              
-              
-              <div class="form-group">
-                <label class="form-label"><%= f.label :account_number %></label>
-                <span class="help"></span>
-                                        <div class="input-with-icon  right">                                       
-                                                <i class=""></i>
-                                                <%= f.text_field :account_number, :class => "form-control" %>
-                                        </div>
-              </div>
-              
-              <div class="form-group">
-                <label class="form-label"><%= f.label :bank %></label>
-                <span class="help"></span>
-                                        <div class="input-with-icon  right">                                       
-                                                <i class=""></i>
-                                                <%= f.text_field :bank, :class => "form-control" %>
-                                        </div>
-              </div>
-              
-              <div class="form-group">
-                <label class="form-label"><%= f.label :representative %></label>
-                <span class="help"></span>
-					<div class="input-with-icon  right">                                       
-							<i class=""></i>
-							<%= f.text_field :representative, :class => "form-control" %>
-							<%= f.label :phone %><%= f.text_field :representative_role, :class => "form-control" %>
-							<%= f.label :role %><%= f.text_field :representative_phone, :class => "form-control" %>
-							
-					</div>
-              </div>
-              
-              
-              
-              
-		  
-			   <div class="form-group">
-					<label class="form-label"><%= f.label :parent %></label>
-					<span class="help"></span>
-					<div class="input-with-icon  right">                                       
-					  <i class=""></i>
-						 <div class="input-with_add_but">
-							  <%= link_to '<i class="icon-plus"></i>'.html_safe, ajax_new_contacts_path, :class => 'btn btn-sm btn-small btn-white fancybox.ajax agent-add-button' %>
-							  <input style="width:100%;margin-bottom: 5px;" name="contact[parent_ids][]" data="<%= contacts_path(format: "json") %>" class="select2-ajax-contacts" value="<%= @contact.parent.first.id if !@contact.parent.first.nil? %>" text="<%= @contact.parent.first.name if !@contact.parent.first.nil? %>" />
-						 </div>
-					</div>
-			   </div>
-              
-              <div class="form-group">
-                <label class="form-label"><%= f.label :note %></label>
-                <span class="help"></span>
-                                        <div class="input-with-icon  right">                                       
-                                                <i class=""></i>
-                                                <%= f.text_area :note, :class => "form-control" %>
-                                        </div>
-              </div>
-              
-              <div class="form-group">
-                <label class="form-label"><%= f.label :agents %></label>
-                <span class="help"></span>
-                <div class="right">                                       
-                        <i class=""></i>
-                        <div id="agents-list" class="col-md-12">
-                          <% if !@contact.agents.nil? %>
-                            <% @contact.agents.each do |agent| %>
-							  
-							  <%= render "agent_line", agent: agent %>
-							
-                              <!--<div class="agent-line">
-								   <span>
-										<%= link_to 'Edit', ajax_edit_contacts_path(:id => agent.id), :class => "btn btn-danger btn-xs btn-mini fancybox.ajax add-agent-button" %>
-										<%= link_to 'Delete', ajax_destroy_contacts_path(:id => agent.id), :class => "btn btn-danger btn-xs btn-mini delete_agent", data: { confirm: 'Are you sure?' } %>					
-								   </span>				   
-								   <input type="hidden" name="contact[agent_ids][]" value="<%= agent.id %>" />
-								   <%= agent.html_agent_line.html_safe %>				
-                              </div>-->
-                            <% end %>
-                          <% end %>
-                        </div>
-                        <div class="controls">
-						 <br />
-							  <%= link_to '<i class="icon-plus"></i> Add agent'.html_safe, ajax_new_contacts_path(:type_id => ContactType.agent, :company_id => @contact.id), :class => "btn btn-info btn-cons fancybox.ajax agent-add-button", :id => "agent-add-button" %>
-                        </div>
-                </div>
-              </div>
-            
-          </div>
-                        
+								   </div>
+								   
+								   <div class="company-box">
+										
+										<h4><span class="semi-bold">Company Infomation</span></h4>
+										
+										<div class="form-group">
+											 <label class="form-label"><%= f.label :name %></label>
+											 <span class="help">(required)</span>
+											 <div class="input-with-icon  right">                                       
+													 <i class=""></i>
+													 <%= f.text_field :name, :class => "form-control required" %>
+											 </div>
+										</div>
+										
+										<div class="row">
+											 <div class="col-md-6">													   
+												  <div class="form-group">
+													   <label class="form-label"><%= f.label :phone %></label>
+													   <span class="help"></span>
+													   <div class="input-with-icon  right">                                       
+															   <i class=""></i>
+															   <%= f.text_field :phone, :class => "form-control" %>
+													   </div>
+												  </div>										
+											 </div>
+											 <div class="col-md-6">
+												  <div class="form-group">
+													   <label class="form-label"><%= f.label :fax %></label>
+													   <span class="help"></span>
+													   <div class="input-with-icon  right">                                       
+															   <i class=""></i>
+															   <%= f.text_field :fax, :class => "form-control" %>
+													   </div>
+												  </div>										
+											 </div>
+										</div>
+										
+										<div class="row">
+											 <div class="col-md-6">													   
+												  <div class="form-group">
+													   <label class="form-label"><%= f.label :tax_code %></label>
+													   <span class="help"></span>
+													   <div class="input-with-icon  right">                                       
+															   <i class=""></i>
+															   <%= f.text_field :tax_code, :class => "form-control" %>
+													   </div>
+												  </div>							
+											 </div>
+											 <div class="col-md-6">
+												  <div class="form-group">
+													   <label class="form-label"><%= f.label :website %></label>
+													   <span class="help"></span>
+													   <div class="input-with-icon  right">                                       
+															   <i class=""></i>
+															   <%= f.text_field :website, :class => "form-control" %>
+													   </div>
+												  </div>						
+											 </div>
+										</div>
+										
+										<div class="row">
+											 <div class="col-md-6">													   
+												  <div class="form-group">
+													   <label class="form-label"><%= f.label :account_number %></label>
+													   <span class="help"></span>
+													   <div class="input-with-icon  right">                                       
+															   <i class=""></i>
+															   <%= f.text_field :account_number, :class => "form-control" %>
+													   </div>
+												  </div>								
+											 </div>
+											 <div class="col-md-6">
+												  <div class="form-group">
+													   <label class="form-label"><%= f.label :bank %></label>
+													   <span class="help"></span>
+													   <div class="input-with-icon  right">                                       
+															   <i class=""></i>
+															   <%= f.text_field :bank, :class => "form-control" %>
+													   </div>
+												  </div>								
+											 </div>
+										</div>
+										
+										
+									</div>
+								   
+							  </div>
                         
                     </div>
                       
 				  <div class="form-actions">  
 					<div class="pull-right">
-					  <button type="submit" class="btn btn-success btn-cons"><i class="icon-ok"></i> Save</button>
-                                          <%= link_to 'Cancel', contacts_path, :class => "btn btn-white btn-cons cancel-but" %>
+						 <button type="submit" class="btn btn-success btn-cons"><i class="icon-ok"></i> Save</button>
+                         <%= link_to 'Cancel', contacts_path, :class => "btn btn-white btn-cons cancel-but" %>
 					</div>
 					</div>
 				<% end %>
@@ -297,4 +320,5 @@
               </div>
             </div>		
       </div>
+
        

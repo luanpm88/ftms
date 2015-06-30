@@ -103,7 +103,9 @@ class Ability
       can :datatable, Course
       can :read, Course
       can :create, Course
-      can :update, Course 
+      can :update, Course
+      
+      can :update, Contact
     end
     
   end

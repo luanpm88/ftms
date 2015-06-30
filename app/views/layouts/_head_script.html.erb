@@ -1,4 +1,15 @@
 <script>
+	
+	function checkContactType() {
+		if($('input[name="contact[is_individual]"]:checked').val() == "true") {
+			$(".personal-box").show();
+			$(".company-box").hide();
+		} else {
+			$(".personal-box").hide();
+			$(".company-box").show();
+		}
+	}
+	
 	function reloadTab(tid, force) {
 		if (typeof(force) == "undefined") {
 			force = false
@@ -271,11 +282,18 @@
 					var types = $(".contact_types input:checkbox:checked").map(function(){
 						return $(this).val();
 					}).get();
+					
+					var individual_statuses = $(".individual_statuses input:checkbox:checked").map(function(){
+						return $(this).val();
+					}).get();
+					
 					d.types = types.join(",");
-					d.area_id = $("#area_id").val()
+					d.individual_statuses = individual_statuses.join(",");
+					d.area_ids = $("#area_ids").val()
+					d.companies = $("input[name='companies']").val()
 				}
 			},
-			"columnDefs": [ { "targets": [0,1,2,3,4], "orderable": false } ],
+			"columnDefs": [ { "targets": [0,2,3,4,5], "orderable": false } ],
 			"order": [],
 			"aLengthMenu": [[10, 25, 50, 75, 100], [10, 25, 50, 75, 100]],
 			"iDisplayLength": 25
@@ -320,9 +338,9 @@
 			"ajax": {
 				"url": "<%= datatable_courses_path %>",
 				"data": function ( d ) {
-					d.intake_month =  $("input[name='filter[intake]']").val(),
-					d.intake_year =  $("input[name='filter[intake]']").val(),
-					d.course_types = $("select[name='filter[course_types[]]']").val()
+					d.intake_month =  $("select[name='filter[intake(2i)]']").val(),
+					d.intake_year =  $("select[name='filter[intake(1i)]']").val(),
+					d.course_types = $("input[name='filter[course_types[]]']").val()
 				}
 			},
 			"columnDefs": [ { "targets": [2,4,5], "orderable": false } ],
@@ -338,12 +356,13 @@
 			placeholder: "Search for a contact",
 			minimumInputLength: 1,
 			allowClear: true,
+			multiple: $('.select2-ajax-contacts').hasClass("multiple"),
 			ajax: {
 			  url: $('.select2-ajax-contacts').attr("data"),
 			  dataType: 'json',
 			  data: function (term, page) { // page is the one-based page number tracked by Select2
 				return {
-				  q: term, //search term
+				  q: term, //search term				  
 				};
 			  },
 			  results: function (data, page) {
@@ -360,6 +379,7 @@
 			placeholder: "Search for a state",
 			minimumInputLength: 1,
 			allowClear: true,
+			multiple: $('.select2-ajax-states').hasClass("multiple"),
 			ajax: {
 			  url: $('.select2-ajax-states').attr("data"),
 			  dataType: 'json',
@@ -500,6 +520,16 @@
 		})
 		
 		$('.date-group select').select2();
+		
+		$('.course-filter select, .course-filter input').change(function() {
+			$('.datatable-courses').dataTable().fnFilter();
+		});
+		
+		checkContactType()
+		$('input[name="contact[is_individual]"]').change(function() {
+			checkContactType()
+		});
+		
 });
 
 </script>

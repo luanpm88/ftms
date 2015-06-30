@@ -7844,7 +7844,7 @@ table.table-border td {
 }
 .contact_types {
     float: left;
-    width: 30%;
+    width: 120px;
 }
 .col_label {
     font-size: 85%;
@@ -8077,4 +8077,19 @@ tr.block_commission_header h3 {
 .date-group #s2id_course_intake_3i, .date-group-my #s2id_filter_intake_3i {
     position: absolute;
     top: -9000px;
+}
+.course-filter select, .course-filter input {    
+}
+.icon-nopic-60 {
+    background: #fff none repeat scroll 0 0 !important;
+    border: 1px solid #aaa;
+    color: #aaa;
+    display: inline-block !important;
+    font-size: 45px;
+    height: 60px;
+    padding: 7px 5px 5px;
+    width: 60px;
+}
+.address_info_line {
+    margin-bottom: 0;
 }

@@ -26,6 +26,9 @@ class Course < ActiveRecord::Base
     @records = self.joins(:course_type)
     
     @records = @records.search(params["search"]["value"]) if !params["search"]["value"].empty?
+    @records = @records.where("EXTRACT(YEAR FROM courses.intake) = ? ", params["intake_year"]) if params["intake_year"].present?
+    @records = @records.where("EXTRACT(MONTH FROM courses.intake) = ? ", params["intake_month"]) if params["intake_month"].present?
+    @records = @records.where("courses.course_type_id IN (#{params["course_types"]})") if params["course_types"].present?
     
     if !params["order"].nil?
       case params["order"]["0"]["column"]

@@ -312,7 +312,14 @@ CREATE TABLE contacts (
     city_id integer,
     contact_types_cache character varying,
     image character varying,
-    user_id integer
+    user_id integer,
+    first_name character varying,
+    last_name character varying,
+    mobile_2 character varying,
+    email_2 character varying,
+    is_individual boolean DEFAULT true,
+    sex character varying,
+    referrer_id integer
 );
 
 
@@ -1023,4 +1030,18 @@ INSERT INTO schema_migrations (version) VALUES ('20150629031144');
 INSERT INTO schema_migrations (version) VALUES ('20150629074251');
 
 INSERT INTO schema_migrations (version) VALUES ('20150629081809');
+
+INSERT INTO schema_migrations (version) VALUES ('20150630052736');
+
+INSERT INTO schema_migrations (version) VALUES ('20150630052750');
+
+INSERT INTO schema_migrations (version) VALUES ('20150630054342');
+
+INSERT INTO schema_migrations (version) VALUES ('20150630054356');
+
+INSERT INTO schema_migrations (version) VALUES ('20150630061658');
+
+INSERT INTO schema_migrations (version) VALUES ('20150630071514');
+
+INSERT INTO schema_migrations (version) VALUES ('20150630092753');
 
