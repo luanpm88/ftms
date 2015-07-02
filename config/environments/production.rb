@@ -78,7 +78,7 @@ Hkerp::Application.configure do
   # Use default logging formatter so that PID and timestamp are not suppressed.
   config.log_formatter = ::Logger::Formatter.new
   
-  config.action_mailer.default_url_options = { :host => '27.0.15.181:3000' }
+  config.action_mailer.default_url_options = { :host => 'ftms.hoangkhang.com.vn:3000' }
   
   config.action_mailer.delivery_method = :smtp
   # SMTP settings for gmail
