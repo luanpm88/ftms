@@ -27,7 +27,7 @@ Hkerp::Application.configure do
   # number of complex assets.
   config.assets.debug = true
   
-  config.action_mailer.default_url_options = { :host => 'ftms.hoangkhang.com.vn:3000' }
+  config.action_mailer.default_url_options = { :host => 'ftms.hoangkhang.com.vn:3010' }
   
   config.action_mailer.delivery_method = :smtp
   # SMTP settings for gmail
