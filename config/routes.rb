@@ -1,4 +1,13 @@
 Hkerp::Application.routes.draw do
+  resources :contact_tags_contacts
+  resources :contact_tags
+  resources :books do
+    collection do
+      get :datatable
+      get :cover
+    end
+  end
+  
   resources :courses do
     collection do
       get :datatable
@@ -87,6 +96,7 @@ Hkerp::Application.routes.draw do
       get :datatable
       
       get :logo
+      get :update_tag
     end
   end
 

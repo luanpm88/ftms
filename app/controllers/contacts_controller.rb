@@ -2,7 +2,7 @@ class ContactsController < ApplicationController
   include ContactsHelper
   
   load_and_authorize_resource
-  before_action :set_contact, only: [:ajax_edit, :ajax_update, :show, :edit, :update, :destroy, :ajax_destroy, :ajax_show, :ajax_list_agent, :ajax_list_supplier_agent]
+  before_action :set_contact, only: [:ajax_tag_box, :ajax_edit, :ajax_update, :show, :edit, :update, :destroy, :ajax_destroy, :ajax_show, :ajax_list_agent, :ajax_list_supplier_agent]
 
   # GET /contacts
   # GET /contacts.json
@@ -57,9 +57,18 @@ class ContactsController < ApplicationController
   def create
     @contact = Contact.new(contact_params)
     @contact.user_id = current_user.id
+    @contact.sex = "male"
+    
+    if params[:contact_tag].present?
+      @contact_tag = ContactTag.find(params[:contact_tag])
+    end
 
     respond_to do |format|
-      if @contact.save       
+      if @contact.save
+        if params[:contact_tag].present?
+          @contact.update_tag(@contact_tag, current_user)
+        end
+        
         format.html { redirect_to params[:tab_page].present? ? {action: "edit", id: @contact.id,tab_page: 1} : contacts_url, notice: 'Contact was successfully created.' }
         format.json { render action: 'show', status: :created, location: @contact }
       else
@@ -74,8 +83,16 @@ class ContactsController < ApplicationController
   def update
     params[:contact][:contact_type_ids] ||= []
     
+    if params[:contact_tag].present?
+      @contact_tag = ContactTag.find(params[:contact_tag])
+    end
+    
     respond_to do |format|
       if @contact.update(contact_params)
+        if params[:contact_tag].present?
+          @contact.update_tag(@contact_tag, current_user)
+        end
+        
         format.html { redirect_to params[:tab_page].present? ? {action: "edit",id: @contact.id,tab_page: 1} : contacts_url, notice: 'Contact was successfully updated.' }
         format.json { head :no_content }
       else
@@ -187,6 +204,13 @@ class ContactsController < ApplicationController
   def logo
     send_file @contact.logo_path(params[:type]), :disposition => 'inline'
   end
+  
+  def update_tag
+    contact_tag = ContactTag.find(params[:tag_id])
+    @contact.update_tag(contact_tag, current_user)
+    
+    render layout: nil
+  end
 
   private
     # Use callbacks to share common setup or constraints between actions.
@@ -196,6 +220,6 @@ class ContactsController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def contact_params
-      params.require(:contact).permit(:referrer_id, :is_individual, :mobile_2, :email_2, :first_name, :last_name, :image, :city_id, :website, :name, :phone, :mobile, :fax, :email, :address, :tax_code, :note, :account_number, :bank, :contact_type_id, :parent_ids => [], :agent_ids => [], :company_ids => [], :contact_type_ids => [])
+      params.require(:contact).permit(:birthday, :sex, :referrer_id, :is_individual, :mobile_2, :email_2, :first_name, :last_name, :image, :city_id, :website, :name, :phone, :mobile, :fax, :email, :address, :tax_code, :note, :account_number, :bank, :contact_type_id, :parent_ids => [], :agent_ids => [], :company_ids => [], :contact_type_ids => [])
     end
 end

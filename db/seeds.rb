@@ -27,3 +27,8 @@ user.add_role Role.where(name: "admin").first
 
 user = User.where(:email => "manager@ftmsglobal.edu.vn").first
 user.add_role Role.where(name: "manager").first
+
+ContactTag.create(name: "No Tag", description: "No Tag")
+ContactTag.create(name: "Follow Up", description: "Likely to study")
+ContactTag.create(name: "Potential", description: "Not sure whether to study")
+ContactTag.create(name: "No More Follow Up", description: "Not want to study any more")

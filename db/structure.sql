@@ -158,6 +158,40 @@ ALTER SEQUENCE autotasks_id_seq OWNED BY autotasks.id;
 
 
 --
+-- Name: books; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE TABLE books (
+    id integer NOT NULL,
+    name character varying,
+    description text,
+    user_id integer,
+    image character varying,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL
+);
+
+
+--
+-- Name: books_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE books_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: books_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE books_id_seq OWNED BY books.id;
+
+
+--
 -- Name: cities; Type: TABLE; Schema: public; Owner: -; Tablespace: 
 --
 
@@ -219,6 +253,103 @@ CREATE SEQUENCE city_types_id_seq
 --
 
 ALTER SEQUENCE city_types_id_seq OWNED BY city_types.id;
+
+
+--
+-- Name: contact_statuses; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE TABLE contact_statuses (
+    id integer NOT NULL,
+    name character varying,
+    title character varying,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL
+);
+
+
+--
+-- Name: contact_statuses_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE contact_statuses_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: contact_statuses_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE contact_statuses_id_seq OWNED BY contact_statuses.id;
+
+
+--
+-- Name: contact_tags; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE TABLE contact_tags (
+    id integer NOT NULL,
+    name character varying,
+    description text,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL
+);
+
+
+--
+-- Name: contact_tags_contacts; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE TABLE contact_tags_contacts (
+    id integer NOT NULL,
+    contact_id integer,
+    contact_tag_id integer,
+    user_id integer,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL
+);
+
+
+--
+-- Name: contact_tags_contacts_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE contact_tags_contacts_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: contact_tags_contacts_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE contact_tags_contacts_id_seq OWNED BY contact_tags_contacts.id;
+
+
+--
+-- Name: contact_tags_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE contact_tags_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: contact_tags_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE contact_tags_id_seq OWNED BY contact_tags.id;
 
 
 --
@@ -319,7 +450,9 @@ CREATE TABLE contacts (
     email_2 character varying,
     is_individual boolean DEFAULT true,
     sex character varying,
-    referrer_id integer
+    referrer_id integer,
+    birthday date,
+    tag_id integer
 );
 
 
@@ -692,6 +825,13 @@ ALTER TABLE ONLY autotasks ALTER COLUMN id SET DEFAULT nextval('autotasks_id_seq
 -- Name: id; Type: DEFAULT; Schema: public; Owner: -
 --
 
+ALTER TABLE ONLY books ALTER COLUMN id SET DEFAULT nextval('books_id_seq'::regclass);
+
+
+--
+-- Name: id; Type: DEFAULT; Schema: public; Owner: -
+--
+
 ALTER TABLE ONLY cities ALTER COLUMN id SET DEFAULT nextval('cities_id_seq'::regclass);
 
 
@@ -700,6 +840,27 @@ ALTER TABLE ONLY cities ALTER COLUMN id SET DEFAULT nextval('cities_id_seq'::reg
 --
 
 ALTER TABLE ONLY city_types ALTER COLUMN id SET DEFAULT nextval('city_types_id_seq'::regclass);
+
+
+--
+-- Name: id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY contact_statuses ALTER COLUMN id SET DEFAULT nextval('contact_statuses_id_seq'::regclass);
+
+
+--
+-- Name: id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY contact_tags ALTER COLUMN id SET DEFAULT nextval('contact_tags_id_seq'::regclass);
+
+
+--
+-- Name: id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY contact_tags_contacts ALTER COLUMN id SET DEFAULT nextval('contact_tags_contacts_id_seq'::regclass);
 
 
 --
@@ -819,6 +980,14 @@ ALTER TABLE ONLY autotasks
 
 
 --
+-- Name: books_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+--
+
+ALTER TABLE ONLY books
+    ADD CONSTRAINT books_pkey PRIMARY KEY (id);
+
+
+--
 -- Name: cities_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
 --
 
@@ -832,6 +1001,30 @@ ALTER TABLE ONLY cities
 
 ALTER TABLE ONLY city_types
     ADD CONSTRAINT city_types_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: contact_statuses_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+--
+
+ALTER TABLE ONLY contact_statuses
+    ADD CONSTRAINT contact_statuses_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: contact_tags_contacts_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+--
+
+ALTER TABLE ONLY contact_tags_contacts
+    ADD CONSTRAINT contact_tags_contacts_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: contact_tags_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+--
+
+ALTER TABLE ONLY contact_tags
+    ADD CONSTRAINT contact_tags_pkey PRIMARY KEY (id);
 
 
 --
@@ -1044,4 +1237,16 @@ INSERT INTO schema_migrations (version) VALUES ('20150630061658');
 INSERT INTO schema_migrations (version) VALUES ('20150630071514');
 
 INSERT INTO schema_migrations (version) VALUES ('20150630092753');
+
+INSERT INTO schema_migrations (version) VALUES ('20150701020801');
+
+INSERT INTO schema_migrations (version) VALUES ('20150701034859');
+
+INSERT INTO schema_migrations (version) VALUES ('20150701073806');
+
+INSERT INTO schema_migrations (version) VALUES ('20150701074441');
+
+INSERT INTO schema_migrations (version) VALUES ('20150701075243');
+
+INSERT INTO schema_migrations (version) VALUES ('20150702041941');
 

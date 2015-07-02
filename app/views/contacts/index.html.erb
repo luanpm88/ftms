@@ -37,8 +37,8 @@
 							  </div>
 						  </div>
 						  
-							<div class="col-md-4">
-								<h4>Area (State/City/District)</h4>
+							<div class="col-md-3">
+								<h4>Areas (State/City/District)</h4>
 								<div class="">
 									<div class="input-with-icon  right">                                       
 									<i class=""></i>
@@ -47,14 +47,19 @@
 								</div>
 							</div>
 							
-							<div class="col-md-4">
-								<h4>Company</h4>
+							<div class="col-md-3">
+								<h4>Companies</h4>
 								<div class="">
 									<div class="input-with-icon  right">                                       
 									<i class=""></i>
 									<input style="width:100%;margin-bottom: 5px;" name="companies" data="<%= contacts_path(is_individual: false, format: "json") %>" class="select2-ajax-contacts multiple" value="" text="" data-placeholder="All"/>
 									</div>
 								</div>
+							</div>
+							
+							<div class="col-md-3">
+								<h4>Tags</h4>
+								<%= select_tag 'tags', options_for_select(ContactTag.all.collect{ |u| [u.name, u.id] }), class: "modern_select width100", multiple: "multiple" %>
 							</div>
 							
 						</form>
@@ -82,6 +87,7 @@
 												<th class="text-left">Info</th>
 												<th class="text-center">Area</th>
 												<th class="text-left">Referrer</th>
+												<th class="text-center">Tag</th>
 												<th class="text-right">Actions</th>
                                             </tr>
                                         </thead>

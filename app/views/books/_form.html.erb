@@ -1,0 +1,106 @@
+       <div class="row">
+            <div class="col-md-6">
+              <div class="grid simple">
+                <div class="grid-title no-border">
+                  <h4>Book <span class="semi-bold">Details</span></h4>
+                  
+                </div>     
+                
+                
+                
+                
+                <div class="grid-body no-border">
+                  
+                  
+                  <% if @book.errors.any? %>
+                    <div class="alert alert-error">
+                      <button data-dismiss="alert" class="close"></button>
+                      <div id="error_explanation">
+                        <h5><%= pluralize(@book.errors.count, "error") %> prohibited this book from being saved:</h5>
+                  
+                        <ul>
+                        <% @book.errors.full_messages.each do |msg| %>
+                          <li><%= msg %></li>
+                        <% end %>
+                        </ul>
+                      </div>
+                    </div>
+                  <% end %>
+                    
+                 
+                  
+                  
+                  <%= form_for(@book, html: { multipart: true }) do |f| %>
+					
+					<%= hidden_field_tag("tab_page", 1) if params[:tab_page] %>
+					
+					<div class="row">
+						 <div class="col-md-12">
+                              
+                              <div class="form-group">
+								   <label class="form-label"><%= f.label :cover %></label>
+								   <span class="help"></span>
+								   <div class="right">                                       
+									   <i class=""></i>
+										<ul id="sortable" class="image-boxes">
+											 
+											 <li class="image-box ui-state-default">
+												  <div class="img-actions">
+													   <i class="icon-minus-sign delete-but<% if !@book.image.present? %> hidden<% end %>"></i>
+												  </div>
+												  <a href="#" class="">
+													   <% if @book.image.present? %>
+															<img class="current_img current_image_pic" src="<%= @book.cover(:thumb2x) %>" />
+													   <% end %>
+													   <i class="icon-picture current_img current_image_icon<% if @book.image.present? %> hidden<% end %>"></i>
+													   <img src="" class="new_picture hidden" />										
+												  </a>
+												  <%= f.file_field :image, :class => "hidden" %>
+											 </li>
+					 
+										</ul>
+										<br style="clear:both" />
+								   </div>
+							   </div>
+                          
+                              <div class="form-group">
+                                    <label class="form-label"><%= f.label :name %></label>
+                                    <span class="help">(required)</span>
+                                    <div class="input-with-icon  right">                                       
+                                      <i class=""></i>
+                                      <%= f.text_field :name, :class => "form-control required" %>
+                                    </div>
+                              </div>
+                              
+							  <div class="form-group">
+								<label class="form-label"><%= f.label :description %></label>
+								<span class="help"></span>
+								<div class="input-with-icon  right">                                       
+									<i class=""></i>
+									  <%= f.text_area :description, :class => "form-control" %>
+								</div>
+							  </div>
+							  
+							  
+							  
+						 </div>
+						 
+						 
+						 
+					</div>
+						 
+					<div class="form-actions">  
+						 <div class="pull-right">
+						 <button type="submit" class="btn btn-success btn-cons"><i class="icon-ok"></i> Save</button>
+						  <%= link_to 'Cancel', users_path, :class => "btn btn-white btn-cons cancel-but" %>
+					   </div>
+					</div>
+							  
+						<% end %>
+			   </div>
+			 </div>
+            </div>
+			
+      </div>
+
+

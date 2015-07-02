@@ -1,5 +1,17 @@
 <script>
 	
+	function updateContactTag(c_id, t_id) {
+		$.ajax({
+			url : '<%= update_tag_contacts_path %>?id='+c_id+'&tag_id='+t_id,
+			type: "GET",
+			success:function(data, textStatus, jqXHR)
+			{
+				
+				$('.contact_tag_box[rel="'+c_id+'"]').html(data);
+			}
+		});
+	}
+	
 	function checkContactType() {
 		if($('input[name="contact[is_individual]"]:checked').val() == "true") {
 			$(".personal-box").show();
@@ -226,7 +238,8 @@
 		//Multiselect for all
 		$(".multi_select").select2();
 		$(".modern_select").select2({
-			allowClear: true
+			allowClear: true,
+			placeholder: "All"
 		});
 		$(".datetime select").select2();
 	
@@ -291,6 +304,7 @@
 					d.individual_statuses = individual_statuses.join(",");
 					d.area_ids = $("#area_ids").val()
 					d.companies = $("input[name='companies']").val()
+					d.tags = $("select#tags").val()
 				}
 			},
 			"columnDefs": [ { "targets": [0,2,3,4,5], "orderable": false } ],
@@ -344,6 +358,22 @@
 				}
 			},
 			"columnDefs": [ { "targets": [2,4,5], "orderable": false } ],
+			"order": [],
+			"aLengthMenu": [[10, 25, 50, 75, 100], [10, 25, 50, 75, 100]],
+			"iDisplayLength": 25
+	    });
+		
+		//Datatable books
+	    $('.datatable-books').dataTable( {
+			"processing": true,
+			"serverSide": true,
+			"ajax": {
+				"url": "<%= datatable_books_path %>",
+				"data": function ( d ) {
+					
+				}
+			},
+			"columnDefs": [ { "targets": [0,2,4,5], "orderable": false } ],
 			"order": [],
 			"aLengthMenu": [[10, 25, 50, 75, 100], [10, 25, 50, 75, 100]],
 			"iDisplayLength": 25
@@ -419,6 +449,29 @@
 			  callback({ id: element.val(), text: element.attr('text') });
 			}
 	    });
+		
+		//ajax select2 for contact tags
+	    $('.select2-ajax-contact-tags').select2({
+			placeholder: "Search for a tag",
+			minimumInputLength: 1,
+			allowClear: true,
+			multiple: $('.select2-ajax-contact-tags').hasClass("multiple"),
+			ajax: {
+			  url: $('.select2-ajax-contact-tags').attr("data"),
+			  dataType: 'json',
+			  data: function (term, page) { // page is the one-based page number tracked by Select2
+				return {
+				  q: term, //search term
+				};
+			  },
+			  results: function (data, page) {
+				return {results: data};
+			  }
+			},
+			initSelection: function (element, callback) {				      
+			  callback({ id: element.val(), text: element.attr('text') });
+			}
+	    });
 	    
 	    $('.dataTables_length select').select2({allowClear: true});
 	    
@@ -468,7 +521,7 @@
 		$('.fancybox_link').fancybox({width: "100%",'autoDimensions': false, 'autoSize':false});
 		
 		//contact filter
-		$("#contact_filter input").click(function() {
+		$("#contact_filter input, #contact_filter select").click(function() {
 			$('.datatable-contacts').dataTable().fnFilter();
 	    });		
 		
@@ -529,6 +582,10 @@
 		$('input[name="contact[is_individual]"]').change(function() {
 			checkContactType()
 		});
+		
+		$(document).on("click",".contact_tag_item",function() {
+			updateContactTag($(this).attr("rel"), $(this).attr("tag_id"))
+		})
 		
 });
 

@@ -297,7 +297,7 @@
       <div class="greeting" style="font-weight: normal">Welcome</div>
       <div class="username"><span class="semi-bold"><%= current_user.short_name %></span></div>
 		<div class="status">
-		<%= current_user.roles_name %>
+			<%= current_user.roles_name %>
 			<!--<a href="#"><div class="status-icon green"></div>Online</a>-->
 		</div>
     </div>
@@ -311,6 +311,7 @@
    <!-- BEGIN SIDEBAR MENU -->	
     <p class="menu-title">BROWSE <span class="pull-right"><a href="javascript:;"><i class="icon-refresh"></i></a></span></p>
     <ul>
+		
 		
 		
 		<% if can? :course_features, User %>
@@ -327,12 +328,27 @@
 					</ul>
 			</li>
 		<% end %>
+		
+		<% if can? :book_features, User %>
+			<li <% if params[:controller] == "books" %> class="active open"<% end %>>
+					<%= link_to contacts_url do %>
+					  <i class="icon-book"></i>
+					  <span class="title">Book</span>
+					  <span class="arrow<% if params[:controller] == "books" %> open<% end %>"></span>
+					<% end %>
+					<ul class="sub-menu">
+						
+						<li<% if params[:controller] == "books" && params[:action] == "index" %> class="active"<% end %>><%= link_to 'Books', books_path(tab_page:1), class: "tab_page" %></li>
+						
+					</ul>
+			</li>
+		<% end %>
 	
 	
 		<% if can? :read, Contact %>
 			<li <% if params[:controller] == "contacts" %> class="active open"<% end %>>
 			  <%= link_to contacts_url do %>
-			<i class="icon-book"></i>
+			<i class="icon-group"></i>
 			<span class="title">Address Book</span>
 			<span class="arrow<% if params[:controller] == "contacts" %> open<% end %>"></span>
 			  <% end %>

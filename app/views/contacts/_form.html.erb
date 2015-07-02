@@ -57,7 +57,17 @@
 												  </div>
 											 </div>
 												  
-											 
+											 <div class="form-group">
+												  <label class="form-label">Contact Tag</label>
+												  <span class="help"></span>
+												  <div class="input-with-icon  right">
+													   <select name="contact_tag" class="modern_select width100">
+															<% ContactTag.all.each do |ctag| %>
+																 <option <%= 'selected="selected"' if !@contact_tag.nil? && ctag.id == @contact_tag.id %> value="<%= ctag.id %>"><%= ctag.name %></option>															
+															<% end %>
+													   </select>
+												  </div>
+											 </div>
 											 						
 										</div>
 											 
@@ -155,6 +165,39 @@
 								   <div class="personal-box">
 										
 										<h4><span class="semi-bold">Personal Infomation</span></h4>							   
+										
+										
+							  
+										<div class="row">
+											 <div class="col-md-6">													   
+												  <div class="form-group">
+													   <label class="form-label">Gender</label>
+													   <span class="help"></span>
+													   <div class="input-with-icon right">                                       
+															<div class="radio radio-success" style="padding: 5px">
+																 <input class="required" id="male" type="radio" name="contact[sex]" value="male" <% if @contact.sex == "male" %>checked="checked"<% end %>>
+																 <label for="male">Male</label>
+																 <input class="required" id="female" type="radio" name="contact[sex]" value="female" <% if @contact.sex == "female" %>checked="checked"<% end %>>
+																 <label for="female">Female</label>
+															</div>
+													   </div>
+												  </div>									
+											 </div>
+											 <div class="col-md-6">
+												  <div class="form-group">
+													   <label class="form-label"><%= f.label :birthday %></label>
+													   <span class="help">(required)</span>
+													   <div class="input-with-icon  right">                                       
+															<i class=""></i>
+															<div class="input-append success date col-md-10 no-padding">
+															  <%= f.text_field :birthday, :class => "form-control required" %>
+															  <span class="add-on"><span class="arrow"></span><i class="icon-th"></i></span>
+															</div>
+															<br style="clear: both" />
+													   </div>
+												  </div>										
+											 </div>
+										</div>
 										
 										<div class="row">
 											 <div class="col-md-6">													   

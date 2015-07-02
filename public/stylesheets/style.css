@@ -8093,3 +8093,49 @@ tr.block_commission_header h3 {
 .address_info_line {
     margin-bottom: 0;
 }
+.follow_up {
+    color: #3c763d;
+}
+.dropdown-menu > li.follow_up a {
+    color: #3c763d;
+}
+.dropdown-menu > li.potential a {
+    color: violet;
+}
+.dropdown-menu > li.no_more_follow_up a {
+    color: grey;
+}
+.tag_button {
+    background: #efefef none repeat scroll 0 0;
+    border: medium none;
+    font-size: 100%;
+    padding: 1px 7px;
+}
+.tag_button.follow_up {
+    color: #fff;
+    background: #3c763d;
+}
+.tag_button.follow_up .caret {
+    border-color: #fff transparent -moz-use-text-color;
+}
+.tag_button.potential {
+    color: #fff;
+    background: violet;
+}
+.tag_button.potential .caret {
+    border-color: #fff transparent -moz-use-text-color;
+}
+.tag_button.no_more_follow_up {
+    color: #fff;
+    background: grey;
+}
+.tag_button.no_more_follow_up .caret {
+    border-color: #fff transparent -moz-use-text-color;
+}
+.tag_button:hover {
+    border: none !important;
+}
+.tag_button:focus {
+    border: none !important;
+    color: #333;
+}

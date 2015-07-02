@@ -1,0 +1,31 @@
+<p id="notice"><%= notice %></p>
+
+<h1>Listing Contact Tags Contacts</h1>
+
+<table>
+  <thead>
+    <tr>
+      <th>Contact</th>
+      <th>Contact type</th>
+      <th>User</th>
+      <th colspan="3"></th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% @contact_tags_contacts.each do |contact_tags_contact| %>
+      <tr>
+        <td><%= contact_tags_contact.contact_id %></td>
+        <td><%= contact_tags_contact.contact_type_id %></td>
+        <td><%= contact_tags_contact.user_id %></td>
+        <td><%= link_to 'Show', contact_tags_contact %></td>
+        <td><%= link_to 'Edit', edit_contact_tags_contact_path(contact_tags_contact) %></td>
+        <td><%= link_to 'Destroy', contact_tags_contact, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<br>
+
+<%= link_to 'New Contact tags contact', new_contact_tags_contact_path %>

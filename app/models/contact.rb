@@ -3,8 +3,16 @@ class Contact < ActiveRecord::Base
   
   include PgSearch
   
-  # validates :name, presence: true
-  # validates :contact_types, presence: true
+  validates :address, presence: true
+  validates :email, presence: true
+  validates :mobile, presence: true, if: :is_individual?
+  validates :name, presence: true, :if => :is_not_individual?
+  validates :first_name, presence: true, if: :is_individual?
+  validates :last_name, presence: true, if: :is_individual?
+  validates :birthday, presence: true, if: :is_individual?
+  validates :sex, presence: true, if: :is_individual?
+  
+  validate :not_exist
   
   has_many :parent_contacts, :dependent => :destroy
   has_many :parent, :through => :parent_contacts, :source => :parent
@@ -28,7 +36,47 @@ class Contact < ActiveRecord::Base
   
   has_and_belongs_to_many :contact_types
   
+  has_and_belongs_to_many :contact_tags
+  has_many :contact_tags_contacts, :dependent => :destroy
+  
+  belongs_to :tag, :class_name => "ContactTagsContact", :foreign_key => "tag_id"
+  
   after_validation :update_cache
+  
+  def is_not_individual?
+    !is_individual
+  end
+  def is_individual?
+    is_individual
+  end
+  
+  def 
+  
+  def first_name=(str)
+    self[:first_name] = str.strip
+  end
+  def last_name=(str)
+    self[:last_name] = str.strip
+  end
+  def name=(str)
+    self[:name] = str.strip
+  end
+  def not_exist
+    exist = []
+    if is_individual
+      exist += Contact.where("LOWER(first_name) = ? AND LOWER(last_name) = ? AND birthday = ?", first_name.downcase, last_name.downcase, birthday) if first_name.present? && last_name.present?
+    else
+      exist += Contact.where("LOWER(name) = ?", name.downcase) if name.present?
+    end
+    
+    if exist.length > 0
+      cs = []
+      exist.each do |c|
+        cs << c.contact_link
+      end
+      errors.add(:base, "There are/is contact(s) with the same information: #{cs.join(";")}".html_safe)
+    end
+  end
   
   def self.datatable(params, user)
     ActionView::Base.send(:include, Rails.application.routes.url_helpers)
@@ -49,10 +97,14 @@ class Contact < ActiveRecord::Base
     end
     @records = @records.order(order) if !order.nil?
     
-    
     @records = @records.where_by_types(params[:types].split(",")) if params[:types].present?
     @records = @records.where("contacts.is_individual IN (#{params[:individual_statuses]})") if params[:individual_statuses].present?
     @records = @records.where("contacts.referrer_id IN (#{params[:companies]})") if params[:companies].present?
+    if params[:tags].present?
+      @records = @records.joins(:tag)
+      @records = @records.where("contact_tags_contacts.contact_tag_id IN (#{params[:tags].join(",")})")
+    end
+    
     
     # Areas filter
     cities_ids = []
@@ -75,7 +127,7 @@ class Contact < ActiveRecord::Base
     @records = @records.limit(params[:length]).offset(params["start"])
     data = []
     
-    actions_col = 5
+    actions_col = 6
     @records.each do |item|
       item = [
               link_helper.link_to(item.display_picture(:thumb), {controller: "contacts", action: "edit", id: item.id, tab_page: 1}, class: "main-title tab_page", title: item.display_name),
@@ -83,6 +135,7 @@ class Contact < ActiveRecord::Base
               '<div class="text-left">'+item.html_info_line.html_safe+"</div>",
               '<div class="text-center nowrap">'+item.city_name+"</div>",
               '<div class="text-left nowrap">'+item.referrer_link+"</div>",
+              '<div class="text-center nowrap contact_tag_box" rel="'+item.id.to_s+'">'+ContactsController.helpers.render_contact_tags_selecter(item)+"</div>",
               '',
             ]
       data << item
@@ -304,7 +357,7 @@ class Contact < ActiveRecord::Base
     if params[:is_individual].present? && params[:is_individual] == "false"
       records = records.where(is_individual: false)
     end    
-    records.search(params[:q]).limit(50).map {|model| {:id => model.id, :text => model.short_name} }
+    records.search(params[:q]).limit(50).map {|model| {:id => model.id, :text => model.display_name} }
   end
   
   def short_name
@@ -358,11 +411,33 @@ class Contact < ActiveRecord::Base
   end
   
   def display_name
-    is_individual ? first_name+" "+last_name : name
+    sirname = sex == "female" ? "[Ms]" : "[Mr]"
+    is_individual ? (first_name+" "+last_name+" "+sirname).html_safe : name
   end
   
   def display_picture(version = nil)
     self.image_url.nil? ? "<i class=\"icon-picture icon-nopic-60\"></i>".html_safe : "<img width='60' src='#{logo(version)}' />".html_safe
+  end
+  
+  def contact_tag
+    tag.nil? ? ContactTag.new(id: nil, name: "No Tag", description: "") : ContactTag.find(tag.contact_tag_id)
+  end
+  
+  def update_tag(contact_tag, user)
+    if self.contact_tag.id == contact_tag.id
+      return false
+    end    
+    
+    if !contact_tag.nil?
+      tag = ContactTagsContact.create(contact_id: self.id, contact_tag_id: contact_tag.id, user_id: user.id)
+      if !tag.id.nil?
+        self.update_attribute(:tag_id, tag.id)
+        return true
+      else
+        return false
+      end      
+    end
+    return false
   end
   
 end

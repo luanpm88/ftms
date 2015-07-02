@@ -88,6 +88,7 @@ class Ability
     
     if user.has_role? "manager"
       can :course_features, User
+      can :book_features, User
       
       can :datatable, CourseType
       can :read, CourseType
@@ -106,6 +107,12 @@ class Ability
       can :update, Course
       
       can :update, Contact
+      can :update_tag, Contact
+      
+      can :datatable, Book
+      can :read, Book
+      can :create, Book
+      can :update, Book
     end
     
   end
