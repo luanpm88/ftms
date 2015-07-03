@@ -127,7 +127,7 @@ class Contact < ActiveRecord::Base
     @records = @records.limit(params[:length]).offset(params["start"])
     data = []
     
-    actions_col = 6
+    actions_col = 7
     @records.each do |item|
       item = [
               link_helper.link_to(item.display_picture(:thumb), {controller: "contacts", action: "edit", id: item.id, tab_page: 1}, class: "main-title tab_page", title: item.display_name),
@@ -136,6 +136,7 @@ class Contact < ActiveRecord::Base
               '<div class="text-center nowrap">'+item.city_name+"</div>",
               '<div class="text-left">'+item.referrer_link+"</div>",
               '<div class="text-center contact_tag_box" rel="'+item.id.to_s+'">'+ContactsController.helpers.render_contact_tags_selecter(item)+"</div>",
+              '<div class="text-center">'+item.user.staff_col+"</div>",
               '',
             ]
       data << item
