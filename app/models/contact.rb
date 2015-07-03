@@ -64,9 +64,9 @@ class Contact < ActiveRecord::Base
   def not_exist
     exist = []
     if is_individual
-      exist += Contact.where("LOWER(first_name) = ? AND LOWER(last_name) = ? AND birthday = ?", first_name.downcase, last_name.downcase, birthday) if first_name.present? && last_name.present?
+      exist += Contact.where("contacts.id != #{self.id} AND LOWER(first_name) = ? AND LOWER(last_name) = ? AND birthday = ?", first_name.downcase, last_name.downcase, birthday) if first_name.present? && last_name.present?
     else
-      exist += Contact.where("LOWER(name) = ?", name.downcase) if name.present?
+      exist += Contact.where("contacts.id != #{self.id} AND LOWER(name) = ?", name.downcase) if name.present?
     end
     
     if exist.length > 0
