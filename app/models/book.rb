@@ -58,7 +58,7 @@ class Book < ActiveRecord::Base
       item = [
               item.book_link(item.display_cover(:thumb)),
               item.book_link,
-              '<div class="text-center">'+item.description+"</div>",
+              '<div class="text-left">'+item.description+"</div>",
               '<div class="text-center">'+item.created_at.strftime("%Y-%m-%d")+"</div>", 
               '<div class="text-center">'+item.user.staff_col+"</div>",
               ''
