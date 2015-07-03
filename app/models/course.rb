@@ -33,7 +33,7 @@ class Course < ActiveRecord::Base
     if !params["order"].nil?
       case params["order"]["0"]["column"]
       when "0"
-        order = "courses.in_take"
+        order = "courses.intake"
       when "1"
         order = "course_types.short_name"
       when "3"
@@ -43,7 +43,7 @@ class Course < ActiveRecord::Base
       end
       order += " "+params["order"]["0"]["dir"]
     else
-      order = "courses.created_at DESC"
+      order = "courses.intake DESC"
     end
     
     @records = @records.order(order) if !order.nil?
