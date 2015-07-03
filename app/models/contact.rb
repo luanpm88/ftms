@@ -281,14 +281,14 @@ class Contact < ActiveRecord::Base
   def html_info_line
     line = "";
     line += "<p class=\"address_info_line\">" + address + "</p>" if !address.nil? && !address.empty?
-    line += "<i class=\"icon-envelope\"></i> " + email + "; " if !email.nil? && !email.empty?
+    line += "<i class=\"icon-envelope\"></i> " + email + "<br />" if !email.nil? && !email.empty?
     
     if is_individual
-      line += "<i class=\"icon-phone\"></i> " + mobile + "; " if !mobile.nil? && !mobile.empty?       
+      line += "<i class=\"icon-phone\"></i> " + mobile + "<br /> " if !mobile.nil? && !mobile.empty?       
     else
-      line += "<i class=\"icon-phone\"></i> " + phone + "; " if !phone.nil? && !phone.empty?
-      line += "<i class=\"icon-print\"></i> " + fax + "; " if !fax.nil? && !fax.empty?
-      line += "<strong>Tax code:</strong> " + tax_code + "; " if !tax_code.nil? && !tax_code.empty?
+      line += "<i class=\"icon-phone\"></i> " + phone + "<br />" if !phone.nil? && !phone.empty?
+      line += "<i class=\"icon-print\"></i> " + fax + "<br />" if !fax.nil? && !fax.empty?
+      line += "<strong>Tax code:</strong> " + tax_code + "<br />" if !tax_code.nil? && !tax_code.empty?
     end
     
       
