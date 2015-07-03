@@ -25,7 +25,7 @@
                       <div class="col-md-4">
                         <h4>Course Types</h4>
                         <!--<input style="width:100%;margin-bottom: 5px;" name="filter[course_types[]]" data="<%= course_types_path(format: "json") %>" class="select2-ajax-course-types required multiple" value="" text=""  multiple="multiple" />-->
-						<%= select_tag 'filter[course_types[]]', options_for_select(CourseType.all.collect{ |u| [u.name, u.id] }), class: "modern_select width100", multiple: "multiple" %>
+						<%= select_tag 'filter[course_types[]]', options_for_select(CourseType.all.collect{ |u| [u.short_name, u.id] }), class: "modern_select width100", multiple: "multiple" %>
                       </div>
                       
                       

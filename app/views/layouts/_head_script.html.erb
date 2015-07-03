@@ -354,7 +354,7 @@
 				"data": function ( d ) {
 					d.intake_month =  $("select[name='filter[intake(2i)]']").val(),
 					d.intake_year =  $("select[name='filter[intake(1i)]']").val(),
-					d.course_types = $("input[name='filter[course_types[]]']").val()
+					d.course_types = $("select[name='filter[course_types[]]']").val()
 				}
 			},
 			"columnDefs": [ { "targets": [2,4,5], "orderable": false } ],
