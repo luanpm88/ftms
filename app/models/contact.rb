@@ -280,7 +280,7 @@ class Contact < ActiveRecord::Base
   
   def html_info_line
     line = "";
-    line += "<p class=\"address_info_line\">" + address + "</p>" if !address.nil? && !address.empty?
+    line += "<p class=\"address_info_line nowrap\">" + address + "</p>" if !address.nil? && !address.empty?
     line += "<i class=\"icon-envelope\"></i> " + email + "<br />" if !email.nil? && !email.empty?
     
     if is_individual
