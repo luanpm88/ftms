@@ -412,7 +412,7 @@ class Contact < ActiveRecord::Base
   
   def display_name
     sirname = sex == "female" ? "[Ms]" : "[Mr]"
-    is_individual ? (first_name+" "+last_name+" "+sirname).html_safe : name
+    is_individual ? (first_name+" "+last_name+" "+sirname).html_safe : short_name
   end
   
   def display_picture(version = nil)
