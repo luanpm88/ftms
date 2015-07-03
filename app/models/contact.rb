@@ -131,11 +131,11 @@ class Contact < ActiveRecord::Base
     @records.each do |item|
       item = [
               link_helper.link_to(item.display_picture(:thumb), {controller: "contacts", action: "edit", id: item.id, tab_page: 1}, class: "main-title tab_page", title: item.display_name),
-              item.contact_link,
+              '<div class="text-left nowrap">'+item.contact_link+"</div>",
               '<div class="text-left">'+item.html_info_line.html_safe+"</div>",
               '<div class="text-center nowrap">'+item.city_name+"</div>",
-              '<div class="text-left nowrap">'+item.referrer_link+"</div>",
-              '<div class="text-center nowrap contact_tag_box" rel="'+item.id.to_s+'">'+ContactsController.helpers.render_contact_tags_selecter(item)+"</div>",
+              '<div class="text-left">'+item.referrer_link+"</div>",
+              '<div class="text-center contact_tag_box" rel="'+item.id.to_s+'">'+ContactsController.helpers.render_contact_tags_selecter(item)+"</div>",
               '',
             ]
       data << item
