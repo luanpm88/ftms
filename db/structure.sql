@@ -256,38 +256,6 @@ ALTER SEQUENCE city_types_id_seq OWNED BY city_types.id;
 
 
 --
--- Name: contact_statuses; Type: TABLE; Schema: public; Owner: -; Tablespace: 
---
-
-CREATE TABLE contact_statuses (
-    id integer NOT NULL,
-    name character varying,
-    title character varying,
-    created_at timestamp without time zone NOT NULL,
-    updated_at timestamp without time zone NOT NULL
-);
-
-
---
--- Name: contact_statuses_id_seq; Type: SEQUENCE; Schema: public; Owner: -
---
-
-CREATE SEQUENCE contact_statuses_id_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-
---
--- Name: contact_statuses_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
---
-
-ALTER SEQUENCE contact_statuses_id_seq OWNED BY contact_statuses.id;
-
-
---
 -- Name: contact_tags; Type: TABLE; Schema: public; Owner: -; Tablespace: 
 --
 
@@ -846,13 +814,6 @@ ALTER TABLE ONLY city_types ALTER COLUMN id SET DEFAULT nextval('city_types_id_s
 -- Name: id; Type: DEFAULT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY contact_statuses ALTER COLUMN id SET DEFAULT nextval('contact_statuses_id_seq'::regclass);
-
-
---
--- Name: id; Type: DEFAULT; Schema: public; Owner: -
---
-
 ALTER TABLE ONLY contact_tags ALTER COLUMN id SET DEFAULT nextval('contact_tags_id_seq'::regclass);
 
 
@@ -1001,14 +962,6 @@ ALTER TABLE ONLY cities
 
 ALTER TABLE ONLY city_types
     ADD CONSTRAINT city_types_pkey PRIMARY KEY (id);
-
-
---
--- Name: contact_statuses_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
---
-
-ALTER TABLE ONLY contact_statuses
-    ADD CONSTRAINT contact_statuses_pkey PRIMARY KEY (id);
 
 
 --
@@ -1241,8 +1194,6 @@ INSERT INTO schema_migrations (version) VALUES ('20150630092753');
 INSERT INTO schema_migrations (version) VALUES ('20150701020801');
 
 INSERT INTO schema_migrations (version) VALUES ('20150701034859');
-
-INSERT INTO schema_migrations (version) VALUES ('20150701073806');
 
 INSERT INTO schema_migrations (version) VALUES ('20150701074441');
 
