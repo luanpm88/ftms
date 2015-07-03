@@ -27,7 +27,7 @@ class Subject < ActiveRecord::Base
       case params["order"]["0"]["column"]
       when "0"
         order = "subjects.name"
-      when "1"
+      when "2"
         order = "subjects.created_at"
       else
         order = "subjects.name"
@@ -43,11 +43,12 @@ class Subject < ActiveRecord::Base
     @records = @records.limit(params[:length]).offset(params["start"])
     data = []
     
-    actions_col = 3
+    actions_col = 4
     @records.each do |item|
       item = [
               item.name,
-              '<div class="text-center">'+item.created_at.strftime("%Y-%m-%d")+"</div>",
+              '<div class="text-left">'+item.description+"</div>",
+              '<div class="text-center">'+item.created_at.strftime("%Y-%m-%d")+"</div>",              
               '<div class="text-center">'+item.user.staff_col+"</div>",
               "", 
             ]
