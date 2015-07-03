@@ -134,7 +134,7 @@ class Contact < ActiveRecord::Base
               '<div class="text-left nowrap">'+item.contact_link+"</div>",
               '<div class="text-left">'+item.html_info_line.html_safe+"</div>",
               '<div class="text-center nowrap">'+item.city_name+"</div>",
-              '<div class="text-left">'+item.referrer_link+"</div>",
+              '<div class="text-left"><i class="icon-building"></i> '+item.referrer_link+"</div>",
               '<div class="text-center contact_tag_box" rel="'+item.id.to_s+'">'+ContactsController.helpers.render_contact_tags_selecter(item)+"</div>",
               '',
             ]
