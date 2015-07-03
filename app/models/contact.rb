@@ -127,14 +127,14 @@ class Contact < ActiveRecord::Base
     @records = @records.limit(params[:length]).offset(params["start"])
     data = []
     
-    actions_col = 5
+    actions_col = 6
     @records.each do |item|
       item = [
               link_helper.link_to(item.display_picture(:thumb), {controller: "contacts", action: "edit", id: item.id, tab_page: 1}, class: "main-title tab_page", title: item.display_name),
               '<div class="text-left nowrap">'+item.contact_link+"</div>",
               '<div class="text-left">'+item.html_info_line.html_safe+"</div>",
               '<div class="text-center nowrap">'+item.city_name+"</div>",
-              #'<div class="text-left">'+item.referrer_link+"</div>",
+              '<div class="text-left">'+item.referrer_link+"</div>",
               '<div class="text-center contact_tag_box" rel="'+item.id.to_s+'">'+ContactsController.helpers.render_contact_tags_selecter(item)+"</div>",
               '',
             ]
@@ -284,8 +284,7 @@ class Contact < ActiveRecord::Base
     line += "<i class=\"icon-envelope\"></i> " + email + "<br />" if !email.nil? && !email.empty?
     
     if is_individual
-      line += "<i class=\"icon-phone\"></i> " + mobile + "<br /> " if !mobile.nil? && !mobile.empty?
-      line += "<i class=\"icon-building\"></i> " + referrer_link + "<br /> " if !referrer_id.nil?
+      line += "<i class=\"icon-phone\"></i> " + mobile + "<br /> " if !mobile.nil? && !mobile.empty?       
     else
       line += "<i class=\"icon-phone\"></i> " + phone + "<br />" if !phone.nil? && !phone.empty?
       line += "<i class=\"icon-print\"></i> " + fax + "<br />" if !fax.nil? && !fax.empty?
