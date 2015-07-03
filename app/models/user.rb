@@ -140,7 +140,7 @@ class User < ActiveRecord::Base
     `mkdir backup/#{dir}`
     
     backup_cmd = ""
-    backup_cmd += "pg_dump -a hkerp_#{params[:environment]} >> backup/#{dir}/data.dump && " if params[:database].present? && params[:environment].present?
+    backup_cmd += "pg_dump -a ftms_#{params[:environment]} >> backup/#{dir}/data.dump && " if params[:database].present? && params[:environment].present?
     backup_cmd += "cp -a uploads backup/#{dir}/ && " if !params[:file].nil?
     backup_cmd += "zip -r backup/#{dir}.zip backup/#{dir} && "
     backup_cmd += "rm -rf backup/#{dir}"
@@ -263,7 +263,7 @@ class User < ActiveRecord::Base
     end
     
     if File.exist?("tmp/backup/backup/#{name.gsub(".zip","")}/data.dump") && params[:database].present? && params[:environment].present?
-      `rake mytask:drop_all_table && rake db:migrate && psql hkerp_#{params[:environment]} < tmp/backup/backup/#{name.gsub(".zip","")}/data.dump`
+      `rake mytask:drop_all_table && rake db:migrate && psql ftms_#{params[:environment]} < tmp/backup/backup/#{name.gsub(".zip","")}/data.dump`
     end
     
     `rm -rf tmp/backup/backup && rm #{path}`
