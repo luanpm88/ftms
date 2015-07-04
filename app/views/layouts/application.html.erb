@@ -318,13 +318,15 @@
 			<li <% if ["course_types","subjects","courses"].include?(params[:controller]) %> class="active open"<% end %>>
 					<%= link_to "#" do %>
 						<i class="icon-briefcase"></i>
-						<span class="title">Course</span>
+						<span class="title">Course Admin</span>
 						<span class="arrow<% if ["course_types","subjects","courses"].include?(params[:controller]) %> open<% end %>"></span>
 					<% end %>
 					<ul class="sub-menu">
-						<li<% if params[:controller] == "courses" && params[:action] == "index" %> class="active"<% end %>><%= link_to 'Courses', courses_path(tab_page:1), class: "tab_page" %></li>
-						<li<% if params[:controller] == "course_types" && params[:action] == "index" %> class="active"<% end %>><%= link_to 'Course Types', course_types_path(tab_page:1), class: "tab_page" %></li>
-						<li<% if params[:controller] == "subjects" && params[:action] == "index" %> class="active"<% end %>><%= link_to 'Subjects', subjects_path(tab_page:1), class: "tab_page" %></li>
+						<li<% if params[:controller] == "course_types" && params[:action] == "index" %> class="active"<% end %>><%= link_to 'Program Management', course_types_path(tab_page:1), class: "tab_page" %></li>
+						<li<% if params[:controller] == "subjects" && params[:action] == "index" %> class="active"<% end %>><%= link_to 'Paper Management', subjects_path(tab_page:1), class: "tab_page" %></li>
+						<li<% if params[:controller] == "courses" && params[:action] == "index" %> class="active"<% end %>><%= link_to 'Course Management', courses_path(tab_page:1), class: "tab_page" %></li>
+						
+						
 					</ul>
 			</li>
 		<% end %>
@@ -333,12 +335,12 @@
 			<li <% if params[:controller] == "books" %> class="active open"<% end %>>
 					<%= link_to contacts_url do %>
 					  <i class="icon-book"></i>
-					  <span class="title">Book</span>
+					  <span class="title">Stock</span>
 					  <span class="arrow<% if params[:controller] == "books" %> open<% end %>"></span>
 					<% end %>
 					<ul class="sub-menu">
 						
-						<li<% if params[:controller] == "books" && params[:action] == "index" %> class="active"<% end %>><%= link_to 'Books', books_path(tab_page:1), class: "tab_page" %></li>
+						<li<% if params[:controller] == "books" && params[:action] == "index" %> class="active"<% end %>><%= link_to 'Stock Management', books_path(tab_page:1), class: "tab_page" %></li>
 						
 					</ul>
 			</li>

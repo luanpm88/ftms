@@ -4,7 +4,7 @@ class ContactType < ActiveRecord::Base
   has_and_belongs_to_many :contacts
   
   def self.student
-    self.find_by_name('Student').id.to_s
+    self.find_by_name('Student')
   end
   
   def self.agent

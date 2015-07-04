@@ -1,0 +1,6 @@
+<div class="box">
+  <%= @contact.contact_link %><br />
+  <%= @contact.html_info_line.html_safe %>
+  
+  <div class="refresh_contact_info text-right" rel="<%= @contact.id %>"><a href="#">Refresh</a> | <%= @contact.contact_link("Edit") %><br /></div>
+</div>

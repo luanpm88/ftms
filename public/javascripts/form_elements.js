@@ -29,7 +29,7 @@ $(document).ready(function(){
 	  $('.input-append.date').datepicker({
 				autoclose: true,
 				todayHighlight: true,
-				format: 'yyyy-mm-dd'
+				format: 'dd-M-yyyy'
 	   });
 	 
 	 $('#dp5').datepicker();

@@ -1,5 +1,20 @@
 <script>
 	
+	function ajaxQuickContactInfo(cid,box) {
+		if (cid == "") {
+			box.html("")
+			return
+		}
+		$.ajax({
+			url : '<%= ajax_quick_info_contacts_path %>?id='+cid,
+			type: "GET",
+			success:function(data, textStatus, jqXHR)
+			{
+				box.html(data);
+			}
+		});
+	}
+	
 	function updateContactTag(c_id, t_id) {
 		$.ajax({
 			url : '<%= update_tag_contacts_path %>?id='+c_id+'&tag_id='+t_id,
@@ -13,12 +28,20 @@
 	}
 	
 	function checkContactType() {
-		if($('input[name="contact[is_individual]"]:checked').val() == "true") {
+		if($('input[name="contact[is_individual]"]:checked').val() == "true" || $('select[name="is_individual"]').val() == "true") {
 			$(".personal-box").show();
 			$(".company-box").hide();
 		} else {
 			$(".personal-box").hide();
 			$(".company-box").show();
+		}
+	}
+	
+	function checkInvoiceRequired() {
+		if($('input[name="contact[invoice_required]"]:checked').val() == "true") {
+			$(".invoice-info-box").show();
+		} else {
+			$(".invoice-info-box").hide();
 		}
 	}
 	
@@ -296,18 +319,16 @@
 						return $(this).val();
 					}).get();
 					
-					var individual_statuses = $(".individual_statuses input:checkbox:checked").map(function(){
-						return $(this).val();
-					}).get();
-					
-					d.types = types.join(",");
-					d.individual_statuses = individual_statuses.join(",");
+					if($("select[name=is_individual]").select2("val") == "true") {						
+						d.types = types.join(",");
+					}
+					d.is_individual = $("select[name=is_individual]").select2("val");
 					d.area_ids = $("#area_ids").val()
 					d.companies = $("input[name='companies']").val()
 					d.tags = $("select#tags").val()
 				}
 			},
-			"columnDefs": [ { "targets": [0,2,3,4,5,6,7], "orderable": false } ],
+			"columnDefs": [ { "targets": [0,2,3,4,5,6,7,8], "orderable": false } ],
 			"order": [],
 			"aLengthMenu": [[10, 25, 50, 75, 100], [10, 25, 50, 75, 100]],
 			"iDisplayLength": 25
@@ -579,12 +600,38 @@
 		});
 		
 		checkContactType()
-		$('input[name="contact[is_individual]"]').change(function() {
+		$('input[name="contact[is_individual]"], select[name="is_individual"]').change(function() {
 			checkContactType()
+		});
+		
+		checkInvoiceRequired()
+		$('input[name="contact[invoice_required]"]').change(function() {
+			checkInvoiceRequired()
 		});
 		
 		$(document).on("click",".contact_tag_item",function() {
 			updateContactTag($(this).attr("rel"), $(this).attr("tag_id"))
+		})
+		
+		ajaxQuickContactInfo($('input[name="contact[referrer_id]"]').val(),$('.selected_company_info'))
+		$('input[name="contact[referrer_id]"]').change(function() {
+			ajaxQuickContactInfo($(this).val(),$('.selected_company_info'))
+		})
+		
+		ajaxQuickContactInfo($('input[name="contact[invoice_info_id]"]').val(),$('.selected_invoice_info'))
+		$('input[name="contact[invoice_info_id]"]').change(function() {
+			ajaxQuickContactInfo($(this).val(),$('.selected_invoice_info'))
+		})
+		
+		$(document).on("click",".refresh_contact_info",function() {
+			ajaxQuickContactInfo($(this).attr("rel"),$(this).parent().parent())
+		})
+		
+		$('select[name="contact[payment_type]"]').change(function() {
+			if ($(this).val() == "company-sponsored" && $('input[name="contact[referrer_id]"]').val() == "") {
+				alert("Must choose company first!")
+				$(this).select2("val", 'self-financed');
+			}
 		})
 		
 });

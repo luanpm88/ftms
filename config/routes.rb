@@ -97,6 +97,8 @@ Hkerp::Application.routes.draw do
       
       get :logo
       get :update_tag
+      
+      get :ajax_quick_info
     end
   end
 

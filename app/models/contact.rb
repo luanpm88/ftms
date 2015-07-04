@@ -6,9 +6,9 @@ class Contact < ActiveRecord::Base
   validates :address, presence: true
   validates :email, presence: true
   validates :mobile, presence: true, if: :is_individual?
-  validates :name, presence: true, :if => :is_not_individual?
-  validates :first_name, presence: true, if: :is_individual?
-  validates :last_name, presence: true, if: :is_individual?
+  validates :name, presence: true #, :if => :is_not_individual?
+  #validates :first_name, presence: true, if: :is_individual?
+  #validates :last_name, presence: true, if: :is_individual?
   validates :birthday, presence: true, if: :is_individual?
   validates :sex, presence: true, if: :is_individual?
   
@@ -30,6 +30,7 @@ class Contact < ActiveRecord::Base
   belongs_to :user
   
   belongs_to :referrer, :class_name => "Contact", :foreign_key => "referrer_id"
+  belongs_to :invoice_info, :class_name => "Contact", :foreign_key => "invoice_info_id"
 
   belongs_to :city
   has_one :state, :through => :city
@@ -63,13 +64,11 @@ class Contact < ActiveRecord::Base
   end
   def not_exist
     exist = []
-    if is_individual
-      exist += Contact.where("contacts.id != #{self.id} AND LOWER(first_name) = ? AND LOWER(last_name) = ? AND birthday = ?", first_name.downcase, last_name.downcase, birthday) if first_name.present? && last_name.present?
-    else
-      exist += Contact.where("contacts.id != #{self.id} AND LOWER(name) = ?", name.downcase) if name.present?
-    end
+
+    exist += Contact.where("LOWER(name) = ?", name.downcase) if name.present?
+
     
-    if exist.length > 0
+    if exist.length > 0 && !self.id.present?
       cs = []
       exist.each do |c|
         cs << c.contact_link
@@ -98,7 +97,7 @@ class Contact < ActiveRecord::Base
     @records = @records.order(order) if !order.nil?
     
     @records = @records.where_by_types(params[:types].split(",")) if params[:types].present?
-    @records = @records.where("contacts.is_individual IN (#{params[:individual_statuses]})") if params[:individual_statuses].present?
+    @records = @records.where("contacts.is_individual = #{params[:is_individual]}") if params[:is_individual].present?
     @records = @records.where("contacts.referrer_id IN (#{params[:companies]})") if params[:companies].present?
     if params[:tags].present?
       @records = @records.joins(:tag)
@@ -127,13 +126,14 @@ class Contact < ActiveRecord::Base
     @records = @records.limit(params[:length]).offset(params["start"])
     data = []
     
-    actions_col = 7
+    actions_col = 8
     @records.each do |item|
       item = [
               link_helper.link_to(item.display_picture(:thumb), {controller: "contacts", action: "edit", id: item.id, tab_page: 1}, class: "main-title tab_page", title: item.display_name),
               '<div class="text-left nowrap">'+item.contact_link+"</div>",
               '<div class="text-left">'+item.html_info_line.html_safe+"</div>",
-              '<div class="text-center nowrap">'+item.city_name+"</div>",
+              "",
+              '<div class="text-center">'+item.contact_type_name+"</div>",
               '<div class="text-left">'+item.referrer_link+"</div>",
               '<div class="text-center contact_tag_box" rel="'+item.id.to_s+'">'+ContactsController.helpers.render_contact_tags_selecter(item)+"</div>",
               '<div class="text-center">'+item.user.staff_col+"</div>",
@@ -153,15 +153,29 @@ class Contact < ActiveRecord::Base
     return {result: result, items: @records, actions_col: actions_col}
   end
   
+  def contact_type_name
+    if is_individual
+      if !contact_types.empty?
+        contact_types.map(&:name).join(", ")
+      else
+        "none"
+      end
+    else
+      "Company/Organization"
+    end    
+  end
+  
   def referrer_link
     referrer.nil? ? "" : '<i class="icon-building"></i> '+referrer.contact_link
   end
   
-  def contact_link
+  def contact_link(title=nil)
     ActionView::Base.send(:include, Rails.application.routes.url_helpers)
     link_helper = ActionController::Base.helpers
     
-    link_helper.link_to(display_name, {controller: "contacts", action: "edit", id: id, tab_page: 1}, class: "tab_page", title: display_name)
+    title = title.nil? ? display_name : title
+    
+    link_helper.link_to(title, {controller: "contacts", action: "edit", id: id, tab_page: 1}, class: "tab_page", title: display_name)
   end
   
   def city_name
@@ -281,21 +295,20 @@ class Contact < ActiveRecord::Base
   
   def html_info_line
     line = "";
-    line += "<p class=\"address_info_line nowrap\">" + address + "</p>" if !address.nil? && !address.empty?
-    line += "<i class=\"icon-envelope\"></i> " + email + "<br />" if !email.nil? && !email.empty?
+    
+    
     
     if is_individual
-      line += "<i class=\"icon-phone\"></i> " + mobile + "<br /> " if !mobile.nil? && !mobile.empty?       
+      line += "<span class=\"nowrap\"><i class=\"icon-calendar\"></i> " + birthday.strftime("%d-%b-%Y") + "</span><br />" if !mobile.nil? && !mobile.empty?
+      line += "<span class=\"nowrap\"><i class=\"icon-envelope\"></i> " + email + "</span><br />" if !email.nil? && !email.empty?
+      line += "<span class=\"nowrap\"><i class=\"icon-phone\"></i> " + mobile + "</span><br />" if !mobile.nil? && !mobile.empty? 
     else
-      line += "<i class=\"icon-phone\"></i> " + phone + "<br />" if !phone.nil? && !phone.empty?
-      line += "<i class=\"icon-print\"></i> " + fax + "<br />" if !fax.nil? && !fax.empty?
-      line += "<strong>Tax code:</strong> " + tax_code + "<br />" if !tax_code.nil? && !tax_code.empty?
+      line += "<span class=\"nowrap\"><i class=\"icon-phone\"></i> " + phone + "</span><br />" if !phone.nil? && !phone.empty?
+      line += "<span class=\"nowrap\"><i class=\"icon-envelope\"></i> " + email + "</span><br />" if !email.nil? && !email.empty?
+      line += "Tax Code " + tax_code + "</span><br />" if tax_code.present?
     end
+    line += "<span class=\"address_info_line\"><i class=\"icon-truck\"></i> " + address + "</span><br />" if address.present?
     
-      
-        
-    
-      
     
     return line
   end
@@ -413,7 +426,7 @@ class Contact < ActiveRecord::Base
   
   def display_name
     sirname = sex == "female" ? "[Ms]" : "[Mr]"
-    is_individual ? (sirname+" "+first_name+" "+last_name).html_safe : short_name
+    is_individual ? (sirname+" "+name).html_safe : name
   end
   
   def display_picture(version = nil)

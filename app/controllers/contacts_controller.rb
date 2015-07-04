@@ -2,12 +2,12 @@ class ContactsController < ApplicationController
   include ContactsHelper
   
   load_and_authorize_resource
-  before_action :set_contact, only: [:ajax_tag_box, :ajax_edit, :ajax_update, :show, :edit, :update, :destroy, :ajax_destroy, :ajax_show, :ajax_list_agent, :ajax_list_supplier_agent]
+  before_action :set_contact, only: [:ajax_quick_info, :ajax_tag_box, :ajax_edit, :ajax_update, :show, :edit, :update, :destroy, :ajax_destroy, :ajax_show, :ajax_list_agent, :ajax_list_supplier_agent]
 
   # GET /contacts
   # GET /contacts.json
   def index
-    @types = [ContactType.student]
+    @types = [ContactType.student.id.to_s]
     @individual_statuses = ["true"]
     
     respond_to do |format|
@@ -31,6 +31,7 @@ class ContactsController < ApplicationController
   # GET /contacts/new
   def new
     @contact = Contact.new
+    @contact.contact_types << ContactType.student
     
     if !params[:is_individual].nil? && params[:is_individual] == "false"
       @contact.is_individual = false
@@ -49,7 +50,8 @@ class ContactsController < ApplicationController
   end
 
   # GET /contacts/1/edit
-  def edit    
+  def edit
+    
   end
 
   # POST /contacts
@@ -211,6 +213,11 @@ class ContactsController < ApplicationController
     
     render layout: nil
   end
+  
+  def ajax_quick_info
+    
+    render layout: nil
+  end
 
   private
     # Use callbacks to share common setup or constraints between actions.
@@ -220,6 +227,6 @@ class ContactsController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def contact_params
-      params.require(:contact).permit(:birthday, :sex, :referrer_id, :is_individual, :mobile_2, :email_2, :first_name, :last_name, :image, :city_id, :website, :name, :phone, :mobile, :fax, :email, :address, :tax_code, :note, :account_number, :bank, :contact_type_id, :parent_ids => [], :agent_ids => [], :company_ids => [], :contact_type_ids => [])
+      params.require(:contact).permit(:invoice_required, :invoice_info_id, :payment_type, :preferred_mailing, :birthday, :sex, :referrer_id, :is_individual, :mobile_2, :email_2, :first_name, :last_name, :image, :city_id, :website, :name, :phone, :mobile, :fax, :email, :address, :tax_code, :note, :account_number, :bank, :contact_type_id, :parent_ids => [], :agent_ids => [], :company_ids => [], :contact_type_ids => [])
     end
 end

@@ -84,6 +84,8 @@ class Ability
       can :activity_log, User do |u|
         u == user
       end
+      
+      can :ajax_quick_info, Contact
     end
     
     if user.has_role? "manager"

@@ -58,7 +58,7 @@ class Course < ActiveRecord::Base
               item.display_intake,
               item.course_type.short_name,
               item.description,
-              '<div class="text-center">'+item.created_at.strftime("%Y-%m-%d")+"</div>",
+              '<div class="text-center">'+item.created_at.strftime("%d-%b-%Y")+"</div>",
               '<div class="text-center">'+item.user.staff_col+"</div>",
               "", 
             ]

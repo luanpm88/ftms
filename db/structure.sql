@@ -420,7 +420,11 @@ CREATE TABLE contacts (
     sex character varying,
     referrer_id integer,
     birthday date,
-    tag_id integer
+    tag_id integer,
+    preferred_mailing character varying,
+    payment_type character varying,
+    invoice_info_id integer,
+    invoice_required boolean DEFAULT true
 );
 
 
@@ -1200,4 +1204,12 @@ INSERT INTO schema_migrations (version) VALUES ('20150701074441');
 INSERT INTO schema_migrations (version) VALUES ('20150701075243');
 
 INSERT INTO schema_migrations (version) VALUES ('20150702041941');
+
+INSERT INTO schema_migrations (version) VALUES ('20150704014135');
+
+INSERT INTO schema_migrations (version) VALUES ('20150704015540');
+
+INSERT INTO schema_migrations (version) VALUES ('20150704020556');
+
+INSERT INTO schema_migrations (version) VALUES ('20150704021106');
 

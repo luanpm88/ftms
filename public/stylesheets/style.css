@@ -8108,7 +8108,6 @@ tr.block_commission_header h3 {
 .tag_button {
     background: #efefef none repeat scroll 0 0;
     border: medium none;
-    font-size: 100%;
     padding: 1px 7px;
 }
 .tag_button.follow_up {
@@ -8138,4 +8137,10 @@ tr.block_commission_header h3 {
 .tag_button:focus {
     border: none !important;
     color: #333;
+}
+.selected_company_info .box, .selected_invoice_info .box {
+    border: 1px solid #ccc;
+    padding: 10px;
+    margin-bottom: 15px;
+    margin-top: 10px;
 }

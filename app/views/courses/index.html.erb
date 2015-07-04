@@ -5,8 +5,8 @@
                     <li><%= link_to 'Users', courses_url, :class => "active" %></li>
                 </ul>
                 <div class="page-title">
-                        <i class="icon-archive"></i>
-                    	<h3>Courses - <span class="semi-bold"> Management</span></h3>	
+                        <!--<i class="icon-archive"></i>-->
+                    	<h3>Course - <span class="semi-bold"> Management</span></h3>	
                 </div>
                 
                 
@@ -17,7 +17,7 @@
                         <h4>Intake</h4>
                         <div class="date_select_filter">
                             <div class="input-with-icon date-group-my right">                                       
-                            <%= date_select(:filter, :intake, {include_blank: true}) %>
+                            <%= date_select(:filter, :intake, {include_blank: true, use_short_month: true}) %>
                             </div>
                         </div>
                       </div>
@@ -39,7 +39,7 @@
                         <%= link_to 'New Course', new_course_path(tab_page: 1), psrc: courses_path(tab_page:1), title: "New Course", :class => 'btn btn-primary btn-cons tab_page' %>
                         <div class="grid simple ">
                             <div class="grid-title no-border">
-                                <h4>Listing  <span class="semi-bold">Courses</span></h4>
+                                <h4>Listing  <span class="semi-bold">Course</span></h4>
                                 
                             </div>
                             <div class="grid-body no-border">

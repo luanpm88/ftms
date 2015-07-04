@@ -14,30 +14,36 @@
 					<div class="row order-filters">
 						
 						<form id="contact_filter">
-						  
-						  <div class="col-md-3">
-							  <h4>Contact Types</h4>
-							  
-							  <div style="margin-top: 20px;">
-									<div class="input-with-icon right">                                       
-											<i class=""></i>
-											<div class="row-fluid individual_statuses">
-												<div class="checkbox check-success">
-													<%= check_box_tag "individual_statuses[]", "true", @individual_statuses.include?("true"), {id: "checkbox_true" } %>
-													<label for="checkbox_true">Individual</label>
-												</div>
-										   </div>
-											<div class="row-fluid individual_statuses">
-												<div class="checkbox check-success">
-													<%= check_box_tag "individual_statuses[]", "false", @individual_statuses.include?("false"), {id: "checkbox_false" } %>
-													<label for="checkbox_false">Company/Organization</label>
-												</div>
-										   </div>
-									</div>
-							  </div>
-						  </div>
-						  
 							<div class="col-md-3">
+								<h4>Contact Types</h4>
+								
+
+									  <div class="input-with-icon right">
+											<select name="is_individual" class="modern_select is_individual width100">
+												<option value="true">Individual</option>
+												<option value="false">Company/Organization</option>
+											</select>											
+									  </div>
+
+
+								<div style="margin-top: 20px;" class="personal-box">
+									  <div class="input-with-icon right">                                       
+											  <i class=""></i>
+												<% ContactType.all.each do |ct| %>
+													 <div class="row-fluid contact_types">
+														  <div class="checkbox check-success">
+															  <%= check_box_tag "types[]", ct.id, @types.include?(ct.id.to_s), {id: "checkbox"+ct.id.to_s } %>
+															  <label for="checkbox<%= ct.id %>"><%= ct.name %></label>
+														  </div>
+													 </div>
+												<% end %>
+												<br style="clear: both" />
+									  </div>
+								</div>
+						  </div>
+							
+						  
+							<!--<div class="col-md-3">
 								<h4>Areas (State/City/District)</h4>
 								<div class="">
 									<div class="input-with-icon  right">                                       
@@ -55,7 +61,7 @@
 									<input style="width:100%;margin-bottom: 5px;" name="companies" data="<%= contacts_path(is_individual: false, format: "json") %>" class="select2-ajax-contacts multiple" value="" text="" data-placeholder="All"/>
 									</div>
 								</div>
-							</div>
+							</div>-->
 							
 							<div class="col-md-3">
 								<h4>Tags</h4>
@@ -82,11 +88,12 @@
                                     <table class="table table-striped no-more-tables datatable-contacts no-filter">
                                         <thead>
                                             <tr>
-												<th width="1%" class="text-center">Logo</th>
+												<th width="1%" class="text-center">Avatar</th>
                                                 <th class="text-left">Name</th>
 												<th class="text-left">Info</th>
-												<th class="text-center">Area</th>
-												<th class="text-left">Referrer</th>
+												<th class="text-left">Program</th>
+												<th class="text-center">Type</th>
+												<th class="text-left">Company</th>
 												<th class="text-center">Tag</th>
 												<th class="text-center">Staff</th>
 												<th class="text-right">Actions</th>
