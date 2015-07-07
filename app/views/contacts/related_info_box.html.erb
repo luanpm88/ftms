@@ -1,0 +1,21 @@
+<% if !@contacts.nil? && !@contacts.empty? %>
+  <h5>Related Contact (<%= @contacts.count %>)</h5>
+  <ul class="related_info_list">
+    <% @contacts.each do |contact| %>
+      <li>
+        <div class="box">
+          <%= contact.contact_link %><br />
+          <%= contact.html_info_line.html_safe %>
+        </div>
+      </li>  
+    <% end %>
+    <% @contacts.each do |contact| %>
+      <li>
+        <div class="box">
+          <%= contact.contact_link %><br />
+          <%= contact.html_info_line.html_safe %>
+        </div>
+      </li>  
+    <% end %>
+  </ul>
+<% end %>
