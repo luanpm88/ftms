@@ -110,6 +110,7 @@ Hkerp::Application.routes.draw do
       get :ajax_quick_info
       get :course_students
       post :export_list
+      get :related_info_box
     end
   end
 

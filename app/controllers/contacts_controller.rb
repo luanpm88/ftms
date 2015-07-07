@@ -267,6 +267,22 @@ class ContactsController < ApplicationController
       end
     end      
   end
+  
+  def related_info_box
+    @contacts = nil
+    
+    if params[:value].strip != ""
+      if params[:type] == "email"
+         @contacts = Contact.where("LOWER(email) = ?", params[:value].strip.downcase)
+      end
+      
+      if params[:type] == "mobile"
+         @contacts = Contact.where("LOWER(mobile) = ?", params[:value].strip.downcase)
+      end    
+    end
+    
+    render layout: nil
+  end
 
   private
     # Use callbacks to share common setup or constraints between actions.

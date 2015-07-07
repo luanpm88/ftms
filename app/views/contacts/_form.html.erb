@@ -132,9 +132,13 @@
 														   <div class="form-group">
 																<label class="form-label"><%= f.label :email %></label>
 																<span class="help">(required)</span>
-																<div class="input-with-icon  right">                                       
+																<div class="input-with-iconx right">                                       
 																		<i class=""></i>
-																		<%= f.text_field :email, :class => "form-control required email" %>
+																		<%= f.text_field :email, rel: related_info_box_contacts_path(type: "email"), :class => "form-control required email related_info_input" %>
+																		<label class="related_info_msg" style="display: none">Has related contact(s)!</label>
+																		<div class="related_info_box" style="display: none">
+																		   
+																		</div>
 																</div>
 														   </div>						
 													  </div>
@@ -243,9 +247,13 @@
 																<div class="form-group">
 																	 <label class="form-label"><%= f.label :mobile %></label>
 																	 <span class="help">(required)</span>
-																	 <div class="input-with-icon  right">                                       
+																	 <div class="input-with-iconx  right">                                       
 																		  <i class=""></i>
-																		  <%= f.text_field :mobile, :class => "form-control required" %>
+																		  <%= f.text_field :mobile, rel: related_info_box_contacts_path(type: "mobile"), :class => "form-control required related_info_input" %>
+																		   <label class="related_info_msg" style="display: none">Has related contact(s)!</label>
+																		   <div class="related_info_box" style="display: none">
+																			  
+																		   </div>
 																	 </div>
 																</div>					
 														   </div>

@@ -114,6 +114,7 @@ class Ability
       can :update_tag, Contact
       can :course_students, Contact
       can :export_list, Contact
+      can :related_info_box, Contact
       
       can :datatable, Book
       can :read, Book

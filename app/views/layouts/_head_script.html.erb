@@ -1,4 +1,33 @@
 <script>
+	var related_info_input
+	function checkRelatedInfo(input) {
+		var url = input.attr("rel")
+		var value = input.val()
+		var box = input.parent().find(".related_info_box")
+		var msg = input.parent().find(".related_info_msg")
+			
+		if(typeof(related_info_input) != "undefined") {
+			related_info_input.abort()
+		}			
+		related_info_input = $.ajax({
+			url : url,
+			type: "GET",
+			data: "value="+value,
+			success:function(data, textStatus, jqXHR)
+			{
+				if(data.trim() != "") {
+					box.html(data)
+					box.show()
+					msg.show()
+					input.addClass("has_related_info")
+				} else {
+					box.hide()
+					msg.hide()
+					input.removeClass("has_related_info")
+				}
+			}
+		});
+	}
 	
 	function clearListCheck() {
 		$('.listing_form table input[type="checkbox"]').attr("checked",false);
@@ -938,6 +967,24 @@
 				clearListCheck()
 			}
 		})
+		
+		
+		$(document).on("keyup",".related_info_input",function() {			
+			checkRelatedInfo($(this))
+		})
+		$('.related_info_input').focus( function() {
+			checkRelatedInfo($(this))
+		});		  
+		$('.related_info_input').blur( function() {
+			var box = $(this).parent().find(".related_info_box")
+			box.hide()
+		});
+		$('.related_info_input').click( function() {
+			checkRelatedInfo($(this))
+		});
+		$('.related_info_input').change( function() {
+			checkRelatedInfo($(this))
+		});
 });
 
 </script>

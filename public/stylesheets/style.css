@@ -8157,3 +8157,36 @@ tr.block_commission_header h3 {
 .check_all_page_but {
     margin-top: 5px;
 }
+.related_info_box {
+    background: #fff none repeat scroll 0 0;
+    border: 1px solid #ccc;
+    max-height: 300px;
+    overflow: auto;
+    padding: 10px;
+    position: absolute;
+    width: 320px;
+    z-index: 10;
+}
+.related_info_box h5 {
+    margin: 5px 0 10px 0;
+}
+.related_info_list {
+    margin: 0;
+    padding: 0;
+}
+.related_info_list li {
+    border-top: 1px solid #efefef;
+    list-style: outside none none;
+    margin: 5px 0 0 0;
+    padding: 5px 0 0 0;
+}
+.related_info_list li:last-child {
+    margin-bottom: 10px;
+}
+.has_related_info {
+    border-color: #aa6708 !important;
+}
+.related_info_msg {
+    color: #aa6708 !important;
+    font-size: 12px;
+}
