@@ -1,6 +1,13 @@
 Hkerp::Application.routes.draw do
+  resources :contacts_courses
+  resources :course_registers
+  resources :course_types_subjects
   resources :contact_tags_contacts
-  resources :contact_tags
+  resources :contact_tags do
+    collection do
+      get :datatable
+    end
+  end
   resources :books do
     collection do
       get :datatable
@@ -11,12 +18,14 @@ Hkerp::Application.routes.draw do
   resources :courses do
     collection do
       get :datatable
+      get :student_courses
     end
   end
   
   resources :subjects do
     collection do
       get :datatable
+      get :ajax_select_box
     end
   end
   
@@ -99,6 +108,8 @@ Hkerp::Application.routes.draw do
       get :update_tag
       
       get :ajax_quick_info
+      get :course_students
+      post :export_list
     end
   end
 

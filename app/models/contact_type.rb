@@ -7,8 +7,12 @@ class ContactType < ActiveRecord::Base
     self.find_by_name('Student')
   end
   
-  def self.agent
-    self.find_by_name('Agent').id.to_s
+  def self.lecturer
+    self.find_by_name('Lecturer')
+  end
+  
+  def self.inquiry
+    self.find_by_name('Inquiry')
   end
   
 end

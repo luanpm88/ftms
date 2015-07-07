@@ -9,115 +9,77 @@
                     	<h3>Contact - <span class="semi-bold"> Management</span></h3>	
                 </div>
 				
-				<div class="grid simple ">
-					<div class="grid-body no-border filters">
-					<div class="row order-filters">
-						
-						<form id="contact_filter">
-							<div class="col-md-3">
-								<h4>Contact Types</h4>
-								
-
-									  <div class="input-with-icon right">
-											<select name="is_individual" class="modern_select is_individual width100">
-												<option value="true">Individual</option>
-												<option value="false">Company/Organization</option>
-											</select>											
-									  </div>
-
-
-								<div style="margin-top: 20px;" class="personal-box">
-									  <div class="input-with-icon right">                                       
-											  <i class=""></i>
-												<% ContactType.all.each do |ct| %>
-													 <div class="row-fluid contact_types">
-														  <div class="checkbox check-success">
-															  <%= check_box_tag "types[]", ct.id, @types.include?(ct.id.to_s), {id: "checkbox"+ct.id.to_s } %>
-															  <label for="checkbox<%= ct.id %>"><%= ct.name %></label>
-														  </div>
-													 </div>
-												<% end %>
-												<br style="clear: both" />
-									  </div>
-								</div>
-						  </div>
-							
-						  
-							<!--<div class="col-md-3">
-								<h4>Areas (State/City/District)</h4>
-								<div class="">
-									<div class="input-with-icon  right">                                       
-									<i class=""></i>
-									<input id="area_ids" style="width:100%;margin-bottom: 5px;" name="area_ids" data="<%= states_path(format: "json") %>" class="select2-ajax-states multiple" value="" text="" data-placeholder="All"/>
-									</div>
-								</div>
-							</div>
-							
-							<div class="col-md-3">
-								<h4>Companies</h4>
-								<div class="">
-									<div class="input-with-icon  right">                                       
-									<i class=""></i>
-									<input style="width:100%;margin-bottom: 5px;" name="companies" data="<%= contacts_path(is_individual: false, format: "json") %>" class="select2-ajax-contacts multiple" value="" text="" data-placeholder="All"/>
-									</div>
-								</div>
-							</div>-->
-							
-							<div class="col-md-3">
-								<h4>Tags</h4>
-								<%= select_tag 'tags', options_for_select(ContactTag.all.collect{ |u| [u.name, u.id] }), class: "modern_select width100", multiple: "multiple" %>
-							</div>
-							
-						</form>
-
-					</div>
-					</div>		    
-				</div>
+				
+			<%= form_tag("", {class: "listing_form", method: "post", target: "_blank"}) do |f| %>
+				
+				
+				<%= render "filters" %>
 				
 				
                 <div class="row">                  
                     <div class="col-md-12">
-						<%= link_to 'New Contact', new_contact_path(tab_page: 1),title: "New Contact", psrc: contacts_url(tab_page: 1), :class => 'btn btn-primary btn-cons tab_page' %>
+						<h3>Listing  <span class="semi-bold">Contacts</span></h3>
+						<div class="listing_box_actions">
+							<div class="btn-group listing_actions"> <a href="#" data-toggle="dropdown" class="btn btn-white dropdown-toggle btn-demo-space"> List Actions (<span class="listing_checked_count">0</span>)<span class="caret"></span> </a>
+								<ul class="dropdown-menu">
+									<li><a href="#" rel="<%= export_list_contacts_path(format: "xls") %>">Export List (Excel)</a></li>
+								</ul>
+							</div>
+							<div class="checkbox check-default check_all_page_but" style="display: inline-block">
+								<input name="check_all_page" id="checkbox_all_page" type="checkbox" value="all_page" class="check_all_page">
+								<label for="checkbox_all_page">Select All Pages</label>
+							</div>
+							<%= link_to 'New Contact', new_contact_path(tab_page: 1),title: "New Contact", psrc: contacts_url(tab_page: 1), :class => 'btn btn-primary btn-cons tab_page pull-right' %>
+						</div>
                         <div class="grid simple ">
-                            <div class="grid-title no-border">
-                                <h4>Listing  <span class="semi-bold">Contacts</span></h4>
-                                
-                            </div>
+                            
                             <div class="grid-body no-border">
                                  
-                                    <table class="table table-striped no-more-tables datatable-contacts no-filter">
+			
+									<table class="table table-striped no-more-tables datatable-contacts no-filter">
                                         <thead>
                                             <tr>
+												<th>
+													<div class="checkbox check-default">
+														<input id="checkbox_all" type="checkbox" value="all" class="checkall">
+														<label for="checkbox_all"></label>
+													</div>
+												</th>
 												<th width="1%" class="text-center">Avatar</th>
                                                 <th class="text-left">Name</th>
-												<th class="text-left">Info</th>
-												<th class="text-left">Program</th>
+												<th class="text-left">Info</th>												
 												<th class="text-center">Type</th>
-												<th class="text-left">Company</th>
+												<th class="text-left">Program</th>
+												<th class="text-center">Course</th>
+												<!--<th class="text-left">Company</th>-->
 												<th class="text-center">Tag</th>
-												<th class="text-center">Staff</th>
+												<!--<th class="text-center">Staff</th>-->
 												<th class="text-right">Actions</th>
                                             </tr>
                                         </thead>
                                         <tbody>
-                                          
+                                    
                                             
 					    
                                         </tbody>
 									</table>
+									
+								
                             </div>
                         </div>
 			
                         
                         
-		    <div class="tmp_hide">
-			<h2>Import Contacts</h2>
-			<%= form_tag import_contacts_path, multipart: true do %>
-			  <%= file_field_tag :file %>
-			  <%= submit_tag "Import" %>
-			<% end %>
-		    </div>
+						<div class="tmp_hide">
+						<h2>Import Contacts</h2>
+						<%= form_tag import_contacts_path, multipart: true do %>
+						  <%= file_field_tag :file %>
+						  <%= submit_tag "Import" %>
+						<% end %>
+						</div>
 
 
                     </div>
                 </div>
+				
+			<% end %>

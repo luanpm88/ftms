@@ -355,7 +355,8 @@
 			<span class="arrow<% if params[:controller] == "contacts" %> open<% end %>"></span>
 			  <% end %>
 			  <ul class="sub-menu">
-				<li<% if params[:controller] == "contacts" %> class="active"<% end %>><%= link_to 'Contacts', contacts_url(tab_page:1), class: "tab_page" %></li>
+				<li<% if params[:controller] == "contacts" %> class="active"<% end %>><%= link_to 'Contact', contacts_url(tab_page:1), class: "tab_page" %></li>
+				<li<% if params[:controller] == "contact_tags" %> class="active"<% end %>><%= link_to 'Tag Management', contact_tags_path(tab_page:1), class: "tab_page" %></li>
 				
 			  </ul>
 			</li>

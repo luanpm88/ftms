@@ -1,14 +1,21 @@
 class ContactsController < ApplicationController
+  #require 'csv'
+  
   include ContactsHelper
   
   load_and_authorize_resource
-  before_action :set_contact, only: [:ajax_quick_info, :ajax_tag_box, :ajax_edit, :ajax_update, :show, :edit, :update, :destroy, :ajax_destroy, :ajax_show, :ajax_list_agent, :ajax_list_supplier_agent]
+  before_action :set_contact, only: [:course_register, :ajax_quick_info, :ajax_tag_box, :ajax_edit, :ajax_update, :show, :edit, :update, :destroy, :ajax_destroy, :ajax_show, :ajax_list_agent, :ajax_list_supplier_agent]
 
   # GET /contacts
   # GET /contacts.json
   def index
     @types = [ContactType.student.id.to_s]
     @individual_statuses = ["true"]
+    
+    if params[:course_id]
+      @course = Course.find(params[:course_id])
+    end
+    
     
     respond_to do |format|
       format.html
@@ -31,15 +38,18 @@ class ContactsController < ApplicationController
   # GET /contacts/new
   def new
     @contact = Contact.new
-    @contact.contact_types << ContactType.student
+    
     
     if !params[:is_individual].nil? && params[:is_individual] == "false"
       @contact.is_individual = false
     end
     
-    if (!params[:type_id].nil?)
-      @contact.contact_types << ContactType.find_by_id(params[:type_id])
+    if (!params[:contact_type_id].nil?)
+      @contact.contact_types << ContactType.find_by_id(params[:contact_type_id])
+    else
+      @contact.contact_types << ContactType.student
     end
+    
     if (!params[:company_id].nil?)
       @contact.companies << Contact.find_by_id(params[:company_id])
     end
@@ -51,7 +61,7 @@ class ContactsController < ApplicationController
 
   # GET /contacts/1/edit
   def edit
-    
+    @student = @contact
   end
 
   # POST /contacts
@@ -203,6 +213,18 @@ class ContactsController < ApplicationController
     render json: result[:result]
   end
   
+  def course_students
+    result = Contact.course_students(params, current_user)
+    
+    result[:items].each_with_index do |item, index|
+      actions = render_contacts_actions(item)
+      
+      result[:result]["data"][index][result[:actions_col]] = actions
+    end
+    
+    render json: result[:result]
+  end
+  
   def logo
     send_file @contact.logo_path(params[:type]), :disposition => 'inline'
   end
@@ -217,6 +239,33 @@ class ContactsController < ApplicationController
   def ajax_quick_info
     
     render layout: nil
+  end
+  
+  def course_register
+    
+  end
+  
+  def export_list
+    if params[:ids].present?
+      if !params[:check_all_page].nil?
+        params[:intake_year] = params["filter"]["intake(1i)"] if params["filter"].present?
+        params[:intake_month] = params["filter"]["intake(2i)"] if params["filter"].present?
+        
+        if params[:is_individual] == "false"
+          params[:contact_types] = nil
+        end        
+        
+        @contacts = Contact.filters(params, current_user)
+      else
+        @contacts = Contact.where(id: params[:ids])
+      end
+      
+      
+      respond_to do |format|
+        format.html
+        format.xls
+      end
+    end      
   end
 
   private

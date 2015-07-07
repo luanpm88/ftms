@@ -9,6 +9,13 @@ class SubjectsController < ApplicationController
   # GET /subjects.json
   def index
     @subjects = Subject.all
+    
+    respond_to do |format|
+      format.html { render layout: "content" if params[:tab_page].present? }
+      format.json {
+        render json: Subject.full_text_search(params[:q])
+      }
+    end
   end
 
   # GET /subjects/1
@@ -28,7 +35,10 @@ class SubjectsController < ApplicationController
   # POST /subjects
   # POST /subjects.json
   def create
-    @subject = Subject.new(subject_params)
+    s_params = subject_params
+    s_params[:course_type_ids] = subject_params[:course_type_ids][0].split(",") if subject_params[:course_type_ids].present?
+    
+    @subject = Subject.new(s_params)    
     @subject.user = current_user
 
     respond_to do |format|
@@ -45,8 +55,10 @@ class SubjectsController < ApplicationController
   # PATCH/PUT /subjects/1
   # PATCH/PUT /subjects/1.json
   def update
+    s_params = subject_params
+    s_params[:course_type_ids] = subject_params[:course_type_ids][0].split(",") if subject_params[:course_type_ids].present?
     respond_to do |format|
-      if @subject.update(subject_params)
+      if @subject.update(s_params)
         format.html { redirect_to params[:tab_page].present? ? "/home/close_tab" : @subject, notice: 'Subject was successfully updated.' }
         format.json { head :no_content }
       else
@@ -76,6 +88,10 @@ class SubjectsController < ApplicationController
     
     render json: result[:result]
   end
+  
+  def ajax_select_box
+    render layout: nil
+  end
 
   private
     # Use callbacks to share common setup or constraints between actions.
@@ -85,6 +101,6 @@ class SubjectsController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def subject_params
-      params.require(:subject).permit(:name, :description)
+      params.require(:subject).permit(:name, :description, :course_type_ids => [])
     end
 end

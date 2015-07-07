@@ -1,4 +1,6 @@
 class ContactTagsController < ApplicationController
+  include ContactTagsHelper
+  load_and_authorize_resource
   before_action :set_contact_tag, only: [:show, :edit, :update, :destroy]
 
   # GET /contact_tags
@@ -34,10 +36,10 @@ class ContactTagsController < ApplicationController
 
     respond_to do |format|
       if @contact_tag.save
-        format.html { redirect_to @contact_tag, notice: 'Contact tag was successfully created.' }
+        format.html { redirect_to params[:tab_page].present? ? "/home/close_tab" : @contact_tag, notice: 'Contact tag was successfully created.' }
         format.json { render action: 'show', status: :created, location: @contact_tag }
       else
-        format.html { render action: 'new' }
+        format.html { render action: 'new', tab_page: params[:tab_page] }
         format.json { render json: @contact_tag.errors, status: :unprocessable_entity }
       end
     end
@@ -48,10 +50,10 @@ class ContactTagsController < ApplicationController
   def update
     respond_to do |format|
       if @contact_tag.update(contact_tag_params)
-        format.html { redirect_to @contact_tag, notice: 'Contact tag was successfully updated.' }
+        format.html { redirect_to params[:tab_page].present? ? "/home/close_tab" : @contact_tag, notice: 'Contact tag was successfully updated.' }
         format.json { head :no_content }
       else
-        format.html { render action: 'edit' }
+        format.html { render action: 'edit', tab_page: params[:tab_page] }
         format.json { render json: @contact_tag.errors, status: :unprocessable_entity }
       end
     end
@@ -65,6 +67,17 @@ class ContactTagsController < ApplicationController
       format.html { redirect_to contact_tags_url }
       format.json { head :no_content }
     end
+  end
+  
+  def datatable
+    result = ContactTag.datatable(params, current_user)
+    
+    result[:items].each_with_index do |item, index|
+      actions = render_contact_tag_actions(item)      
+      result[:result]["data"][index][result[:actions_col]] = actions
+    end
+    
+    render json: result[:result]
   end
 
   private

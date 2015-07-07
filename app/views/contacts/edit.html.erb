@@ -6,10 +6,87 @@
 			<%= link_to 'Contacts', contacts_url, :class => "active" %>
                     </li>
       </ul>
-      <div class="page-title"> <i class="icon-edit"></i>
-        <h3>Edit - <span class="semi-bold">Contact</span></h3>
+      <div class="page-title pull-left"> <i class="icon-user"></i>
+        <h3 class="nowrap"><span class="semi-bold"><%= @contact.display_name %></span></h3>
+		
       </div>
-      
+      <%= render_contacts_actions(@contact, "big") %>
 
 	  
-<%= render 'form' %>
+		<div class="row">
+            <div class="col-md-12">
+              <div class="grid simple">
+                <div class="grid-title no-border">
+                  
+                  
+                </div>     
+                
+                
+                
+                
+					<div class="grid-body no-border">
+					  
+					  
+						 <ul class="nav nav-pills inner-tab" id="tab-01">
+							  <li class="active"><a href="#general">Information</a></li>
+								<% if @contact.contact_types.include?(ContactType.student) %>
+										<li>
+										  <a href="#tab_course">Course List (<%= @contact.courses.count %>)</a>
+										</li>
+								<% end %>
+						 </ul>
+						 <div class="tools"> <a href="javascript:;" class="collapse"></a> <a href="#grid-config" data-toggle="modal" class="config"></a> <a href="javascript:;" class="reload"></a> <a href="javascript:;" class="remove"></a> </div>
+						 <div class="tab-content" style="margin-bottom: 0;">
+								<div class="tab-pane active" id="general">
+								
+										<%= render 'form' %>
+								
+								</div>
+								<div class="tab-pane" id="tab_course">
+										
+										<%= render "courses/filters" %>
+										
+										<style>
+												.student-course-filter {
+														position: absolute;
+														top: -90000px;
+												}
+										</style>
+										
+										<div class="row">
+												<div class="col-md-12">													
+													<div class="grid simple ">
+														<div class="grid-title no-border">
+															<h4>Listing  <span class="semi-bold">Course</span></h4>															
+														</div>
+														
+														
+														
+														<div class="grid-body no-border">															 
+																<table class="table table-striped no-more-tables datatable-student-courses no-filter">
+																	<thead>
+																		<tr>                                                
+																			<th class="text-left" width="1%">Intake</th>
+																			<th class="text-left nowrap">Program-Paper</th>
+																			<th class="text-center">Student Num</th>
+																			<th class="text-center">Lecturer</th>
+																			<th class="text-center">Joined At</th>																			
+																			<th class="text-right" width="1%">Actions</th>
+																		</tr>
+																	</thead>                                        
+																</table>
+														</div>
+													</div>
+										
+												</div>
+										
+										</div>
+								</div>
+						 </div>
+								  
+					</div>
+					
+				
+              </div>
+            </div>		
+      </div>

@@ -8,6 +8,8 @@ class CourseType < ActiveRecord::Base
   
   has_many :courses
   
+  has_and_belongs_to_many :subjects
+  
   pg_search_scope :search,
                   against: [:name, :short_name, :description],                
                   using: {
@@ -75,4 +77,6 @@ class CourseType < ActiveRecord::Base
   def self.full_text_search(q)
     self.search(q).limit(50).map {|model| {:id => model.id, :text => model.short_name} }
   end
+  
+  
 end

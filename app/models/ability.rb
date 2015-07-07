@@ -86,6 +86,7 @@ class Ability
       end
       
       can :ajax_quick_info, Contact
+      can :ajax_select_box, Subject
     end
     
     if user.has_role? "manager"
@@ -107,14 +108,33 @@ class Ability
       can :read, Course
       can :create, Course
       can :update, Course
+      can :student_courses, Course
       
       can :update, Contact
       can :update_tag, Contact
+      can :course_students, Contact
+      can :export_list, Contact
       
       can :datatable, Book
       can :read, Book
       can :create, Book
       can :update, Book
+      
+      can :datatable, ContactTag
+      can :read, ContactTag
+      can :create, ContactTag
+      can :update, ContactTag
+      
+      can :datatable, CourseRegister
+      can :read, CourseRegister
+      can :create, CourseRegister
+      can :update, CourseRegister
+      
+      can :course_register, Contact do |contact|
+        contact.contact_types.include?(ContactType.student)
+      end
+      
+      
     end
     
   end

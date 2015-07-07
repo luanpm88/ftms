@@ -9,6 +9,17 @@ class CoursesController < ApplicationController
   # GET /courses.json
   def index
     @courses = Course.all
+    
+    if params[:student_id]
+      @student = Contact.find(params[:student_id])
+    end
+    
+    respond_to do |format|
+      format.html { render layout: "content" if params[:tab_page].present? }
+      format.json {
+        render json: Course.full_text_search(params[:q])
+      }
+    end
   end
 
   # GET /courses/1
@@ -23,16 +34,19 @@ class CoursesController < ApplicationController
 
   # GET /courses/1/edit
   def edit
+    @types = [ContactType.student.id.to_s]
+    @individual_statuses = ["true"]
   end
 
   # POST /courses
   # POST /courses.json
   def create
     @course = Course.new(course_params)
-    @course.user = current_user
-
+    @course.user = current_user    
+    @course.update_program_paper(params[:program_paper])
+    
     respond_to do |format|
-      if @course.save
+      if @course.save        
         format.html { redirect_to params[:tab_page].present? ? "/home/close_tab" : @course, notice: 'Course was successfully created.' }
         format.json { render action: 'show', status: :created, location: @course }
       else
@@ -45,8 +59,11 @@ class CoursesController < ApplicationController
   # PATCH/PUT /courses/1
   # PATCH/PUT /courses/1.json
   def update
+    @course.assign_attributes(course_params)
+    course_types_subject = @course.update_program_paper(params[:program_paper])    
+    
     respond_to do |format|
-      if @course.update(course_params)
+      if @course.save
         format.html { redirect_to params[:tab_page].present? ? "/home/close_tab" : @course, notice: 'Course was successfully updated.' }
         format.json { head :no_content }
       else
@@ -76,6 +93,19 @@ class CoursesController < ApplicationController
     
     render json: result[:result]
   end
+  
+  def student_courses
+    result = Course.student_courses(params, current_user)
+    
+    result[:items].each_with_index do |item, index|
+      actions = render_student_courses_actions(item)      
+      result[:result]["data"][index][result[:actions_col]] = actions
+    end
+    
+    render json: result[:result]
+  end
+  
+  
 
   private
     # Use callbacks to share common setup or constraints between actions.
@@ -85,6 +115,6 @@ class CoursesController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def course_params
-      params.require(:course).permit(:description, :user_id, :intake, :course_type_id)
+      params.require(:course).permit(:lecturer_id, :description, :user_id, :intake, :course_type_id, :course_type_ids => [])
     end
 end

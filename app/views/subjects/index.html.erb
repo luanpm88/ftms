@@ -2,12 +2,27 @@
                     <li>
                         <p>YOU ARE HERE</p>
                     </li> 
-                    <li><%= link_to 'Users', subjects_url, :class => "active" %></li>
+                    <li><%= link_to 'Paper Management', subjects_url, :class => "active" %></li>
                 </ul>
                 <div class="page-title">
                         <!--<i class="icon-archive"></i>-->
                     	<h3>Paper - <span class="semi-bold"> Management</span></h3>	
                 </div>
+				
+				<div class="grid simple ">
+                  <div class="grid-body no-border filters course-filter">
+                  <div class="row order-filters">
+                      
+                      <div class="col-md-4">
+                        <h4>Program</h4>
+						<%= select_tag 'filter[course_types[]]', options_for_select(CourseType.all.collect{ |u| [u.short_name, u.id] }), class: "modern_select width100", multiple: "multiple" %>
+                      </div>
+                      
+                      
+                  </div>
+                  </div>		    
+				</div>
+				
                 <div class="row">
                     <div class="col-md-12">
                         <%= link_to 'New Paper', new_subject_path(tab_page: 1), psrc: subjects_path(tab_page:1), title: "New Paper", :class => 'btn btn-primary btn-cons tab_page' %>
@@ -22,7 +37,7 @@
                                         <thead>
                                             <tr>                                                
 												<th>Name</th>
-												<th>Description</th>
+												<th class="text-center">Program(s)</th>
                                                 <th class="text-center">Created At</th>
 												<th class="text-center" width="1%">Creator</th>
 												<th class="text-right" width="1%">Actions</th>

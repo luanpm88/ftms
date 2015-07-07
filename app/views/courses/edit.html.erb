@@ -6,10 +6,111 @@
 			<%= link_to 'Subjects', courses_url %>
                     </li>
       </ul>
-      <div class="page-title"> <!--<i class="icon-edit"></i>-->
-        <h3>Edit Course - <span class="semi-bold"><%= @course.name %></span></h3>
-      </div>
+      <div class="page-title pull-left nowrap"> <i class="icon-briefcase"></i>
+        <h3 class=""><span class="semi-bold"><%= @course.name %></span></h3>
+      </div>	  
       
-
+		<%= render_course_actions(@course, "big") %>
 	  
-<%= render 'form' %>
+		<div class="row">
+            <div class="col-md-12">
+              <div class="grid simple">
+                <div class="grid-title no-border">
+                  
+                  
+                </div>     
+                
+                
+                
+                
+					<div class="grid-body no-border">
+					  
+					  
+						 <ul class="nav nav-pills inner-tab" id="tab-01">
+							  <li class="active"><a href="#general">Information</a></li>
+										<li>
+										  <a href="#tab_student">Student List (<%= @course.contacts.count %>)</a>
+										</li>
+						 </ul>
+						 <div class="tools"> <a href="javascript:;" class="collapse"></a> <a href="#grid-config" data-toggle="modal" class="config"></a> <a href="javascript:;" class="reload"></a> <a href="javascript:;" class="remove"></a> </div>
+						 <div class="tab-content" style="margin-bottom: 0;">
+								<div class="tab-pane active" id="general">
+								
+										<%= render 'form' %>
+								
+								</div>
+								<div class="tab-pane" id="tab_student">
+										
+										<%= form_tag("", {class: "listing_form", method: "post", target: "_blank"}) do |f| %>
+										
+												<style>
+														.course-contact-filter, .type-contact-filter {
+																position: absolute;
+																top: -90000px;
+														}
+												</style>
+												
+												<%= render "contacts/filters" %>
+												
+												<div class="row">                  
+														<div class="col-md-12">
+																<h4>Listing  <span class="semi-bold">Contacts</span></h4>
+																<div class="listing_box_actions">
+																	<div class="btn-group listing_actions"> <a href="#" data-toggle="dropdown" class="btn btn-white dropdown-toggle btn-demo-space"> List Actions (<span class="listing_checked_count">0</span>)<span class="caret"></span> </a>
+																		<ul class="dropdown-menu">
+																			<li><a href="#" rel="<%= export_list_contacts_path(format: "xls") %>">Export List (Excel)</a></li>
+																		</ul>
+																	</div>
+																	<div class="checkbox check-default check_all_page_but" style="display: inline-block">
+																		<input name="check_all_page" id="checkbox_all_page" type="checkbox" value="all_page" class="check_all_page">
+																		<label for="checkbox_all_page">Select All Pages</label>
+																	</div>
+																	<%= link_to 'New Contact', new_contact_path(tab_page: 1),title: "New Contact", psrc: contacts_url(tab_page: 1), :class => 'btn btn-primary btn-cons tab_page pull-right' %>
+																</div>
+															<div class="grid simple ">
+																<div class="grid-body no-border">
+																	 
+																		<table class="table table-striped no-more-tables datatable-course-students no-filter">
+																			<thead>
+																				<tr>
+																						<th width="1%">
+																								<div class="checkbox check-default">
+																									<input id="checkbox_all" type="checkbox" value="all" class="checkall">
+																									<label for="checkbox_all"></label>
+																								</div>
+																						</th>
+																						<th width="1%" class="text-left">Avatar</th>
+																						<th class="text-left">Name</th>
+																						<th class="text-left">Info</th>
+																						<th class="text-left">Program</th>
+																						<th class="text-center">Course</th>
+																						<!--<th class="text-left">Company</th>-->
+																						<th class="text-center">Tag</th>
+																						<th class="text-center">Joined Date</th>
+																						<th class="text-right">Actions</th>
+																				</tr>
+																			</thead>
+																			<tbody>
+																			  
+																				
+															
+																			</tbody>
+																		</table>
+																</div>
+															</div>
+												
+									
+									
+														</div>
+													</div>
+										<% end %>
+										
+								</div>
+						 </div>
+								  
+					</div>
+					
+				
+              </div>
+            </div>		
+      </div>

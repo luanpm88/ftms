@@ -7582,7 +7582,7 @@ ul.filter {
     right: 30px;
 }
 .date_select_filter .select2-container {
-    min-width: 80px;
+    min-width: 50px;
 }
 .accounting-statistics-filters select {
     font-size: 150%;
@@ -8072,7 +8072,7 @@ tr.block_commission_header h3 {
     padding: 0;
 }
 .date-group .select2-choice, .date-group-my .select2-choice {
-    min-width: 120px;
+    min-width: 90px;
 }
 .date-group #s2id_course_intake_3i, .date-group-my #s2id_filter_intake_3i {
     position: absolute;
@@ -8096,7 +8096,7 @@ tr.block_commission_header h3 {
 .follow_up {
     color: #3c763d;
 }
-.dropdown-menu > li.follow_up a {
+/*.dropdown-menu > li.follow_up a {
     color: #3c763d;
 }
 .dropdown-menu > li.potential a {
@@ -8137,10 +8137,23 @@ tr.block_commission_header h3 {
 .tag_button:focus {
     border: none !important;
     color: #333;
-}
+}*/
 .selected_company_info .box, .selected_invoice_info .box {
     border: 1px solid #ccc;
     padding: 10px;
     margin-bottom: 15px;
     margin-top: 10px;
+}
+.box_mini_info  {
+    display: inline-block;
+    margin-right: 10px;
+}
+.inner-tab {
+    margin-bottom: 10px;
+}
+.listing_box_actions {
+    margin-top: 20px;
+}
+.check_all_page_but {
+    margin-top: 5px;
 }

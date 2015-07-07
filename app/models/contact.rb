@@ -42,6 +42,11 @@ class Contact < ActiveRecord::Base
   
   belongs_to :tag, :class_name => "ContactTagsContact", :foreign_key => "tag_id"
   
+  has_many :contacts_courses
+  has_and_belongs_to_many :courses
+  
+  
+  
   after_validation :update_cache
   
   def is_not_individual?
@@ -50,8 +55,6 @@ class Contact < ActiveRecord::Base
   def is_individual?
     is_individual
   end
-  
-  def 
   
   def first_name=(str)
     self[:first_name] = str.strip
@@ -62,11 +65,20 @@ class Contact < ActiveRecord::Base
   def name=(str)
     self[:name] = str.strip
   end
+  def email=(str)
+    self[:email] = str.strip
+  end
+  def mobile=(str)
+    self[:mobile] = str.strip
+  end
   def not_exist
     exist = []
-
-    exist += Contact.where("LOWER(name) = ?", name.downcase) if name.present?
-
+    
+    if is_individual
+      exist += Contact.where("(LOWER(name) = ? AND LOWER(email) = ?) OR (LOWER(name) = ? AND LOWER(mobile) = ?)", name.downcase, email.downcase, name.downcase, mobile.downcase) if mobile.present?
+    else
+      exist += Contact.where("LOWER(name) = ?", name.downcase) if name.present?
+    end
     
     if exist.length > 0 && !self.id.present?
       cs = []
@@ -77,33 +89,46 @@ class Contact < ActiveRecord::Base
     end
   end
   
-  def self.datatable(params, user)
-    ActionView::Base.send(:include, Rails.application.routes.url_helpers)
-    link_helper = ActionController::Base.helpers
-    
+  def self.filters(params, user)
     @records = self.main_contacts
     
-    if !params["order"].nil?
-      case params["order"]["0"]["column"]
-      when "1"
-        order = "contacts.first_name #{params["order"]["0"]["dir"]}, contacts.last_name #{params["order"]["0"]["dir"]}"
-      else
-        order = "contacts.first_name"
-      end
-      order += " "+params["order"]["0"]["dir"] if params["order"]["0"]["column"] == 3
-    else
-      order = "contacts.first_name, contacts.last_name"
-    end
-    @records = @records.order(order) if !order.nil?
-    
-    @records = @records.where_by_types(params[:types].split(",")) if params[:types].present?
+    @records = @records.where_by_types(params[:contact_types]) if params[:contact_types].present?
     @records = @records.where("contacts.is_individual = #{params[:is_individual]}") if params[:is_individual].present?
     @records = @records.where("contacts.referrer_id IN (#{params[:companies]})") if params[:companies].present?
+    
+    if params[:courses].present?
+       @records = @records.joins(:courses)
+      @records = @records.where("courses.id IN (#{params[:courses]})")
+    end
+    
     if params[:tags].present?
       @records = @records.joins(:tag)
       @records = @records.where("contact_tags_contacts.contact_tag_id IN (#{params[:tags].join(",")})")
     end
     
+    if params["course_types"].present?
+      conds = []
+      params["course_types"].each do |ccid|
+        conds << "contacts.cache_course_type_ids LIKE '%[#{ccid}]%'"
+      end
+      @records = @records.where(conds.join(" OR "))
+    end
+    
+    if params["intake_year"].present? && params["intake_month"].present?
+      @records = @records.where("contacts.cache_intakes LIKE '%{:year=>#{params["intake_year"]}, :month=>#{params["intake_month"]}}%'")
+    elsif params["intake_year"].present?
+      @records = @records.where("contacts.cache_intakes LIKE '%{:year=>#{params["intake_year"]}%'")
+    elsif params["intake_month"].present?
+      @records = @records.where("contacts.cache_intakes LIKE '%:month=>#{params["intake_month"]}}%'")
+    end
+    
+    if params["subjects"].present?
+      conds = []
+      params["subjects"].each do |sid|
+        conds << "contacts.cache_subjects LIKE '%[#{sid}]%'"
+      end
+      @records = @records.where(conds.join(" OR "))
+    end
     
     # Areas filter
     cities_ids = []
@@ -120,7 +145,29 @@ class Contact < ActiveRecord::Base
       @records = @records.where(city_id: cities_ids)
     end
     
-    @records = @records.search(params["search"]["value"]) if !params["search"]["value"].empty?
+    @records = @records.search(params["search"]["value"]) if params["search"].present? && !params["search"]["value"].empty?
+    
+    return @records
+  end
+  
+  def self.datatable(params, user)
+    ActionView::Base.send(:include, Rails.application.routes.url_helpers)
+    link_helper = ActionController::Base.helpers
+    
+    @records = self.filters(params, user)
+    
+    if !params["order"].nil?
+      case params["order"]["0"]["column"]
+      when "2"
+        order = "contacts.first_name #{params["order"]["0"]["dir"]}, contacts.last_name #{params["order"]["0"]["dir"]}"
+      else
+        order = "contacts.first_name"
+      end
+      order += " "+params["order"]["0"]["dir"] if params["order"]["0"]["column"] == 3
+    else
+      order = "contacts.first_name, contacts.last_name"
+    end
+    @records = @records.order(order) if !order.nil?    
     
     total = @records.count
     @records = @records.limit(params[:length]).offset(params["start"])
@@ -129,14 +176,15 @@ class Contact < ActiveRecord::Base
     actions_col = 8
     @records.each do |item|
       item = [
-              link_helper.link_to(item.display_picture(:thumb), {controller: "contacts", action: "edit", id: item.id, tab_page: 1}, class: "main-title tab_page", title: item.display_name),
-              '<div class="text-left nowrap">'+item.contact_link+"</div>",
-              '<div class="text-left">'+item.html_info_line.html_safe+"</div>",
-              "",
+              "<div class=\"checkbox check-default\"><input name=\"ids[]\" id=\"checkbox#{item.id}\" type=\"checkbox\" value=\"#{item.id}\"><label for=\"checkbox#{item.id}\"></label></div>",
+              item.contact_link(item.display_picture(:thumb)),
+              '<div class="text-left">'+item.contact_link+"</div>",
+              '<div class="text-left">'+item.html_info_line.html_safe+item.referrer_link+"</div>",              
               '<div class="text-center">'+item.contact_type_name+"</div>",
-              '<div class="text-left">'+item.referrer_link+"</div>",
+              '<div class="text-center">'+item.course_types_name+"</div>",
+              '<div class="text-center">'+item.course_count_link+"</div>",
               '<div class="text-center contact_tag_box" rel="'+item.id.to_s+'">'+ContactsController.helpers.render_contact_tags_selecter(item)+"</div>",
-              '<div class="text-center">'+item.user.staff_col+"</div>",
+              #'<div class="text-center">'+item.user.staff_col+"</div>",
               '',
             ]
       data << item
@@ -151,6 +199,88 @@ class Contact < ActiveRecord::Base
     result["data"] = data
     
     return {result: result, items: @records, actions_col: actions_col}
+  end
+  
+  def self.course_students(params, user)
+    ActionView::Base.send(:include, Rails.application.routes.url_helpers)
+    link_helper = ActionController::Base.helpers
+    
+    @course = Contact.find(params[:courses])
+    
+    @records = self.filters(params, user)
+    
+    if !params["order"].nil?
+      case params["order"]["0"]["column"]
+      when "1"
+        order = "contacts.first_name #{params["order"]["0"]["dir"]}, contacts.last_name #{params["order"]["0"]["dir"]}"
+      else
+        order = "contacts.first_name"
+      end
+      order += " "+params["order"]["0"]["dir"] if params["order"]["0"]["column"] == 3
+    else
+      order = "contacts.first_name, contacts.last_name"
+    end
+    @records = @records.order(order) if !order.nil?    
+    
+    total = @records.count
+    @records = @records.limit(params[:length]).offset(params["start"])
+    data = []
+    
+    actions_col = 8
+    @records.each do |item|
+      item = [
+              "<div class=\"checkbox check-default\"><input name=\"ids[]\" id=\"checkbox#{item.id}\" type=\"checkbox\" value=\"#{item.id}\"><label for=\"checkbox#{item.id}\"></label></div>",
+              item.contact_link(item.display_picture(:thumb)),
+              '<div class="text-left nowrap">'+item.contact_link+"</div>",
+              '<div class="text-left">'+item.html_info_line.html_safe+item.referrer_link+"</div>",               
+              '<div class="text-center">'+item.course_types_name+"</div>",
+              '<div class="text-center">'+item.course_count_link+"</div>",
+              #'<div class="text-left">'+item.referrer_link+"</div>",
+              '<div class="text-center contact_tag_box" rel="'+item.id.to_s+'">'+ContactsController.helpers.render_contact_tags_selecter(item)+"</div>",
+              '<div class="text-center">'+item.course_register(@course).created_date.strftime("%d-%b-%Y")+"</div>",
+              '',
+            ]
+      data << item
+      
+    end
+    
+    result = {
+              "drawn" => params[:drawn],
+              "recordsTotal" => total,
+              "recordsFiltered" => total
+    }
+    result["data"] = data
+    
+    return {result: result, items: @records, actions_col: actions_col}
+  end
+  
+  def course_register(course)
+    CourseRegister.find(contacts_courses.where(course_id: course.id).first.course_register_id)
+  end
+  
+  def course_types
+    contacts_courses.map {|cc| cc.course.course_type}.uniq
+  end
+  
+  def intakes
+    contacts_courses.map {|cc| {year: cc.course.intake.year, month: cc.course.intake.month}}.uniq    
+  end
+  
+  def update_cache_intakes
+    self.update_attribute(:cache_intakes, intakes.to_s)
+  end
+  
+  def subjects
+    contacts_courses.map {|cc| cc.course.subject}.uniq
+  end
+  
+  def update_cache_subjects
+    cache = "["+subjects.map(&:id).join("][")+"]"
+    self.update_attribute(:cache_subjects, cache)
+  end
+  
+  def course_types_name
+    course_types.map(&:short_name).join(", ")
   end
   
   def contact_type_name
@@ -299,15 +429,15 @@ class Contact < ActiveRecord::Base
     
     
     if is_individual
-      line += "<span class=\"nowrap\"><i class=\"icon-calendar\"></i> " + birthday.strftime("%d-%b-%Y") + "</span><br />" if !mobile.nil? && !mobile.empty?
-      line += "<span class=\"nowrap\"><i class=\"icon-envelope\"></i> " + email + "</span><br />" if !email.nil? && !email.empty?
-      line += "<span class=\"nowrap\"><i class=\"icon-phone\"></i> " + mobile + "</span><br />" if !mobile.nil? && !mobile.empty? 
+      line += "<span class=\"box_mini_info nowrap\"><i class=\"icon-calendar\"></i> " + birthday.strftime("%d-%b-%Y") + "</span> " if !mobile.nil? && !mobile.empty?
+      line += "<span class=\"box_mini_info nowrap\"><i class=\"icon-envelope\"></i> " + email + "</span> " if !email.nil? && !email.empty?
+      line += "<span class=\"box_mini_info nowrap\"><i class=\"icon-phone\"></i> " + mobile + "</span> " if !mobile.nil? && !mobile.empty? 
     else
-      line += "<span class=\"nowrap\"><i class=\"icon-phone\"></i> " + phone + "</span><br />" if !phone.nil? && !phone.empty?
-      line += "<span class=\"nowrap\"><i class=\"icon-envelope\"></i> " + email + "</span><br />" if !email.nil? && !email.empty?
+      line += "<span class=\"box_mini_info nowrap\"><i class=\"icon-phone\"></i> " + phone + "</span> " if !phone.nil? && !phone.empty?
+      line += "<span class=\"box_mini_info nowrap\"><i class=\"icon-envelope\"></i> " + email + "</span> " if !email.nil? && !email.empty?
       line += "Tax Code " + tax_code + "</span><br />" if tax_code.present?
     end
-    line += "<span class=\"address_info_line\"><i class=\"icon-truck\"></i> " + address + "</span><br />" if address.present?
+    line += "<div class=\"address_info_line\"><i class=\"icon-truck\"></i> " + address + "</div>" if address.present?
     
     
     return line
@@ -370,6 +500,10 @@ class Contact < ActiveRecord::Base
     records = self.all
     if params[:is_individual].present? && params[:is_individual] == "false"
       records = records.where(is_individual: false)
+    end
+    if params[:contact_type_id].present?
+      cids = Contact.joins(:contact_types).where(contact_types: {id: params[:contact_type_id]}).map(&:id)
+      records = records.where(id: cids)
     end    
     records.search(params[:q]).limit(50).map {|model| {:id => model.id, :text => model.display_name} }
   end
@@ -453,5 +587,25 @@ class Contact < ActiveRecord::Base
     end
     return false
   end
+  
+  def update_cache_course_type_ids
+    cache = "["+course_types.map(&:id).join("][")+"]"
+    self.update_attribute(:cache_course_type_ids,cache)
+  end
+  
+  def students
+    ContactType.student.contacts
+  end
+  
+  def course_list_link(title=nil)
+    title = title.nil? ? "Course List (#{courses.count.to_s})" : title
+    ActionController::Base.helpers.link_to(title, {controller: "courses", action: "index", student_id: self.id, tab_page: 1}, title: "#{display_name}: Course List", class: "tab_page")
+  end
+  
+  def course_count_link
+    course_list_link("["+courses.count.to_s+"]")
+  end
+  
+  
   
 end

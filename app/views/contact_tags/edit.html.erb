@@ -1,6 +1,15 @@
-<h1>Editing Contact Tag</h1>
+<ul class="breadcrumb">
+        <li>
+          <p>YOU ARE HERE</p>
+        </li>
+                    <li>
+			<%= link_to 'Tag', contact_tags_url %>
+                    </li>
+      </ul>
+      <div class="page-title"> <i class="icon-edit"></i>
+        <h3>Edit Tag - <span class="semi-bold"><%= @contact_tag.name %></span></h3>
+      </div>
+      
 
+	  
 <%= render 'form' %>
-
-<%= link_to 'Show', @contact_tag %> |
-<%= link_to 'Back', contact_tags_path %>

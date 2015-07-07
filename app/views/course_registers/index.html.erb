@@ -1,0 +1,29 @@
+<p id="notice"><%= notice %></p>
+
+<h1>Listing Course Registers</h1>
+
+<table>
+  <thead>
+    <tr>
+      <th>Created date</th>
+      <th>User</th>
+      <th colspan="3"></th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% @course_registers.each do |course_register| %>
+      <tr>
+        <td><%= course_register.created_date %></td>
+        <td><%= course_register.user_id %></td>
+        <td><%= link_to 'Show', course_register %></td>
+        <td><%= link_to 'Edit', edit_course_register_path(course_register) %></td>
+        <td><%= link_to 'Destroy', course_register, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<br>
+
+<%= link_to 'New Course register', new_course_register_path %>

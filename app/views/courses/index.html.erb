@@ -10,28 +10,7 @@
                 </div>
                 
                 
-                <div class="grid simple ">
-                  <div class="grid-body no-border filters course-filter">
-                  <div class="row order-filters">
-                      <div class="col-md-4">
-                        <h4>Intake</h4>
-                        <div class="date_select_filter">
-                            <div class="input-with-icon date-group-my right">                                       
-                            <%= date_select(:filter, :intake, {include_blank: true, use_short_month: true}) %>
-                            </div>
-                        </div>
-                      </div>
-                      
-                      <div class="col-md-4">
-                        <h4>Course Types</h4>
-                        <!--<input style="width:100%;margin-bottom: 5px;" name="filter[course_types[]]" data="<%= course_types_path(format: "json") %>" class="select2-ajax-course-types required multiple" value="" text=""  multiple="multiple" />-->
-						<%= select_tag 'filter[course_types[]]', options_for_select(CourseType.all.collect{ |u| [u.short_name, u.id] }), class: "modern_select width100", multiple: "multiple" %>
-                      </div>
-                      
-                      
-                  </div>
-                  </div>		    
-              </div>
+                <%= render "filters" %>
                 
                 
                 <div class="row">
@@ -47,9 +26,10 @@
                                     <table class="table table-striped no-more-tables datatable-courses no-filter">
                                         <thead>
                                             <tr>                                                
-												<th>Intake</th>
-                                                <th>Course Type</th>
-                                                <th>Description</th>
+												<th class="text-left" width="1%">Intake</th>
+                                                <th class="text-left nowrap">Program-Paper</th>
+												<th class="text-center">Student Num</th>
+												<th class="text-center">Lecturer</th>
                                                 <th class="text-center">Created At</th>
 												<th class="text-center" width="1%">Creator</th>
 												<th class="text-right" width="1%">Actions</th>

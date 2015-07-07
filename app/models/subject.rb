@@ -5,8 +5,10 @@ class Subject < ActiveRecord::Base
   
   belongs_to :user
   
+  has_and_belongs_to_many :course_types
+  
   pg_search_scope :search,
-                  against: [:name, :short_name, :description],                
+                  against: [:name, :description],                
                   using: {
                       tsearch: {
                         dictionary: 'english',
@@ -39,15 +41,21 @@ class Subject < ActiveRecord::Base
     
     @records = @records.order(order) if !order.nil?
     
+    if params["course_types"].present?
+      @records = @records.joins(:course_types)
+      @records = @records.where("course_types.id IN (#{params["course_types"].join(",")})")
+    end
+    
     total = @records.count
     @records = @records.limit(params[:length]).offset(params["start"])
+    
     data = []
     
     actions_col = 4
     @records.each do |item|
       item = [
               item.name,
-              '<div class="text-left">'+item.description+"</div>",
+              '<div class="text-center">'+item.programs_name+"</div>",
               '<div class="text-center">'+item.created_at.strftime("%Y-%m-%d")+"</div>",              
               '<div class="text-center">'+item.user.staff_col+"</div>",
               "", 
@@ -66,4 +74,18 @@ class Subject < ActiveRecord::Base
     return {result: result, items: @records, actions_col: actions_col}
     
   end
+  
+  def self.full_text_search(q)
+    self.search(q).limit(50).map {|model| {:id => model.id, :text => model.name} }
+  end
+  
+  def json_encode_ids_names
+    json = course_types.map {|t| {id: t.id.to_s, text: t.short_name}}
+    json.to_json
+  end
+  
+  def programs_name
+    course_types.map(&:short_name).join(", ")
+  end
+  
 end
