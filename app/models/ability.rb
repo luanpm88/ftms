@@ -113,6 +113,7 @@ class Ability
       can :update, Contact
       can :update_tag, Contact
       can :course_students, Contact
+      can :seminar_students, Contact
       can :export_list, Contact
       can :related_info_box, Contact
       
@@ -135,7 +136,14 @@ class Ability
         contact.contact_types.include?(ContactType.student)
       end
       
+      can :datatable, Seminar
+      can :read, Seminar
+      can :create, Seminar
+      can :update, Seminar
+      can :add_contacts, Seminar
+      can :remove_contacts, Seminar
       
+      can :seminar_features, Seminar
     end
     
   end

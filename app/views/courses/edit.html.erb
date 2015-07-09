@@ -27,19 +27,21 @@
 					  
 					  
 						 <ul class="nav nav-pills inner-tab" id="tab-01">
-							  <li class="active"><a href="#general">Information</a></li>
-										<li>
-										  <a href="#tab_student">Student List (<%= @course.contacts.count %>)</a>
-										</li>
+								<li class="<%= "active" if ["information",nil].include?(params[:tab]) %>">
+										<a href="#information">Information</a>
+								</li>
+								<li class="<%= "active" if ["student"].include?(params[:tab]) %>">
+								  <a href="#student">Student List (<%= @course.contacts.count %>)</a>
+								</li>
 						 </ul>
 						 <div class="tools"> <a href="javascript:;" class="collapse"></a> <a href="#grid-config" data-toggle="modal" class="config"></a> <a href="javascript:;" class="reload"></a> <a href="javascript:;" class="remove"></a> </div>
 						 <div class="tab-content" style="margin-bottom: 0;">
-								<div class="tab-pane active" id="general">
+								<div class="tab-pane <%= "active" if ["information",nil].include?(params[:tab]) %>" id="information">
 								
 										<%= render 'form' %>
 								
 								</div>
-								<div class="tab-pane" id="tab_student">
+								<div class="tab-pane <%= "active" if ["student"].include?(params[:tab]) %>" id="student">
 										
 										<%= form_tag("", {class: "listing_form", method: "post", target: "_blank"}) do |f| %>
 										

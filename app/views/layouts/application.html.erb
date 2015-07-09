@@ -81,6 +81,15 @@
 <%= javascript_include_tag "/javascripts/datatable/js/jquery.dataTables.min.js" %>
 <!-- END PAGE LEVEL PLUGINS -->
 
+
+<%= stylesheet_link_tag "/javascripts/datetimepicker/css/bootstrap-datetimepicker.css" %>
+<%= stylesheet_link_tag "/stylesheets/glyphicons.css" %>
+<%= javascript_include_tag "/javascripts/datetimepicker/moment.js" %>
+<%= javascript_include_tag "/javascripts/datetimepicker/js/bootstrap-datetimepicker.min.js" %>
+
+<%= javascript_include_tag "headshot.js" %>
+<%= javascript_include_tag "headshot_support.js" %>
+
 <%= render "layouts/head_script" %>
 
 <script>
@@ -342,6 +351,19 @@
 						
 						<li<% if params[:controller] == "books" && params[:action] == "index" %> class="active"<% end %>><%= link_to 'Stock Management', books_path(tab_page:1), class: "tab_page" %></li>
 						
+					</ul>
+			</li>
+		<% end %>
+		
+		<% if can? :seminar_features, Seminar %>
+			<li <% if params[:controller] == "seminars" %> class="active open"<% end %>>
+					<%= link_to contacts_url do %>
+					  <i class="icon-facetime-video"></i>
+					  <span class="title">Marketing</span>
+					  <span class="arrow<% if params[:controller] == "seminars" %> open<% end %>"></span>
+					<% end %>
+					<ul class="sub-menu">						
+						<li<% if params[:controller] == "seminars" && params[:action] == "index" %> class="active"<% end %>><%= link_to 'Seminar Management', seminars_path(tab_page:1), class: "tab_page" %></li>
 					</ul>
 			</li>
 		<% end %>

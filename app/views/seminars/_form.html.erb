@@ -1,0 +1,115 @@
+       <div class="row">
+            <div class="col-md-12">
+              <div class="grid simple">
+                <div class="grid-titlea no-border">
+                  <h4><span class="semi-bold">Seminar Details</span></h4>
+                  
+                </div>     
+                
+                
+                
+                
+                <div class="grid-body no-border">
+                  
+                  
+                  <% if @seminar.errors.any? %>
+                    <div class="alert alert-error">
+                      <button data-dismiss="alert" class="close"></button>
+                      <div id="error_explanation">
+                        <h5><%= pluralize(@seminar.errors.count, "error") %> prohibited this seminar from being saved:</h5>
+                  
+                        <ul>
+                        <% @seminar.errors.full_messages.each do |msg| %>
+                          <li><%= msg %></li>
+                        <% end %>
+                        </ul>
+                      </div>
+                    </div>
+                  <% end %>
+                    
+                 
+                  
+                  
+                  <%= form_for(@seminar) do |f| %>
+					
+					<%= hidden_field_tag("tab_page", 1) if params[:tab_page] %>
+					
+					<div class="row">
+						 <div class="col-md-6">
+                            
+                            <div class="form-group">
+                                  <label class="form-label"><%= f.label :title %></label>
+                                  <span class="help">(required)</span>
+                                  <div class="input-with-icon  right">                                       
+                                    <i class=""></i>
+                                    <%= f.text_field :name, :class => "form-control required" %>
+                                  </div>
+                            </div>
+                            
+                            
+                            <div class="row">
+                               <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label class="form-label"><%= f.label :start_date %></label>
+                                        <span class="help"></span>
+                                        <div class="input-with-icon  right">                                       
+                                              <i class=""></i>
+                                              <div class="input-append success date col-md-10 no-padding">
+                                                <%= text_field_tag :start_date, @start_date, :class => "form-control" %>
+                                                <span class="add-on"><span class="arrow"></span><i class="icon-th"></i></span>
+                                              </div>
+                                              <br style="clear: both" />
+                                         </div>
+                                    </div>
+                                    
+                                    
+                               </div>
+                              <div class="col-md-6">
+                                
+                                  <div class="form-group">
+                                        <label class="form-label"><%= f.label :start_time %></label>
+                                        <span class="help"></span>
+                                        <div class="controls">
+                                          <div class="input-append bootstrap-timepicker-component">
+                                            <%= text_field_tag :start_time, @start_time, :class => "timepicker-default span12" %>
+                                            <span class="add-on"><span class="arrow"></span><i class="icon-time"></i></span> </div>
+                                        </div>                                
+                                    </div>
+                                
+                              </div>
+                            </div>
+                            
+							  
+						 </div>
+						 
+						 <div class="col-md-6">
+							
+                            <div class="form-group">
+                                  <label class="form-label"><%= f.label :description %></label>
+                                  <span class="help"></span>
+                                  <div class="input-with-icon  right">                                       
+                                    <i class=""></i>
+                                    <%= f.text_area :description, :class => "form-control" %>
+                                  </div>
+                            </div>
+                              
+						 </div>
+						 
+						 
+					</div>
+						 
+					<div class="form-actions">  
+						 <div class="pull-right">
+						 <button type="submit" class="btn btn-success btn-cons"><i class="icon-ok"></i> Save</button>
+						  <%= link_to 'Cancel', users_path, :class => "btn btn-white btn-cons cancel-but" %>
+					   </div>
+					</div>
+							  
+						<% end %>
+			   </div>
+			 </div>
+            </div>
+			
+      </div>
+
+

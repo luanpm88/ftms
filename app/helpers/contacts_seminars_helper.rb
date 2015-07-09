@@ -1,0 +1,2 @@
+module ContactsSeminarsHelper
+end

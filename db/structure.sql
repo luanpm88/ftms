@@ -168,7 +168,10 @@ CREATE TABLE books (
     user_id integer,
     image character varying,
     created_at timestamp without time zone NOT NULL,
-    updated_at timestamp without time zone NOT NULL
+    updated_at timestamp without time zone NOT NULL,
+    publisher character varying,
+    price numeric,
+    parent_id integer
 );
 
 
@@ -484,6 +487,38 @@ ALTER SEQUENCE contacts_id_seq OWNED BY contacts.id;
 
 
 --
+-- Name: contacts_seminars; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE TABLE contacts_seminars (
+    id integer NOT NULL,
+    contact_id integer,
+    seminar_id integer,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL
+);
+
+
+--
+-- Name: contacts_seminars_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE contacts_seminars_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: contacts_seminars_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE contacts_seminars_id_seq OWNED BY contacts_seminars.id;
+
+
+--
 -- Name: countries; Type: TABLE; Schema: public; Owner: -; Tablespace: 
 --
 
@@ -649,6 +684,43 @@ ALTER SEQUENCE courses_id_seq OWNED BY courses.id;
 
 
 --
+-- Name: headshot_photos; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE TABLE headshot_photos (
+    id integer NOT NULL,
+    description character varying,
+    image_file_name character varying,
+    image_content_type character varying,
+    image_file_size integer,
+    capturable_id integer,
+    capturable_type character varying,
+    image_updated_at timestamp without time zone,
+    created_at timestamp without time zone,
+    updated_at timestamp without time zone
+);
+
+
+--
+-- Name: headshot_photos_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE headshot_photos_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: headshot_photos_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE headshot_photos_id_seq OWNED BY headshot_photos.id;
+
+
+--
 -- Name: notifications; Type: TABLE; Schema: public; Owner: -; Tablespace: 
 --
 
@@ -755,6 +827,40 @@ ALTER SEQUENCE roles_id_seq OWNED BY roles.id;
 CREATE TABLE schema_migrations (
     version character varying NOT NULL
 );
+
+
+--
+-- Name: seminars; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE TABLE seminars (
+    id integer NOT NULL,
+    name character varying,
+    description text,
+    start_at timestamp without time zone,
+    user_id integer,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL
+);
+
+
+--
+-- Name: seminars_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE seminars_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: seminars_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE seminars_id_seq OWNED BY seminars.id;
 
 
 --
@@ -962,6 +1068,13 @@ ALTER TABLE ONLY contacts_courses ALTER COLUMN id SET DEFAULT nextval('contacts_
 -- Name: id; Type: DEFAULT; Schema: public; Owner: -
 --
 
+ALTER TABLE ONLY contacts_seminars ALTER COLUMN id SET DEFAULT nextval('contacts_seminars_id_seq'::regclass);
+
+
+--
+-- Name: id; Type: DEFAULT; Schema: public; Owner: -
+--
+
 ALTER TABLE ONLY countries ALTER COLUMN id SET DEFAULT nextval('countries_id_seq'::regclass);
 
 
@@ -997,6 +1110,13 @@ ALTER TABLE ONLY courses ALTER COLUMN id SET DEFAULT nextval('courses_id_seq'::r
 -- Name: id; Type: DEFAULT; Schema: public; Owner: -
 --
 
+ALTER TABLE ONLY headshot_photos ALTER COLUMN id SET DEFAULT nextval('headshot_photos_id_seq'::regclass);
+
+
+--
+-- Name: id; Type: DEFAULT; Schema: public; Owner: -
+--
+
 ALTER TABLE ONLY notifications ALTER COLUMN id SET DEFAULT nextval('notifications_id_seq'::regclass);
 
 
@@ -1012,6 +1132,13 @@ ALTER TABLE ONLY parent_contacts ALTER COLUMN id SET DEFAULT nextval('parent_con
 --
 
 ALTER TABLE ONLY roles ALTER COLUMN id SET DEFAULT nextval('roles_id_seq'::regclass);
+
+
+--
+-- Name: id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY seminars ALTER COLUMN id SET DEFAULT nextval('seminars_id_seq'::regclass);
 
 
 --
@@ -1140,6 +1267,14 @@ ALTER TABLE ONLY contacts
 
 
 --
+-- Name: contacts_seminars_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+--
+
+ALTER TABLE ONLY contacts_seminars
+    ADD CONSTRAINT contacts_seminars_pkey PRIMARY KEY (id);
+
+
+--
 -- Name: countries_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
 --
 
@@ -1180,6 +1315,14 @@ ALTER TABLE ONLY courses
 
 
 --
+-- Name: headshot_photos_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+--
+
+ALTER TABLE ONLY headshot_photos
+    ADD CONSTRAINT headshot_photos_pkey PRIMARY KEY (id);
+
+
+--
 -- Name: notifications_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
 --
 
@@ -1201,6 +1344,14 @@ ALTER TABLE ONLY parent_contacts
 
 ALTER TABLE ONLY roles
     ADD CONSTRAINT roles_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: seminars_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+--
+
+ALTER TABLE ONLY seminars
+    ADD CONSTRAINT seminars_pkey PRIMARY KEY (id);
 
 
 --
@@ -1375,4 +1526,16 @@ INSERT INTO schema_migrations (version) VALUES ('20150706080457');
 INSERT INTO schema_migrations (version) VALUES ('20150706082550');
 
 INSERT INTO schema_migrations (version) VALUES ('20150706085609');
+
+INSERT INTO schema_migrations (version) VALUES ('20150708012614');
+
+INSERT INTO schema_migrations (version) VALUES ('20150708012710');
+
+INSERT INTO schema_migrations (version) VALUES ('20150708014434');
+
+INSERT INTO schema_migrations (version) VALUES ('20150708023427');
+
+INSERT INTO schema_migrations (version) VALUES ('20150708053215');
+
+INSERT INTO schema_migrations (version) VALUES ('20150709015943');
 

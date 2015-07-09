@@ -9,6 +9,13 @@ class BooksController < ApplicationController
   # GET /books.json
   def index
     @books = Book.all
+    
+    respond_to do |format|
+      format.html
+      format.json {
+        render json: Book.full_text_search(params)
+      }
+    end
   end
 
   # GET /books/1
@@ -19,6 +26,11 @@ class BooksController < ApplicationController
   # GET /books/new
   def new
     @book = Book.new
+    
+    if params[:parent_id]
+      @book.parent = Book.find(params[:parent_id])
+    end
+    
   end
 
   # GET /books/1/edit
@@ -90,6 +102,6 @@ class BooksController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def book_params
-      params.require(:book).permit(:name, :description, :user_id, :image)
+      params.require(:book).permit(:name, :description, :user_id, :image, :pirce, :publisher, :parent_id)
     end
 end

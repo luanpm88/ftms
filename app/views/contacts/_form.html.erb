@@ -66,34 +66,85 @@
 														   
 													  <div class="col-md-6">											 
 														   <div class="form-group">
-																<label class="form-label"><%= f.label :picture %></label>
+																<label class="form-label"><strong><%= f.label :picture %></strong></label>
+																<ul class="avatar_upload_url" id="avatar_capture">
+																		   <li class="active" rel="upload">
+																				   <a href="#upload">Upload File</a>
+																		   </li>
+																		   <li class="" rel="camera">
+																			 <a href="#camera"><i class="icon-facetime-video"></i> Camera</a>
+																		   </li>
+																	  </ul>
 																<span class="help"></span>
 																<div class="right">                                       
 																	<i class=""></i>
-																	<!--<div class="nice"><%= f.file_field :image %></div>-->
-																	
-																	 <ul id="sortable" class="image-boxes">
-																		  
-																		  <li class="image-box ui-state-default">
-																			   <div class="img-actions">
-																					<i class="icon-minus-sign delete-but<% if !@contact.image.present? %> hidden<% end %>"></i>
-																			   </div>
-																			   <a href="#" class="">
-																					<% if @contact.image.present? %>
-																						 <img class="current_img current_image_pic" src="<%= @contact.logo(:thumb2x) %>" />
-																					<% end %>
-																					<i class="icon-picture current_img current_image_icon<% if @contact.image.present? %> hidden<% end %>"></i>
-																					<img src="" class="new_picture hidden" />										
-																			   </a>
-																			   <%= f.file_field :image, :class => "hidden" %>
-																		  </li>
-												  
-																	 </ul>
+																	  
+																	  <%= hidden_field_tag "avatar_method", "upload" %>
+																	  <%= hidden_field_tag "headshot_url", "" %>
+																	  
+																	  
+																	  
+																	  <div class="tab-content" style="margin-bottom: 0;">
+																		   
+																		   <div class="tab-pane active" id="upload">
+																							   <ul id="sortable" class="image-boxes">
+																									
+																									<li class="image-box size2x ui-state-default">
+																										 <div class="img-actions">
+																											  <i class="icon-minus-sign delete-but<% if !@contact.image.present? %> hidden<% end %>"></i>
+																										 </div>
+																										 <a href="#" class="">
+																											  <% if @contact.image.present? %>
+																												   <img class="current_img current_image_pic" src="<%= @contact.logo(:thumb2x) %>" />
+																											  <% end %>
+																											  <i class="icon-picture current_img current_image_icon<% if @contact.image.present? %> hidden<% end %>"></i>
+																											  <img src="" class="new_picture hidden" />										
+																										 </a>
+																										 <%= f.file_field :image, :class => "hidden" %>
+																									</li>
+																			
+																							   </ul>
+																		   </div>
+																		   
+																		   <div class="tab-pane" id="camera">
+																				<script>
+																					 var customCameraHooks = {
+																						  onComplete: function(response) {
+																							   //console.log("Server responded: " + response);
+																							   console.log(response);
+																							   //headshot.reset();
+																							   var res = JSON.parse(response)
+																							   //alert(res.url)
+																							   $('input[name="headshot_url"]').val(res.url)
+																							   alert("Image is captured successfully!")
+																						  }
+																					 };
+																					 
+																					 $('#avatar_capture li').click(function() {
+																						  $('input[name="avatar_method"]').val($(this).attr("rel"))
+																					 })
+																				</script>
+													
+																				<%= headshot_default_config(Rails.application.config.session_options[:key], headshot_capture_path, :on_complete => "customCameraHooks.onComplete") %>
+																				<%= headshot_camera(width=245, height=245) %>
+		  
+																				
+																				<div style="margin-top: 5px;">
+																					 <%= headshot_snap_button('Capture', {type: "button", class: "btn btn-small btn-primary"}) %>
+																					 <div class="btn btn-small btn-white" onclick="headshot.reset()">Reset</div>
+																				</div>
+																		   </div>
+																		   
+																	  </div>
+																	  
+																	 
 																	 <br style="clear:both" />
 																</div>
 														   </div>										
 													  </div>
 												 </div>
+										  
+																	  
 								  
 												 <div class="form-group">
 													  <label class="form-label"><%= f.label :full_name %></label>
@@ -166,14 +217,7 @@
 													  </div>
 												 </div>
 													  
-												 <div class="form-group">
-													  <label class="form-label"><%= f.label :note %></label>
-													  <span class="help"></span>
-													  <div class="input-with-icon  right">                                       
-															  <i class=""></i>
-															  <%= f.text_area :note, :class => "form-control" %>
-													  </div>
-												 </div>
+												 
 																											  
 										  </div>
 										  
@@ -433,6 +477,15 @@
 													  
 													  
 												  </div>
+												 
+												 <div class="form-group">
+													  <label class="form-label"><%= f.label :note %></label>
+													  <span class="help"></span>
+													  <div class="input-with-icon  right">                                       
+															  <i class=""></i>
+															  <%= f.text_area :note, :class => "form-control" %>
+													  </div>
+												 </div>
 												 
 											</div>
 									  

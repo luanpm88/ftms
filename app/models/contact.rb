@@ -45,6 +45,8 @@ class Contact < ActiveRecord::Base
   has_many :contacts_courses
   has_and_belongs_to_many :courses
   
+  has_many :contacts_seminars
+  has_and_belongs_to_many :seminars
   
   
   after_validation :update_cache
@@ -99,6 +101,11 @@ class Contact < ActiveRecord::Base
     if params[:courses].present?
        @records = @records.joins(:courses)
       @records = @records.where("courses.id IN (#{params[:courses]})")
+    end
+    
+    if params[:seminars].present?
+       @records = @records.joins(:seminars)
+      @records = @records.where("seminars.id IN (#{params[:seminars]})")
     end
     
     if params[:tags].present?
@@ -177,7 +184,7 @@ class Contact < ActiveRecord::Base
     @records.each do |item|
       item = [
               "<div class=\"checkbox check-default\"><input name=\"ids[]\" id=\"checkbox#{item.id}\" type=\"checkbox\" value=\"#{item.id}\"><label for=\"checkbox#{item.id}\"></label></div>",
-              item.contact_link(item.display_picture(:thumb)),
+              item.picture_link,
               '<div class="text-left">'+item.contact_link+"</div>",
               '<div class="text-left">'+item.html_info_line.html_safe+item.referrer_link+"</div>",              
               '<div class="text-center">'+item.contact_type_name+"</div>",
@@ -230,7 +237,7 @@ class Contact < ActiveRecord::Base
     @records.each do |item|
       item = [
               "<div class=\"checkbox check-default\"><input name=\"ids[]\" id=\"checkbox#{item.id}\" type=\"checkbox\" value=\"#{item.id}\"><label for=\"checkbox#{item.id}\"></label></div>",
-              item.contact_link(item.display_picture(:thumb)),
+              item.picture_link,
               '<div class="text-left nowrap">'+item.contact_link+"</div>",
               '<div class="text-left">'+item.html_info_line.html_safe+item.referrer_link+"</div>",               
               '<div class="text-center">'+item.course_types_name+"</div>",
@@ -252,6 +259,63 @@ class Contact < ActiveRecord::Base
     result["data"] = data
     
     return {result: result, items: @records, actions_col: actions_col}
+  end
+  
+  def self.seminar_students(params, user)
+    ActionView::Base.send(:include, Rails.application.routes.url_helpers)
+    link_helper = ActionController::Base.helpers
+    
+    @seminar = Seminar.find(params[:seminars])
+    
+    @records = self.filters(params, user)
+    
+    if !params["order"].nil?
+      case params["order"]["0"]["column"]
+      when "1"
+        order = "contacts.first_name #{params["order"]["0"]["dir"]}, contacts.last_name #{params["order"]["0"]["dir"]}"
+      else
+        order = "contacts.first_name"
+      end
+      order += " "+params["order"]["0"]["dir"] if params["order"]["0"]["column"] == 3
+    else
+      order = "contacts.first_name, contacts.last_name"
+    end
+    @records = @records.order(order) if !order.nil?    
+    
+    total = @records.count
+    @records = @records.limit(params[:length]).offset(params["start"])
+    data = []
+    
+    actions_col = 8
+    @records.each do |item|
+      item = [
+              "<div class=\"checkbox check-default\"><input name=\"ids[]\" id=\"checkbox#{item.id}\" type=\"checkbox\" value=\"#{item.id}\"><label for=\"checkbox#{item.id}\"></label></div>",
+              item.picture_link,
+              '<div class="text-left nowrap">'+item.contact_link+"</div>",
+              '<div class="text-left">'+item.html_info_line.html_safe+item.referrer_link+"</div>",               
+              '<div class="text-center">'+item.course_types_name+"</div>",
+              '<div class="text-center">'+item.course_count_link+"</div>",
+              #'<div class="text-left">'+item.referrer_link+"</div>",
+              '<div class="text-center contact_tag_box" rel="'+item.id.to_s+'">'+ContactsController.helpers.render_contact_tags_selecter(item)+"</div>",
+              '<div class="text-center">'+item.contacts_seminar(@seminar).created_at.strftime("%d-%b-%Y")+"</div>",
+              "<div class=\"text-right\"><div rel=\"#{@seminar.id}\" contact_ids=\"#{item.id}\" class=\"remove_contact_from_seminar_but btn btn-mini btn-danger\">Remove</div></div>",
+            ]
+      data << item
+      
+    end
+    
+    result = {
+              "drawn" => params[:drawn],
+              "recordsTotal" => total,
+              "recordsFiltered" => total
+    }
+    result["data"] = data
+    
+    return {result: result, items: @records, actions_col: actions_col}
+  end
+  
+  def contacts_seminar(seminar)
+    contacts_seminars.where(seminar_id: seminar.id).first
   end
   
   def course_register(course)
@@ -306,6 +370,13 @@ class Contact < ActiveRecord::Base
     title = title.nil? ? display_name : title
     
     link_helper.link_to(title, {controller: "contacts", action: "edit", id: id, tab_page: 1}, class: "tab_page", title: display_name)
+  end
+  
+  def picture_link
+    ActionView::Base.send(:include, Rails.application.routes.url_helpers)
+    link_helper = ActionController::Base.helpers
+    
+    link_helper.link_to(display_picture(:thumb), logo+".png", class: "fancybox.image fancybox logo", title: display_name)
   end
   
   def city_name
@@ -498,14 +569,14 @@ class Contact < ActiveRecord::Base
   
   def self.full_text_search(params)
     records = self.all
-    if params[:is_individual].present? && params[:is_individual] == "false"
-      records = records.where(is_individual: false)
+    if params[:is_individual].present?
+      records = records.where(is_individual: params[:is_individual])
     end
     if params[:contact_type_id].present?
       cids = Contact.joins(:contact_types).where(contact_types: {id: params[:contact_type_id]}).map(&:id)
       records = records.where(id: cids)
-    end    
-    records.search(params[:q]).limit(50).map {|model| {:id => model.id, :text => model.display_name} }
+    end
+    records.search(params[:q]).limit(50).map {|model| {:id => model.id, :text => model.display_name(params)} }
   end
   
   def short_name
@@ -558,9 +629,15 @@ class Contact < ActiveRecord::Base
     link_helper.url_for(controller: "contacts", action: "logo", id: self.id, type: version)
   end
   
-  def display_name
+  def display_name(params=nil)
     sirname = sex == "female" ? "[Ms]" : "[Mr]"
-    is_individual ? (sirname+" "+name).html_safe : name
+    result = is_individual ? (sirname+" "+name).html_safe : name
+    
+    if params.present?
+      result = result+" (#{self.email})" if params[:email].present?
+    end
+    
+    return result
   end
   
   def display_picture(version = nil)
@@ -599,7 +676,7 @@ class Contact < ActiveRecord::Base
   
   def course_list_link(title=nil)
     title = title.nil? ? "Course List (#{courses.count.to_s})" : title
-    ActionController::Base.helpers.link_to(title, {controller: "courses", action: "index", student_id: self.id, tab_page: 1}, title: "#{display_name}: Course List", class: "tab_page")
+    ActionController::Base.helpers.link_to(title, {controller: "contacts", action: "edit", id: self.id, tab_page: 1, tab: "course"}, title: "#{display_name}: Course List", class: "tab_page")
   end
   
   def course_count_link

@@ -1,0 +1,29 @@
+<p id="notice"><%= notice %></p>
+
+<h1>Listing Contacts Seminars</h1>
+
+<table>
+  <thead>
+    <tr>
+      <th>Contact</th>
+      <th>Seminar</th>
+      <th colspan="3"></th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% @contacts_seminars.each do |contacts_seminar| %>
+      <tr>
+        <td><%= contacts_seminar.contact_id %></td>
+        <td><%= contacts_seminar.seminar_id %></td>
+        <td><%= link_to 'Show', contacts_seminar %></td>
+        <td><%= link_to 'Edit', edit_contacts_seminar_path(contacts_seminar) %></td>
+        <td><%= link_to 'Destroy', contacts_seminar, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<br>
+
+<%= link_to 'New Contacts seminar', new_contacts_seminar_path %>

@@ -1,5 +1,5 @@
 class ContactsController < ApplicationController
-  #require 'csv'
+  helper :headshot
   
   include ContactsHelper
   
@@ -14,6 +14,10 @@ class ContactsController < ApplicationController
     
     if params[:course_id]
       @course = Course.find(params[:course_id])
+    end
+    
+    if params[:seminar_id]
+      @seminar = Seminar.find(params[:seminar_id])
     end
     
     
@@ -37,8 +41,7 @@ class ContactsController < ApplicationController
 
   # GET /contacts/new
   def new
-    @contact = Contact.new
-    
+    @contact = Contact.new    
     
     if !params[:is_individual].nil? && params[:is_individual] == "false"
       @contact.is_individual = false
@@ -74,13 +77,18 @@ class ContactsController < ApplicationController
     if params[:contact_tag].present?
       @contact_tag = ContactTag.find(params[:contact_tag])
     end
+    
+    if params[:avatar_method] == "camera" && params[:headshot_url].present?
+          filename = params[:headshot_url].split("/").last
+          @contact.image = File.open("public/headshots/"+filename)
+    end
 
     respond_to do |format|
       if @contact.save
         if params[:contact_tag].present?
           @contact.update_tag(@contact_tag, current_user)
         end
-        
+
         format.html { redirect_to params[:tab_page].present? ? {action: "edit", id: @contact.id,tab_page: 1} : contacts_url, notice: 'Contact was successfully created.' }
         format.json { render action: 'show', status: :created, location: @contact }
       else
@@ -99,11 +107,17 @@ class ContactsController < ApplicationController
       @contact_tag = ContactTag.find(params[:contact_tag])
     end
     
+    if params[:avatar_method] == "camera" && params[:headshot_url].present?
+          filename = params[:headshot_url].split("/").last
+          @contact.image = File.open("public/headshots/"+filename)
+    end
+    
     respond_to do |format|
       if @contact.update(contact_params)
         if params[:contact_tag].present?
           @contact.update_tag(@contact_tag, current_user)
         end
+        
         
         format.html { redirect_to params[:tab_page].present? ? {action: "edit",id: @contact.id,tab_page: 1} : contacts_url, notice: 'Contact was successfully updated.' }
         format.json { head :no_content }
@@ -221,6 +235,18 @@ class ContactsController < ApplicationController
       
       result[:result]["data"][index][result[:actions_col]] = actions
     end
+    
+    render json: result[:result]
+  end
+  
+  def seminar_students
+    result = Contact.seminar_students(params, current_user)
+    
+    #result[:items].each_with_index do |item, index|
+    #  actions = render_contacts_actions(item)
+    #  
+    #  result[:result]["data"][index][result[:actions_col]] = actions
+    #end
     
     render json: result[:result]
   end

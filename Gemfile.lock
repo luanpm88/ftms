@@ -69,6 +69,7 @@ GEM
     execjs (2.5.2)
     globalid (0.3.5)
       activesupport (>= 4.1.0)
+    headshot (0.1.6)
     hike (1.2.3)
     http-cookie (1.0.2)
       domain_name (~> 0.5)
@@ -203,6 +204,7 @@ DEPENDENCIES
   coffee-rails (~> 4.0.0)
   devise
   execjs
+  headshot
   jbuilder (~> 1.2)
   jquery-rails
   mechanize

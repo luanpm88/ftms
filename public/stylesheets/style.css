@@ -7919,6 +7919,30 @@ tr.block_commission_header h3 {
     top: 0;
     color: #f35958;
 }
+
+
+.image-box.size2x {
+    height: 245px;
+    width: 245px;
+}
+.image-box.size2x i.current_img {
+    font-size: 80px;
+}
+.image-box.size2x:hover i.current_img {
+    font-size: 90px;
+}
+.image-box.size2x img.new_picture, .image-box.size2x img.current_image_pic {
+    max-height: 243px;
+    max-width: 243px;
+}
+.image-box.size2x a {
+    height: 243px;
+    width: 243px;
+}
+.image-box.size2x i.delete-but {
+    font-size: 24px;
+}
+
 .select2-container.error .select2-choice, textarea.error {
     border: 1px solid #f35958
 }
@@ -8189,4 +8213,34 @@ tr.block_commission_header h3 {
 .related_info_msg {
     color: #aa6708 !important;
     font-size: 12px;
+}
+.student-add-box {
+    display: block;
+    float: left;
+    width: 300px;
+    margin-right: 10px;
+    margin-bottom: 10px
+}
+.listing_actions {
+}
+#headshot_movie {
+    width: 250px;
+    height: 250px;
+}
+.avatar_upload_url {
+    display: inline;
+    padding: 0;
+}
+.avatar_upload_url li {
+    display: inline-block;
+    list-style: outside none none;
+
+    margin-right: 5px;
+}
+.avatar_upload_url li a {
+    color: #555;
+}
+.avatar_upload_url li.active a {
+    color: #333;
+    font-weight: bold;
 }

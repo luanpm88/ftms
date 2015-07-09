@@ -1,0 +1,143 @@
+<ul class="breadcrumb">
+        <li>
+          <p>YOU ARE HERE</p>
+        </li>
+                    <li>
+			<%= link_to 'Seminar Management', books_url %>
+                    </li>
+      </ul>
+      <div class="page-title pull-left nowrap"> <i class="icon-briefcase"></i>
+        <h3 class=""><span class="semi-bold"><%= @seminar.name %></span></h3>
+      </div>
+      
+      <%= render_seminar_actions(@seminar, "big") %>
+	  
+		<div class="row">
+            <div class="col-md-12">
+              <div class="grid simple">
+                <div class="grid-title no-border">
+                  
+                  
+                </div>     
+                
+                
+                
+                
+					<div class="grid-body no-border">
+					  
+					  
+						 <ul class="nav nav-pills inner-tab" id="tab-01">
+								<li class="<%= "active" if ["information",nil].include?(params[:tab]) %>">
+										<a href="#information">Information</a>
+								</li>
+								<li class="<%= "active" if params[:tab] == "attendance" %>">
+								  <a href="#attendance">Attendance List (<span class="seminar_students_count"><%= @seminar.contacts.count %></span>)</a>
+								</li>
+						 </ul>
+						 <div class="tools"> <a href="javascript:;" class="collapse"></a> <a href="#grid-config" data-toggle="modal" class="config"></a> <a href="javascript:;" class="reload"></a> <a href="javascript:;" class="remove"></a> </div>
+						 <div class="tab-content" style="margin-bottom: 0;">
+								<div class="tab-pane <%= "active" if ["information",nil].include?(params[:tab]) %>" id="information">
+								
+										<%= render 'form' %>
+								
+								</div>
+								<div class="tab-pane <%= "active" if params[:tab] == "attendance" %>" id="attendance">
+										
+										<%= form_tag("", {class: "listing_form", method: "post", target: "_blank"}) do |f| %>
+										
+												<style>
+														.seminar-contact-filter, .type-contact-filter {
+																position: absolute;
+																top: -90000px;
+														}
+												</style>
+												
+                                                
+                                                <h4><span class="semi-bold">Add contact(s) to seminar</span></h4>
+                                                <div class="row">                  
+													<div class="col-md-9">                                                        
+                                                        <div class="input-with-icon student-add-box right" style="width:100%">
+                                                              <div class="input-with_add_but add-students-input">
+                                                                   <%= link_to '<i class="icon-plus"></i>'.html_safe, new_contact_path(is_individual: true, tab_page: 1), title: "New Contact", :class => 'btn btn-sm btn-small btn-white add-agent-button tab_page' %>
+                                                                   <input style="width:100%;margin-bottom: 5px;" name="contacts" data="<%= contacts_path(format: "json", is_individual: true, email: true) %>" class="select2-ajax-contacts multiple" />
+                                                              </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-3">
+                                                        <%= link_to 'Add', "#add", rel: @seminar.id, :class => 'btn btn-primary add_contact_to_seminar_but' %>
+                                                    </div>
+                                                </div>
+                                                <br style="clear: both" />
+                                                
+                                                
+                                                
+																		
+                                                
+                                                <h4><span class="semi-bold">Listing Contacts</span></h4>
+                                                <%= render "contacts/filters" %>
+												<div class="row">                  
+														<div class="col-md-12">
+																
+																<div class="listing_box_actions">
+																	<div class="btn-group listing_actions"> <a href="#" data-toggle="dropdown" class="btn btn-white dropdown-toggle btn-demo-space"> List Actions (<span class="listing_checked_count">0</span>)<span class="caret"></span> </a>
+																		<ul class="dropdown-menu">
+                                                                            <li><a sid="<%= @seminar.id %>" class="remove_contacts_from_seminar_but" href="#" rel="">Remove from this seminar</a></li>
+																			<li><a href="#" rel="<%= export_list_contacts_path(format: "xls") %>">Export List (Excel)</a></li>                                                                            
+																		</ul>
+																	</div>
+																	<div class="checkbox check-default check_all_page_but" style="display: inline-block">
+																		<input name="check_all_page" id="checkbox_all_page" type="checkbox" value="all_page" class="check_all_page">
+																		<label for="checkbox_all_page">Select All Pages</label>
+																	</div>
+                                                                    
+                                                                    
+                                             
+																	
+																</div>
+															<div class="grid simple ">
+																<div class="grid-body no-border">
+																	 
+																		<table class="table table-striped no-more-tables datatable-seminar-students no-filter">
+																			<thead>
+																				<tr>
+																						<th width="1%">
+																								<div class="checkbox check-default">
+																									<input id="checkbox_all" type="checkbox" value="all" class="checkall">
+																									<label for="checkbox_all"></label>
+																								</div>
+																						</th>
+																						<th width="1%" class="text-left">Avatar</th>
+																						<th class="text-left">Name</th>
+																						<th class="text-left">Info</th>
+																						<th class="text-left">Program</th>
+																						<th class="text-center">Course</th>
+																						<!--<th class="text-left">Company</th>-->
+																						<th class="text-center">Tag</th>
+																						<th class="text-center">Joined Date</th>
+																						<th class="text-right">Actions</th>
+																				</tr>
+																			</thead>
+																			<tbody>
+																			  
+																				
+															
+																			</tbody>
+																		</table>
+																</div>
+															</div>
+												
+									
+									
+														</div>
+													</div>
+										<% end %>
+										
+								</div>
+						 </div>
+								  
+					</div>
+					
+				
+              </div>
+            </div>		
+      </div>

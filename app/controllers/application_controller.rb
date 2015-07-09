@@ -34,6 +34,12 @@ class ApplicationController < ActionController::Base
     end
   end
   
+  #def headshot_post_save(file_path)
+  #  @headshot_photo = HeadshotPhoto.new
+  #  @headshot_photo.image = File.new(file_path)
+  #  @headshot_photo.save
+  #end 
+  
   protected
   
   def configure_devise_permitted_parameters

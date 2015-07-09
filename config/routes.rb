@@ -1,4 +1,13 @@
 Hkerp::Application.routes.draw do
+  post "headshot/capture" => 'headshot#capture', :as => :headshot_capture
+  resources :contacts_seminars
+  resources :seminars do
+    collection do
+      get :datatable
+      get :add_contacts
+      get :remove_contacts
+    end
+  end
   resources :contacts_courses
   resources :course_registers
   resources :course_types_subjects
@@ -109,6 +118,7 @@ Hkerp::Application.routes.draw do
       
       get :ajax_quick_info
       get :course_students
+      get :seminar_students
       post :export_list
       get :related_info_box
     end

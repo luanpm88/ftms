@@ -1,8 +1,8 @@
        <div class="row">
-            <div class="col-md-6">
+            <div class="col-md-12">
               <div class="grid simple">
                 <div class="grid-title no-border">
-                  <h4>Book <span class="semi-bold">Details</span></h4>
+                  <h4><span class="semi-bold">Details</span></h4>
                   
                 </div>     
                 
@@ -35,7 +35,7 @@
 					<%= hidden_field_tag("tab_page", 1) if params[:tab_page] %>
 					
 					<div class="row">
-						 <div class="col-md-12">
+						 <div class="col-md-3">
                               
                               <div class="form-group">
 								   <label class="form-label"><%= f.label :cover %></label>
@@ -63,28 +63,58 @@
 								   </div>
 							   </div>
                           
-                              <div class="form-group">
-                                    <label class="form-label"><%= f.label :name %></label>
-                                    <span class="help">(required)</span>
-                                    <div class="input-with-icon  right">                                       
-                                      <i class=""></i>
-                                      <%= f.text_field :name, :class => "form-control required" %>
-                                    </div>
-                              </div>
                               
-							  <div class="form-group">
-								<label class="form-label"><%= f.label :description %></label>
-								<span class="help"></span>
-								<div class="input-with-icon  right">                                       
-									<i class=""></i>
-									  <%= f.text_area :description, :class => "form-control" %>
-								</div>
-							  </div>
 							  
 							  
 							  
 						 </div>
 						 
+						 <div class="col-md-9">
+							  
+							  <div class="row">
+								   <div class="col-md-6">
+							  
+										<div class="form-group">
+											  <label class="form-label"><%= f.label :title %></label>
+											  <span class="help">(required)</span>
+											  <div class="input-with-icon  right">                                       
+												<i class=""></i>
+												<%= f.text_field :name, :class => "form-control required" %>
+											  </div>
+										</div>
+										
+										<% if !@book.parent.nil? %>
+											 <div class="form-group">
+											   <label class="form-label"><%= f.label :parent %></label>
+											   <span class="help"></span>
+											   <div class="input-with-icon  right">                                       
+												   <i class=""></i>
+												   <div class="input-with_add_but">
+													   <%= link_to '<i class="icon-plus"></i>'.html_safe, new_book_path, title: "New Book", :class => 'btn btn-sm btn-small btn-white tab_page' %>
+													   <input style="width:100%;margin-bottom: 5px;" name="book[parent_id]" data="<%= books_path(format: "json") %>" class="select2-ajax-books" value="<%= @book.parent_id %>" text="<%= @book.parent.name if !@book.parent.nil? %>" />
+												  </div>
+											   </div>
+											 </div>
+										<% end %>
+										
+										
+								   </div>
+								   
+								   <div class="col-md-6">
+										<div class="form-group">
+										  <label class="form-label"><%= f.label :publisher %></label>
+										  <span class="help"></span>
+										  <div class="input-with-icon  right">                                       
+											  <i class=""></i>
+												<%= f.text_field :publisher, :class => "form-control", value: (@book.parent.nil? ? @book.parent.publisher : "") %>
+										  </div>
+										</div>
+										
+								   </div>
+								   
+							  </div>
+							  
+						 </div>
 						 
 						 
 					</div>

@@ -7,7 +7,11 @@
                     </li>
       </ul>
       <div class="page-title"> <i class="icon-edit"></i>
-        <h3>New <span class="semi-bold">Book</span></h3>
+		<% if @book.parent.nil? %>
+				<h3>New <span class="semi-bold">Book</span></h3>
+		<% else %>
+				<h3><span class="semi-bold"><%= @book.parent.name %></span> - New Volumn</h3>
+		<% end %>
       </div>
       
 
