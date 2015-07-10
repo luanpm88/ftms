@@ -170,10 +170,10 @@ class Course < ActiveRecord::Base
               "", 
             ]
       
-      if course_arr.include?(item.id)
+      #if !course_arr.include?(item.id)
         data << itemz
         course_arr << item.id
-      end
+      #end
       
     end
     
