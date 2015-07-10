@@ -159,6 +159,7 @@ class Course < ActiveRecord::Base
     data = []
     
     actions_col = 5
+    course_arr = []
     @records.each do |item|
       item = [
               '<div class="text-left nowrap">'+item.display_intake+"</div>",
@@ -168,7 +169,11 @@ class Course < ActiveRecord::Base
               '<div class="text-center">'+item.course_register(@student).created_date.strftime("%d-%b-%Y")+"</div>",
               "", 
             ]
-      data << item
+      
+      if !course_arr.include?(item.id)
+        data << item
+        course_arr << item.id
+      end
       
     end
     
