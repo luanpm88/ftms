@@ -158,9 +158,10 @@ class Course < ActiveRecord::Base
     @records = @records.limit(params[:length]).offset(params["start"])
     data = []
     
-    total = -1
+    total = 0
     actions_col = 5
     course_arr = []
+    @recordsz = []
     @records.each do |item|
       itemz = [
               '<div class="text-left nowrap">'+item.display_intake+"</div>",
@@ -175,6 +176,7 @@ class Course < ActiveRecord::Base
         data << itemz
         course_arr << item.id
         total += 1
+        @recordsz << item
       end
       
     end
@@ -186,7 +188,7 @@ class Course < ActiveRecord::Base
     }
     result["data"] = data
     
-    return {result: result, items: @records, actions_col: actions_col}
+    return {result: result, items: @recordsz, actions_col: actions_col}
     
   end
   
