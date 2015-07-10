@@ -152,7 +152,7 @@ class Course < ActiveRecord::Base
     
     @records = @records.order(order) if !order.nil?
     
-    @records = @records.distinct
+    @records = @records.group_by(&:course)
     
     total = @records.count
     @records = @records.limit(params[:length]).offset(params["start"])
