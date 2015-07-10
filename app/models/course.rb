@@ -14,6 +14,7 @@ class Course < ActiveRecord::Base
   
   has_and_belongs_to_many :contacts
   has_many :contacts_courses
+  has_one :contacts_course
   
   pg_search_scope :search,
                   against: [:description],
@@ -129,7 +130,7 @@ class Course < ActiveRecord::Base
     
     @records =  self.filters(params, user)
     
-    @records = @records.joins(:contacts_courses)
+    @records = @records.joins(:contacts_course => :course_register)
     @records = @records.where(contacts_courses: {contact_id: @student.id})
     
     
@@ -141,13 +142,13 @@ class Course < ActiveRecord::Base
       when "1"
         order = "course_types.short_name #{params["order"]["0"]["dir"]}, subjects.name"
       when "4"
-        order = "contacts_courses.created_at"
+        order = "course_registers.created_date"
       else
-        order = "contacts_courses.created_at"
+        order = "course_registers.created_date"
       end
       order += " "+params["order"]["0"]["dir"] if !["0","1"].include?(params["order"]["0"]["column"])
     else
-      order = "contacts_courses.created_at DESC"
+      order = "course_registers.created_date DESC"
     end
     
     @records = @records.order(order) if !order.nil?
