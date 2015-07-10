@@ -166,13 +166,13 @@ class Contact < ActiveRecord::Base
     if !params["order"].nil?
       case params["order"]["0"]["column"]
       when "2"
-        order = "contacts.first_name #{params["order"]["0"]["dir"]}, contacts.last_name #{params["order"]["0"]["dir"]}"
+        order = "contacts.name"
       else
-        order = "contacts.first_name"
+        order = "contacts.name"
       end
-      order += " "+params["order"]["0"]["dir"] if params["order"]["0"]["column"] == 3
+      order += " "+params["order"]["0"]["dir"]
     else
-      order = "contacts.first_name, contacts.last_name"
+      order = "contacts.name"
     end
     @records = @records.order(order) if !order.nil?    
     
@@ -185,7 +185,7 @@ class Contact < ActiveRecord::Base
       item = [
               "<div class=\"checkbox check-default\"><input name=\"ids[]\" id=\"checkbox#{item.id}\" type=\"checkbox\" value=\"#{item.id}\"><label for=\"checkbox#{item.id}\"></label></div>",
               item.picture_link,
-              '<div class="text-left">'+item.contact_link+"</div>",
+              '<div class="text-left nowrap">'+item.contact_link+"</div>",
               '<div class="text-left">'+item.html_info_line.html_safe+item.referrer_link+"</div>",              
               '<div class="text-center">'+item.contact_type_name+"</div>",
               '<div class="text-center">'+item.course_types_name+"</div>",
@@ -218,14 +218,14 @@ class Contact < ActiveRecord::Base
     
     if !params["order"].nil?
       case params["order"]["0"]["column"]
-      when "1"
-        order = "contacts.first_name #{params["order"]["0"]["dir"]}, contacts.last_name #{params["order"]["0"]["dir"]}"
+      when "2"
+        order = "contacts.name"
       else
-        order = "contacts.first_name"
+        order = "contacts.name"
       end
-      order += " "+params["order"]["0"]["dir"] if params["order"]["0"]["column"] == 3
+      order += " "+params["order"]["0"]["dir"]
     else
-      order = "contacts.first_name, contacts.last_name"
+      order = "contacts.name"
     end
     @records = @records.order(order) if !order.nil?    
     
@@ -271,14 +271,14 @@ class Contact < ActiveRecord::Base
     
     if !params["order"].nil?
       case params["order"]["0"]["column"]
-      when "1"
-        order = "contacts.first_name #{params["order"]["0"]["dir"]}, contacts.last_name #{params["order"]["0"]["dir"]}"
+      when "2"
+        order = "contacts.name"
       else
-        order = "contacts.first_name"
+        order = "contacts.name"
       end
-      order += " "+params["order"]["0"]["dir"] if params["order"]["0"]["column"] == 3
+      order += " "+params["order"]["0"]["dir"]
     else
-      order = "contacts.first_name, contacts.last_name"
+      order = "contacts.name"
     end
     @records = @records.order(order) if !order.nil?    
     
