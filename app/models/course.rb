@@ -141,13 +141,13 @@ class Course < ActiveRecord::Base
       when "1"
         order = "course_types.short_name #{params["order"]["0"]["dir"]}, subjects.name"
       when "4"
-        order = "contacts_courses.created_date"
+        order = "contacts_courses.created_at"
       else
-        order = "contacts_courses.created_date"
+        order = "contacts_courses.created_at"
       end
       order += " "+params["order"]["0"]["dir"] if !["0","1"].include?(params["order"]["0"]["column"])
     else
-      order = "contacts_courses.created_date DESC"
+      order = "contacts_courses.created_at DESC"
     end
     
     @records = @records.order(order) if !order.nil?
