@@ -127,7 +127,7 @@ class Course < ActiveRecord::Base
     
     @student = Contact.find(params[:students])
     
-    @records =  self.filters(params, user).select("DISTINCT courses.*")
+    @records =  self.filters(params, user)
     
     @records = @records.joins(:contacts_courses => :course_register)
     @records = @records.where(contacts_courses: {contact_id: @student.id})
@@ -159,7 +159,7 @@ class Course < ActiveRecord::Base
     data = []
     
     actions_col = 5
-    @records.each do |item|
+    @records.uniq{|x| x.id}.each do |item|
       item = [
               '<div class="text-left nowrap">'+item.display_intake+"</div>",
               '<div class="text-left nowrap">'+item.program_paper_name+"</div>",
