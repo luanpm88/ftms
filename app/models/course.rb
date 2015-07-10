@@ -14,7 +14,6 @@ class Course < ActiveRecord::Base
   
   has_and_belongs_to_many :contacts
   has_many :contacts_courses
-  has_one :contacts_course
   
   pg_search_scope :search,
                   against: [:description],
@@ -130,7 +129,7 @@ class Course < ActiveRecord::Base
     
     @records =  self.filters(params, user)
     
-    @records = @records.joins(:contacts_course => :course_register)
+    @records = @records.joins(:contacts_courses => :course_register)
     @records = @records.where(contacts_courses: {contact_id: @student.id})
     
     
@@ -160,7 +159,7 @@ class Course < ActiveRecord::Base
     data = []
     
     actions_col = 5
-    @records.each do |item|
+    @records.group("courses.id").each do |item|
       item = [
               '<div class="text-left nowrap">'+item.display_intake+"</div>",
               '<div class="text-left nowrap">'+item.program_paper_name+"</div>",
