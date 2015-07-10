@@ -127,7 +127,7 @@ class Course < ActiveRecord::Base
     
     @student = Contact.find(params[:students])
     
-    @records =  self.filters(params, user)
+    @records =  self.filters(params, user).select("DISTINCT courses.*")
     
     @records = @records.joins(:contacts_courses => :course_register)
     @records = @records.where(contacts_courses: {contact_id: @student.id})
@@ -152,7 +152,7 @@ class Course < ActiveRecord::Base
     
     @records = @records.order(order) if !order.nil?
     
-    @records = @records.group_by(&:course)
+    #@records = @records.group_by(&:course)
     
     total = @records.count
     @records = @records.limit(params[:length]).offset(params["start"])
