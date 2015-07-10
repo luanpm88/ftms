@@ -187,7 +187,7 @@ class Course < ActiveRecord::Base
   
   
   def display_name
-    display_intake#+"-"+program_paper_name
+    display_intake+"-"+program_paper_name
   end
   
   def display_lecturer
