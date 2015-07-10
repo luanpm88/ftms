@@ -158,7 +158,7 @@ class Course < ActiveRecord::Base
     @records = @records.limit(params[:length]).offset(params["start"])
     data = []
     
-    total = 0
+    total = -1
     actions_col = 5
     course_arr = []
     @records.each do |item|
