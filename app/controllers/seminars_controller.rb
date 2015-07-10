@@ -50,10 +50,10 @@ class SeminarsController < ApplicationController
 
     respond_to do |format|
       if @seminar.save
-        format.html { redirect_to @seminar, notice: 'Seminar was successfully created.' }
+        format.html { redirect_to params[:tab_page].present? ? "/home/close_tab" : @seminar, notice: 'Seminar was successfully created.' }
         format.json { render action: 'show', status: :created, location: @seminar }
       else
-        format.html { render action: 'new' }
+        format.html { render action: 'new', tab_page: params[:tab_page] }
         format.json { render json: @seminar.errors, status: :unprocessable_entity }
       end
     end
@@ -68,10 +68,10 @@ class SeminarsController < ApplicationController
     end
     respond_to do |format|
       if @seminar.save
-        format.html { redirect_to @seminar, notice: 'Seminar was successfully updated.' }
+        format.html { redirect_to params[:tab_page].present? ? "/home/close_tab" : @seminar, notice: 'Seminar was successfully updated.' }
         format.json { head :no_content }
       else
-        format.html { render action: 'edit' }
+        format.html { render action: 'edit', tab_page: params[:tab_page] }
         format.json { render json: @seminar.errors, status: :unprocessable_entity }
       end
     end
