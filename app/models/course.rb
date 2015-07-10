@@ -159,7 +159,7 @@ class Course < ActiveRecord::Base
     data = []
     
     actions_col = 5
-    @records.group("courses.id").each do |item|
+    @records.group("course_registers.created_date").each do |item|
       item = [
               '<div class="text-left nowrap">'+item.display_intake+"</div>",
               '<div class="text-left nowrap">'+item.program_paper_name+"</div>",
