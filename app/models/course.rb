@@ -161,7 +161,7 @@ class Course < ActiveRecord::Base
     actions_col = 5
     course_arr = []
     @records.each do |item|
-      item = [
+      itemz = [
               '<div class="text-left nowrap">'+item.display_intake+"</div>",
               '<div class="text-left nowrap">'+item.program_paper_name+"</div>",
               '<div class="text-center">'+item.student_count_link+"</div>",
@@ -171,7 +171,7 @@ class Course < ActiveRecord::Base
             ]
       
       if !course_arr.include?(item.id)
-        data << item
+        data << itemz
         course_arr << item.id
       end
       
