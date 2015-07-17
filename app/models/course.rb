@@ -170,8 +170,8 @@ class Course < ActiveRecord::Base
               '<div class="text-left nowrap">'+item.display_intake+"</div>",
               '<div class="text-left nowrap">'+item.program_paper_name+"</div>",
               #'<div class="text-center">'+item.student_count_link+"</div>",
-              '<div class="text-center nowrap">'+item.display_lecturer+"</div>",
               '<div class="text-left">'+item.courses_phrase_list_by_sudent(@student)+"</div>",
+              '<div class="text-center nowrap">'+item.display_lecturer+"</div>",              
               "", 
             ]
       
