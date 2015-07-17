@@ -51,7 +51,7 @@ class ContactsController < ApplicationController
     if (!params[:contact_type_id].nil?)
       @contact.contact_types << ContactType.find_by_id(params[:contact_type_id])
     else
-      @contact.contact_types << ContactType.student
+      @contact.contact_types << ContactType.inquiry
     end
     
     if (!params[:company_id].nil?)
