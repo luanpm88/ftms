@@ -144,7 +144,7 @@ class Course < ActiveRecord::Base
         order = "courses.intake #{params["order"]["0"]["dir"]}, course_types.short_name, subjects.name"
       when "1"
         order = "course_types.short_name #{params["order"]["0"]["dir"]}, subjects.name"
-      when "3"
+      when "4"
         order = "course_registers.created_date"
       else
         order = "course_registers.created_date"
@@ -171,7 +171,7 @@ class Course < ActiveRecord::Base
               '<div class="text-left nowrap">'+item.program_paper_name+"</div>",              
               '<div class="text-left">'+item.courses_phrase_list_by_sudent(@student)+"</div>",
               '<div class="text-center nowrap">'+item.display_lecturer+"</div>",
-              '<div class="text-center">'+item.contacts_course(@student).created_at.strftime("%d-%b-%Y")+"</div>",              
+              '<div class="text-center">'+item.course_register(@student).created_date.strftime("%d-%b-%Y")+"</div>",              
               "", 
             ]
       
