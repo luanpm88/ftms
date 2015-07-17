@@ -7,7 +7,7 @@ class Contact < ActiveRecord::Base
   validates :email, presence: true
   validates :name, presence: true
   validates :mobile, presence: true, if: :is_individual?
-  validates :birthday, presence: true, if: :is_individual?
+  #validates :birthday, presence: true, if: :is_individual?
   validates :sex, presence: true, if: :is_individual?
   validates :account_manager_id, presence: true, if: :is_individual?
   
