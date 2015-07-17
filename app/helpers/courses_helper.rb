@@ -5,9 +5,9 @@ module CoursesHelper
                     <button class="btn btn-'+size+' btn-white btn-demo-space dropdown-toggle" data-toggle="dropdown">Actions <span class="caret"></span></button>'
       actions += '<ul class="dropdown-menu">'      
       
-      if can? :read, Contact
-        actions += '<li>'+item.student_list_link+'</li>'        
-      end
+      #if can? :read, Contact
+      #  actions += '<li>'+item.student_list_link+'</li>'        
+      #end
       
       if can? :update, item
         actions += '<li>'+item.course_link("Edit", courses_path(tab_page: 1))+'</li>'        
