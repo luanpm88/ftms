@@ -3,12 +3,12 @@ class Contact < ActiveRecord::Base
   
   include PgSearch
   
-  validates :address, presence: true
+  #validates :address, presence: true
   validates :email, presence: true
   validates :name, presence: true
   validates :mobile, presence: true, if: :is_individual?
   #validates :birthday, presence: true, if: :is_individual?
-  validates :sex, presence: true, if: :is_individual?
+  #validates :sex, presence: true, if: :is_individual?
   validates :account_manager_id, presence: true, if: :is_individual?
   
   validate :not_exist
