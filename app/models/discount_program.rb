@@ -58,8 +58,8 @@ class DiscountProgram < ActiveRecord::Base
               item.name,
               item.description,
               '<div class="text-center">'+item.rate.to_s+" (%)</div>",
-              '<div class="text-center">'+item.start_at.strftime("%Y-%m-%d")+"</div>",
-              '<div class="text-center">'+item.end_at.strftime("%Y-%m-%d")+"</div>",              
+              '<div class="text-center">'+item.start_at.strftime("%d-%b-%Y")+"</div>",
+              '<div class="text-center">'+item.end_at.strftime("%d-%b-%Y")+"</div>",              
               '<div class="text-center">'+item.user.staff_col+"</div>",
               "", 
             ]

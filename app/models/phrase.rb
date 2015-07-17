@@ -63,7 +63,7 @@ class Phrase < ActiveRecord::Base
     actions_col = 5
     @records.each do |item|
       item = [
-              item.phrase_link,
+              item.name,
               '<div class="text-center">'+item.course_types_name+"</div>",
               '<div class="text-center">'+item.subjecs_name+"</div>",
               '<div class="text-center">'+item.created_at.strftime("%Y-%m-%d")+"</div>",              
