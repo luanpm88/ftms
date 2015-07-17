@@ -34,7 +34,10 @@ class PhrasesController < ApplicationController
 
   # POST /phrases
   # POST /phrases.json
-  def create
+  def create    
+    s_params = phrase_params
+    s_params[:subject_ids] = phrase_params[:subject_ids][0].split(",") if phrase_params[:subject_ids].present?
+
     @phrase = Phrase.new(phrase_params)
     @phrase.user = current_user
 
@@ -52,8 +55,10 @@ class PhrasesController < ApplicationController
   # PATCH/PUT /phrases/1
   # PATCH/PUT /phrases/1.json
   def update
+    s_params = phrase_params
+    s_params[:subject_ids] = phrase_params[:subject_ids][0].split(",") if phrase_params[:subject_ids].present?
     respond_to do |format|
-      if @phrase.update(phrase_params)
+      if @phrase.update(s_params)
         format.html { redirect_to params[:tab_page].present? ? "/home/close_tab" : @phrase, notice: 'Phrase was successfully updated.' }
         format.json { head :no_content }
       else
@@ -92,6 +97,6 @@ class PhrasesController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def phrase_params
-      params.require(:phrase).permit(:name, :subject_ids => [])
+      params.require(:phrase).permit(:name, :description, :subject_ids => [])
     end
 end

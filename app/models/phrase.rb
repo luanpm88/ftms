@@ -63,7 +63,7 @@ class Phrase < ActiveRecord::Base
     actions_col = 5
     @records.each do |item|
       item = [
-              item.name,
+              item.phrase_link,
               '<div class="text-center">'+item.course_types_name+"</div>",
               '<div class="text-center">'+item.subjecs_name+"</div>",
               '<div class="text-center">'+item.created_at.strftime("%Y-%m-%d")+"</div>",              
@@ -100,5 +100,9 @@ class Phrase < ActiveRecord::Base
   
   def self.full_text_search(q)
     self.search(q).limit(50).map {|model| {:id => model.id, :text => model.name} }
+  end
+  
+  def phrase_link
+    ActionController::Base.helpers.link_to(self.name, {controller: "phrases", action: "edit", id: self.id, tab_page: 1}, title: self.name, class: "tab_page")
   end
 end
