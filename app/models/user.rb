@@ -17,6 +17,7 @@ class User < ActiveRecord::Base
   
   has_many :course_types
   has_many :subjects
+  has_many :students, class_name: "Contact", :foreign_key => "account_manager_id"
   
   validates :first_name, presence: true
   validates :last_name, presence: true

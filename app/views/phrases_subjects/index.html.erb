@@ -1,0 +1,29 @@
+<p id="notice"><%= notice %></p>
+
+<h1>Listing Phrases Subjects</h1>
+
+<table>
+  <thead>
+    <tr>
+      <th>Phrase</th>
+      <th>Subject</th>
+      <th colspan="3"></th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% @phrases_subjects.each do |phrases_subject| %>
+      <tr>
+        <td><%= phrases_subject.phrase_id %></td>
+        <td><%= phrases_subject.subject_id %></td>
+        <td><%= link_to 'Show', phrases_subject %></td>
+        <td><%= link_to 'Edit', edit_phrases_subject_path(phrases_subject) %></td>
+        <td><%= link_to 'Destroy', phrases_subject, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<br>
+
+<%= link_to 'New Phrases subject', new_phrases_subject_path %>

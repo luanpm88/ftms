@@ -6,12 +6,12 @@ module ContactsHelper
                     <button class="btn btn-'+size+' btn-white btn-demo-space dropdown-toggle" data-toggle="dropdown">Actions <span class="caret"></span></button>'
       actions += '<ul class="dropdown-menu">'      
       
-      if can? :read, Course
-        actions += '<li>'+item.course_list_link+'</li>'        
-      end
+      #if can? :read, Course
+      #  actions += '<li>'+item.course_list_link+'</li>'        
+      #end
       
       if can? :course_register, item
-        actions += '<li>'+ActionController::Base.helpers.link_to('Course Register', {controller: "course_registers", action: "new", contact_id: item.id, tab_page: 1}, title: "#{item.display_name}: Course Register", class: "tab_page")+'</li>'        
+        actions += '<li>'+ActionController::Base.helpers.link_to('Add Course', {controller: "course_registers", action: "new", contact_id: item.id, tab_page: 1}, title: "#{item.display_name}: Course Register", class: "tab_page")+'</li>'        
       end
       
       

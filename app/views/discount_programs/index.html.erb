@@ -1,0 +1,41 @@
+                <ul class="breadcrumb">
+                    <li>
+                        <p>YOU ARE HERE</p>
+                    </li> 
+                    <li><%= link_to 'Discount Program', discount_programs_url, :class => "active" %></li>
+                </ul>
+                <div class="page-title">
+                        <i class="icon-money"></i>
+                    	<h3>Discount - <span class="semi-bold"> Program</span></h3>	
+                </div>
+                
+                <div class="row">
+                    <div class="col-md-12">
+                        <%= link_to 'New Discount Program', new_discount_program_path(tab_page: 1), psrc: discount_programs_path(tab_page:1), title: "New Discount Program", :class => 'btn btn-primary btn-cons tab_page' %>
+                        <div class="grid simple ">
+                            <div class="grid-title no-border">
+                                <h4>Listing  <span class="semi-bold">Discount Program</span></h4>
+                                
+                            </div>
+                            <div class="grid-body no-border">
+                                 
+                                    <table class="table table-striped no-more-tables datatable-discount-programs no-filter">
+                                        <thead>
+                                            <tr>                                                
+												<th>Name</th>
+                                                <th>Description</th>
+												<th class="text-center">Rate</th>
+                                                <th class="text-center">Start At</th>
+                                                <th class="text-center">End At</th>
+												<th class="text-center" width="1%">Creator</th>
+												<th class="text-right" width="1%">Actions</th>
+                                            </tr>
+                                        </thead>                                        
+                                    </table>
+                            </div>
+                        </div>
+			
+                    </div>
+		    
+                </div>
+

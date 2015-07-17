@@ -3,7 +3,7 @@ class CoursesController < ApplicationController
   
   load_and_authorize_resource
   
-  before_action :set_course, only: [:show, :edit, :update, :destroy]
+  before_action :set_course, only: [:courses_phrases_checkboxs, :show, :edit, :update, :destroy]
 
   # GET /courses
   # GET /courses.json
@@ -64,6 +64,9 @@ class CoursesController < ApplicationController
     
     respond_to do |format|
       if @course.save
+        
+        @course.update_courses_phrases(params[:courses_phrases])
+        
         format.html { redirect_to params[:tab_page].present? ? "/home/close_tab" : @course, notice: 'Course was successfully updated.' }
         format.json { head :no_content }
       else
@@ -105,7 +108,10 @@ class CoursesController < ApplicationController
     render json: result[:result]
   end
   
-  
+  def courses_phrases_checkboxs
+    
+    render layout: nil
+  end
 
   private
     # Use callbacks to share common setup or constraints between actions.

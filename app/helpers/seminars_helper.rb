@@ -5,6 +5,10 @@ module SeminarsHelper
                     <button class="btn btn-'+size+' btn-white btn-demo-space dropdown-toggle" data-toggle="dropdown">Actions <span class="caret"></span></button>'
       actions += '<ul class="dropdown-menu">'      
       
+      if can? :import_list, item
+        actions += '<li>'+ActionController::Base.helpers.link_to('Import List', {controller: "seminars", action: "import_list", id: item.id, tab_page: 1}, psrc: seminars_path(tab_page: 1), title: item.name+": Import List", class: "tab_page")+'</li>'        
+      end
+      
       if can? :update, item
         actions += '<li>'+ActionController::Base.helpers.link_to('Edit', {controller: "seminars", action: "edit", id: item.id, tab_page: 1}, psrc: seminars_path(tab_page: 1), title: item.name, class: "tab_page")+'</li>'        
       end

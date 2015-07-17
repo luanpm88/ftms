@@ -5,12 +5,11 @@ class Contact < ActiveRecord::Base
   
   validates :address, presence: true
   validates :email, presence: true
+  validates :name, presence: true
   validates :mobile, presence: true, if: :is_individual?
-  validates :name, presence: true #, :if => :is_not_individual?
-  #validates :first_name, presence: true, if: :is_individual?
-  #validates :last_name, presence: true, if: :is_individual?
   validates :birthday, presence: true, if: :is_individual?
   validates :sex, presence: true, if: :is_individual?
+  validates :account_manager_id, presence: true, if: :is_individual?
   
   validate :not_exist
   
@@ -48,6 +47,10 @@ class Contact < ActiveRecord::Base
   has_many :contacts_seminars
   has_and_belongs_to_many :seminars
   
+  belongs_to :account_manager, :class_name => "User"
+  
+  has_and_belongs_to_many :course_types
+  
   
   after_validation :update_cache
   
@@ -82,13 +85,28 @@ class Contact < ActiveRecord::Base
       exist += Contact.where("LOWER(name) = ?", name.downcase) if name.present?
     end
     
-    if exist.length > 0 && !self.id.present?
-      cs = []
-      exist.each do |c|
-        cs << c.contact_link
-      end
+    if !exist_contacts.empty?
+      cs = exist_contacts.map {|c| c.contact_link}
       errors.add(:base, "There are/is contact(s) with the same information: #{cs.join(";")}".html_safe)
     end
+  end
+  
+  def exist_contacts
+    exist = []    
+    if is_individual
+      exist += Contact.where("(LOWER(name) = ? AND LOWER(email) = ?) OR (LOWER(name) = ? AND LOWER(mobile) = ?)", name.downcase, email.downcase, name.downcase, mobile.downcase)
+    else
+      exist += Contact.where("LOWER(name) = ?", name.downcase) if name.present?
+    end
+    
+    cs = []
+    if exist.length > 0 && !self.id.present?      
+      exist.each do |c|
+        cs << c
+      end      
+    end
+    
+    return cs
   end
   
   def self.filters(params, user)
@@ -180,18 +198,18 @@ class Contact < ActiveRecord::Base
     @records = @records.limit(params[:length]).offset(params["start"])
     data = []
     
-    actions_col = 8
+    actions_col = 9
     @records.each do |item|
       item = [
               "<div class=\"checkbox check-default\"><input name=\"ids[]\" id=\"checkbox#{item.id}\" type=\"checkbox\" value=\"#{item.id}\"><label for=\"checkbox#{item.id}\"></label></div>",
               item.picture_link,
-              '<div class="text-left nowrap">'+item.contact_link+"</div>",
+              '<div class="text-left">'+item.contact_link+"</div>",
               '<div class="text-left">'+item.html_info_line.html_safe+item.referrer_link+"</div>",              
               '<div class="text-center">'+item.contact_type_name+"</div>",
               '<div class="text-center">'+item.course_types_name+"</div>",
               '<div class="text-center">'+item.course_count_link+"</div>",
               '<div class="text-center contact_tag_box" rel="'+item.id.to_s+'">'+ContactsController.helpers.render_contact_tags_selecter(item)+"</div>",
-              #'<div class="text-center">'+item.user.staff_col+"</div>",
+              '<div class="text-center">'+item.account_manager_col+"</div>",
               '',
             ]
       data << item
@@ -206,6 +224,10 @@ class Contact < ActiveRecord::Base
     result["data"] = data
     
     return {result: result, items: @records, actions_col: actions_col}
+  end
+  
+  def account_manager_col
+    !account_manager.nil? ? account_manager.staff_col : ""
   end
   
   def self.course_students(params, user)
@@ -238,7 +260,7 @@ class Contact < ActiveRecord::Base
       item = [
               "<div class=\"checkbox check-default\"><input name=\"ids[]\" id=\"checkbox#{item.id}\" type=\"checkbox\" value=\"#{item.id}\"><label for=\"checkbox#{item.id}\"></label></div>",
               item.picture_link,
-              '<div class="text-left nowrap">'+item.contact_link+"</div>",
+              '<div class="text-left">'+item.contact_link+"</div>",
               '<div class="text-left">'+item.html_info_line.html_safe+item.referrer_link+"</div>",               
               '<div class="text-center">'+item.course_types_name+"</div>",
               '<div class="text-center">'+item.course_count_link+"</div>",
@@ -291,13 +313,13 @@ class Contact < ActiveRecord::Base
       item = [
               "<div class=\"checkbox check-default\"><input name=\"ids[]\" id=\"checkbox#{item.id}\" type=\"checkbox\" value=\"#{item.id}\"><label for=\"checkbox#{item.id}\"></label></div>",
               item.picture_link,
-              '<div class="text-left nowrap">'+item.contact_link+"</div>",
+              '<div class="text-left">'+item.contact_link+"</div>",
               '<div class="text-left">'+item.html_info_line.html_safe+item.referrer_link+"</div>",               
               '<div class="text-center">'+item.course_types_name+"</div>",
               '<div class="text-center">'+item.course_count_link+"</div>",
               #'<div class="text-left">'+item.referrer_link+"</div>",
               '<div class="text-center contact_tag_box" rel="'+item.id.to_s+'">'+ContactsController.helpers.render_contact_tags_selecter(item)+"</div>",
-              '<div class="text-center">'+item.contacts_seminar(@seminar).created_at.strftime("%d-%b-%Y")+"</div>",
+              '<div class="text-center">'+item.display_present_with_seminar(@seminar)+"</div>",
               "<div class=\"text-right\"><div rel=\"#{@seminar.id}\" contact_ids=\"#{item.id}\" class=\"remove_contact_from_seminar_but btn btn-mini btn-danger\">Remove</div></div>",
             ]
       data << item
@@ -312,6 +334,20 @@ class Contact < ActiveRecord::Base
     result["data"] = data
     
     return {result: result, items: @records, actions_col: actions_col}
+  end
+  
+  def display_present_with_seminar(seminar)
+    ActionView::Base.send(:include, Rails.application.routes.url_helpers)
+    link_helper = ActionController::Base.helpers
+    
+    url = link_helper.url_for({controller: "seminars", action: "check_contact", value: !present_with_seminar?(seminar), id: seminar.id, contact_id: self.id})
+    
+    ApplicationController.helpers.check_ajax_button(present_with_seminar?(seminar), url)    
+  end
+  
+  def present_with_seminar?(seminar)
+    cs = contacts_seminar(seminar)
+    cs.nil? ? false : cs.present?
   end
   
   def contacts_seminar(seminar)
@@ -349,11 +385,20 @@ class Contact < ActiveRecord::Base
   
   def contact_type_name
     if is_individual
+      result = ""
       if !contact_types.empty?
-        contact_types.map(&:name).join(", ")
+        result += contact_types.map(&:name).join(", ")
       else
-        "none"
+        result += "none"
       end
+      
+      if !course_types.empty?
+        result += "<div class=\"text-center\"><label class=\"col_label text-center\">Inquiry:</label>"
+        result += course_types.map(&:short_name).join(", ")
+        result += "</div>"
+      end
+      
+      return result
     else
       "Company/Organization"
     end    
@@ -683,6 +728,14 @@ class Contact < ActiveRecord::Base
     course_list_link("["+courses.count.to_s+"]")
   end
   
+  def json_encode_course_type_ids_names
+    json = course_types.map {|t| {id: t.id.to_s, text: t.short_name}}
+    json.to_json
+  end
   
+  def set_present_in_seminar(seminar, checked)
+    contacts_seminar = seminar.contacts_seminars.where(contact_id: self.id).first    
+    contacts_seminar.update_attribute(:present, checked)
+  end
   
 end

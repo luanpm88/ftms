@@ -6,9 +6,10 @@ class Subject < ActiveRecord::Base
   belongs_to :user
   
   has_and_belongs_to_many :course_types
+  has_and_belongs_to_many :phrases
   
   pg_search_scope :search,
-                  against: [:name, :description],                
+                  against: [:name, :description],
                   using: {
                       tsearch: {
                         dictionary: 'english',
@@ -79,7 +80,7 @@ class Subject < ActiveRecord::Base
     self.search(q).limit(50).map {|model| {:id => model.id, :text => model.name} }
   end
   
-  def json_encode_ids_names
+  def json_encode_course_type_ids_names
     json = course_types.map {|t| {id: t.id.to_s, text: t.short_name}}
     json.to_json
   end

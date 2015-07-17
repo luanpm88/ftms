@@ -109,6 +109,7 @@ class Ability
       can :create, Course
       can :update, Course
       can :student_courses, Course
+      can :courses_phrases_checkboxs, Course
       
       can :update, Contact
       can :update_tag, Contact
@@ -133,7 +134,7 @@ class Ability
       can :update, CourseRegister
       
       can :course_register, Contact do |contact|
-        contact.contact_types.include?(ContactType.student)
+        contact.contact_types.include?(ContactType.student) || contact.contact_types.include?(ContactType.inquiry)
       end
       
       can :datatable, Seminar
@@ -142,8 +143,21 @@ class Ability
       can :update, Seminar
       can :add_contacts, Seminar
       can :remove_contacts, Seminar
+      can :check_contact, Seminar
       
       can :seminar_features, Seminar
+      
+      can :datatable, Phrase
+      can :read, Phrase
+      can :create, Phrase
+      can :update, Phrase
+      
+      can :datatable, DiscountProgram
+      can :read, DiscountProgram
+      can :create, DiscountProgram
+      can :update, DiscountProgram
+      
+      can :import_list, Seminar
     end
     
   end

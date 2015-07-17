@@ -1,0 +1,180 @@
+<ul class="breadcrumb">
+        <li>
+          <p>YOU ARE HERE</p>
+        </li>
+                    <li>
+			<%= link_to 'Seminar Management', seminars_url %>
+                    </li>
+      </ul>
+      <div class="page-title"> <i class="icon-edit"></i>
+        <h3>Import List - <span class="semi-bold"><%= @seminar.name %></span></h3>
+      </div>
+      
+		
+		<% if !@list.nil? %>
+				<div class="row">
+						<div class="col-md-12">								
+								<h4><span class="semi-bold">Statistic</span></h4>
+										
+								<p><strong>Total: <span class="new_imported"><%= @list[:total] %></span></strong></p>
+								<p><strong>New Imported: <span class="new_imported"><%= @list[:new_count] %></span></strong></p>
+								<p><strong>Old Imported: <span class="new_imported"><%= @list[:old_count] %></span></strong></p>
+								<p><strong>Not Sure: <span class="new_imported"><%= @list[:waiting_count] %></span></strong></p>
+								<br />
+								
+								<h4><span class="semi-bold">Listing Result</span></h4>
+								<table class="table">
+										<tr>
+												<th>Name</th>
+												<th>Company</th>
+												<th>Mobile</th>
+												<th>Email</th>
+												<th class="text-center">Present?</th>
+												<th class="text-center">Status</th>
+												<th class="text-right">Actions</th>
+										</tr>
+										<% @list[:list].each do |row| %>
+												<tr class="raw_rol row_<%= row[:status] %>">
+														<td>
+																<%= row[:name] %>
+														</td>
+														<td>
+																<%= row[:company] %>
+														</td>
+														<td>
+																<%= row[:mobile] %>
+														</td>
+														<td>
+																<%= row[:email] %>
+														</td>
+														<td class="text-center">
+																<% if row[:present].present? %>
+																		<a class="check-radio ajax-check-radio" href="#"><i class="true icon-check"></i></a>
+																<% else %>
+																		<a class="check-radio ajax-check-radio" href="#"><i class="false icon-check-empty"></i></a>
+																<% end %>
+														</td>
+														<td class="text-center">
+																<% if ["not_sure"].include?(row[:status]) %>
+																		<span class="<%= row[:status] %>">Not Sure</span>
+																<% end %>
+																<% if ["new_imported"].include?(row[:status]) %>
+																		<span class="<%= row[:status] %>">New Imported</span>
+																<% end %>
+														</td>
+														<td class="text-right">
+																<% if !["new_imported","old_imported"].include?(row[:status])  %>
+																		<a href="#" class="btn btn-mini btn-primary">Use This</a>
+																		<!--<a href="#" class="btn btn-mini btn-white" title="Announce to Account Manager">Announce</a>-->
+																<% end %>
+														</td>
+														
+												</tr>
+												<% row[:contacts].each do |contact| %>
+														<tr class="dark_row row_<%= row[:status] %>">
+																<td>
+																		<i class="icon-long-arrow-right"></i> <%= contact.contact_link %>
+																</td>
+																<td>
+																		<%= contact.referrer_link %>
+																</td>
+																<td>
+																		<%= contact.mobile %>
+																</td>
+																<td>
+																		<%= contact.email %>
+																</td>
+																<td class="text-center">
+																		<% if row[:selected_id] == contact.id && ["new_imported","old_imported"].include?(row[:status]) %>
+																				<a class="check-radio ajax-check-radio" href="#"><i class="true icon-check"></i></a>
+																		<% elsif ["new_imported","old_imported"].include?(row[:status]) %>
+																				<a class="check-radio ajax-check-radio" href="#"><i class="false icon-check-empty"></i></a>
+																		<% end %>
+																</td>
+																<td class="text-center">
+																		<%= "<span class=\"#{row[:status]}\">Imported</span>".html_safe if row[:selected_id] == contact.id && ["new_imported","old_imported"].include?(row[:status]) %>
+																</td>
+																<td class="text-right">
+																		<% if !["new_imported","old_imported"].include?(row[:status]) %>
+																				<a href="#" class="btn btn-mini btn-info">Use This</a>
+																		<% end %>
+																</td>
+														</tr>
+												<% end %>
+										<% end %>
+								</table>
+								
+								<!--<div class="form-actions">  
+										<div class="pull-right">
+										<button type="submit" class="btn btn-success btn-cons"><i class="icon-ok"></i> Save</button>
+										 <%= link_to 'Cancel', users_path, :class => "btn btn-white btn-cons cancel-but" %>
+									  </div>
+								</div>-->
+								
+						</div>
+				</div>
+				
+		<% end %>
+		
+	  
+        <div class="row">
+            <div class="col-md-6">
+              <div class="grid simple">
+                <div class="grid-titlez no-border">
+                  <h4>Upload <span class="semi-bold">List</span></h4>
+                  
+                </div>     
+                
+                
+                
+                
+                <div class="grid-body no-border">
+                  
+                  
+                               
+                  
+                  
+                  <%= form_for(import_list_seminars_path, html: { multipart: true }) do |f| %>
+					
+					<%= hidden_field_tag("tab_page", 1) if params[:tab_page] %>
+					<%= hidden_field_tag("id", @seminar.id) %>
+					
+					<div class="row column-seperation">
+						 <div class="col-md-12">
+							  
+							  <div class="form-group">
+								<label class="form-label"><%= f.label :file %></label>
+								<span class="help">(required)</span>
+								<div class="input-with-icon nice right">                                       
+									<i class=""></i>
+									<%= file_field_tag :file, class: "required width100" %>
+								</div>
+							  </div>
+							  
+							  							  
+							  
+							  
+							  
+							  
+						 </div>
+						 
+						 
+						 
+					</div>
+						 
+					<div class="form-actions">  
+						 <div class="pull-right">
+						 <button type="submit" class="btn btn-success btn-cons"><i class="icon-ok"></i> Upload</button>
+						  <%= link_to 'Cancel', users_path, :class => "btn btn-white btn-cons cancel-but" %>
+					   </div>
+					</div>
+							  
+						<% end %>
+			   </div>
+			 </div>
+            </div>
+			
+		</div>
+		
+		
+			  

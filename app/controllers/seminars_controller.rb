@@ -2,7 +2,7 @@ class SeminarsController < ApplicationController
   include SeminarsHelper
   load_and_authorize_resource
   
-  before_action :set_seminar, only: [:show, :edit, :update, :destroy]
+  before_action :set_seminar, only: [:check_contact, :import_from_file, :show, :edit, :update, :destroy]
 
   # GET /seminars
   # GET /seminars.json
@@ -34,8 +34,8 @@ class SeminarsController < ApplicationController
     @types = []
     @individual_statuses = ["true"]
     
-    @start_date = @seminar.start_at.strftime("%d-%b-%Y")
-    @start_time = @seminar.start_at.strftime("%I:%M %p")
+    @start_date = @seminar.start_at.strftime("%d-%b-%Y") if !@seminar.start_at.nil?
+    @start_time = @seminar.start_at.strftime("%I:%M %p") if !@seminar.start_at.nil?
   end
 
   # POST /seminars
@@ -110,6 +110,20 @@ class SeminarsController < ApplicationController
     
     render nothing: true
   end
+  
+  def import_list    
+    if params[:file].present?
+      @list = @seminar.render_list(params[:file])
+      @list = @seminar.process_rendered_list(@list)
+    end
+  end
+  
+  def check_contact
+    @contact = Contact.find(params[:contact_id])
+    @contact.set_present_in_seminar(@seminar, params[:value])    
+    
+    render layout: nil
+  end
 
   private
     # Use callbacks to share common setup or constraints between actions.
@@ -119,6 +133,6 @@ class SeminarsController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def seminar_params
-      params.require(:seminar).permit(:name, :description, :start_at)
+      params.require(:seminar).permit(:course_type_id, :name, :description, :start_at)
     end
 end

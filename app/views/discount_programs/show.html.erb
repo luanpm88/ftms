@@ -1,0 +1,29 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <strong>Name:</strong>
+  <%= @discount_program.name %>
+</p>
+
+<p>
+  <strong>User:</strong>
+  <%= @discount_program.user_id %>
+</p>
+
+<p>
+  <strong>Start at:</strong>
+  <%= @discount_program.start_at %>
+</p>
+
+<p>
+  <strong>End at:</strong>
+  <%= @discount_program.end_at %>
+</p>
+
+<p>
+  <strong>Rate:</strong>
+  <%= @discount_program.rate %>
+</p>
+
+<%= link_to 'Edit', edit_discount_program_path(@discount_program) %> |
+<%= link_to 'Back', discount_programs_path %>

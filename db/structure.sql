@@ -424,14 +424,50 @@ CREATE TABLE contacts (
     referrer_id integer,
     birthday date,
     tag_id integer,
-    preferred_mailing character varying,
+    mailing_address character varying,
     payment_type character varying,
     invoice_info_id integer,
     invoice_required boolean DEFAULT true,
     cache_course_type_ids text,
     cache_intakes text,
-    cache_subjects text
+    cache_subjects text,
+    base_id character varying,
+    base_password character varying,
+    account_manager_id integer,
+    preferred_mailing character varying
 );
+
+
+--
+-- Name: contacts_course_types; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE TABLE contacts_course_types (
+    id integer NOT NULL,
+    contact_id integer,
+    course_type_id integer,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL
+);
+
+
+--
+-- Name: contacts_course_types_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE contacts_course_types_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: contacts_course_types_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE contacts_course_types_id_seq OWNED BY contacts_course_types.id;
 
 
 --
@@ -444,7 +480,8 @@ CREATE TABLE contacts_courses (
     course_id integer,
     course_register_id integer,
     created_at timestamp without time zone NOT NULL,
-    updated_at timestamp without time zone NOT NULL
+    updated_at timestamp without time zone NOT NULL,
+    courses_phrase_ids character varying
 );
 
 
@@ -495,7 +532,8 @@ CREATE TABLE contacts_seminars (
     contact_id integer,
     seminar_id integer,
     created_at timestamp without time zone NOT NULL,
-    updated_at timestamp without time zone NOT NULL
+    updated_at timestamp without time zone NOT NULL,
+    present boolean DEFAULT false
 );
 
 
@@ -684,6 +722,75 @@ ALTER SEQUENCE courses_id_seq OWNED BY courses.id;
 
 
 --
+-- Name: courses_phrases; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE TABLE courses_phrases (
+    id integer NOT NULL,
+    course_id integer,
+    phrase_id integer,
+    start_at timestamp without time zone,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL
+);
+
+
+--
+-- Name: courses_phrases_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE courses_phrases_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: courses_phrases_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE courses_phrases_id_seq OWNED BY courses_phrases.id;
+
+
+--
+-- Name: discount_programs; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE TABLE discount_programs (
+    id integer NOT NULL,
+    name character varying,
+    description text,
+    user_id integer,
+    start_at timestamp without time zone,
+    end_at timestamp without time zone,
+    rate numeric,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL
+);
+
+
+--
+-- Name: discount_programs_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE discount_programs_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: discount_programs_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE discount_programs_id_seq OWNED BY discount_programs.id;
+
+
+--
 -- Name: headshot_photos; Type: TABLE; Schema: public; Owner: -; Tablespace: 
 --
 
@@ -790,6 +897,71 @@ ALTER SEQUENCE parent_contacts_id_seq OWNED BY parent_contacts.id;
 
 
 --
+-- Name: phrases; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE TABLE phrases (
+    id integer NOT NULL,
+    name character varying,
+    description text,
+    user_id integer,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL
+);
+
+
+--
+-- Name: phrases_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE phrases_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: phrases_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE phrases_id_seq OWNED BY phrases.id;
+
+
+--
+-- Name: phrases_subjects; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE TABLE phrases_subjects (
+    id integer NOT NULL,
+    phrase_id integer,
+    subject_id integer,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL
+);
+
+
+--
+-- Name: phrases_subjects_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE phrases_subjects_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: phrases_subjects_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE phrases_subjects_id_seq OWNED BY phrases_subjects.id;
+
+
+--
 -- Name: roles; Type: TABLE; Schema: public; Owner: -; Tablespace: 
 --
 
@@ -840,7 +1012,8 @@ CREATE TABLE seminars (
     start_at timestamp without time zone,
     user_id integer,
     created_at timestamp without time zone NOT NULL,
-    updated_at timestamp without time zone NOT NULL
+    updated_at timestamp without time zone NOT NULL,
+    course_type_id integer
 );
 
 
@@ -1061,6 +1234,13 @@ ALTER TABLE ONLY contacts ALTER COLUMN id SET DEFAULT nextval('contacts_id_seq':
 -- Name: id; Type: DEFAULT; Schema: public; Owner: -
 --
 
+ALTER TABLE ONLY contacts_course_types ALTER COLUMN id SET DEFAULT nextval('contacts_course_types_id_seq'::regclass);
+
+
+--
+-- Name: id; Type: DEFAULT; Schema: public; Owner: -
+--
+
 ALTER TABLE ONLY contacts_courses ALTER COLUMN id SET DEFAULT nextval('contacts_courses_id_seq'::regclass);
 
 
@@ -1110,6 +1290,20 @@ ALTER TABLE ONLY courses ALTER COLUMN id SET DEFAULT nextval('courses_id_seq'::r
 -- Name: id; Type: DEFAULT; Schema: public; Owner: -
 --
 
+ALTER TABLE ONLY courses_phrases ALTER COLUMN id SET DEFAULT nextval('courses_phrases_id_seq'::regclass);
+
+
+--
+-- Name: id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY discount_programs ALTER COLUMN id SET DEFAULT nextval('discount_programs_id_seq'::regclass);
+
+
+--
+-- Name: id; Type: DEFAULT; Schema: public; Owner: -
+--
+
 ALTER TABLE ONLY headshot_photos ALTER COLUMN id SET DEFAULT nextval('headshot_photos_id_seq'::regclass);
 
 
@@ -1125,6 +1319,20 @@ ALTER TABLE ONLY notifications ALTER COLUMN id SET DEFAULT nextval('notification
 --
 
 ALTER TABLE ONLY parent_contacts ALTER COLUMN id SET DEFAULT nextval('parent_contacts_id_seq'::regclass);
+
+
+--
+-- Name: id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY phrases ALTER COLUMN id SET DEFAULT nextval('phrases_id_seq'::regclass);
+
+
+--
+-- Name: id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY phrases_subjects ALTER COLUMN id SET DEFAULT nextval('phrases_subjects_id_seq'::regclass);
 
 
 --
@@ -1251,6 +1459,14 @@ ALTER TABLE ONLY contact_types
 
 
 --
+-- Name: contacts_course_types_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+--
+
+ALTER TABLE ONLY contacts_course_types
+    ADD CONSTRAINT contacts_course_types_pkey PRIMARY KEY (id);
+
+
+--
 -- Name: contacts_courses_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
 --
 
@@ -1307,11 +1523,27 @@ ALTER TABLE ONLY course_types_subjects
 
 
 --
+-- Name: courses_phrases_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+--
+
+ALTER TABLE ONLY courses_phrases
+    ADD CONSTRAINT courses_phrases_pkey PRIMARY KEY (id);
+
+
+--
 -- Name: courses_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
 --
 
 ALTER TABLE ONLY courses
     ADD CONSTRAINT courses_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: discount_programs_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+--
+
+ALTER TABLE ONLY discount_programs
+    ADD CONSTRAINT discount_programs_pkey PRIMARY KEY (id);
 
 
 --
@@ -1336,6 +1568,22 @@ ALTER TABLE ONLY notifications
 
 ALTER TABLE ONLY parent_contacts
     ADD CONSTRAINT parent_contacts_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: phrases_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+--
+
+ALTER TABLE ONLY phrases
+    ADD CONSTRAINT phrases_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: phrases_subjects_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+--
+
+ALTER TABLE ONLY phrases_subjects
+    ADD CONSTRAINT phrases_subjects_pkey PRIMARY KEY (id);
 
 
 --
@@ -1538,4 +1786,30 @@ INSERT INTO schema_migrations (version) VALUES ('20150708023427');
 INSERT INTO schema_migrations (version) VALUES ('20150708053215');
 
 INSERT INTO schema_migrations (version) VALUES ('20150709015943');
+
+INSERT INTO schema_migrations (version) VALUES ('20150710072419');
+
+INSERT INTO schema_migrations (version) VALUES ('20150710072433');
+
+INSERT INTO schema_migrations (version) VALUES ('20150710073708');
+
+INSERT INTO schema_migrations (version) VALUES ('20150713012339');
+
+INSERT INTO schema_migrations (version) VALUES ('20150713012541');
+
+INSERT INTO schema_migrations (version) VALUES ('20150713015522');
+
+INSERT INTO schema_migrations (version) VALUES ('20150713021606');
+
+INSERT INTO schema_migrations (version) VALUES ('20150713024929');
+
+INSERT INTO schema_migrations (version) VALUES ('20150713030131');
+
+INSERT INTO schema_migrations (version) VALUES ('20150713085842');
+
+INSERT INTO schema_migrations (version) VALUES ('20150713100153');
+
+INSERT INTO schema_migrations (version) VALUES ('20150714062706');
+
+INSERT INTO schema_migrations (version) VALUES ('20150715082317');
 

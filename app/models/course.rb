@@ -15,6 +15,9 @@ class Course < ActiveRecord::Base
   has_and_belongs_to_many :contacts
   has_many :contacts_courses
   
+  has_many :courses_phrases
+  has_and_belongs_to_many :phrases
+  
   pg_search_scope :search,
                   against: [:description],
                   associated_against: {
@@ -93,11 +96,12 @@ class Course < ActiveRecord::Base
     @records = @records.limit(params[:length]).offset(params["start"])
     data = []
     
-    actions_col = 6
+    actions_col = 7
     @records.each do |item|
       item = [
               '<div class="text-left nowrap">'+item.display_intake+"</div>",
               '<div class="text-left nowrap">'+item.program_paper_name+"</div>",
+              '<div class="text-left">'+item.courses_phrase_list+"</div>",
               '<div class="text-center">'+item.student_count_link+"</div>",
               '<div class="text-center nowrap">'+item.display_lecturer+"</div>",
               '<div class="text-center">'+item.created_at.strftime("%d-%b-%Y")+"</div>",
@@ -129,7 +133,7 @@ class Course < ActiveRecord::Base
     
     @records =  self.filters(params, user)
     
-    @records = @records.joins(:contacts_courses => :course_register)
+    @records = @records.includes(:contacts_courses => :course_register)
     @records = @records.where(contacts_courses: {contact_id: @student.id})
     
     
@@ -140,7 +144,7 @@ class Course < ActiveRecord::Base
         order = "courses.intake #{params["order"]["0"]["dir"]}, course_types.short_name, subjects.name"
       when "1"
         order = "course_types.short_name #{params["order"]["0"]["dir"]}, subjects.name"
-      when "4"
+      when "3"
         order = "course_registers.created_date"
       else
         order = "course_registers.created_date"
@@ -158,27 +162,21 @@ class Course < ActiveRecord::Base
     @records = @records.limit(params[:length]).offset(params["start"])
     data = []
     
-    total = 0
-    actions_col = 5
-    course_arr = []
-    @recordsz = []
+
+    actions_col = 4
+
     @records.each do |item|
       itemz = [
               '<div class="text-left nowrap">'+item.display_intake+"</div>",
               '<div class="text-left nowrap">'+item.program_paper_name+"</div>",
-              '<div class="text-center">'+item.student_count_link+"</div>",
+              #'<div class="text-center">'+item.student_count_link+"</div>",
               '<div class="text-center nowrap">'+item.display_lecturer+"</div>",
-              '<div class="text-center">'+item.course_register(@student).created_date.strftime("%d-%b-%Y")+"</div>",
+              '<div class="text-left">'+item.courses_phrase_list_by_sudent(@student)+"</div>",
               "", 
             ]
       
-      if !course_arr.include?(item.id)
+
         data << itemz
-        course_arr << item.id
-        total += 1
-        @recordsz << item
-      end
-      
     end
     
     result = {
@@ -188,12 +186,41 @@ class Course < ActiveRecord::Base
     }
     result["data"] = data
     
-    return {result: result, items: @recordsz, actions_col: actions_col}
+    return {result: result, items: @records, actions_col: actions_col}
     
   end
   
+  def courses_phrase_list
+    arr = []
+    courses_phrases.each do |p|
+      arr << "#{p.phrase.name} [#{p.start_at.strftime("%d-%b-%Y")}]"
+    end
+    arr.join("<br />").html_safe
+  end
+  
+  def courses_phrase_list_by_sudent(student)
+    arr = []
+    courses_phrases_by_sudent(student).each do |p|
+      arr << "#{p.phrase.name} [#{p.start_at.strftime("%d-%b-%Y")}]"
+    end
+    arr.join("<br />").html_safe
+  end
+  
+  def courses_phrases_by_sudent(student)
+    cc = contacts_course(student)
+    if !cc.nil?
+      return CoursesPhrase.where(id: (JSON.parse(contacts_course(student).courses_phrase_ids)))
+    else
+      return []
+    end
+  end
+  
+  def contacts_course(student)
+    contacts_courses.where(contact_id: student.id).first
+  end
+  
   def course_register(student)
-    CourseRegister.find(contacts_courses.where(contact_id: student.id).first.course_register_id)
+    CourseRegister.find(contacts_course(student).course_register_id)
   end
   
   
@@ -246,6 +273,17 @@ class Course < ActiveRecord::Base
   def course_link(title=nil)
     title = title.nil? ? name : title
     ActionController::Base.helpers.link_to(title, {controller: "courses", action: "edit", id: id, tab_page: 1}, title: name, class: "tab_page")
+  end
+  
+  def update_courses_phrases(params)
+    courses_phrases.destroy_all
+    params.each do |row|
+      if row[1]["phrase_id"].present?
+        courses_phrases.create(phrase_id: row[1]["phrase_id"],
+                        start_at: row[1]["start_at"]
+                      )
+      end
+    end
   end
   
 end

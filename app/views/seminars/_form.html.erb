@@ -84,6 +84,19 @@
 						 
 						 <div class="col-md-6">
 							
+							  <div class="form-group">
+								   <label class="form-label"><label>Program</label></label>
+								   <span class="help">(required)</span>
+								   <div class="input-with-icon date-group right">                                       
+										  <i class=""></i>
+										  <div class="input-with_add_but">
+												 <%= link_to '<i class="icon-plus"></i>'.html_safe, new_course_type_path(tab_page: 1), title: "New Program", :class => 'btn btn-sm btn-small btn-white add-agent-button tab_page' %>
+												 <input style="width:100%;margin-bottom: 5px;" name="seminar[course_type_id]" data="<%= course_types_path(format: "json") %>" class="select2-ajax-course-types required" value="<%= @seminar.course_type_id %>" text="<%= @seminar.name if !@seminar.course_type.nil? %>" /> 
+										  </div>																					
+									
+								   </div>
+							  </div>
+							
                             <div class="form-group">
                                   <label class="form-label"><%= f.label :description %></label>
                                   <span class="help"></span>

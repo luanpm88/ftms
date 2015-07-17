@@ -35,7 +35,7 @@ class CourseRegistersController < ApplicationController
     
     respond_to do |format|
       if @course_register.save
-        @course_register.save_contact_courses(params[:contact_id], params[:course_ids])
+        @course_register.save_contacts_courses(params[:contact_id], params[:contacts_courses])
         
         format.html { redirect_to params[:tab_page].present? ? "/home/close_tab?contact_id=#{params[:contact_id]}" : @course_register, notice: 'Course register was successfully created.' }
         format.json { render action: 'show', status: :created, location: @course_register }

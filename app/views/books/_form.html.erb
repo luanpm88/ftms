@@ -104,9 +104,9 @@
 										<div class="form-group">
 										  <label class="form-label"><%= f.label :publisher %></label>
 										  <span class="help"></span>
-										  <div class="input-with-icon  right">                                       
+										  <div class="input-with-icon  right">
 											  <i class=""></i>
-												<%= f.text_field :publisher, :class => "form-control", value: (@book.parent.nil? ? @book.parent.publisher : "") %>
+												<%= f.text_field :publisher, :class => "form-control", value: (!@book.parent.nil? && !@book.parent.publisher.nil? ? @book.parent.publisher : "") %>
 										  </div>
 										</div>
 										

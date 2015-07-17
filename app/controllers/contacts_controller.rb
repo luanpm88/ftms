@@ -41,7 +41,8 @@ class ContactsController < ApplicationController
 
   # GET /contacts/new
   def new
-    @contact = Contact.new    
+    @contact = Contact.new
+    @contact.account_manager = current_user
     
     if !params[:is_individual].nil? && params[:is_individual] == "false"
       @contact.is_individual = false
@@ -297,14 +298,13 @@ class ContactsController < ApplicationController
   def related_info_box
     @contacts = nil
     
-    if params[:value].strip != ""
-      if params[:type] == "email"
-         @contacts = Contact.where("LOWER(email) = ?", params[:value].strip.downcase)
-      end
+    if params[:value].strip.present? && params[:type].strip.present?
+      @contacts = Contact.all
       
-      if params[:type] == "mobile"
-         @contacts = Contact.where("LOWER(mobile) = ?", params[:value].strip.downcase)
-      end    
+      @contacts = Contact.where.not(id: params[:id].strip) if params[:id].present?
+      
+      @contacts = @contacts.where("LOWER(#{params[:type]}) = ?", params[:value].strip.downcase)
+      
     end
     
     render layout: nil
@@ -318,6 +318,6 @@ class ContactsController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def contact_params
-      params.require(:contact).permit(:invoice_required, :invoice_info_id, :payment_type, :preferred_mailing, :birthday, :sex, :referrer_id, :is_individual, :mobile_2, :email_2, :first_name, :last_name, :image, :city_id, :website, :name, :phone, :mobile, :fax, :email, :address, :tax_code, :note, :account_number, :bank, :contact_type_id, :parent_ids => [], :agent_ids => [], :company_ids => [], :contact_type_ids => [])
+      params.require(:contact).permit(:mailing_address, :preferred_mailing, :account_manager_id, :base_id, :base_password, :invoice_required, :invoice_info_id, :payment_type, :preferred_mailing, :birthday, :sex, :referrer_id, :is_individual, :mobile_2, :email_2, :first_name, :last_name, :image, :city_id, :website, :name, :phone, :mobile, :fax, :email, :address, :tax_code, :note, :account_number, :bank, :contact_type_id, :parent_ids => [], :agent_ids => [], :company_ids => [], :contact_type_ids => [], :course_type_ids => [])
     end
 end

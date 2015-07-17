@@ -58,7 +58,21 @@
 																					<% end %>
 																					<br style="clear: both" />
 																		  </div>
-																	 </div>
+																 </div>
+																		  
+																 <div class="form-group">
+																	  <label class="form-label"><%= f.label :programs %></label>
+																	  <span class="help"></span>
+																	  <div class="input-with-icon  right">                                       
+																			 <i class=""></i>
+																			 <div class="input-with_add_but">
+																					<%= link_to '<i class="icon-plus"></i>'.html_safe, new_course_type_path(tab_page: 1), title: "New Course Type", :class => 'btn btn-sm btn-small btn-white tab_page' %>
+																					<input style="width:100%;margin-bottom: 5px;" name="contact[course_type_ids][]" data="<%= course_types_path(format: "json") %>" class="select2-ajax-course-types multiple" values="<%= @contact.json_encode_course_type_ids_names %>" /> 
+																			 </div>
+																													   
+																	   
+																	  </div>
+																 </div>
 														   </div>
 														   
 																				  
@@ -151,7 +165,11 @@
 													  <span class="help">(required)</span>
 													  <div class="input-with-icon  right">                                       
 															  <i class=""></i>
-															  <%= f.text_field :name, :class => "form-control required" %>
+															  <%= f.text_field :name, rel: related_info_box_contacts_path(type: "name", id: @contact.id), :class => "form-control related_info_input required" %>
+																 <label class="related_info_msg" style="display: none">Has related contact(s)!</label>
+																 <div class="related_info_box" style="display: none">
+																	
+																 </div>
 													  </div>
 												 </div>
 													  
@@ -185,7 +203,7 @@
 																<span class="help">(required)</span>
 																<div class="input-with-iconx right">                                       
 																		<i class=""></i>
-																		<%= f.text_field :email, rel: related_info_box_contacts_path(type: "email"), :class => "form-control required email related_info_input" %>
+																		<%= f.text_field :email, rel: related_info_box_contacts_path(type: "email", id: @contact.id), :class => "form-control required email related_info_input" %>
 																		<label class="related_info_msg" style="display: none">Has related contact(s)!</label>
 																		<div class="related_info_box" style="display: none">
 																		   
@@ -246,18 +264,18 @@
 																</div>									
 														   </div>
 														   <div class="col-md-6">
-																<div class="form-group">
-																	 <label class="form-label"><%= f.label :birthday %></label>
-																	 <span class="help">(required)</span>
-																	 <div class="input-with-icon  right">                                       
-																		  <i class=""></i>
-																		  <div class="input-append success date col-md-10 no-padding">
-																			<%= f.text_field :birthday, :class => "form-control required", value: (@contact.birthday.nil? ? "" : @contact.birthday.strftime("%d-%b-%Y")) %>
-																			<span class="add-on"><span class="arrow"></span><i class="icon-th"></i></span>
-																		  </div>
-																		  <br style="clear: both" />
-																	 </div>
-																</div>										
+																 <div class="form-group">
+																	  <label class="form-label"><%= f.label :birthday %></label>
+																	  <span class="help">(required)</span>
+																	  <div class="input-with-icon  right">                                       
+																		   <i class=""></i>
+																		   <div class="input-append success date col-md-10 no-padding">
+																			 <%= f.text_field :birthday, :class => "form-control required", value: (@contact.birthday.nil? ? "" : @contact.birthday.strftime("%d-%b-%Y")) %>
+																			 <span class="add-on"><span class="arrow"></span><i class="icon-th"></i></span>
+																		   </div>
+																		   <br style="clear: both" />
+																	  </div>
+																 </div>										
 														   </div>
 													  </div>
 													  
@@ -293,7 +311,7 @@
 																	 <span class="help">(required)</span>
 																	 <div class="input-with-iconx  right">                                       
 																		  <i class=""></i>
-																		  <%= f.text_field :mobile, rel: related_info_box_contacts_path(type: "mobile"), :class => "form-control required related_info_input" %>
+																		  <%= f.text_field :mobile, rel: related_info_box_contacts_path(type: "mobile", id: @contact.id), :class => "form-control required related_info_input" %>
 																		   <label class="related_info_msg" style="display: none">Has related contact(s)!</label>
 																		   <div class="related_info_box" style="display: none">
 																			  
@@ -385,14 +403,66 @@
 													  </div>
 														   
 													  <div class="row">
-														   <div class="col-md-12">													   
+														   <div class="col-md-6">													   
 																<div class="form-group">
 																	 <label class="form-label"><i class="icon-truck"></i> Preferred mailing</label>
 																	 <span class="help"></span>
 																	 <div class="input-with-icon  right">
-																		  <%= f.text_field :preferred_mailing, :class => "form-control" %>
+																		  <select name="contact[preferred_mailing]" class="modern_select width100 required">
+																				
+																				<option <%= 'selected="selected"' if @contact.preferred_mailing == "home" %> value="home">Home address</option>
+																				<option <%= 'selected="selected"' if @contact.preferred_mailing == "company" %> value="company">Company address</option>
+																				<option <%= 'selected="selected"' if @contact.preferred_mailing == "other" %> value="other">Other</option>
+																		  </select>
 																	 </div>
-																</div>					
+																</div>																
+														   </div>
+															<div class="col-md-6 mailing_address_box">													   
+																 <div class="form-group">
+																	  <label class="form-label"><i class="icon-truck"></i> Mailing address</label>
+																	  <span class="help">(required)</span>
+																	  <div class="input-with-icon  right">
+																		   <%= f.text_field :mailing_address, :class => "form-control required" %>
+																	  </div>
+																 </div>					
+															</div>
+													  </div>
+													   
+													   <div class="row">
+															<div class="col-md-12">													   
+																<div class="form-group">
+																	 <label class="form-label"><%= f.label :account_manager %></label>
+																	 <span class="help">(required)</span>
+																	 <div class="input-with-icon  right">                                       
+																		  <i class=""></i>
+																		  <div class="input-with_add_but_">																			   
+																			   <input style="width:100%;margin-bottom: 5px;" name="contact[account_manager_id]" data="<%= users_path(format: "json") %>" class="select2-ajax-users required" value="<%= @contact.account_manager_id %>" text="<%= @contact.account_manager.name if !@contact.account_manager.nil? %>" />
+																		  </div>
+																	 </div>
+																</div>			
+														   </div>
+													   </div>
+													  
+													  <div class="row">
+														   <div class="col-md-6">													   
+																<div class="form-group">
+																	 <label class="form-label"><label>Program ID</label></label>
+																	 <span class="help"></span>
+																	 <div class="input-with-icon  right">                                       
+																			 <i class=""></i>
+																			 <%= f.text_field :base_id, :class => "form-control" %>
+																	 </div>
+																</div>								
+														   </div>
+														   <div class="col-md-6">
+																<div class="form-group">
+																	 <label class="form-label"><%= f.label :program_password %></label>
+																	 <span class="help"></span>
+																	 <div class="input-with-icon  right">                                       
+																			 <i class=""></i>
+																			 <%= f.text_field :base_password, :class => "form-control" %>
+																	 </div>
+																</div>								
 														   </div>
 													  </div>
 													  
@@ -479,11 +549,11 @@
 												  </div>
 												 
 												 <div class="form-group">
-													  <label class="form-label"><%= f.label :note %></label>
+													  <label class="form-label"><%= f.label :background %></label>
 													  <span class="help"></span>
 													  <div class="input-with-icon  right">                                       
 															  <i class=""></i>
-															  <%= f.text_area :note, :class => "form-control" %>
+															  <%= f.text_area :note, :class => "form-control", style: "height: 160px" %>
 													  </div>
 												 </div>
 												 
@@ -498,3 +568,10 @@
 								  </div>
 								  </div>
 							  <% end %>
+							  
+<script>
+	 $(document).ready(function() {
+		  vs = JSON.parse($('.select2-ajax-course-types').attr('values'))
+		  $('.select2-ajax-course-types').select2('data', vs)
+	 });
+</script>

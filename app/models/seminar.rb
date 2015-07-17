@@ -5,6 +5,7 @@ class Seminar < ActiveRecord::Base
   validates :user_id, presence: true
   
   belongs_to :user
+  belongs_to :course_type
   
   has_many :contacts_seminars, :dependent => :destroy
   has_and_belongs_to_many :contacts
@@ -45,17 +46,21 @@ class Seminar < ActiveRecord::Base
     
     @records = @records.order(order) if !order.nil?
     
+    @records = @records.where("course_type_id IN (#{params["course_types"].join(",")})") if params["course_types"].present?
+
+    
     total = @records.count
     @records = @records.limit(params[:length]).offset(params["start"])
     data = []
     
-    actions_col = 5
+    actions_col = 6
     @records.each do |item|
       item = [
               item.seminar_link,
               item.description,
+              '<div class="text-center">'+item.course_type_name+"</div>",
               '<div class="text-center">'+item.contact_count_link+"</div>",
-              '<div class="text-center">'+item.start_at.strftime("%d-%b-%Y %I:%M %p")+"</div>",
+              '<div class="text-center">'+item.display_start_at+"</div>",
               '<div class="text-center">'+item.user.staff_col+"</div>",
               ''
             ]
@@ -72,6 +77,14 @@ class Seminar < ActiveRecord::Base
     
     return {result: result, items: @records, actions_col: actions_col}
     
+  end
+  
+  def course_type_name
+    course_type.nil? ? "" : course_type.short_name
+  end
+  
+  def display_start_at
+    start_at.nil? ? "" : start_at.strftime("%d-%b-%Y %I:%M %p")
   end
   
   def contact_list_link(title=nil)
@@ -105,6 +118,68 @@ class Seminar < ActiveRecord::Base
   def json_encode_ids_names
     json = [{id: id, text: name}]
     json.to_json
+  end
+  
+  def render_list(file)
+    list = []
+    
+    spreadsheet = Roo::Spreadsheet.open(file.path)
+    header = spreadsheet.row(1)
+    (2..spreadsheet.last_row).each do |i|
+      row = Hash[[header, spreadsheet.row(i)].transpose]
+      item = {name: row["Full name"], company: row["Company"], mobile: row["Mobile"], email: row["Email"], present: row["Status"]}
+      item[:contacts] = similar_contacts({email: item[:email], name: item[:name]})
+      list << item
+    end
+    
+    return list
+  end
+  
+  def process_rendered_list(list)
+    new_count = 0
+    old_count = 0
+    waiting_count = 0
+    
+    new_list = []
+    list.each do |row|
+      if !row[:contacts].empty?
+        row[:status] = "not_sure"
+        row[:contacts].each do |contact|
+          if row[:name].strip.downcase == contact.name.downcase && row[:email].strip.downcase == contact.email.downcase
+            row[:selected_id] = contact.id
+            
+            row[:status] = "old_imported"
+            
+            old_count += 1
+            break
+          end        
+        end
+        
+        waiting_count += 1 if row[:status] == "not_sure"
+      else
+        row[:status] = "new_imported"
+        new_count += 1
+      end
+      
+        
+      new_list << row
+    end
+    return { list: new_list,
+              new_count: new_count,
+              old_count: old_count,
+              waiting_count: waiting_count,
+              total: new_count+old_count+waiting_count
+    }
+              
+  end
+  
+  def similar_contacts(data={})
+    result = []
+    if data[:email].present?
+      result += Contact.where("LOWER(email) = ? OR LOWER(name) = ?", data[:email].strip.downcase, data[:name].strip.downcase)
+    end
+    
+    return result
   end
   
 end

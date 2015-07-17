@@ -1,5 +1,5 @@
        <div class="row">
-            <div class="col-md-6">
+            <div class="col-md-12">
               <div class="grid simple">
                 <div class="grid-title no-border">
                   <h4>Course <span class="semi-bold">Register</span></h4>
@@ -35,51 +35,77 @@
 					<%= hidden_field_tag("tab_page", 1) if params[:tab_page] %>
                     <%= hidden_field_tag("contact_id", @contact.id) %>
 					
-					<div class="row">
+					 <div class="row column-seperation">
 						 <div class="col-md-6">
+							  <div class="row">
+								   <div class="col-md-6">
+										
+										<div class="form-group">
+										  <label class="form-label"><%= f.label :student_name %></label>
+										  <span class="help">(required)</span>
+										  <div class="input-with-icon right">                                       
+											  <strong><%= @contact.display_name %></strong>
+										  </div>
+										</div>
+										
+								   </div>
+								   <div class="col-md-6">
+										
+										<div class="form-group">
+										  <label class="form-label"><%= f.label :registration_date %></label>
+										  <span class="help">(required)</span>
+										  <div class="input-with-icon  right">                                       
+											   <i class=""></i>
+											   <div class="input-append success date col-md-10 no-padding">
+												 <%= f.text_field :created_date, :class => "form-control required", value: (@course_register.created_date.nil? ? "" : @course_register.created_date.strftime("%d-%b-%Y")) %>
+												 <span class="add-on"><span class="arrow"></span><i class="icon-th"></i></span>
+											   </div>
+											   <br style="clear: both" />
+										  </div>
+										</div>
+										
+								   </div>
+								   
+								   
+							  </div>
 							  
-							  <div class="form-group">
-                                <label class="form-label"><%= f.label :student_name %></label>
-                                <span class="help">(required)</span>
-                                <div class="input-with-icon  right">                                       
-                                    <strong><%= @contact.display_name %></strong>
-                                </div>
-                              </div>
-                              
+							  
+							  	
 						 </div>
-						 <div class="col-md-6">
-							  
-							  <div class="form-group">
-                                <label class="form-label"><%= f.label :registration_date %></label>
-                                <span class="help">(required)</span>
-                                <div class="input-with-icon  right">                                       
-                                     <i class=""></i>
-                                     <div class="input-append success date col-md-10 no-padding">
-                                       <%= f.text_field :created_date, :class => "form-control required", value: (@course_register.created_date.nil? ? "" : @course_register.created_date.strftime("%d-%b-%Y")) %>
-                                       <span class="add-on"><span class="arrow"></span><i class="icon-th"></i></span>
-                                     </div>
-                                     <br style="clear: both" />
-                                </div>
-                              </div>
-                              
+					 </div>
+					 
+					
+					<% (0..9).each do |number| %>
+					
+						 <div class="row column-seperation phrase_box phrase_box_<%= number.to_s %>" <%= 'style="display:none"'.html_safe if number > 0 %>>
+							  <div class="col-md-6">
+								  <div class="form-group">
+										<label class="form-label"><%= f.label :course %></label>
+										<span class="help"></span>
+										<div class="input-with-icon  right">                                       
+											 <i class=""></i>
+											 <div class="input-with_add_but">
+												  <%= link_to '<i class="icon-plus"></i>'.html_safe, new_course_path(tab_page: 1), title: "New Course", :class => 'btn btn-sm btn-small btn-white tab_page' %>
+												  <input style="width:100%;margin-bottom: 5px;" name="contacts_courses[<%= number %>][course_id]" data="<%= courses_path(format: "json") %>" class="select2-ajax-courses main_input registration_course" value="" text="" box_url="<%= courses_phrases_checkboxs_courses_path %>" box_id="registration_phrase_box_<%= number %>" box_number="<%= number %>" />
+											 </div>
+										</div>
+								  </div>
+							  </div>
+							 <div class="col-md-6">
+								  <div class="form-group">
+										<label class="form-label"><%= f.label :phrase %></label>
+										<span class="help"></span>
+										<div class="input-with-icon registration_phrase_box_<%= number %> right">                                       
+											 
+											 
+									   </div>
+								  <br style="clear: both" />
+								  </div>	
+							 </div>						 
 						 </div>
 						 
-						 
-					</div>
-                    
-                    
-                    <div class="form-group">
-                          <label class="form-label"><%= f.label :courses %></label>
-                          <span class="help"></span>
-                          <div class="input-with-icon  right">                                       
-                               <i class=""></i>
-                               <div class="input-with_add_but">
-                                    <%= link_to '<i class="icon-plus"></i>'.html_safe, new_course_path(tab_page: 1), title: "New Course", :class => 'btn btn-sm btn-small btn-white tab_page' %>
-                                    <input style="width:100%;margin-bottom: 5px;" name="course_ids[]" data="<%= courses_path(format: "json") %>" class="select2-ajax-courses multiple" value="" text="" />
-                               </div>
-                          </div>
-                    </div>	
-                    
+					<% end %>
+					 
 						 
 					<div class="form-actions">  
 						 <div class="pull-right">

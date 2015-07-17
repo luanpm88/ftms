@@ -1,4 +1,17 @@
 Hkerp::Application.routes.draw do
+  resources :discount_programs do
+    collection do
+      get :datatable
+    end
+  end
+  resources :courses_phrases
+  resources :phrases_subjects
+  resources :phrases do
+    collection do
+      get :datatable
+    end
+  end
+  resources :contacts_course_types
   post "headshot/capture" => 'headshot#capture', :as => :headshot_capture
   resources :contacts_seminars
   resources :seminars do
@@ -6,6 +19,11 @@ Hkerp::Application.routes.draw do
       get :datatable
       get :add_contacts
       get :remove_contacts
+      
+      get :import_list
+      post :import_list
+      
+      get :check_contact
     end
   end
   resources :contacts_courses
@@ -28,6 +46,7 @@ Hkerp::Application.routes.draw do
     collection do
       get :datatable
       get :student_courses
+      get :courses_phrases_checkboxs
     end
   end
   

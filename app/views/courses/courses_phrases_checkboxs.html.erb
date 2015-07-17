@@ -1,0 +1,10 @@
+<% @course.courses_phrases.each do |courses_phrase| %>
+    <div class="row-fluid">
+         <div class="checkbox check-success">
+             <%= check_box_tag "contacts_courses["+params[:number].to_s+"][courses_phrase_ids][]", courses_phrase.id, false, {id: "checkbox"+courses_phrase.id.to_s} %>
+             <label for="checkbox<%= courses_phrase.id %>">
+                  <%= courses_phrase.phrase.name %> [<%= courses_phrase.start_at.strftime("%d-%b-%Y") %>]
+             </label>
+         </div>
+    </div>
+<% end %>
