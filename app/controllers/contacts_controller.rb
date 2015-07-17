@@ -71,9 +71,14 @@ class ContactsController < ApplicationController
   # POST /contacts
   # POST /contacts.json
   def create
-    @contact = Contact.new(contact_params)
+    s_params = contact_params
+    s_params[:course_type_ids] = contact_params[:course_type_ids][0].split(",") if contact_params[:course_type_ids].present?
+    
+    @contact = Contact.new(s_params)
     @contact.user_id = current_user.id
     @contact.sex = "male"
+    
+    
     
     if params[:contact_tag].present?
       @contact_tag = ContactTag.find(params[:contact_tag])
@@ -83,6 +88,8 @@ class ContactsController < ApplicationController
           filename = params[:headshot_url].split("/").last
           @contact.image = File.open("public/headshots/"+filename)
     end
+    
+    
 
     respond_to do |format|
       if @contact.save
@@ -102,7 +109,6 @@ class ContactsController < ApplicationController
   # PATCH/PUT /contacts/1
   # PATCH/PUT /contacts/1.json
   def update
-    params[:contact][:contact_type_ids] ||= []
     
     if params[:contact_tag].present?
       @contact_tag = ContactTag.find(params[:contact_tag])
@@ -111,14 +117,19 @@ class ContactsController < ApplicationController
     if params[:avatar_method] == "camera" && params[:headshot_url].present?
           filename = params[:headshot_url].split("/").last
           @contact.image = File.open("public/headshots/"+filename)
+          @contact.save
     end
     
+    s_params = contact_params
+    s_params[:course_type_ids] = contact_params[:course_type_ids][0].split(",") if contact_params[:course_type_ids].present?
+    
+    
+    
     respond_to do |format|
-      if @contact.update(contact_params)
+      if @contact.update(s_params)
         if params[:contact_tag].present?
           @contact.update_tag(@contact_tag, current_user)
         end
-        
         
         format.html { redirect_to params[:tab_page].present? ? {action: "edit",id: @contact.id,tab_page: 1} : contacts_url, notice: 'Contact was successfully updated.' }
         format.json { head :no_content }

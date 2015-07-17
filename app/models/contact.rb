@@ -206,7 +206,7 @@ class Contact < ActiveRecord::Base
               '<div class="text-left">'+item.contact_link+"</div>",
               '<div class="text-left">'+item.html_info_line.html_safe+item.referrer_link+"</div>",              
               '<div class="text-center">'+item.contact_type_name+"</div>",
-              '<div class="text-center">'+item.course_types_name+"</div>",
+              '<div class="text-center">'+item.joined_courses_name+"</div>",
               '<div class="text-center">'+item.course_count_link+"</div>",
               '<div class="text-center contact_tag_box" rel="'+item.id.to_s+'">'+ContactsController.helpers.render_contact_tags_selecter(item)+"</div>",
               '<div class="text-center">'+item.account_manager_col+"</div>",
@@ -358,7 +358,7 @@ class Contact < ActiveRecord::Base
     CourseRegister.find(contacts_courses.where(course_id: course.id).first.course_register_id)
   end
   
-  def course_types
+  def joined_courses
     contacts_courses.map {|cc| cc.course.course_type}.uniq
   end
   
@@ -379,8 +379,8 @@ class Contact < ActiveRecord::Base
     self.update_attribute(:cache_subjects, cache)
   end
   
-  def course_types_name
-    course_types.map(&:short_name).join(", ")
+  def joined_courses_name
+    joined_courses.map(&:short_name).join(", ")
   end
   
   def contact_type_name
@@ -711,7 +711,7 @@ class Contact < ActiveRecord::Base
   end
   
   def update_cache_course_type_ids
-    cache = "["+course_types.map(&:id).join("][")+"]"
+    cache = "["+joined_courses.map(&:id).join("][")+"]"
     self.update_attribute(:cache_course_type_ids,cache)
   end
   
