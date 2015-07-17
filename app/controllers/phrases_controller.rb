@@ -43,7 +43,7 @@ class PhrasesController < ApplicationController
 
     respond_to do |format|
       if @phrase.save
-        format.html { redirect_to params[:tab_page].present? ? "/home/close_tab" : @phrase, notice: 'Phrase was successfully created.' }
+        format.html { redirect_to edit_phrase_path(id: @phrase.id, tab_page: 1), notice: 'Phrase was successfully created.' }
         format.json { render action: 'show', status: :created, location: @phrase }
       else
         format.html { render action: 'new', tab_page: params[:tab_page] }
@@ -59,7 +59,7 @@ class PhrasesController < ApplicationController
     s_params[:subject_ids] = phrase_params[:subject_ids][0].split(",") if phrase_params[:subject_ids].present?
     respond_to do |format|
       if @phrase.update(s_params)
-        format.html { redirect_to params[:tab_page].present? ? "/home/close_tab" : @phrase, notice: 'Phrase was successfully updated.' }
+        format.html { redirect_to edit_phrase_path(id: @phrase.id, tab_page: 1), notice: 'Phrase was successfully updated.' }
         format.json { head :no_content }
       else
         format.html { render action: 'edit', tab_page: params[:tab_page] }
