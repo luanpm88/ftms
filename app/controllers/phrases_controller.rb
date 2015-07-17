@@ -92,6 +92,6 @@ class PhrasesController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def phrase_params
-      params.require(:phrase).permit(:name, :subject_id, :subject_ids => [])
+      params.require(:phrase).permit(:name, :subject_ids => [])
     end
 end
