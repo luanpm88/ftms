@@ -109,7 +109,7 @@
 													   <i class=""></i>
 													   <div class="input-with_add_but">
 															<%= link_to '<i class="icon-plus"></i>'.html_safe, new_phrase_path(tab_page: 1), title: "New Phrase", :class => 'btn btn-sm btn-small btn-white add-agent-button tab_page' %>
-															<input style="width:100%;margin-bottom: 5px;" name="courses_phrases[<%= num.to_s %>][phrase_id]" data="<%= phrases_path(format: "json") %>" class="select2-ajax-subjects" value="<%= courses_phrase.phrase.id %>" text="<%= courses_phrase.phrase.name %>" /> 
+															<input style="width:100%;margin-bottom: 5px;" name="courses_phrases[<%= num.to_s %>][phrase_id]" data="<%= phrases_path(format: "json") %>" class="select2-ajax-phrases" value="<%= courses_phrase.phrase.id %>" text="<%= courses_phrase.phrase.name %>" /> 
 													   </div>
 												  </div>
 											 </div>
@@ -134,7 +134,7 @@
 													   <i class=""></i>
 													   <div class="input-with_add_but">
 															<%= link_to '<i class="icon-plus"></i>'.html_safe, new_phrase_path(tab_page: 1), title: "New Phrase", :class => 'btn btn-sm btn-small btn-white add-agent-button tab_page' %>
-															<input style="width:100%;margin-bottom: 5px;" name="courses_phrases[<%= number.to_s %>][phrase_id]" data="<%= phrases_path(format: "json") %>" class="select2-ajax-subjects main_input" values="" /> 
+															<input style="width:100%;margin-bottom: 5px;" name="courses_phrases[<%= number.to_s %>][phrase_id]" data="<%= phrases_path(format: "json") %>" class="select2-ajax-phrases main_input" values="" /> 
 													   </div>
 												  </div>
 											 </div>
