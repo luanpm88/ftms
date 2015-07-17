@@ -10,7 +10,7 @@ module CoursesHelper
       end
       
       if can? :update, item
-        actions += '<li>'+item.course_link("View")+'</li>'        
+        actions += '<li>'+item.course_link("Edit", courses_path(tab_page: 1))+'</li>'        
       end
       
       if can? :destroy, item

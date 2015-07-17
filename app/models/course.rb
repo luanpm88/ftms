@@ -270,9 +270,9 @@ class Course < ActiveRecord::Base
     student_list_link("["+contacts.count.to_s+"]")
   end
   
-  def course_link(title=nil)
+  def course_link(title=nil, psrc=nil)
     title = title.nil? ? name : title
-    ActionController::Base.helpers.link_to(title, {controller: "courses", action: "edit", id: id, tab_page: 1}, title: name, class: "tab_page")
+    ActionController::Base.helpers.link_to(title, {controller: "courses", action: "edit", id: id, tab_page: 1}, psrc: psrc, title: name, class: "tab_page")
   end
   
   def update_courses_phrases(params)
