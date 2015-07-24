@@ -6,7 +6,7 @@ class DiscountProgram < ActiveRecord::Base
   belongs_to :user
   
   pg_search_scope :search,
-                  against: [:name, :description],
+                  against: [:name, :rate, :description],
                   using: {
                       tsearch: {
                         dictionary: 'english',
@@ -16,7 +16,11 @@ class DiscountProgram < ActiveRecord::Base
                   }
   
   def self.full_text_search(q)
-    self.search(q).limit(50).map {|model| {:id => model.id, :text => model.name} }
+    self.search(q).limit(50).map {|model| {:id => model.id, :text => model.display_name} }
+  end
+  
+  def display_name
+    "[#{self.display_rate}] " + self.name
   end
   
   def self.datatable(params, user)
@@ -57,7 +61,7 @@ class DiscountProgram < ActiveRecord::Base
       item = [
               item.name,
               item.description,
-              '<div class="text-center">'+item.rate.to_s+" (%)</div>",
+              '<div class="text-center">'+item.display_rate+"</div>",
               '<div class="text-center">'+item.start_at.strftime("%d-%b-%Y")+"</div>",
               '<div class="text-center">'+item.end_at.strftime("%d-%b-%Y")+"</div>",              
               '<div class="text-center">'+item.user.staff_col+"</div>",
@@ -77,4 +81,24 @@ class DiscountProgram < ActiveRecord::Base
     return {result: result, items: @records, actions_col: actions_col}
     
   end
+  
+  def display_rate
+    result = ApplicationController.helpers.format_price(rate).to_s
+    result += " "+rate_unit
+    
+    return result
+  end
+  
+  def rate_unit
+    if type_name == "percent"
+      return "%"
+    elsif type_name == "amount"
+      return Setting.get("currency_code")
+    end
+  end
+  
+  def rate=(new)
+    self[:rate] = new.to_s.gsub(/\,/, '')
+  end
+  
 end

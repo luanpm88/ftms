@@ -62,13 +62,32 @@
 						 </div>
 						 <div class="col-md-6">
                           
-                              <div class="form-group">
-                                  <label class="form-label"><%= f.label :rate %></label>
-                                  <span class="help">(required)</span>
-                                  <div class="input-with-icon  right">                                       
-                                      <i class=""></i>
-                                        <%= f.text_field :rate, :class => "form-control number_input required" %>
-                                  </div>
+							  <div class="row">
+                                      <div class="col-md-8">
+										<div class="form-group">
+											<label class="form-label"><%= f.label :discount %></label>
+											<span class="help">(required)</span>
+											<div class="input-with-icon  right">                                       
+												<i class=""></i>
+												  <%= f.text_field :rate, :class => "form-control number_input required text-right" %>
+											</div>
+										</div>
+									  </div>
+									  <div class="col-md-4">
+										<div class="form-group">
+											<label class="form-label"><%= f.label :type %></label>
+											<span class="help">(required)</span>
+											<div class="input-with-icon  right">                                       
+												<i class=""></i>
+												  <div class="input-with-icon right">
+													   <select name="discount_program[type_name]" class="modern_select width100 required">
+															 <option <%= 'selected="selected"' if @discount_program.type_name == "percent" %> value="percent">Percent (%)</option>
+															 <option <%= 'selected="selected"' if @discount_program.type_name == "amount" %> value="amount">Amount (<%= Setting.get("currency_code") %>)</option>
+													   </select>
+												  </div>
+											</div>
+										</div>
+									  </div>
 							  </div>
 							  
                               <div class="row">

@@ -1,0 +1,4 @@
+<div class="col-md-3 course-contact-filter personal-box">
+    <h4>Phrase</h4>							
+    <%= select_tag 'courses_phrases', options_for_select(@courses_phrases.collect{ |u| [u.display_name, u.id] }), :include_blank => 'All', class: "modern_select width100" %>
+</div>

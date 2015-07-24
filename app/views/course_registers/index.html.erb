@@ -1,29 +1,44 @@
-<p id="notice"><%= notice %></p>
+                <ul class="breadcrumb">
+                    <li>
+                        <p>YOU ARE HERE</p>
+                    </li> 
+                    <li><%= link_to 'Registration Management', course_registers_url, :class => "active" %></li>
+                </ul>
+                <div class="page-title">
+                        <i class="icon-briefcase"></i>
+                    	<h3>Registration - <span class="semi-bold"> Management</span></h3>	
+                </div>
+				
+				<%= render "filter" %>
+				
+                <div class="row">
+                    <div class="col-md-12">
+                        <%= link_to 'New Registration', new_course_register_path(tab_page: 1), psrc: course_registers_path(tab_page:1), title: "New Registration", :class => 'btn btn-primary btn-cons tab_page' %>
+                        <div class="grid simple ">
+                            <div class="grid-title no-border">
+                                <h4>Listing  <span class="semi-bold">Registration</span></h4>
+                                
+                            </div>
+                            <div class="grid-body no-border">
+                                 
+                                    <table class="table table-striped no-more-tables datatable-course-registers no-filter">
+                                        <thead>
+                                            <tr>                                                
+												<th>Student Name</th>
+												<th class="text-left">Course</th>
+                                                <th class="text-left">Stock</th>
+												<th class="text-right">Total</th>
+												<th class="text-center">Payment</th>
+                                                <th class="text-center">Receipt Date</th>
+												<th class="text-center" width="1%">Creator</th>
+												<th class="text-right" width="1%">Actions</th>
+                                            </tr>
+                                        </thead>                                        
+                                    </table>
+                            </div>
+                        </div>
+			
+                    </div>
+		    
+                </div>
 
-<h1>Listing Course Registers</h1>
-
-<table>
-  <thead>
-    <tr>
-      <th>Created date</th>
-      <th>User</th>
-      <th colspan="3"></th>
-    </tr>
-  </thead>
-
-  <tbody>
-    <% @course_registers.each do |course_register| %>
-      <tr>
-        <td><%= course_register.created_date %></td>
-        <td><%= course_register.user_id %></td>
-        <td><%= link_to 'Show', course_register %></td>
-        <td><%= link_to 'Edit', edit_course_register_path(course_register) %></td>
-        <td><%= link_to 'Destroy', course_register, method: :delete, data: { confirm: 'Are you sure?' } %></td>
-      </tr>
-    <% end %>
-  </tbody>
-</table>
-
-<br>
-
-<%= link_to 'New Course register', new_course_register_path %>

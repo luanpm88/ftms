@@ -9,28 +9,10 @@
                     	<h3>Stock - <span class="semi-bold"> Management</span></h3>	
                 </div>
                 
+				
+				<%= render "filters" %>
                 
-                <!--<div class="grid simple ">
-					<div class="grid-body no-border filters course-filter">
-						<div class="row order-filters">
-							<div class="col-md-4">
-							  <h4>Intake</h4>
-							  <div class="date_select_filter">
-								  <div class="input-with-icon date-group-my right">                                       
-								  <%= date_select(:filter, :intake, {include_blank: true}) %>
-								  </div>
-							  </div>
-							</div>
-							
-							<div class="col-md-4">
-							  <h4>Course Types</h4>
-							  <input style="width:100%;margin-bottom: 5px;" name="filter[course_types[]]" data="<%= course_types_path(format: "json") %>" class="select2-ajax-course-types required multiple" value="" text=""  multiple="multiple" /> 
-							</div>
-							
-							
-						</div>
-					</div>		    
-				</div>-->
+                
                 
                 
                 <div class="row">
@@ -49,7 +31,10 @@
 												<th width="1%">Cover</th>
                                                 <th>Title</th>
 												<th>Volumns</th>
+												<th class="text-center">Program</th>
+												<th class="text-center">Paper</th>
                                                 <th>Publisher</th>
+												<th class="text-center">List Price</th>
                                                 <th class="text-center">Created At</th>
 												<th class="text-center" width="1%">Creator</th>
 												<th class="text-right" width="1%">Actions</th>

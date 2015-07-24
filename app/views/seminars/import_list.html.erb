@@ -56,10 +56,10 @@
 														</td>
 														<td class="text-center">
 																<% if ["not_sure"].include?(row[:status]) %>
-																		<span class="<%= row[:status] %>">Not Sure</span>
+																		<span class="<%= row[:status] %>">Check</span>
 																<% end %>
 																<% if ["new_imported"].include?(row[:status]) %>
-																		<span class="<%= row[:status] %>">New Imported</span>
+																		<span class="<%= row[:status] %>">New</span>
 																<% end %>
 														</td>
 														<td class="text-right">
@@ -92,12 +92,14 @@
 																		<% end %>
 																</td>
 																<td class="text-center">
-																		<%= "<span class=\"#{row[:status]}\">Imported</span>".html_safe if row[:selected_id] == contact.id && ["new_imported","old_imported"].include?(row[:status]) %>
+																		<%= "<span class=\"#{row[:status]}\">Existing</span>".html_safe if row[:selected_id] == contact.id && ["new_imported","old_imported"].include?(row[:status]) %>
 																</td>
 																<td class="text-right">
+																		<%= contact.contact_link("<span class=\"btn btn-mini btn-white\">Update</span>".html_safe) %>
 																		<% if !["new_imported","old_imported"].include?(row[:status]) %>
 																				<a href="#" class="btn btn-mini btn-info">Use This</a>
 																		<% end %>
+																		
 																</td>
 														</tr>
 												<% end %>

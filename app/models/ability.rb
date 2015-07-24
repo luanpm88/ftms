@@ -110,6 +110,7 @@ class Ability
       can :update, Course
       can :student_courses, Course
       can :courses_phrases_checkboxs, Course
+      can :course_price_select, Course
       
       can :update, Contact
       can :update_tag, Contact
@@ -119,9 +120,13 @@ class Ability
       can :related_info_box, Contact
       
       can :datatable, Book
+      can :student_books, Book
       can :read, Book
       can :create, Book
       can :update, Book
+      can :stock_select, Book
+      can :volumn_checkboxs, Book
+      can :stock_price_form, Book
       
       can :datatable, ContactTag
       can :read, ContactTag
@@ -129,6 +134,7 @@ class Ability
       can :update, ContactTag
       
       can :datatable, CourseRegister
+      can :student_course_registers, CourseRegister
       can :read, CourseRegister
       can :create, CourseRegister
       can :update, CourseRegister
@@ -158,6 +164,13 @@ class Ability
       can :update, DiscountProgram
       
       can :import_list, Seminar
+      
+      can :datatable, BankAccount
+      can :read, BankAccount
+      can :create, BankAccount
+      can :update, BankAccount
+      
+      can :courses_phrases_select, CoursesPhrase
     end
     
   end

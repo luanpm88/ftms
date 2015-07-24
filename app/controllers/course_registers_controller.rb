@@ -1,4 +1,6 @@
 class CourseRegistersController < ApplicationController
+  include CourseRegistersHelper
+  
   load_and_authorize_resource
   
   before_action :set_course_register, only: [:show, :edit, :update, :destroy]
@@ -12,14 +14,17 @@ class CourseRegistersController < ApplicationController
   # GET /course_registers/1
   # GET /course_registers/1.json
   def show
+    @contact = @course_register.contact
   end
 
   # GET /course_registers/new
   def new
     @course_register = CourseRegister.new
-    @contact = Contact.find(params[:contact_id])
+    @contact = !params[:contact_id].present? ? Contact.new : Contact.find(params[:contact_id])
     
     @course_register.created_date = Time.now.strftime("%d-%b-%Y")
+    @course_register.mailing_address = @contact.default_mailing_address
+    @course_register.contact_id = @contact.id
   end
 
   # GET /course_registers/1/edit
@@ -30,12 +35,13 @@ class CourseRegistersController < ApplicationController
   # POST /course_registers.json
   def create
     @course_register = CourseRegister.new(course_register_params)
-    @course_register.user = current_user
-    
+    @course_register.user = current_user    
+    @course_register.update_contacts_courses(params[:contacts_courses])
+    @course_register.update_books_contacts(params[:books_contacts])
     
     respond_to do |format|
-      if @course_register.save
-        @course_register.save_contacts_courses(params[:contact_id], params[:contacts_courses])
+      if @course_register.save    
+        @course_register.contact.update_info
         
         format.html { redirect_to params[:tab_page].present? ? "/home/close_tab?contact_id=#{params[:contact_id]}" : @course_register, notice: 'Course register was successfully created.' }
         format.json { render action: 'show', status: :created, location: @course_register }
@@ -69,6 +75,28 @@ class CourseRegistersController < ApplicationController
       format.json { head :no_content }
     end
   end
+  
+  def datatable
+    result = CourseRegister.datatable(params, current_user)
+    
+    result[:items].each_with_index do |item, index|
+      actions = render_course_register_actions(item)      
+      result[:result]["data"][index][result[:actions_col]] = actions
+    end
+    
+    render json: result[:result]
+  end
+  
+  def student_course_registers
+    result = CourseRegister.student_course_registers(params, current_user)
+    
+    result[:items].each_with_index do |item, index|
+      actions = render_course_register_actions(item)      
+      result[:result]["data"][index][result[:actions_col]] = actions
+    end
+    
+    render json: result[:result]
+  end
 
   private
     # Use callbacks to share common setup or constraints between actions.
@@ -78,6 +106,6 @@ class CourseRegistersController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def course_register_params
-      params.require(:course_register).permit(:created_date, :user_id)
+      params.require(:course_register).permit(:discount, :contact_id, :mailing_address, :payment_type, :bank_account_id, :discount_program_id, :created_date, :user_id)
     end
 end

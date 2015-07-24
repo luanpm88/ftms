@@ -1,0 +1,39 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <strong>Course register:</strong>
+  <%= @books_contact.course_register_id %>
+</p>
+
+<p>
+  <strong>Book:</strong>
+  <%= @books_contact.book_id %>
+</p>
+
+<p>
+  <strong>Contact:</strong>
+  <%= @books_contact.contact_id %>
+</p>
+
+<p>
+  <strong>Price:</strong>
+  <%= @books_contact.price %>
+</p>
+
+<p>
+  <strong>Discount program:</strong>
+  <%= @books_contact.discount_program_id %>
+</p>
+
+<p>
+  <strong>Discount:</strong>
+  <%= @books_contact.discount %>
+</p>
+
+<p>
+  <strong>Volumn ids:</strong>
+  <%= @books_contact.volumn_ids %>
+</p>
+
+<%= link_to 'Edit', edit_books_contact_path(@books_contact) %> |
+<%= link_to 'Back', books_contacts_path %>

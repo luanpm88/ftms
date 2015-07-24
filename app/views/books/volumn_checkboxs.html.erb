@@ -1,0 +1,20 @@
+<div class="form-group">
+
+
+    <label class="form-label"><label>Volumn</label></label>
+    <div class="input-with-icon right">
+
+        <% @books.volumns.each do |volumn| %>
+            <div class="row-fluid phrase_checkbox">
+                 <div class="checkbox check-success">
+                     <%= check_box_tag "books_contacts["+params[:number].to_s+"][volumn_ids][]", volumn.id, true, {id: "volumn_checkbox_"+params[:number]+ "_"+volumn.id.to_s} %>
+                     <label for="volumn_checkbox_<%= params[:number] %>_<%= volumn.id %>">
+                        <%= volumn.name %>
+                     </label>
+                 </div>
+            </div>
+        <% end %>
+        <br style="clear: both" />
+        
+    </div>
+</div>

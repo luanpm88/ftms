@@ -44,6 +44,9 @@ class Contact < ActiveRecord::Base
   has_many :contacts_courses
   has_and_belongs_to_many :courses
   
+  has_many :books_contacts
+  has_and_belongs_to_many :books
+  
   has_many :contacts_seminars
   has_and_belongs_to_many :seminars
   
@@ -51,8 +54,44 @@ class Contact < ActiveRecord::Base
   
   has_and_belongs_to_many :course_types
   
+  has_many :contacts_lecturer_course_types
+  has_many :lecturer_course_types, :through => :contacts_lecturer_course_types, :source => :course_type
+  
+  has_many :course_registers
   
   after_validation :update_cache
+  before_validation :check_type
+  
+  def self.format_mobile(string)
+    result = string.gsub(/\D/, '')
+    if (result =~ /84/i) != 0
+      if result[0] == "0"
+        result[0] = ""        
+      end
+      result = "84"+result      
+    end
+    
+    return result
+  end
+  
+  def update_info
+    self.check_type
+    self.save
+    
+    self.update_cache_course_type_ids
+    self.update_cache_intakes
+    self.update_cache_subjects
+  end
+  
+  def check_type
+    self.course_types = [] if !contact_types.include?(ContactType.inquiry)
+    self.lecturer_course_types = [] if !contact_types.include?(ContactType.lecturer)
+    self.contact_types.delete(ContactType.student) if joined_course_types.empty?
+    if !joined_course_types.empty?
+      self.contact_types << ContactType.student if !self.contact_types.include?(ContactType.student)
+      self.contact_types.delete(ContactType.inquiry)
+    end
+  end
   
   def is_not_individual?
     !is_individual
@@ -73,9 +112,15 @@ class Contact < ActiveRecord::Base
   def email=(str)
     self[:email] = str.strip
   end
-  def mobile=(str)
-    self[:mobile] = str.strip
+  #def email_2=(str)
+  #  self[:email_2] = str.strip
+  #end
+  def mobile=(value)
+    self[:mobile] = Contact.format_mobile(value)
   end
+  #def mobile_2=(value)
+  #  self[:mobile_2] = Contact.format_mobile(value)
+  #end
   def not_exist
     exist = []
     
@@ -121,6 +166,11 @@ class Contact < ActiveRecord::Base
       @records = @records.where("courses.id IN (#{params[:courses]})")
     end
     
+    if params[:courses_phrases].present?
+       @records = @records.joins(:contacts_courses)
+      @records = @records.where("contacts_courses.courses_phrase_ids LIKE ?","%[#{params[:courses_phrases]}]%")
+    end
+    
     if params[:seminars].present?
        @records = @records.joins(:seminars)
       @records = @records.where("seminars.id IN (#{params[:seminars]})")
@@ -136,6 +186,12 @@ class Contact < ActiveRecord::Base
       params["course_types"].each do |ccid|
         conds << "contacts.cache_course_type_ids LIKE '%[#{ccid}]%'"
       end
+      
+      @records = @records.joins("LEFT JOIN contacts_course_types ON contacts_course_types.contact_id = contacts.id")
+      #@records = @records.joins("LEFT JOIN contacts_lecturer_course_types ON contacts_lecturer_course_types.contact_id = contacts.id")
+      conds << "contacts_course_types.course_type_id IN (#{params["course_types"].join(", ")})"
+      #conds << "contacts_lecturer_course_types.course_type_id IN (#{params["course_types"].join(", ")})"
+      
       @records = @records.where(conds.join(" OR "))
     end
     
@@ -205,8 +261,8 @@ class Contact < ActiveRecord::Base
               item.picture_link,
               '<div class="text-left">'+item.contact_link+"</div>",
               '<div class="text-left">'+item.html_info_line.html_safe+item.referrer_link+"</div>",              
-              '<div class="text-center">'+item.contact_type_name+"</div>",
-              '<div class="text-center">'+item.joined_courses_name+"</div>",
+              '<div class="text-right">'+item.contact_type_name+"</div>",
+              '<div class="text-left">'+item.course_types_name_col+"</div>",
               '<div class="text-center">'+item.course_count_link+"</div>",
               '<div class="text-center contact_tag_box" rel="'+item.id.to_s+'">'+ContactsController.helpers.render_contact_tags_selecter(item)+"</div>",
               '<div class="text-center">'+item.account_manager_col+"</div>",
@@ -262,7 +318,7 @@ class Contact < ActiveRecord::Base
               item.picture_link,
               '<div class="text-left">'+item.contact_link+"</div>",
               '<div class="text-left">'+item.html_info_line.html_safe+item.referrer_link+"</div>",               
-              '<div class="text-center">'+item.course_types_name+"</div>",
+              '<div class="text-center">'+item.joined_course_types_name+"</div>",
               '<div class="text-center">'+item.course_count_link+"</div>",
               #'<div class="text-left">'+item.referrer_link+"</div>",
               '<div class="text-center contact_tag_box" rel="'+item.id.to_s+'">'+ContactsController.helpers.render_contact_tags_selecter(item)+"</div>",
@@ -315,7 +371,7 @@ class Contact < ActiveRecord::Base
               item.picture_link,
               '<div class="text-left">'+item.contact_link+"</div>",
               '<div class="text-left">'+item.html_info_line.html_safe+item.referrer_link+"</div>",               
-              '<div class="text-center">'+item.course_types_name+"</div>",
+              '<div class="text-center">'+item.joined_course_types_name+"</div>",
               '<div class="text-center">'+item.course_count_link+"</div>",
               #'<div class="text-left">'+item.referrer_link+"</div>",
               '<div class="text-center contact_tag_box" rel="'+item.id.to_s+'">'+ContactsController.helpers.render_contact_tags_selecter(item)+"</div>",
@@ -358,7 +414,7 @@ class Contact < ActiveRecord::Base
     CourseRegister.find(contacts_courses.where(course_id: course.id).first.course_register_id)
   end
   
-  def joined_courses
+  def joined_course_types
     contacts_courses.map {|cc| cc.course.course_type}.uniq
   end
   
@@ -379,29 +435,38 @@ class Contact < ActiveRecord::Base
     self.update_attribute(:cache_subjects, cache)
   end
   
-  def joined_courses_name
-    joined_courses.map(&:short_name).join(", ")
+  def joined_course_types_name
+    joined_course_types.map(&:short_name).join(", ")
   end
   
   def contact_type_name
     if is_individual
       result = ""
       if !contact_types.empty?
-        result += contact_types.map(&:name).join(", ")
+        result += "<div class=\"contact_type_line\">"+contact_types.order(:display_order).map(&:name).join("</div><div class=\"contact_type_line\">")+"</div>"
       else
         result += "none"
       end
       
-      if !course_types.empty?
-        result += "<div class=\"text-center\"><label class=\"col_label text-center\">Inquiry:</label>"
-        result += course_types.map(&:short_name).join(", ")
-        result += "</div>"
-      end
+      #if !course_types.empty?
+      #  result += "<div class=\"text-center\"><label class=\"col_label text-center\">Inquiry:</label>"
+      #  result += course_types.map(&:short_name).join(", ")
+      #  result += "</div>"
+      #end
       
       return result
     else
       "Company/Organization"
     end    
+  end
+  
+  def course_types_name_col
+    result = ""
+    result += "<div class=\"contact_type_line\">#{joined_course_types_name}</div>" if contact_types.include?(ContactType.student)
+    result += "<div class=\"contact_type_line\">#{course_types.map(&:short_name).join(", ")}</div>" if contact_types.include?(ContactType.inquiry)
+    result += "<div class=\"contact_type_line\">#{lecturer_course_types.map(&:short_name).join(", ")}</div>" if contact_types.include?(ContactType.lecturer)
+    
+    return result
   end
   
   def referrer_link
@@ -545,7 +610,8 @@ class Contact < ActiveRecord::Base
     
     
     if is_individual
-      line += "<span class=\"box_mini_info nowrap\"><i class=\"icon-calendar\"></i> " + birthday.strftime("%d-%b-%Y") + "</span> " if !mobile.nil? && !mobile.empty?
+      birth = !birthday.nil? ? birthday.strftime("%d-%b-%Y") : ""
+      line += "<span class=\"box_mini_info nowrap\"><i class=\"icon-calendar\"></i> " + birth + "</span> " if !mobile.nil? && !mobile.empty?
       line += "<span class=\"box_mini_info nowrap\"><i class=\"icon-envelope\"></i> " + email + "</span> " if !email.nil? && !email.empty?
       line += "<span class=\"box_mini_info nowrap\"><i class=\"icon-phone\"></i> " + mobile + "</span> " if !mobile.nil? && !mobile.empty? 
     else
@@ -676,7 +742,8 @@ class Contact < ActiveRecord::Base
   
   def display_name(params=nil)
     sirname = sex == "female" ? "[Ms]" : "[Mr]"
-    result = is_individual ? (sirname+" "+name).html_safe : name
+    result = is_individual ? (sirname+" "+name).html_safe.mb_chars.titleize : name
+    result = result
     
     if params.present?
       result = result+" (#{self.email})" if params[:email].present?
@@ -685,8 +752,17 @@ class Contact < ActiveRecord::Base
     return result
   end
   
+  def name
+    return "" if self[:name].nil?
+    is_individual ? self[:name].mb_chars.titleize : self[:name]
+  end
+  
   def display_picture(version = nil)
     self.image_url.nil? ? "<i class=\"icon-picture icon-nopic-60\"></i>".html_safe : "<img width='60' src='#{logo(version)}' />".html_safe
+  end
+  
+  def course_register_count
+    course_registers.count
   end
   
   def contact_tag
@@ -711,7 +787,7 @@ class Contact < ActiveRecord::Base
   end
   
   def update_cache_course_type_ids
-    cache = "["+joined_courses.map(&:id).join("][")+"]"
+    cache = "["+joined_course_types.map(&:id).join("][")+"]"
     self.update_attribute(:cache_course_type_ids,cache)
   end
   
@@ -733,9 +809,33 @@ class Contact < ActiveRecord::Base
     json.to_json
   end
   
+  def json_encode_lecturer_course_type_ids_names
+    json = lecturer_course_types.map {|t| {id: t.id.to_s, text: t.short_name}}
+    json.to_json
+  end
+  
   def set_present_in_seminar(seminar, checked)
     contacts_seminar = seminar.contacts_seminars.where(contact_id: self.id).first    
     contacts_seminar.update_attribute(:present, checked)
+  end
+  
+  def default_mailing_address
+    if preferred_mailing == "home"
+      return address
+    elsif preferred_mailing == "company"
+      return referrer.address
+    else
+      return mailing_address
+    end
+    
+  end
+  
+  def course_count
+    courses.uniq.count
+  end
+  
+  def book_count
+    books.uniq.count
   end
   
 end

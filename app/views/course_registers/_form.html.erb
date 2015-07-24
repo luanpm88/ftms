@@ -2,7 +2,7 @@
             <div class="col-md-12">
               <div class="grid simple">
                 <div class="grid-title no-border">
-                  <h4>Course <span class="semi-bold">Register</span></h4>
+                  
                   
                 </div>     
                 
@@ -33,26 +33,156 @@
                   <%= form_for(@course_register) do |f| %>
 					
 					<%= hidden_field_tag("tab_page", 1) if params[:tab_page] %>
-                    <%= hidden_field_tag("contact_id", @contact.id) %>
+                    
 					
 					 <div class="row column-seperation">
-						 <div class="col-md-6">
+						 <div class="col-md-12">
 							  <div class="row">
-								   <div class="col-md-6">
+								   <div class="col-md-4">
 										
 										<div class="form-group">
-										  <label class="form-label"><%= f.label :student_name %></label>
+										  <label class="form-label"><%= f.label :student %></label>
 										  <span class="help">(required)</span>
-										  <div class="input-with-icon right">                                       
-											  <strong><%= @contact.display_name %></strong>
+										  <div class="input-with-iconz right">
+											 <input style="width:100%;margin-bottom: 5px;" name="course_register[contact_id]" data="<%= contacts_path(is_individual: true, format: "json") %>" class="select2-ajax-contacts required" value="<%= @contact.id %>" text="<%= @contact.display_name %>" />
+											 <!--<div style="margin: 0;font-size: 18px;font-weight: bold"><strong><%= @contact.display_name %></strong></div>-->
 										  </div>
 										</div>
 										
 								   </div>
-								   <div class="col-md-6">
+							  </div>
+						 </div>
+					 </div>
+					 
+					<h3>Course Registration</h3> 
+					
+					 
+					<div class="phrase_box_list">
+						 <% (0..9).each do |number| %>
+							  <div class="row column-seperation phrase_box phrase_box_<%= number.to_s %> <%= 'hidden'.html_safe if number > 0 %>" rel="<%= number %>">
+								   <div class="phrase_box_label">Course #<%= number+1 %></div>
+								   <% if number != 0 %>
+										<div class="phrase_box_close" rel="<%= number.to_s %>"><i class="icon icon-remove"></i></div>
+								   <% end %>
+								   <div class="col-md-12">
+										<hr />
+								   </div>
+								   <div class="col-md-5">
+										<div class="row">
+											 <div class="col-md-5">													   
+												  <div class="form-group">
+													   <label class="form-label">Upfront?</label>
+													   <span class="help"></span>
+													   <div class="input-with-icon right">                                       
+															<div class="radio radio-success" style="padding: 5px">
+																 <input class="required" id="upfront_true_<%= number %>" type="radio" name="contacts_courses[<%= number %>][upfront]" value="true">
+																 <label for="upfront_true_<%= number %>">Yes</label>
+																 <input class="required" id="upfront_false_<%= number %>" type="radio" name="contacts_courses[<%= number %>][upfront]" value="false" checked="checked">
+																 <label for="upfront_false_<%= number %>">No</label>
+															</div>
+													   </div>
+												  </div>									
+											 </div>
+											 <div class="col-md-7">
+												  <div class="form-group">
+														<label class="form-label"><%= f.label :course %></label>
+														<span class="help">(required)</span>
+														<div class="input-with-icon  right">                                       
+															 <i class=""></i>
+															 <div class="input-with_add_but">
+																  <%= link_to '<i class="icon-plus"></i>'.html_safe, new_course_path(tab_page: 1), title: "New Course", :class => 'btn btn-sm btn-small btn-white tab_page' %>
+																  <input style="width:100%;margin-bottom: 5px;" name="contacts_courses[<%= number %>][course_id]" data="<%= courses_path(format: "json") %>" class="select2-ajax-courses main_input registration_course required" value="" text="" box_number="<%= number %>" />
+															 </div>
+														</div>
+												  </div>
+											 </div>
+										</div>
 										
+										<div class="registration_course_price_box_<%= number %>"></div>
+								   
+										
+								   </div>
+								  <div class="col-md-7">
+									   
+											 
+											 <div class="registration_phrase_box_<%= number %>">                                       
+												  
+												  
+											</div>
+									   	
+								  </div>						 
+							  </div>
+							  
+						 <% end %>
+						 
+						 <hr />
+						 <a href="#add" class="btn btn-white add-more-course-form"><i class="icon icon-plus"></i> Add Course</a>
+					</div>
+					
+					<br />
+					
+					<h3>Stock Registration</h3>
+					
+					<div class="stock_box_list">
+						 <% (0..9).each do |number| %>
+							  <div class="row column-seperation stock_box stock_box_<%= number.to_s %> <%= 'hidden'.html_safe if number >= 0 %>" rel="<%= number %>">
+								   <div class="stock_box_label">Stock #<%= number+1 %></div>
+								   <% if true %>
+										<div class="stock_box_close" rel="<%= number.to_s %>"><i class="icon icon-remove"></i></div>
+								   <% end %>
+								   <div class="col-md-12">
+										<hr />
+								   </div>
+								   <div class="col-md-3">
 										<div class="form-group">
-										  <label class="form-label"><%= f.label :registration_date %></label>
+											 <label class="form-label"><label>Program</label></label>
+											 <span class="help"></span>
+											 <div class="input-with-icon date-group right">                                       
+												  <i class=""></i>
+												  <div class="input-with_add_but">
+														 <%= link_to '<i class="icon-plus"></i>'.html_safe, new_course_type_path(tab_page: 1), title: "New Program", :class => 'btn btn-sm btn-small btn-white add-agent-button tab_page' %>
+														 <input style="width:100%;margin-bottom: 5px;" name="program_id" data="<%= course_types_path(format: "json") %>" class="select2-ajax-course-types" value="" text="" box_number="<%= number %>" /> 
+												  </div>
+											 </div>
+										</div>
+										<div class="form-group">
+											 <label class="form-label"><label>Subject</label></label>
+											 <span class="help"></span>
+											 <div class="input-with-icon date-group right">                                       
+												  <i class=""></i>
+												  <div class="input-with_add_but">
+														 <%= link_to '<i class="icon-plus"></i>'.html_safe, new_subject_path(tab_page: 1), title: "New Paper", :class => 'btn btn-sm btn-small btn-white add-agent-button tab_page' %>
+														 <input style="width:100%;margin-bottom: 5px;" name="subject_id" data="<%= subjects_path(format: "json") %>" class="select2-ajax-subjects" value="" text="" box_number="<%= number %>" /> 
+												  </div>
+											 </div>
+										</div>	
+								   </div>
+								   <div class="col-md-4">
+										<div class="form_stock_list_<%= number %>"></div>
+										<div class="form_stock_price_<%= number %>"></div>
+								   </div>
+								   <div class="col-md-5">
+										<div class="form_volumn_list_<%= number %>"></div>
+								   </div>
+							  </div>
+							  
+						 <% end %>
+						 
+						 <hr />
+						 <a href="#add" class="btn btn-white add-more-stock-form"><i class="icon icon-plus"></i> Add Stock</a>
+					</div>
+					
+					<br />
+					
+					<h3>Payment Information</h3> 
+					
+					
+					<div class="row column-seperation">
+						 <div class="col-md-12">
+							  <div class="row">								   
+								   <div class="col-md-3">										
+										<div class="form-group">
+										  <label class="form-label"><label>Receipt Date</label></label>
 										  <span class="help">(required)</span>
 										  <div class="input-with-icon  right">                                       
 											   <i class=""></i>
@@ -64,7 +194,82 @@
 										  </div>
 										</div>
 										
+								   </div>							   
+								   <div class="col-md-3">										
+										<div class="form-group">
+											 <label class="form-label"><label>Payment type</label></label>
+											 <span class="help">(required)</span>
+											 <div class="input-with-icon right">                                       
+												  <select name="course_register[payment_type]" class="modern_select width100 required">
+													   <option value="self-financed">Self-financed</option>
+													   <option value="company-sponsored">Company-sponsored</option>
+												  </select>
+											 </div>
+										</div>										
 								   </div>
+								   <div class="col-md-3">													   
+										<div class="form-group">
+											 <label class="form-label"><%= f.label :bank %></label>
+											 <span class="help">(required)</span>
+											 <div class="input-with-icon  right">                                       
+												  <i class=""></i>
+												  <div class="input-with_add_butz">												   													   
+													   <%= select_tag 'course_register[bank_account_id]', options_for_select(BankAccount.all.collect{ |u| [u.name, u.id] }), :include_blank => 'None', class: "modern_select width100 required" %>
+												  </div>
+											 </div>
+										</div>					
+								   </div>
+								   <div class="col-md-3">										
+										<div class="form-group">
+											 <label class="form-label"><label>Mailing Address</label></label>
+											 <span class="help"></span>
+											 <div class="input-with-icon right">                                       
+												 <%= f.text_field :mailing_address, :class => "form-control required" %>
+											 </div>
+										</div>										
+								   </div>
+								   
+							  </div>
+							  
+							  <div class="row">
+								   <div class="col-md-3">
+										<div class="form-group">
+											 <label class="form-label"><label>Discount Program</label></label>
+											 <span class="help"></span>
+											 <div class="input-with-icon right">                                       
+												  <i class=""></i>
+												   <div class="input-with_add_but">
+													 <%= link_to '<i class="icon-plus"></i>'.html_safe, new_discount_program_path(tab_page: 1), title: "New Discount Program", :class => 'btn btn-sm btn-small btn-white tab_page' %>
+													 <input style="width:100%;margin-bottom: 5px;" name="course_register[discount_program_id]" data="<%= discount_programs_path(format: "json") %>" class="select2-ajax-discount-programs" /> 
+												   </div>
+											 </div>
+										</div>
+								   </div>
+								   <div class="col-md-3">										
+										<div class="form-group">
+											 <label class="form-label"><label>Total Price</label></label>
+											 <span class="help"></span>
+											 <div class="input-with-icon right">
+												  <table style="font-size: 16px;" width="100%">
+													   <tr>
+															<td class="text-right">Course: </td>
+															<td width="50%" class="text-right"><strong class="total_course_price"></strong></td>
+															
+													   </tr>
+													   <tr>
+															<td class="text-right">Stock: </td>
+															<td class="text-right"><strong class="total_stock_price"></strong></td>
+													   </tr>
+													   <tr>
+															<td class="text-right">Total: </td>
+															<td class="text-right"><strong class="total_registration_price"></strong></td>
+													   </tr>
+												  </table>
+												 
+											 </div>
+										</div>										
+								   </div>
+								   
 								   
 								   
 							  </div>
@@ -73,38 +278,6 @@
 							  	
 						 </div>
 					 </div>
-					 
-					
-					<% (0..9).each do |number| %>
-					
-						 <div class="row column-seperation phrase_box phrase_box_<%= number.to_s %>" <%= 'style="display:none"'.html_safe if number > 0 %>>
-							  <div class="col-md-6">
-								  <div class="form-group">
-										<label class="form-label"><%= f.label :course %></label>
-										<span class="help"></span>
-										<div class="input-with-icon  right">                                       
-											 <i class=""></i>
-											 <div class="input-with_add_but">
-												  <%= link_to '<i class="icon-plus"></i>'.html_safe, new_course_path(tab_page: 1), title: "New Course", :class => 'btn btn-sm btn-small btn-white tab_page' %>
-												  <input style="width:100%;margin-bottom: 5px;" name="contacts_courses[<%= number %>][course_id]" data="<%= courses_path(format: "json") %>" class="select2-ajax-courses main_input registration_course" value="" text="" box_url="<%= courses_phrases_checkboxs_courses_path %>" box_id="registration_phrase_box_<%= number %>" box_number="<%= number %>" />
-											 </div>
-										</div>
-								  </div>
-							  </div>
-							 <div class="col-md-6">
-								  <div class="form-group">
-										<label class="form-label"><%= f.label :phrase %></label>
-										<span class="help"></span>
-										<div class="input-with-icon registration_phrase_box_<%= number %> right">                                       
-											 
-											 
-									   </div>
-								  <br style="clear: both" />
-								  </div>	
-							 </div>						 
-						 </div>
-						 
-					<% end %>
 					 
 						 
 					<div class="form-actions">  

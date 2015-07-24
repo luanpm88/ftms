@@ -1,5 +1,315 @@
 <script>
 	
+	function updateStockPriceForm(input) {
+		
+		var url = "<%= stock_price_form_books_path %>"
+		var book_id = input.select2("val")
+		var number = input.attr("box_number")
+		var full_url = url+'?id='+book_id+'&number='+number
+		var box = $('.form_stock_price_'+number)
+		
+		if (book_id == "") {
+			box.html("")
+			return
+		}
+		
+		$.ajax({
+			url : full_url,
+			type: "GET",
+			success:function(data, textStatus, jqXHR)
+			{
+				box.html(data)
+				box.find(".modern_select").select2()
+				
+				//ajax select2 for contacts		
+				box.find('.select2-ajax-discount-programs').select2({
+					placeholder: "Search for a discount program",
+					minimumInputLength: 1,
+					allowClear: true,
+					multiple: $('.select2-ajax-discount-programs').hasClass("multiple"),
+					ajax: {
+					  url: $('.select2-ajax-discount-programs').attr("data"),
+					  dataType: 'json',
+					  data: function (term, page) { // page is the one-based page number tracked by Select2
+						return {
+						  q: term, //search term
+						};
+					  },
+					  results: function (data, page) {
+						return {results: data};
+					  }
+					},
+					initSelection: function (element, callback) {				      
+					  callback({ id: element.val(), text: element.attr('text') });
+					}
+				});
+				
+				format_price(box.find('input.price_input'))
+				
+				calculateStockPriceForm()
+			}
+		});
+	}
+	
+	function updateVolumnForm(input) {
+		
+		var url = "<%= volumn_checkboxs_books_path %>"
+		var book_id = input.select2("val")
+		var number = input.attr("box_number")
+		var full_url = url+'?id='+book_id+'&number='+number
+		var box = $('.form_volumn_list_'+number)
+		
+		if (book_id == "") {
+			box.html("")
+			return
+		}
+		
+		$.ajax({
+			url : full_url,
+			type: "GET",
+			success:function(data, textStatus, jqXHR)
+			{
+				box.html(data)
+			}
+		});
+	}
+	
+	function updateBookForm(program, subject, number) {
+		var url = "<%= stock_select_books_path %>"
+		var program_id = ""
+		var subject_id = ""
+		
+		if (program && program.val() != "") {
+			program_id = program.val()
+		}		
+		if (subject && subject.val() != "") {
+			subject_id = subject.val()
+		}
+		
+		var full_url = url+'?program_id='+program_id+'&subject_id='+subject_id+'&number='+number
+		var box = $('.form_stock_list_'+number)
+		
+		$.ajax({
+			url : full_url,
+			type: "GET",
+			success: function(data, textStatus, jqXHR)
+			{
+				box.html(data)
+				box.find(".modern_select").select2()
+			}
+		});
+	}
+	
+	function updateTotalRegistration() {
+		$(total_registration_price)
+	}
+	
+	function calculateStockPriceForm() {
+		var total = 0
+		$('.stock_box_list .stock_box').each(function() {	
+			var number = $(this).attr("rel")
+			var box = $(this)
+			if (!$(this).hasClass("hidden") && box.find('input[name="contacts_courses['+number+'][course_id]"]').val() != "") {
+				
+				var line_total = 0
+				var price = 0
+				var price_discount_program = 0
+				var price_discount = 0
+        
+				if(box.find('select[name="books_contacts['+number+'][price]"]').length) {
+				  price = parseFloat(box.find('select[name="books_contacts['+number+'][price]"]').val())
+				}        
+				if(box.find('input[name="books_contacts['+number+'][discount]"]').length && box.find('input[name="books_contacts['+number+'][discount]"]').val() != "") {
+				  price_discount = parseFloat(box.find('input[name="books_contacts['+number+'][discount]"]').val().replace(/,/g,""))
+				}       
+				if(box.find('input[name="books_contacts['+number+'][discount_program_id]"]').length && box.find('input[name="books_contacts['+number+'][discount_program_id]"]').val() != "") {
+				  var text = box.find('input[name="books_contacts['+number+'][discount_program_id]"]').select2("data").text
+				  var dd_v = parseFloat(text.split("[")[1].split("]")[0].split(" ")[0].replace(/,/g,""))
+				  var pp_type = text.split("[")[1].split("]")[0].split(" ")[1]
+				  price_discount_program = parseFloat(box.find('input[name="books_contacts['+number+'][discount_program_id]"]').select2("data").text.split("[")[1].split("]")[0].replace(/,/g,""))
+				  
+				  if(pp_type=="%") {
+					price_discount_program = (price_discount_program/100)*price
+				  }
+				}
+				
+				line_total = price - price_discount - price_discount_program
+				
+				box.find(".total_stock").html(ReplaceNumberWithDots(line_total.toFixed(0)))
+				
+				
+				total = total + line_total
+			}
+		})
+		$(".total_stock_price").html(ReplaceNumberWithDots(total.toFixed(0)))
+		updateTotalRegsitrationPrice()
+		return total
+	}
+	
+	function updateTotalRegsitrationPrice() {
+		
+		if ($(".total_course_price").length == 0) {
+			return false
+		}
+		
+		var course = parseFloat($(".total_course_price").html().replace(/,/g,""))
+		var stock = parseFloat($(".total_stock_price").html().replace(/,/g,""))
+		var price_discount_program = 0
+		
+		if($('input[name="course_register[discount_program_id]"]').length && $('input[name="course_register[discount_program_id]"]').val() != "") {
+			var text = $('input[name="course_register[discount_program_id]"]').select2("data").text
+			var dd_v = parseFloat(text.split("[")[1].split("]")[0].split(" ")[0].replace(/,/g,""))
+			var pp_type = text.split("[")[1].split("]")[0].split(" ")[1]
+			price_discount_program = parseFloat($('input[name="course_register[discount_program_id]"]').select2("data").text.split("[")[1].split("]")[0].replace(/,/g,""))
+			
+			if(pp_type=="%") {
+				price_discount_program = (price_discount_program/100)*(course + stock)
+			}
+		}
+		
+		var total = course + stock - price_discount_program
+		
+		$(".total_registration_price").html(ReplaceNumberWithDots(total.toFixed(0)))
+		
+		
+	}
+	
+	function calculateCoursePriceForm() {
+		var total = 0
+		$('.phrase_box_list .phrase_box').each(function() {	
+			var number = $(this).attr("rel")
+			var box = $(this)
+			if (!$(this).hasClass("hidden") && box.find('input[name="contacts_courses['+number+'][course_id]"]').val() != "") {
+				
+				var line_total = 0
+				var price = 0
+				var price_discount_program = 0
+				var price_discount = 0
+        
+				if(box.find('select[name="contacts_courses['+number+'][price]"]').length) {
+				  price = parseFloat(box.find('select[name="contacts_courses['+number+'][price]"]').val())
+				}        
+				if(box.find('input[name="contacts_courses['+number+'][discount]"]').length && box.find('input[name="contacts_courses['+number+'][discount]"]').val() != "") {
+				  price_discount = parseFloat(box.find('input[name="contacts_courses['+number+'][discount]"]').val().replace(/,/g,""))
+				}       
+				if(box.find('input[name="contacts_courses['+number+'][discount_program_id]"]').length && box.find('input[name="contacts_courses['+number+'][discount_program_id]"]').val() != "") {
+				  var text = box.find('input[name="contacts_courses['+number+'][discount_program_id]"]').select2("data").text
+				  var dd_v = parseFloat(text.split("[")[1].split("]")[0].split(" ")[0].replace(/,/g,""))
+				  var pp_type = text.split("[")[1].split("]")[0].split(" ")[1]
+				  price_discount_program = parseFloat(box.find('input[name="contacts_courses['+number+'][discount_program_id]"]').select2("data").text.split("[")[1].split("]")[0].replace(/,/g,""))
+				  
+				  if(pp_type=="%") {
+					price_discount_program = (price_discount_program/100)*price
+				  }
+				}
+				
+				line_total = price - price_discount - price_discount_program
+				
+				box.find(".total_course").html(ReplaceNumberWithDots(line_total.toFixed(0)))
+				
+				
+				total = total + line_total
+			}
+		})
+		$(".total_course_price").html(ReplaceNumberWithDots(total.toFixed(0)))
+		updateTotalRegsitrationPrice()
+		return total
+	}
+	
+	function updateCoursePriceForm(input) {
+		var url = "<%= course_price_select_courses_path %>"
+		var course_id = input.val()
+		var number = input.attr("box_number")
+		var full_url = url+'?id='+course_id+'&number='+number
+		var box = $('.registration_course_price_box_'+number)
+		
+		if (course_id == "") {
+			box.html("")
+			return
+		}
+		
+		$.ajax({
+			url : full_url,
+			type: "GET",
+			success:function(data, textStatus, jqXHR)
+			{
+				box.html(data)
+				box.find(".modern_select").select2()
+				
+				//ajax select2 for contacts		
+				box.find('.select2-ajax-discount-programs').select2({
+					placeholder: "Search for a discount program",
+					minimumInputLength: 1,
+					allowClear: true,
+					multiple: $('.select2-ajax-discount-programs').hasClass("multiple"),
+					ajax: {
+					  url: $('.select2-ajax-discount-programs').attr("data"),
+					  dataType: 'json',
+					  data: function (term, page) { // page is the one-based page number tracked by Select2
+						return {
+						  q: term, //search term
+						};
+					  },
+					  results: function (data, page) {
+						return {results: data};
+					  }
+					},
+					initSelection: function (element, callback) {				      
+					  callback({ id: element.val(), text: element.attr('text') });
+					}
+				});
+				
+				format_price(box.find('input.price_input'));
+				
+				calculateCoursePriceForm()
+			}
+		});
+	}
+	
+	function updateCoursePhraseForm(input) {
+		var url = "<%= courses_phrases_checkboxs_courses_path %>"
+		var course_id = input.val()
+		var number = input.attr("box_number")
+		var full_url = url+'?id='+course_id+'&number='+number
+		var box = $('.registration_phrase_box_'+number)
+		
+		if (course_id == "") {
+			box.html("")
+			return
+		}
+		
+		$.ajax({
+			url : full_url,
+			type: "GET",
+			success:function(data, textStatus, jqXHR)
+			{
+				box.html(data)
+			}
+		});
+	}
+	
+	function toggleLinePrice() {
+		$('.line_price').each(function() {
+			
+		})
+	}
+	
+	function updateProgramsBox() {
+		var types = $('input[name="contact[contact_type_ids][]"]:checked').map(function(){
+			return $(this).val();
+		}).get();
+
+		$('.programs_box').hide()
+		
+		$('.programs_box').each(function() {
+			$(this).select2("val","")
+		})
+		
+		types.forEach(function(a){
+		  $('.programs_box_'+a).show()
+		});
+	}
+	
 	function changeMailingPreferred(input) {		
 		if (input.val() == "company" && $('input[name="contact[referrer_id]"]').val() == "") {
 			alert("Must choose company first!")
@@ -475,6 +785,10 @@
 					if($("input[name='seminars']").val()) {
 						d.seminars =  $("input[name='seminars']").val()
 					}
+					
+					if($("input[name='courses_phrases']").val()) {
+						d.courses_phrases =  $("input[name='courses_phrases']").val()
+					}
 				}
 			},
 			"columnDefs": [ { "targets": [0,1,3,4,5,6,7,8,9], "orderable": false } ],
@@ -526,6 +840,10 @@
 					
 					if($("input[name='seminars']").val()) {
 						d.seminars =  $("input[name='seminars']").val()
+					}
+					
+					if($("input[name='courses_phrases']").val()) {
+						d.courses_phrases =  $("input[name='courses_phrases']").val()
 					}
 				}				
 			},
@@ -581,6 +899,10 @@
 					
 					if($("input[name='seminars']").val()) {
 						d.seminars =  $("input[name='seminars']").val()
+					}
+					
+					if($("input[name='courses_phrases']").val()) {
+						d.courses_phrases =  $("input[name='courses_phrases']").val()
 					}
 				}
 			},
@@ -638,7 +960,7 @@
 					d.lecturers = $("input[name='filter[lecturers[]]']").val()
 				}
 			},
-			"columnDefs": [ { "targets": [2,3,4,6,7], "orderable": false } ],
+			"columnDefs": [ { "targets": [2,3,4,5,7,8], "orderable": false } ],
 			"order": [],
 			"aLengthMenu": [[10, 25, 50, 75, 100], [10, 25, 50, 75, 100]],
 			"iDisplayLength": 25
@@ -672,10 +994,36 @@
 			"ajax": {
 				"url": "<%= datatable_books_path %>",
 				"data": function ( d ) {
+					d.program_id = $("select[name='filter[course_types[]]']").val()
+					d.subject_id = $("select[name='filter[subjects[]]']").val()
 					
+					if($("input[name='student']").val()) {
+						d.student =  $("input[name='student']").val()
+					}
 				}
 			},
-			"columnDefs": [ { "targets": [0,2,5,6], "orderable": false } ],
+			"columnDefs": [ { "targets": [0,2,3,4,6,8,9], "orderable": false } ],
+			"order": [],
+			"aLengthMenu": [[10, 25, 50, 75, 100], [10, 25, 50, 75, 100]],
+			"iDisplayLength": 25
+	    });
+		
+		//Datatable books
+	    $('.datatable-student-books').dataTable( {
+			"processing": true,
+			"serverSide": true,
+			"ajax": {
+				"url": "<%= student_books_books_path %>",
+				"data": function ( d ) {
+					d.program_id = $("select[name='filter[course_types[]]']").val()
+					d.subject_id = $("select[name='filter[subjects[]]']").val()
+					
+					if($("input[name='student']").val()) {
+						d.student =  $("input[name='student']").val()
+					}
+				}
+			},
+			"columnDefs": [ { "targets": [0,2,3,4,6,8,9], "orderable": false } ],
 			"order": [],
 			"aLengthMenu": [[10, 25, 50, 75, 100], [10, 25, 50, 75, 100]],
 			"iDisplayLength": 25
@@ -725,6 +1073,106 @@
 				}
 			},
 			"columnDefs": [ { "targets": [1,2,4,5], "orderable": false } ],
+			"order": [],
+			"aLengthMenu": [[10, 25, 50, 75, 100], [10, 25, 50, 75, 100]],
+			"iDisplayLength": 25
+	    });
+		
+		//Datatable subjects
+	    $('.datatable-bank-accounts').dataTable( {
+			"processing": true,
+			"serverSide": true,
+			"ajax": {
+				"url": "<%= datatable_bank_accounts_path %>",
+				"data": function ( d ) {
+					
+				}
+			},
+			"columnDefs": [ { "targets": [1,2,3,5,6], "orderable": false } ],
+			"order": [],
+			"aLengthMenu": [[10, 25, 50, 75, 100], [10, 25, 50, 75, 100]],
+			"iDisplayLength": 25
+	    });
+		
+		//Datatable subjects
+	    $('.datatable-course-registers').dataTable( {
+			"processing": true,
+			"serverSide": true,
+			"ajax": {
+				"url": "<%= datatable_course_registers_path %>",
+				"data": function ( d ) {
+					if($("select[name='course_types[]']").val()) {
+						d.course_types = $("select[name='course_types[]']").val()
+					}
+					
+					if($("select[name='subjects[]']").val()) {
+						d.subjects = $("select[name='subjects[]']").val()
+					}
+					
+					if($("select[name='filter[intake(2i)]']").val()) {
+						d.intake_month =  $("select[name='filter[intake(2i)]']").val()
+					}
+					
+					if($("select[name='filter[intake(1i)]']").val()) {
+						d.intake_year =  $("select[name='filter[intake(1i)]']").val()
+					}
+					
+					if($("input[name='courses']").val()) {
+						d.courses =  $("input[name='courses']").val()
+					}
+					
+					if($("input[name='courses_phrases']").val()) {
+						d.courses_phrases =  $("input[name='courses_phrases']").val()
+					}
+					
+					if($("input[name='student']").val()) {
+						d.student =  $("input[name='student']").val()
+					}
+				}
+			},
+			"columnDefs": [ { "targets": [0,1,2,3,4,5,6,7], "orderable": false } ],
+			"order": [],
+			"aLengthMenu": [[10, 25, 50, 75, 100], [10, 25, 50, 75, 100]],
+			"iDisplayLength": 25
+	    });
+		
+		//Datatable subjects
+	    $('.datatable-student-course-registers').dataTable( {
+			"processing": true,
+			"serverSide": true,
+			"ajax": {
+				"url": "<%= student_course_registers_course_registers_path %>",
+				"data": function ( d ) {
+					if($("select[name='course_types[]']").val()) {
+						d.course_types = $("select[name='course_types[]']").val()
+					}
+					
+					if($("select[name='subjects[]']").val()) {
+						d.subjects = $("select[name='subjects[]']").val()
+					}
+					
+					if($("select[name='filter[intake(2i)]']").val()) {
+						d.intake_month =  $("select[name='filter[intake(2i)]']").val()
+					}
+					
+					if($("select[name='filter[intake(1i)]']").val()) {
+						d.intake_year =  $("select[name='filter[intake(1i)]']").val()
+					}
+					
+					if($("input[name='courses']").val()) {
+						d.courses =  $("input[name='courses']").val()
+					}
+					
+					if($("input[name='courses_phrases']").val()) {
+						d.courses_phrases =  $("input[name='courses_phrases']").val()
+					}
+					
+					if($("input[name='student']").val()) {
+						d.student =  $("input[name='student']").val()
+					}
+				}
+			},
+			"columnDefs": [ { "targets": [0,1,2,3,4,5,6,7], "orderable": false } ],
 			"order": [],
 			"aLengthMenu": [[10, 25, 50, 75, 100], [10, 25, 50, 75, 100]],
 			"iDisplayLength": 25
@@ -826,7 +1274,7 @@
 		
 		//ajax select2 for contacts
 	    $('.select2-ajax-course-types').select2({
-			placeholder: "Search for a course type",
+			placeholder: "Search for a program",
 			minimumInputLength: 1,
 			allowClear: true,
 			multiple: $('.select2-ajax-course-types').hasClass("multiple"),
@@ -966,6 +1414,7 @@
 			}
 	    });
 		
+		
 		//ajax select2 for contacts		
 	    $('.select2-ajax-phrases').select2({
 			placeholder: "Search for a phrase",
@@ -978,6 +1427,52 @@
 			  data: function (term, page) { // page is the one-based page number tracked by Select2
 				return {
 				  q: term, //search term
+				};
+			  },
+			  results: function (data, page) {
+				return {results: data};
+			  }
+			},
+			initSelection: function (element, callback) {				      
+			  callback({ id: element.val(), text: element.attr('text') });
+			}
+	    });
+		
+		//ajax select2 for contacts		
+	    $('.select2-ajax-discount-programs').select2({
+			placeholder: "Search for a discount program",
+			minimumInputLength: 1,
+			allowClear: true,
+			multiple: $('.select2-ajax-discount-programs').hasClass("multiple"),
+			ajax: {
+			  url: $('.select2-ajax-discount-programs').attr("data"),
+			  dataType: 'json',
+			  data: function (term, page) { // page is the one-based page number tracked by Select2
+				return {
+				  q: term, //search term
+				};
+			  },
+			  results: function (data, page) {
+				return {results: data};
+			  }
+			},
+			initSelection: function (element, callback) {				      
+			  callback({ id: element.val(), text: element.attr('text') });
+			}
+	    });
+		
+		//ajax select2 for bank
+	    $('.select2-ajax-bank-accounts').select2({
+			placeholder: "Search for a bank account",
+			minimumInputLength: 1,
+			allowClear: true,
+			multiple: $('.select2-ajax-bank-accounts').hasClass("multiple"),
+			ajax: {
+			  url: $('.select2-ajax-bank-accounts').attr("data"),
+			  dataType: 'json',
+			  data: function (term, page) { // page is the one-based page number tracked by Select2
+				return {
+				  q: term, //search term				  
 				};
 			  },
 			  results: function (data, page) {
@@ -1007,17 +1502,17 @@
 	    
 	    $('.dataTables_length select').select2({allowClear: true});
 	    
-	    $('.date_select_filter select').eq(0).select2({
+	    $('.date_select_filter select[name="filter[intake(1i)]"]').select2({
 			allowClear: true,
 			placeholder: "year"
 	    });
 	    
-	    $('.date_select_filter select').eq(1).select2({
+	    $('.date_select_filter  select[name="filter[intake(2i)]"]').select2({
 			allowClear: true,
 			placeholder: "month"
 	    });
 	    
-	    $('.date_select_filter select').eq(2).select2({
+	    $('.date_select_filter  select[name="filter[intake(3i)]"]').select2({
 			allowClear: true,
 			placeholder: "day"
 	    });
@@ -1075,7 +1570,7 @@
 		$('.fancybox_link').fancybox({width: "100%",'autoDimensions': false, 'autoSize':false});
 		
 		//contact filter
-		$("#contact_filter input, #contact_filter select").click(function() {
+		$(document).on("change", "#contact_filter input, #contact_filter select", function() {
 			$('.datatable-contacts').dataTable().fnFilter();
 			$('.datatable-course-students').dataTable().fnFilter();
 			$('.datatable-seminar-students').dataTable().fnFilter();
@@ -1144,6 +1639,10 @@
 			$('.datatable-subjects').dataTable().fnFilter();
 			$('.datatable-seminars').dataTable().fnFilter();
 			$('.datatable-phrases').dataTable().fnFilter();
+			$('.datatable-books').dataTable().fnFilter();
+			$('.datatable-student-books').dataTable().fnFilter();
+			$('.datatable-course-registers').dataTable().fnFilter();
+			$('.datatable-student-course-registers').dataTable().fnFilter();
 		});
 		
 		checkContactType()
@@ -1277,31 +1776,36 @@
 		})
 		
 		
-		$('.phrase_box .main_input').change(function() {
-			var value = $(this).val()
-			var next_box = $(this).parents(".phrase_box").next()
-			if (value != "") {
-				next_box.show()
-			} else if (next_box.find(".main_input").val() == "") {
-				next_box.hide()
-			}
-		})
+		//$('.phrase_box .main_input').change(function() {
+		//	var value = $(this).val()
+		//	var next_box = $(this).parents(".phrase_box").next()
+		//	if (value != "") {
+		//		next_box.show()
+		//	} else if (next_box.find(".main_input").val() == "") {
+		//		next_box.hide()
+		//	}
+		//})
+		
+		$('.add-more-course-form').click(function() {
+			$('.phrase_box_list .phrase_box').each(function() {
+				if ($(this).hasClass("hidden")) {
+					$(this).removeClass("hidden")
+					return false
+				}				
+			})
+		});
+		
+		$(document).on("click", ".phrase_box_close", function(e) {			
+			var val = $(this).attr("rel")
+			$('.phrase_box_'+val).find(".main_input").select2("val","")
+			$('.phrase_box_'+val).find(".main_input").trigger("change")
+			$('.phrase_box_'+val).addClass("hidden")
+		});
 		
 		$('.registration_course').change(function() {
-			var url = $(this).attr("box_url")
-			var course_id = $(this).val()
-			var number = $(this).attr("box_number")
-			var full_url = url+'?id='+course_id+'&number='+number
-			var box = $('.'+$(this).attr("box_id"))
+			updateCoursePhraseForm($(this))
+			updateCoursePriceForm($(this))
 			
-			$.ajax({
-				url : full_url,
-				type: "GET",
-				success:function(data, textStatus, jqXHR)
-				{
-					box.html(data)
-				}
-			});
 		})
 		
 		$(document).on("click", ".ajax-check-radio", function(e) {
@@ -1319,6 +1823,92 @@
 				}
 			});
 		});
-});
+		
+		updateProgramsBox()
+		$(document).on("change", "input[name='contact[contact_type_ids][]']", function(e) {
+			updateProgramsBox()
+		});
+		
+		$('.price_line input').keyup(function() {
+			var val = $(this).val()
+			var next = $(this).parent().next()
+			if (val != "" || parseInt(val) > 0) {
+				next.show()
+			} else {
+				next.hide()
+			}
+		})
+		
+		calculateCoursePriceForm()
+		$(document).on("change", ".phrase_box input, .phrase_box select", function(e) {
+			calculateCoursePriceForm()
+		});
+		$(document).on("keyup", ".phrase_box input", function(e) {
+			calculateCoursePriceForm()
+		});
+		
+		
+		$('.add-more-stock-form').click(function() {
+			$('.stock_box_list .stock_box').each(function() {
+				if ($(this).hasClass("hidden")) {
+					$(this).removeClass("hidden")
+					updateBookForm(false, false, $(this).attr("rel"))
+					return false
+				}
+			})
+		});
+		
+		$(document).on("click", ".stock_box_close", function(e) {			
+			var val = $(this).attr("rel")
+			$('.stock_box_'+val).find("select[name=book_id]").select2("val","")
+			$('.stock_box_'+val).find("select[name=book_id]").trigger("change")
+			$('.stock_box_'+val).addClass("hidden")
+		});
+		
+		updateBookForm(false, false, 0)		
+		$('input[name="program_id"]').change(function() {
+			updateBookForm($(this),false, $(this).attr("box_number"))
+		})
+		$('input[name="subject_id"]').change(function() {
+			updateBookForm(false, $(this),$(this).attr("box_number"))
+		})
+		
+		$(document).on("change", 'select.stock_select', function() {			
+			updateVolumnForm($(this))
+			updateStockPriceForm($(this))
+		})
+		
+		calculateStockPriceForm()
+		$(document).on("change", ".stock_box input, .stock_box select", function(e) {
+			calculateStockPriceForm()
+		});
+		$(document).on("keyup", ".stock_box input", function(e) {
+			calculateStockPriceForm()
+		});
+		$('input[name="course_register[discount_program_id]"]').change(function() {
+			updateTotalRegsitrationPrice()
+		})
+		
+		
+		$(document).on("change", "input[name=courses]", function(e) {
+			var course_id = $(this).val()
+			var box = $(".courses_phrases_select")
+			if (course_id == "") {
+				box.html("")
+				return
+			}
+
+			$.ajax({
+				url : "<%= courses_phrases_select_courses_phrases_path %>?course_id="+course_id,
+				type: "GET",
+				success:function(data, textStatus, jqXHR)
+				{
+					box.html(data)
+					box.find(".modern_select").select2()
+				}
+			});
+		});
+	})
+	
 
 </script>

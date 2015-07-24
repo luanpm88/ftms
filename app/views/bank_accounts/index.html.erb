@@ -1,0 +1,43 @@
+                <ul class="breadcrumb">
+                    <li>
+                        <p>YOU ARE HERE</p>
+                    </li> 
+                    <li><%= link_to 'Bank Account', subjects_url, :class => "active" %></li>
+                </ul>
+                <div class="page-title">
+                        <i class="icon-list-alt"></i>
+                    	<h3>Bank - <span class="semi-bold"> Account</span></h3>	
+                </div>
+				
+				
+				
+                <div class="row">
+                    <div class="col-md-12">
+                        <%= link_to 'New Bank Account', new_bank_account_path(tab_page: 1), psrc: bank_accounts_path(tab_page:1), title: "New Bank Account", :class => 'btn btn-primary btn-cons tab_page' %>
+                        <div class="grid simple ">
+                            <div class="grid-title no-border">
+                                <h4>Listing  <span class="semi-bold">Bank account</span></h4>
+                                
+                            </div>
+                            <div class="grid-body no-border">
+                                 
+                                    <table class="table table-striped no-more-tables datatable-bank-accounts no-filter">
+                                        <thead>
+                                            <tr>                                                
+												<th>Name</th>
+												<th>Bank</th>
+                                                <th>Account Name</th>
+                                                <th>Account Number</th>
+                                                <th class="text-center">Created At</th>
+												<th class="text-center" width="1%">Creator</th>
+												<th class="text-right" width="1%">Actions</th>
+                                            </tr>
+                                        </thead>                                        
+                                    </table>
+                            </div>
+                        </div>
+			
+                    </div>
+		    
+                </div>
+

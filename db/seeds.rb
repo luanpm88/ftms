@@ -6,9 +6,9 @@
 #   cities = City.create([{ name: 'Chicago' }, { name: 'Copenhagen' }])
 #   Mayor.create(name: 'Emanuel', city: cities.first)
 
-ContactType.create(name: "Student")
-ContactType.create(name: "Lecturer")
-ContactType.create(name: "Inquiry")
+ContactType.create(name: "Student", display_order: 1)
+ContactType.create(name: "Inquiry", display_order: 2)
+ContactType.create(name: "Lecturer", display_order: 3)
 
 User.create(:email => "admin@ftmsglobal.edu.vn", :password => "aA456321@", :password_confirmation => "aA456321@",:first_name => "Super",:last_name => "Admin")
 User.create(:email => "manager@ftmsglobal.edu.vn", :password => "aA456321@", :password_confirmation => "aA456321@",:first_name => "System",:last_name => "Manager")
@@ -33,3 +33,5 @@ ContactTag.create(name: "No Tag", description: "No Tag")
 ContactTag.create(name: "Follow Up", description: "Likely to study")
 ContactTag.create(name: "Potential", description: "Not sure whether to study")
 ContactTag.create(name: "No More Follow Up", description: "Not want to study any more")
+
+Setting.create(name: "currency_code", value: "VNĐ")

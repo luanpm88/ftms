@@ -45,6 +45,9 @@ class BooksController < ApplicationController
 
     respond_to do |format|
       if @book.save
+        new_price = @book.book_prices.new(prices: params[:book_prices], user_id: current_user.id)
+        @book.update_price(new_price)
+        
         format.html { redirect_to params[:tab_page].present? ? "/home/close_tab" : @book, notice: 'Book was successfully created.' }
         format.json { render action: 'show', status: :created, location: @book }
       else
@@ -59,6 +62,9 @@ class BooksController < ApplicationController
   def update
     respond_to do |format|
       if @book.update(book_params)
+        new_price = @book.book_prices.new(prices: params[:book_prices], user_id: current_user.id)
+        @book.update_price(new_price)
+        
         format.html { redirect_to params[:tab_page].present? ? "/home/close_tab" : @book, notice: 'Book was successfully updated.' }
         format.json { head :no_content }
       else
@@ -93,6 +99,42 @@ class BooksController < ApplicationController
     
     render json: result[:result]
   end
+  
+  def student_books
+    result = Book.student_books(params, current_user)
+    
+    result[:items].each_with_index do |item, index|
+      actions = render_book_actions(item)
+      
+      result[:result]["data"][index][result[:actions_col]] = actions
+    end
+    
+    render json: result[:result]
+  end
+  
+  def stock_select
+    @books = Book.filter(params, current_user)    
+    
+    render layout: nil
+  end
+  
+  def volumn_checkboxs
+    if !params[:id].present?
+      render nothing: true
+    else
+      @books = Book.find(params[:id])
+      render layout: nil
+    end   
+  end
+  
+  def stock_price_form
+    if !params[:id].present?
+      render nothing: true
+    else
+      @books = Book.find(params[:id])
+      render layout: nil
+    end
+  end
 
   private
     # Use callbacks to share common setup or constraints between actions.
@@ -102,6 +144,6 @@ class BooksController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def book_params
-      params.require(:book).permit(:name, :description, :user_id, :image, :pirce, :publisher, :parent_id)
+      params.require(:book).permit(:subject_ids, :course_type_ids, :name, :description, :user_id, :image, :pirce, :publisher, :parent_id)
     end
 end

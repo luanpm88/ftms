@@ -1,0 +1,53 @@
+<div class="row">
+     <div class="col-md-5">
+          <div class="form-group">
+            <label class="form-label"><label>Price</label></label>
+            <span class="help"></span>
+            <div class="input-with-icon  right">                                       
+                 <i class=""></i>
+                 <div class="input-with-iconz right">
+                      <select name="contacts_courses[<%= params[:number].to_s %>][price]" class="text-right modern_select width100 required price_acourse">
+                        <% @course.prices.each do |price| %>
+                            <option value="<%= price %>" class="text-right"><%= format_price(price) %></option>
+                        <% end %>
+                      </select>
+                 </div>
+            </div>
+          </div>	                                                                                                                          
+     </div>
+     <div class="col-md-7">
+          <div class="form-group">
+                <label class="form-label"><label>Discount Program</label></label>
+                <span class="help"></span>
+                <div class="input-with-icon right">                                       
+                     <i class=""></i>
+                      <div class="input-with_add_but">
+                        <%= link_to '<i class="icon-plus"></i>'.html_safe, new_discount_program_path(tab_page: 1), title: "New Discount Program", :class => 'btn btn-sm btn-small btn-white tab_page' %>
+                        <input style="width:100%;margin-bottom: 5px;" name="contacts_courses[<%= params[:number].to_s %>][discount_program_id]" data="<%= discount_programs_path(format: "json") %>" class="select2-ajax-discount-programs price_discount_program" /> 
+                      </div>
+                </div>
+          </div>
+     </div>
+     <div class="col-md-5">
+          <div class="form-group">
+                <label class="form-label"><label>Discount</label></label>
+                <span class="help"></span>
+                <div class="input-with-iconz right">                                       
+                    <%= text_field_tag "contacts_courses["+params[:number].to_s+"][discount]", "", class: "form-control price_input price_discount" %>
+                </div>
+          </div>
+     </div>
+     <div class="col-md-7">
+          <div class="form-group">
+                <label class="form-label"><label>Total</label></label>
+                <span class="help"></span>
+                <div class="input-with-iconz right">                                       
+                    <h4 class="text-right" style="margin: 0">
+                         <strong class="total_course total_course_<%= params[:number] %>"></strong>
+                    </h4>
+                </div>
+          </div>
+     </div>
+</div>
+    
+    

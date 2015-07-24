@@ -9,6 +9,13 @@ class DiscountProgramsController < ApplicationController
   # GET /discount_programs.json
   def index
     @discount_programs = DiscountProgram.all
+    
+    respond_to do |format|
+      format.html { render layout: "content" if params[:tab_page].present? }
+      format.json {
+        render json: DiscountProgram.full_text_search(params[:q])
+      }
+    end
   end
 
   # GET /discount_programs/1
@@ -87,6 +94,6 @@ class DiscountProgramsController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def discount_program_params
-      params.require(:discount_program).permit(:name, :description, :user_id, :start_at, :end_at, :rate)
+      params.require(:discount_program).permit(:type_name, :name, :description, :user_id, :start_at, :end_at, :rate)
     end
 end

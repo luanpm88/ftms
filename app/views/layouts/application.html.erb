@@ -324,19 +324,18 @@
 		
 		
 		<% if can? :course_features, User %>
-			<li <% if ["course_types","subjects","courses"].include?(params[:controller]) %> class="active open"<% end %>>
+			<li <% if ["course_registers","course_types","subjects","courses"].include?(params[:controller]) %> class="active open"<% end %>>
 					<%= link_to "#" do %>
 						<i class="icon-briefcase"></i>
 						<span class="title">Course Admin</span>
-						<span class="arrow<% if ["course_types","subjects","courses"].include?(params[:controller]) %> open<% end %>"></span>
+						<span class="arrow<% if ["course_registers","course_types","subjects","courses"].include?(params[:controller]) %> open<% end %>"></span>
 					<% end %>
 					<ul class="sub-menu">
+						<li<% if params[:controller] == "course_registers" && params[:action] == "index" %> class="active"<% end %>><%= link_to 'Registration Management', course_registers_path(tab_page:1), class: "tab_page" %></li>
 						<li<% if params[:controller] == "course_types" && params[:action] == "index" %> class="active"<% end %>><%= link_to 'Program Management', course_types_path(tab_page:1), class: "tab_page" %></li>
-						<li<% if params[:controller] == "subjects" && params[:action] == "index" %> class="active"<% end %>><%= link_to 'Paper Management', subjects_path(tab_page:1), class: "tab_page" %></li>
-						<li<% if params[:controller] == "phrases" && params[:action] == "index" %> class="active"<% end %>><%= link_to 'Phrase Management', phrases_path(tab_page:1), class: "tab_page" %></li>
+						<li<% if params[:controller] == "subjects" && params[:action] == "index" %> class="active"<% end %>><%= link_to 'Paper Management', subjects_path(tab_page:1), class: "tab_page" %></li>						
 						<li<% if params[:controller] == "courses" && params[:action] == "index" %> class="active"<% end %>><%= link_to 'Course Management', courses_path(tab_page:1), class: "tab_page" %></li>
-						
-						
+						<li<% if params[:controller] == "phrases" && params[:action] == "index" %> class="active"<% end %>><%= link_to 'Phrase Management', phrases_path(tab_page:1), class: "tab_page" %></li>											
 					</ul>
 			</li>
 		<% end %>
@@ -388,12 +387,26 @@
 		<% if can? :read, Contact %>
 			<li <% if params[:controller] == "discount_programs" %> class="active open"<% end %>>
 			  <%= link_to contacts_url do %>
-			<i class="icon-money"></i>
+			<i class="icon-chevron-sign-down"></i>
 			<span class="title">Discount Program</span>
 			<span class="arrow<% if params[:controller] == "discount_programs" %> open<% end %>"></span>
 			  <% end %>
 			  <ul class="sub-menu">
 				<li<% if params[:controller] == "discount_programs" %> class="active"<% end %>><%= link_to 'Discount Program', discount_programs_path(tab_page:1), class: "tab_page" %></li>
+
+			  </ul>
+			</li>
+		<% end %>
+		
+		<% if can? :read, BankAccount %>
+			<li <% if params[:controller] == "bank_accounts" %> class="active open"<% end %>>
+			  <%= link_to contacts_url do %>
+			<i class="icon-list-alt"></i>
+			<span class="title">Accounting</span>
+			<span class="arrow<% if params[:controller] == "bank_accounts" %> open<% end %>"></span>
+			  <% end %>
+			  <ul class="sub-menu">
+				<li<% if params[:controller] == "bank_accounts" %> class="active"<% end %>><%= link_to 'Bank Account', bank_accounts_path(tab_page:1), class: "tab_page" %></li>
 
 			  </ul>
 			</li>

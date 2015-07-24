@@ -1,0 +1,10 @@
+<div class="form-group">
+      <label class="form-label"><label>Stock</label></label>
+      <span class="help">(required)</span>
+      <div class="input-with-icon date-group right">                                       
+           <i class=""></i>
+           <div class="input-with_add_but">
+               <%= select_tag "books_contacts["+params[:number].to_s+"][book_id]", options_for_select(@books.collect{ |u| [u.name, u.id] }), :include_blank => 'None', class: "modern_select width100 required stock_select", box_number: params[:number] %>
+           </div>
+      </div>
+</div>	

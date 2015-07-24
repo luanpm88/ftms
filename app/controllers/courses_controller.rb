@@ -3,7 +3,7 @@ class CoursesController < ApplicationController
   
   load_and_authorize_resource
   
-  before_action :set_course, only: [:courses_phrases_checkboxs, :show, :edit, :update, :destroy]
+  before_action :set_course, only: [:show, :edit, :update, :destroy]
 
   # GET /courses
   # GET /courses.json
@@ -46,7 +46,10 @@ class CoursesController < ApplicationController
     @course.update_program_paper(params[:program_paper])
     
     respond_to do |format|
-      if @course.save        
+      if @course.save
+        new_price = @course.course_prices.new(prices: params[:course_prices], user_id: current_user.id)
+        @course.update_price(new_price)
+        
         format.html { redirect_to params[:tab_page].present? ? "/home/close_tab" : @course, notice: 'Course was successfully created.' }
         format.json { render action: 'show', status: :created, location: @course }
       else
@@ -63,9 +66,10 @@ class CoursesController < ApplicationController
     course_types_subject = @course.update_program_paper(params[:program_paper])    
     
     respond_to do |format|
-      if @course.save
-        
+      if @course.save        
         @course.update_courses_phrases(params[:courses_phrases])
+        new_price = @course.course_prices.new(prices: params[:course_prices], user_id: current_user.id)
+        @course.update_price(new_price)
         
         format.html { redirect_to params[:tab_page].present? ? "/home/close_tab" : @course, notice: 'Course was successfully updated.' }
         format.json { head :no_content }
@@ -109,8 +113,23 @@ class CoursesController < ApplicationController
   end
   
   def courses_phrases_checkboxs
+    if !params[:id].present?
+      render nothing: true
+    else
+      @course = Course.find(params[:id])
+      render layout: nil
+    end
     
-    render layout: nil
+    
+  end
+  
+  def course_price_select
+    if !params[:id].present?
+      render nothing: true
+    else
+      @course = Course.find(params[:id])
+      render layout: nil
+    end
   end
 
   private

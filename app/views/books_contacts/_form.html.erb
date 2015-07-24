@@ -1,0 +1,45 @@
+<%= form_for(@books_contact) do |f| %>
+  <% if @books_contact.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(@books_contact.errors.count, "error") %> prohibited this books_contact from being saved:</h2>
+
+      <ul>
+      <% @books_contact.errors.full_messages.each do |message| %>
+        <li><%= message %></li>
+      <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="field">
+    <%= f.label :course_register_id %><br>
+    <%= f.number_field :course_register_id %>
+  </div>
+  <div class="field">
+    <%= f.label :book_id %><br>
+    <%= f.number_field :book_id %>
+  </div>
+  <div class="field">
+    <%= f.label :contact_id %><br>
+    <%= f.number_field :contact_id %>
+  </div>
+  <div class="field">
+    <%= f.label :price %><br>
+    <%= f.text_field :price %>
+  </div>
+  <div class="field">
+    <%= f.label :discount_program_id %><br>
+    <%= f.number_field :discount_program_id %>
+  </div>
+  <div class="field">
+    <%= f.label :discount %><br>
+    <%= f.text_field :discount %>
+  </div>
+  <div class="field">
+    <%= f.label :volumn_ids %><br>
+    <%= f.text_area :volumn_ids %>
+  </div>
+  <div class="actions">
+    <%= f.submit %>
+  </div>
+<% end %>

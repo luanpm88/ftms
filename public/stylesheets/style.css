@@ -8272,3 +8272,52 @@ td .logo {
 .dark_row.row_old_imported td, .raw_rol.row_new_imported td {
     background-color: #f3faf8 !important;
 }
+.contact_type_line {
+    display: block;
+    white-space: nowrap;
+    height: 30px;
+}
+.phrase_checkbox, .volumn_checkbox {
+    float: left;
+    margin-right: 20px;
+}
+.phrase_box, .book_box {
+    padding-top: 0px;
+}
+.phrase_box_label, .stock_box_label {
+    background: #0090d9 none repeat scroll 0 0;
+    border: 0 none;
+    border-radius: 15px;
+    color: #fff;
+    display: block;
+    font-weight: bold;
+    margin: 7px 0 0 6px;
+    padding: 3px 40px;
+    position: absolute;
+    z-index: 1;
+}
+.stock_box_label {
+    background: #aa6708;
+}
+.phrase_box_list {}
+.phrase_box_close, .stock_box_close {
+    background: #ce4844 none repeat scroll 0 0;
+    border-radius: 20px;
+    border-right: 20px none;
+    color: #fff;
+    font-size: 18px;
+    height: 28px;
+    margin-top: 25px;
+    padding: 0 7px;
+    position: absolute;
+    right: 15px;
+    width: 28px;
+    cursor: pointer;
+}
+.phrase_box_close .icon {
+    
+}
+.courses_phrases_list {
+    padding-left: 10px;
+    border-left: solid 1px #aaa;
+}

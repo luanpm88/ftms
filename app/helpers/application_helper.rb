@@ -53,4 +53,13 @@ module ApplicationHelper
   def check_ajax_button(checked, url)	
     "<a href=\"#{url}\" class=\"check-radio ajax-check-radio\"><i class=\"#{checked.to_s} icon-#{(checked ? "check" : "check-empty")}\"></i></a>"
   end
+  
+  def split_prices(array)
+    ps = []
+    array.each do |row|
+      p = row.to_s.gsub(/\,/, '').to_f
+      ps << p if p > 1000
+    end
+    return ps
+  end
 end

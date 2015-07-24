@@ -31,7 +31,13 @@
 								<li class="<%= "active" if ["information",nil].include?(params[:tab]) %>"><a href="#information">Information</a></li>
 								<% if @contact.contact_types.include?(ContactType.student) %>
 										<li class="<%= "active" if ["course"].include?(params[:tab]) %>">
-										  <a href="#course">Course List (<%= @contact.courses.count %>)</a>
+										  <a href="#course">Course List (<%= @contact.course_count %>)</a>
+										</li>
+										<li class="<%= "active" if ["book"].include?(params[:tab]) %>">
+										  <a href="#book">Stock List (<%= @contact.book_count %>)</a>
+										</li>
+										<li class="<%= "active" if ["course_registration"].include?(params[:tab]) %>">
+										  <a href="#course_registration">Course Registration (<%= @contact.course_register_count %>)</a>
 										</li>
 								<% end %>
 						 </ul>
@@ -82,6 +88,95 @@
 												</div>
 										
 										</div>
+								</div>
+					
+								<div class="tab-pane <%= "active" if ["course_registration"].include?(params[:tab]) %>" id="course_registration">
+										
+										<%= render "course_registers/filter" %>
+										
+										<style>
+												.student-course-register-filter {
+														position: absolute;
+														top: -90000px;
+												}
+										</style>
+										
+										<div class="row">
+												<div class="col-md-12">
+													<%= link_to 'New Registration', new_course_register_path(conact_id: @contact.id, tab_page: 1), psrc: course_registers_path(tab_page:1), title: "New Registration", :class => 'btn btn-primary btn-cons tab_page' %>
+													<div class="grid simple ">
+														<div class="grid-title no-border">
+															<h4>Listing  <span class="semi-bold">Registration</span></h4>
+															
+														</div>
+														<div class="grid-body no-border">
+															 
+																<table class="table table-striped no-more-tables datatable-student-course-registers no-filter">
+																	<thead>
+																		<tr>                                                
+																			<th>Student Name</th>
+																			<th class="text-left">Course</th>
+																			<th class="text-left">Stock</th>
+																			<th class="text-right">Total</th>
+																			<th class="text-center">Payment</th>
+																			<th class="text-center">Receipt Date</th>
+																			<th class="text-center" width="1%">Creator</th>
+																			<th class="text-right" width="1%">Actions</th>
+																		</tr>
+																	</thead>                                        
+																</table>
+														</div>
+													</div>
+										
+												</div>
+										
+											</div>
+										
+								</div>
+								<div class="tab-pane <%= "active" if ["book"].include?(params[:tab]) %>" id="book">
+								
+										<%= render "books/filters" %>
+										
+										<style>
+												.student-book-filter {
+														position: absolute;
+														top: -90000px;
+												}
+										</style>
+                
+										<div class="row">
+											<div class="col-md-12">
+												
+												<div class="grid simple ">
+													<div class="grid-title no-border">
+														<h4>Listing  <span class="semi-bold">Books</span></h4>
+														
+													</div>
+													<div class="grid-body no-border">
+														 
+															<table class="table table-striped no-more-tables datatable-student-books no-filter">
+																<thead>
+																	<tr>                                                
+																		<th width="1%">Cover</th>
+																		<th>Title</th>
+																		<th>Volumns</th>
+																		<th class="text-center">Program</th>
+																		<th class="text-center">Paper</th>
+																		<th>Publisher</th>
+																		<th class="text-center">List Price</th>
+																		<th class="text-center">Created At</th>
+																		<th class="text-center" width="1%">Creator</th>
+																		<th class="text-right" width="1%">Actions</th>
+																	</tr>
+																</thead>                                        
+															</table>
+													</div>
+												</div>
+									
+											</div>
+									
+										</div>
+								
 								</div>
 						 </div>
 								  

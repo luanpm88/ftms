@@ -60,6 +60,12 @@ class CoursesPhrasesController < ApplicationController
       format.json { head :no_content }
     end
   end
+  
+  def courses_phrases_select
+    @courses_phrases = CoursesPhrase.where(id: Course.find(params[:course_id]).courses_phrases.map(&:id))
+    
+    render layout: nil
+  end
 
   private
     # Use callbacks to share common setup or constraints between actions.

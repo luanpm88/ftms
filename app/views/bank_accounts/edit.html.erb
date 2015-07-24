@@ -1,0 +1,15 @@
+<ul class="breadcrumb">
+        <li>
+          <p>YOU ARE HERE</p>
+        </li>
+                    <li>
+			<%= link_to 'Bank Account', bank_accounts_url %>
+                    </li>
+      </ul>
+      <div class="page-title"> <i class="icon-edit"></i>
+        <h3>Edit Bank Account - <span class="semi-bold"><%= @bank_account.name %></span></h3>
+      </div>
+      
+
+	  
+<%= render 'form' %>

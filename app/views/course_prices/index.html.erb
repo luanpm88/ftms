@@ -1,0 +1,31 @@
+<p id="notice"><%= notice %></p>
+
+<h1>Listing Course Prices</h1>
+
+<table>
+  <thead>
+    <tr>
+      <th>Course</th>
+      <th>Prices</th>
+      <th>User</th>
+      <th colspan="3"></th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% @course_prices.each do |course_price| %>
+      <tr>
+        <td><%= course_price.course_id %></td>
+        <td><%= course_price.prices %></td>
+        <td><%= course_price.user_id %></td>
+        <td><%= link_to 'Show', course_price %></td>
+        <td><%= link_to 'Edit', edit_course_price_path(course_price) %></td>
+        <td><%= link_to 'Destroy', course_price, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<br>
+
+<%= link_to 'New Course price', new_course_price_path %>

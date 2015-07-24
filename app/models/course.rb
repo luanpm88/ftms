@@ -18,6 +18,8 @@ class Course < ActiveRecord::Base
   has_many :courses_phrases
   has_and_belongs_to_many :phrases
   
+  has_many :course_prices
+  
   pg_search_scope :search,
                   against: [:description],
                   associated_against: {
@@ -96,14 +98,15 @@ class Course < ActiveRecord::Base
     @records = @records.limit(params[:length]).offset(params["start"])
     data = []
     
-    actions_col = 7
+    actions_col = 8
     @records.each do |item|
       item = [
               '<div class="text-left nowrap">'+item.display_intake+"</div>",
               '<div class="text-left nowrap">'+item.program_paper_name+"</div>",
               '<div class="text-left">'+item.courses_phrase_list+"</div>",
-              '<div class="text-center">'+item.student_count_link+"</div>",
               '<div class="text-center nowrap">'+item.display_lecturer+"</div>",
+              '<div class="text-right">'+item.display_prices+"</div>",
+              '<div class="text-center">'+item.student_count_link+"</div>",              
               '<div class="text-center">'+item.created_at.strftime("%d-%b-%Y")+"</div>",
               '<div class="text-center">'+item.user.staff_col+"</div>",
               "", 
@@ -168,9 +171,9 @@ class Course < ActiveRecord::Base
     @records.each do |item|
       itemz = [
               '<div class="text-left nowrap">'+item.display_intake+"</div>",
-              '<div class="text-left nowrap">'+item.program_paper_name+"</div>",              
+              '<div class="text-left nowrap">'+item.program_paper_name+"</div>",
               '<div class="text-left">'+item.courses_phrase_list_by_sudent(@student)+"</div>",
-              '<div class="text-center nowrap">'+item.display_lecturer+"</div>",
+              '<div class="text-center nowrap">'+item.display_lecturer+"</div>",             
               '<div class="text-center">'+item.course_register(@student).created_date.strftime("%d-%b-%Y")+"</div>",              
               "", 
             ]
@@ -190,26 +193,31 @@ class Course < ActiveRecord::Base
     
   end
   
-  def courses_phrase_list
+  def self.render_courses_phrase_list(list)
     arr = []
-    courses_phrases.each do |p|
-      arr << "#{p.phrase.name} [#{p.start_at.strftime("%d-%b-%Y")}]"
+    group_name = ""
+    list.each do |p|
+      if group_name != p.phrase.name
+        arr << "<strong class=\"width100\">#{p.phrase.name}</strong><br />"
+        group_name = p.phrase.name
+      end
+      arr << "[#{p.start_at.strftime("%d-%b-%Y")}] "
     end
-    arr.join("<br />").html_safe
+    arr.join("").html_safe
+  end
+  
+  def courses_phrase_list
+    Course.render_courses_phrase_list(courses_phrases.joins(:phrase).order("phrases.name, courses_phrases.start_at"))
   end
   
   def courses_phrase_list_by_sudent(student)
-    arr = []
-    courses_phrases_by_sudent(student).each do |p|
-      arr << "#{p.phrase.name} [#{p.start_at.strftime("%d-%b-%Y")}]"
-    end
-    arr.join("<br />").html_safe
+    Course.render_courses_phrase_list(courses_phrases_by_sudent(student).joins(:phrase).order("phrases.name, courses_phrases.start_at"))    
   end
   
   def courses_phrases_by_sudent(student)
     cc = contacts_course(student)
     if !cc.nil?
-      return CoursesPhrase.where(id: (JSON.parse(contacts_course(student).courses_phrase_ids)))
+      return CoursesPhrase.where(id: (cc.courses_phrases.map(&:id)))
     else
       return []
     end
@@ -283,6 +291,33 @@ class Course < ActiveRecord::Base
                         start_at: row[1]["start_at"]
                       )
       end
+    end
+  end
+  
+  def course_price
+    course_prices.order("created_at DESC").first
+  end
+  
+  def prices
+    if course_price.nil?
+      return []
+    else
+      return JSON.parse(course_price.prices)
+    end   
+  end
+  
+  def display_prices
+    a = prices.map {|p| ApplicationController.helpers.format_price(p)}
+    return a.join("<br />")
+  end
+  
+  def update_price(new_price)
+    if course_price.nil?
+      new_price.save
+    else
+      if course_price.prices != new_price.prices
+        new_price.save
+      end      
     end
   end
   

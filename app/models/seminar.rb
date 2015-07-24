@@ -128,7 +128,7 @@ class Seminar < ActiveRecord::Base
     (2..spreadsheet.last_row).each do |i|
       row = Hash[[header, spreadsheet.row(i)].transpose]
       item = {name: row["Full name"], company: row["Company"], mobile: row["Mobile"], email: row["Email"], present: row["Status"]}
-      item[:contacts] = similar_contacts({email: item[:email], name: item[:name]})
+      item[:contacts] = similar_contacts({email: item[:email], name: item[:name], mobile: item[:mobile]})
       list << item
     end
     
@@ -145,7 +145,7 @@ class Seminar < ActiveRecord::Base
       if !row[:contacts].empty?
         row[:status] = "not_sure"
         row[:contacts].each do |contact|
-          if row[:name].strip.downcase == contact.name.downcase && row[:email].strip.downcase == contact.email.downcase
+          if row[:name].strip.downcase == contact.name.downcase && row[:email].strip.downcase == contact.email.downcase && Contact.format_mobile(row[:mobile]) == contact.mobile
             row[:selected_id] = contact.id
             
             row[:status] = "old_imported"
@@ -176,7 +176,7 @@ class Seminar < ActiveRecord::Base
   def similar_contacts(data={})
     result = []
     if data[:email].present?
-      result += Contact.where("LOWER(email) = ? OR LOWER(name) = ?", data[:email].strip.downcase, data[:name].strip.downcase)
+      result += Contact.where("LOWER(email) = ? OR LOWER(name) = ? OR LOWER(mobile) = ?", data[:email].strip.downcase, data[:name].strip.downcase, Contact.format_mobile(data[:mobile]))
     end
     
     return result

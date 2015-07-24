@@ -1,0 +1,2 @@
+module CoursePricesHelper
+end

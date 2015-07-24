@@ -1,10 +1,24 @@
 Hkerp::Application.routes.draw do
+  resources :books_contacts
+  resources :book_prices
+  resources :bank_accounts do
+    collection do
+      get :datatable
+    end
+  end
+  resources :course_prices
+  resources :contacts_lecturer_course_types
+  resources :settings
   resources :discount_programs do
     collection do
       get :datatable
     end
   end
-  resources :courses_phrases
+  resources :courses_phrases do
+    collection do
+      get :courses_phrases_select
+    end
+  end
   resources :phrases_subjects
   resources :phrases do
     collection do
@@ -27,7 +41,12 @@ Hkerp::Application.routes.draw do
     end
   end
   resources :contacts_courses
-  resources :course_registers
+  resources :course_registers do
+    collection do
+      get :datatable
+      get :student_course_registers
+    end
+  end
   resources :course_types_subjects
   resources :contact_tags_contacts
   resources :contact_tags do
@@ -39,6 +58,10 @@ Hkerp::Application.routes.draw do
     collection do
       get :datatable
       get :cover
+      get :stock_select
+      get :volumn_checkboxs
+      get :stock_price_form
+      get :student_books
     end
   end
   
@@ -47,6 +70,7 @@ Hkerp::Application.routes.draw do
       get :datatable
       get :student_courses
       get :courses_phrases_checkboxs
+      get :course_price_select
     end
   end
   

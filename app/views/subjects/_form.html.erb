@@ -55,8 +55,6 @@
                                                   <%= link_to '<i class="icon-plus"></i>'.html_safe, new_course_type_path(tab_page: 1), title: "New Course Type", :class => 'btn btn-sm btn-small btn-white add-agent-button tab_page' %>
                                                   <input style="width:100%;margin-bottom: 5px;" name="subject[course_type_ids][]" data="<%= course_types_path(format: "json") %>" class="select2-ajax-course-types multiple" values="<%= @subject.json_encode_course_type_ids_names %>" /> 
                                            </div>
-                                                                                     
-                                     
                                     </div>
                                </div>
 							  							  
