@@ -198,7 +198,7 @@ class Course < ActiveRecord::Base
     group_name = ""
     list.each do |p|
       if group_name != p.phrase.name
-        arr << "<strong class=\"width100\">#{p.phrase.name}</strong><br />"
+        arr << "<div><strong class=\"width100\">#{p.phrase.name}</strong></div>"
         group_name = p.phrase.name
       end
       arr << "[#{p.start_at.strftime("%d-%b-%Y")}] "
