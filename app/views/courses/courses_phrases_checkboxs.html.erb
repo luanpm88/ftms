@@ -9,8 +9,9 @@
             <% @course.courses_phrases.includes(:phrase).order("phrases.name DESC, courses_phrases.start_at").each do |courses_phrase| %>
                 
                     <% if group_name != courses_phrase.phrase.name %>
+                        <% if group_name != "" %><br style="clear: both" /><% end %>
                         <% group_name = courses_phrase.phrase.name %>
-                        <br style="clear: both" />
+                        
                         <h5 style="margin-top: 0;"><strong><%= group_name %></strong></h5>
                     <% end %>
                     <div class="row-fluid phrase_checkbox">
