@@ -203,7 +203,7 @@ class Course < ActiveRecord::Base
       end
       arr << "[#{p.start_at.strftime("%d-%b-%Y")}] "
     end
-    arr.join("").html_safe
+    return "<div>"+arr.join("").html_safe+"</div>"
   end
   
   def courses_phrase_list
