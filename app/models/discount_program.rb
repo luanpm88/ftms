@@ -84,7 +84,7 @@ class DiscountProgram < ActiveRecord::Base
   
   def display_rate
     result = ApplicationController.helpers.format_price(rate).to_s
-    result += " "+rate_unit
+    result += " "+rate_unit.to_s
     
     return result
   end
