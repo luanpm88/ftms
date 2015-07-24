@@ -57,7 +57,7 @@ class Book < ActiveRecord::Base
     @records = @records.where("books.course_type_ids LIKE ? OR books.course_type_ids LIKE ? OR books.course_type_ids LIKE ? OR books.course_type_ids LIKE ? ", "%[#{params["program_id"]},%", "%,#{params["program_id"]},%", "%,#{params["program_id"]}]%", "%[#{params["program_id"]}]%") if params["program_id"].present?
     @records = @records.where("books.subject_ids LIKE ? OR books.subject_ids LIKE ? OR books.subject_ids LIKE ? OR books.subject_ids LIKE ? ", "%[#{params["subject_id"]},%", "%,#{params["subject_id"]},%", "%,#{params["subject_id"]}]%", "%[#{params["subject_id"]}]%") if params["subject_id"].present?
     
-    @records = @records.search(params["search"]["value"]) if !params["search"]["value"].empty?
+    
     
     return @records
   end
@@ -67,7 +67,7 @@ class Book < ActiveRecord::Base
     link_helper = ActionController::Base.helpers    
     
     @records = Book.filter(params, user)  
-    
+    @records = @records.search(params["search"]["value"]) if !params["search"]["value"].empty?
     
     if !params["order"].nil?
       case params["order"]["0"]["column"]
@@ -129,6 +129,7 @@ class Book < ActiveRecord::Base
     @student = Contact.find(params[:student])
     
     @records =  self.filter(params, user)
+    @records = @records.search(params["search"]["value"]) if !params["search"]["value"].empty?
     
     @records = @records.includes(:books_contacts => :course_register)
     @records = @records.where(books_contacts: {contact_id: @student.id})
