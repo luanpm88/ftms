@@ -57,6 +57,8 @@ class CourseRegister < ActiveRecord::Base
         cc.discount = row[1]["discount"]
       end
     end
+    
+    contact.update_info
   end
   
   def update_books_contacts(cids)
