@@ -170,6 +170,14 @@
 						 
 						 <hr />
 						 <a href="#add" class="btn btn-white add-more-stock-form"><i class="icon icon-plus"></i> Add Stock</a>
+						 <hr />
+								   <div class="form-group">
+											 <label class="form-label"><label>Delivery Address</label></label>
+											 <span class="help">(required)</span>
+											 <div class="input-with-iconz right">                                       
+												  <%= f.text_field :mailing_address, :class => "form-control required" %>
+											 </div>
+								   </div>
 					</div>
 					
 					<br />
@@ -178,9 +186,9 @@
 					
 					
 					<div class="row column-seperation">
-						 <div class="col-md-12">
+						 <div class="col-md-6">
 							  <div class="row">								   
-								   <div class="col-md-3">										
+								   <div class="col-md-6">										
 										<div class="form-group">
 										  <label class="form-label"><label>Receipt Date</label></label>
 										  <span class="help">(required)</span>
@@ -195,7 +203,7 @@
 										</div>
 										
 								   </div>							   
-								   <div class="col-md-3">										
+								   <div class="col-md-6">										
 										<div class="form-group">
 											 <label class="form-label"><label>Payment type</label></label>
 											 <span class="help">(required)</span>
@@ -207,9 +215,11 @@
 											 </div>
 										</div>										
 								   </div>
-								   <div class="col-md-3">													   
+							  </div>
+							  <div class="row">
+								   <div class="col-md-6">													   
 										<div class="form-group">
-											 <label class="form-label"><%= f.label :bank %></label>
+											 <label class="form-label"><%= f.label :bank_acount %></label>
 											 <span class="help">(required)</span>
 											 <div class="input-with-icon  right">                                       
 												  <i class=""></i>
@@ -219,20 +229,7 @@
 											 </div>
 										</div>					
 								   </div>
-								   <div class="col-md-3">										
-										<div class="form-group">
-											 <label class="form-label"><label>Mailing Address</label></label>
-											 <span class="help"></span>
-											 <div class="input-with-icon right">                                       
-												 <%= f.text_field :mailing_address, :class => "form-control required" %>
-											 </div>
-										</div>										
-								   </div>
-								   
-							  </div>
-							  
-							  <div class="row">
-								   <div class="col-md-3">
+								   <div class="col-md-6">										
 										<div class="form-group">
 											 <label class="form-label"><label>Discount Program</label></label>
 											 <span class="help"></span>
@@ -243,39 +240,156 @@
 													 <input style="width:100%;margin-bottom: 5px;" name="course_register[discount_program_id]" data="<%= discount_programs_path(format: "json") %>" class="select2-ajax-discount-programs" /> 
 												   </div>
 											 </div>
-										</div>
-								   </div>
-								   <div class="col-md-3">										
-										<div class="form-group">
-											 <label class="form-label"><label>Total Price</label></label>
-											 <span class="help"></span>
-											 <div class="input-with-icon right">
-												  <table style="font-size: 16px;" width="100%">
-													   <tr>
-															<td class="text-right">Course: </td>
-															<td width="50%" class="text-right"><strong class="total_course_price"></strong></td>
-															
-													   </tr>
-													   <tr>
-															<td class="text-right">Stock: </td>
-															<td class="text-right"><strong class="total_stock_price"></strong></td>
-													   </tr>
-													   <tr>
-															<td class="text-right">Total: </td>
-															<td class="text-right"><strong class="total_registration_price"></strong></td>
-													   </tr>
-												  </table>
-												 
-											 </div>
 										</div>										
 								   </div>
 								   
-								   
-								   
 							  </div>
 							  
-							  
-							  	
+							  <div class="row">
+								   <div class="col-md-6">
+										<div class="form-group">
+											 <label class="form-label"><label>Other discount/credit</label></label>
+											 <span class="help"></span>
+											 <div class="input-with-iconz right">                                       
+												  <i class=""></i>
+												   <div class="input-with_add_butz">
+													 <%= text_field_tag "course_register[discount]", "", class: "form-control price_input price_discount" %>
+												   </div>
+											 </div>
+										</div>
+								   </div>
+								   <div class="col-md-6">
+										<div class="form-group">
+										  <label class="form-label"><label>Debt Date</label></label>
+										  <span class="help"></span>
+										  <div class="input-with-icon  right">                                       
+											   <i class=""></i>
+											   <div class="input-append success date col-md-10 no-padding">
+												 <%= f.text_field :debt_date, :class => "form-control" %>
+												 <span class="add-on"><span class="arrow"></span><i class="icon-th"></i></span>
+											   </div>
+											   <br style="clear: both" />
+										  </div>
+										</div>
+								   </div>
+							  </div>
+							  <div class="row">
+								   <div class="col-md-6">
+										<div class="form-group">
+											 <label class="form-label"><%= f.label :invoice_required %></label>
+											 <span class="help">(required)</span>
+											 <div class="radio radio-success" style="padding: 5px">
+												  <input class="invoice_required" id="invoice_yes" type="radio" name="course_register[invoice_required]" value="true" <% if @contact.invoice_required %>checked="checked"<% end %>>
+												  <label for="invoice_yes">Yes</label>
+												  <input class="invoice_required" id="invoice_no" type="radio" name="course_register[invoice_required]" value="false" <% if !@contact.invoice_required %>checked="checked"<% end %>>
+												  <label for="invoice_no">No</label>
+											 </div>
+										</div>	
+								   </div>
+								   <div class="col-md-6 invoice-info-box">
+										<div class="form-group">
+											 <label class="form-label"><label>VAT Address</label></label>
+											 <span class="help"></span>
+											 <div class="input-with-iconz right">                                       
+												  <%= text_field_tag "course_register[vat_address]", @contact.vat_address, class: "form-control" %>
+											 </div>
+										</div>
+								   </div>
+							  </div>
+							  <div class="row invoice-info-box">
+								   <div class="col-md-8">
+										<div class="form-group">
+											 <label class="form-label"><label>VAT Name</label></label>
+											 <span class="help"></span>
+											 <div class="input-with-iconz right">                                       
+												  <%= text_field_tag "course_register[vat_name]", @contact.vat_name, class: "form-control" %>
+											 </div>
+										</div>
+								   </div>
+								   <div class="col-md-4">
+										<div class="form-group">
+											 <label class="form-label"><label>VAT Code</label></label>
+											 <span class="help"></span>
+											 <div class="input-with-iconz right">                                       
+												  <%= text_field_tag "course_register[vat_code]", @contact.vat_code, class: "form-control" %>
+											 </div>
+										</div>
+								   </div>
+							  </div>
+						 </div>
+						 <div class="col-md-6">
+	 						  <div class="form-group">
+								   <label class="form-label"><label>Total Price</label></label>
+								   <span class="help"></span>
+								   <div class="input-with-icon right">
+										<table style="" class="table">
+											 <tr>
+												  <th>Type</th>
+												  <th class="text-center">Count</th>
+												  <th class="text-right">List Price</th>
+												  <th class="text-right">Discount Program</th>
+												  <th class="text-right">Other discount/credit</th>
+												  <th class="text-right">Total</th>
+											 </tr>
+											 <tr>
+												  <td class="text-left">Course</td>
+												  <th class="text-center">
+													   <strong class="total_course_count"></strong>
+												  </th>
+												  <td width="50%" class="text-right">
+													   <strong class="total_course_list_price"></strong>
+												  </td>
+												  <td width="50%" class="text-right">
+													   <strong class="total_course_discount_program_price"></strong>
+												  </td>
+												  <td width="50%" class="text-right">
+													   <strong class="total_course_other_discount_price"></strong>
+												  </td>
+												  <td width="50%" class="text-right">
+													   <strong class="total_course_price"></strong>
+												  </td>
+												  
+											 </tr>
+											 <tr>
+												  <td class="text-left">Stock</td>
+												  <th class="text-center">
+													   <strong class="total_stock_count"></strong>
+												  </th>
+												  <td width="50%" class="text-right">
+													   <strong class="total_stock_list_price"></strong>
+												  </td>
+												  <td width="50%" class="text-right">
+													   <strong class="total_stock_discount_program_price"></strong>
+												  </td>
+												  <td width="50%" class="text-right">
+													   <strong class="total_stock_other_discount_price"></strong>
+												  </td>
+												  <td class="text-right">
+													   <strong class="total_stock_price"></strong>
+												  </td>
+											 </tr>
+											 <tr>
+												  <td class="text-right" colspan="5">Discount Program</td>
+												  <td class="text-right">
+													   <strong class="total_registration_discount_program"></strong>
+												  </td>
+											 </tr>
+											 <tr>
+												  <td class="text-right" colspan="5">Other discount/credit</td>
+												  <td class="text-right">
+													   <strong class="total_registration_discount"></strong>
+												  </td>
+											 </tr>
+											 <tr>
+												  <td class="text-right" colspan="5">Total</td>
+												  <td class="text-right">
+													   <strong class="total_registration_price"></strong>
+												  </td>
+											 </tr>
+										</table>
+									   
+								   </div>
+							  </div>										
 						 </div>
 					 </div>
 					 

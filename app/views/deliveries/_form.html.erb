@@ -1,0 +1,141 @@
+       <div class="row">
+            <div class="col-md-12">
+              <div class="grid simple">
+                <div class="grid-title no-border">
+                  <h4>Delivery <span class="semi-bold">Details</span></h4>
+                  
+                </div>     
+                
+                
+                
+                
+                <div class="grid-body no-border">
+                  
+                  
+                  <% if @delivery.errors.any? %>
+                    <div class="alert alert-error">
+                      <button data-dismiss="alert" class="close"></button>
+                      <div id="error_explanation">
+                        <h5><%= pluralize(@delivery.errors.count, "error") %> prohibited this delivery from being saved:</h5>
+                  
+                        <ul>
+                        <% @delivery.errors.full_messages.each do |msg| %>
+                          <li><%= msg %></li>
+                        <% end %>
+                        </ul>
+                      </div>
+                    </div>
+                  <% end %>
+                    
+                 
+                  
+                  
+                  <%= form_for(@delivery) do |f| %>
+					
+					<%= hidden_field_tag("tab_page", 1) if params[:tab_page] %>
+                    <%= f.hidden_field :course_register_id %>
+					
+					<div class="row column-seperation">
+						 <div class="col-md-6">
+                              <div class="row">
+                                  <div class="col-md-6">
+                                      <div class="form-group">
+                                        <label class="form-label"><%= f.label :contact %></label>
+                                        <span class="help">(required)</span>
+                                        <div class="input-with-icon  right">                                       
+                                            <i class=""></i>
+                                            <strong><%= @course_register.contact.display_name %></strong>
+                                        </div>
+                                      </div>
+                                  </div>
+                                  <div class="col-md-6">
+                                      <div class="form-group">
+                                        <label class="form-label"><%= f.label :address %></label>
+                                        <span class="help">(required)</span>
+                                        <div class="input-with-icon  right">                                       
+                                            <i class=""></i>
+                                            <strong><%= @course_register.mailing_address %></strong>
+                                        </div>
+                                      </div>
+                                  </div>
+                              </div>
+                              
+                              <div class="row">
+                                  <div class="col-md-6">
+                                      <div class="form-group">
+                                        <label class="form-label"><%= f.label :registered_on %></label>
+                                        <span class="help">(required)</span>
+                                        <div class="input-with-icon  right">                                       
+                                            <i class=""></i>
+                                            <strong><%= @course_register.created_date.strftime("%d-%b-%Y") %></strong>
+                                        </div>
+                                      </div>
+                                  </div>
+                                  <div class="col-md-6">
+                                      <div class="form-group">
+                                            <label class="form-label"><%= f.label :delivery_date %></label>
+                                            <span class="help"></span>
+                                            <div class="input-with-icon  right">                                       
+                                                 <i class=""></i>
+                                                 <div class="input-append success date col-md-10 no-padding">
+                                                   <%= f.text_field :delivery_date, :class => "form-control", value: (@delivery.delivery_date.nil? ? "" : @delivery.delivery_date.strftime("%d-%b-%Y")) %>
+                                                   <span class="add-on"><span class="arrow"></span><i class="icon-th"></i></span>
+                                                 </div>
+                                                 <br style="clear: both" />
+                                            </div>
+                                      </div>
+                                  </div>
+                              </div>
+
+                              
+                              
+							  
+						 </div>
+						 <div class="col-md-6">
+							  <div class="form-group">
+                                    <label class="form-label"><%= f.label :items %></label>
+                                    <span class="help"></span>
+                                    <div class="input-with-iconx">                                       
+                                         <table class="table">
+                                            <tr>
+                                              <th>Name</th>
+                                              <th class="text-center">Deliver</th>
+                                              <th class="text-center">Stock</th>
+                                            </tr>
+                                            
+                                            <% @course_register.books.each do |row| %>
+                                              <tr>
+                                                <td>
+                                                  <div><strong><%= row[:book].name %></strong></div>
+                                                  <%= row[:volumns].map(&:name).join(", ") %>
+                                                </td>
+                                                <td class="text-center">
+                                                  1
+                                                </td>
+                                                <td class="text-center">
+                                                  1000
+                                                </td>
+                                              </tr>  
+                                            <% end %>
+                                            
+                                         </table>
+                                    </div>
+                              </div>
+						 </div>
+						 
+						 
+					</div>
+						 
+					<div class="form-actions">  
+						 <div class="pull-right">
+						 <button type="submit" class="btn btn-success btn-cons"><i class="icon-ok"></i> Deliver</button>
+						  <%= link_to 'Cancel', users_path, :class => "btn btn-white btn-cons cancel-but" %>
+					   </div>
+					</div>
+							  
+						<% end %>
+			   </div>
+			 </div>
+            </div>
+			
+     </div>

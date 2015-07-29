@@ -1,0 +1,15 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  type: 
+  book_id: 1
+  quantity: 1
+  created_date: 2015-07-28 02:02:15
+  user_id: 1
+
+two:
+  type: 
+  book_id: 1
+  quantity: 1
+  created_date: 2015-07-28 02:02:15
+  user_id: 1

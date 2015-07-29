@@ -1,0 +1,15 @@
+                <div class="grid simple payment-record-filter student-payment-filter">
+                  <div class="grid-body no-border filters">
+                    <div class="row order-filters">
+                        
+                        <div class="col-md-3 student-course-filter">
+							<h4>Student</h4>
+							<div class="students-filter-box">
+								<input style="width:100%;margin-bottom: 5px;" name="filter[students[]]" data="<%= contacts_path(is_individual: true, contact_type_id: ContactType.student.id,format: "json") %>" class="select2-ajax-students multiple" value="<%= @student.id if !@student.nil? %>" text="<%= @student.display_name if !@student.nil? %>" />
+							</div>
+						</div>
+                        
+                        
+                    </div>
+                  </div>		    
+				</div>

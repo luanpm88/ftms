@@ -1,0 +1,27 @@
+<%= stylesheet_link_tag "print_html.css?v=5" %>
+
+<div class="page_outer">
+
+	  <div>
+          <%= link_to("<i class=\"icon icon-print\"></i> Print".html_safe, {controller: "deliveries", action: "print", id: @delivery.id}, class: "btn btn-primary", target: "_blank") %>
+	  </div>
+      
+	  <br style="clear: both" />
+      <%= render "show" %>
+	  
+</div>
+<br style="clear: both" />
+
+
+
+
+<style>
+  .page_outer {
+    margin: 20px;
+    
+  }
+  .page {    
+    border: solid 1px #ccc;
+    padding: 20px;
+  }
+</style>

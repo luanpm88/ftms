@@ -1,0 +1,319 @@
+<h3>Course Registration</h3> 
+					
+					 
+					<div class="phrase_box_list">
+                          <% number = 0 %>
+                          <% @course_register.contacts_courses.each do |cc| %>
+							  <div class="row phrase_box phrase_box_<%= number.to_s %>" rel="<%= number %>">
+								   <div class="phrase_box_label">Course #<%= number+1 %></div>
+
+								   <div class="col-md-12">
+										<hr />
+								   </div>
+								   <div class="col-md-12">
+										<div class="row column-seperation">
+											 <div class="col-md-1">													   
+												  <div class="form-group">
+													   <label class="form-label">Upfront?</label>
+													   <span class="help"></span>
+													   <div class="input-with-icon right">                                       
+															<strong><%= cc.upfront ? "Yes" : "No" %></strong>
+													   </div>
+												  </div>									
+											 </div>
+											 <div class="col-md-2">
+												  <div class="form-group">
+														<label class="form-label">Course</label>
+														<span class="help"></span>
+														<div class="input-with-iconz  right">                                       
+															 <strong><%= cc.course.name %></strong>
+														</div>
+												  </div>
+											 </div>
+                                             <div class="col-md-3">
+												  <div class="form-group">
+														<label class="form-label">Phrase</label>
+														<span class="help"></span>
+														<div class="input-with-iconz  right">                                       
+															 <%= cc.courses_phrase_list.html_safe %>
+														</div>
+												  </div>
+											 </div>
+                                             <div class="col-md-2">
+												  <div class="form-group">
+														<label class="form-label">Price</label>
+														<span class="help"></span>
+														<div class="input-with-iconz  text-right">                                       
+															 <strong><%= format_price(cc.price) %></strong>
+														</div>
+												  </div>
+											 </div>
+                                             <div class="col-md-2">
+														<div class="form-group">
+															  <label class="form-label">Discount Program</label>
+															  <span class="help"></span>
+															  <div class="input-with-iconz  text-right">                                       
+																		<div><strong><%= format_price(cc.discount_program_amount) %></strong></div>
+																   
+															  </div>
+														</div>
+														<% if cc.discount.to_f > 0 %>
+																<div class="form-group">
+																		<label class="form-label">Other discount/credit</label>
+																		<span class="help"></span>
+																		<div class="input-with-iconz  text-right">                                       
+																			 <div><strong><%= format_price(cc.discount.to_f) %></strong></div>
+																			 
+																		</div>
+																</div>
+														<% end %>
+											 </div>
+                                             <div class="col-md-2">
+												  <div class="form-group">
+														<label class="form-label">Total</label>
+														<span class="help"></span>
+														<div class="input-with-iconz text-right">                                       
+															 <strong style="font-size: 18px"><%= format_price(cc.total) %></strong>
+														</div>
+												  </div>
+											 </div>
+										</div>
+										
+										
+								   </div>
+								  
+							  </div>
+						  
+                            <% number += 1 %>
+                          <% end %>
+						 
+						 <hr />
+						 
+					</div>
+					
+					<br />
+						
+						<% if @course_register.books_contacts.count > 0 %>
+								<h3>Stock Registration</h3>
+								
+								<div class="stock_box_list">
+									  <% number = 0 %>
+									  <% @course_register.books_contacts.each do |bc| %>
+										  <div class="row column-seperation stock_box stock_box_<%= number.to_s %>" rel="<%= number %>">
+											   <div class="stock_box_label">Book #<%= number+1 %></div>
+											   <div class="col-md-12">
+													<hr />
+											   </div>
+											   <div class="col-md-12">
+													<div class="row column-seperation">
+														<div class="col-md-1" style="margin-top: 5px">
+														  <%= bc.book.cover_link %>
+														</div>
+														 <div class="col-md-2">
+															  <div class="form-group">
+																	<label class="form-label">Book</label>
+																	<span class="help"></span>
+																	<div class="input-with-iconz  right">                                       
+																		 <strong><%= bc.book.name %></strong>
+																	</div>
+															  </div>
+														 </div>
+														 <div class="col-md-3">
+															  <div class="form-group">
+																	<label class="form-label">Volumn</label>
+																	<span class="help"></span>
+																	<div class="input-with-iconz  right">                                       
+																		 <strong><%= bc.volumns.map(&:name).join("<br />") %></strong>
+																	</div>
+															  </div>
+														 </div>
+														 <div class="col-md-2">
+															  <div class="form-group">
+																	<label class="form-label">Price</label>
+																	<span class="help"></span>
+																	<div class="input-with-iconz  text-right">                                       
+																		 <strong><%= format_price(bc.price) %></strong>
+																	</div>
+															  </div>
+														 </div>
+														 <div class="col-md-2">
+																	<div class="form-group">
+																		  <label class="form-label">Discount Program</label>
+																		  <span class="help"></span>
+																		  <div class="input-with-iconz  text-right">                                       
+																					<div><strong><%= format_price(bc.discount_program_amount) %></strong></div>
+																			   
+																		  </div>
+																	</div>
+																	<% if bc.discount.to_f > 0 %>
+																			<div class="form-group">
+																					<label class="form-label">Other discount/credit</label>
+																					<span class="help"></span>
+																					<div class="input-with-iconz  text-right">                                       
+																						 <div><strong><%= format_price(bc.discount.to_f) %></strong></div>
+																						 
+																					</div>
+																			</div>
+																	<% end %>
+														 </div>
+														 <div class="col-md-2">
+															  <div class="form-group">
+																	<label class="form-label">Total</label>
+																	<span class="help"></span>
+																	<div class="input-with-iconz text-right">                                       
+																		 <strong style="font-size: 18px"><%= format_price(bc.total) %></strong>
+																	</div>
+															  </div>
+														 </div>
+													</div>
+													
+													
+											   </div>
+										  </div>
+										  
+										<% number += 1 %>
+									 <% end %>
+									 
+									 <hr />
+									 
+								</div>
+								
+								<br />
+								
+						<% end %>
+						
+					
+					<h3>Payment Information</h3> 
+					
+					
+					<div class="row">
+						 <div class="col-md-12">
+							  <div class="row column-seperation">								   
+								   <div class="col-md-2">										
+										<div class="form-group">
+										  <label class="form-label">Receipt Date</label>
+										  <span class="help"></span>
+										  <div class="input-with-icon  right">                                       
+                                                <i class=""></i>
+                                                <strong><%= @course_register.created_date.strftime("%d-%b-%Y") %></strong>
+										  </div>
+										</div>
+										
+								   </div>							   
+								   <div class="col-md-2">										
+										<div class="form-group">
+											 <label class="form-label">Payment type</label>
+											 <span class="help"></span>
+											 <div class="input-with-iconz right">                                       
+												  <strong><%= @course_register.payment_type %></strong>
+											 </div>
+										</div>										
+								   </div>
+								   <div class="col-md-2">													   
+										<div class="form-group">
+											 <label class="form-label">Bank Account</label>
+											 <span class="help"></span>
+											 <div class="input-with-icon  right">                                       
+												  <i class=""></i>
+												  <div class="input-with_add_butz">												   													   
+													   <strong><%= @course_register.bank_account.name %></strong>
+												  </div>
+											 </div>
+										</div>					
+								   </div>
+								   <div class="col-md-2">										
+										<div class="form-group">
+											 <label class="form-label">Mailing Address</label>
+											 <span class="help"></span>
+											 <div class="input-with-iconz right">                                       
+												 <strong><%= @course_register.mailing_address %></strong>
+											 </div>
+										</div>										
+								   </div>
+
+								   <div class="col-md-2">
+										
+												<div class="form-group">
+														<label class="form-label">VAT Info</label>
+														<span class="help"></span>
+														<div class="input-with-iconx right">
+															 <% if @course_register.invoice_required == true %>
+																		<div class="text-right" style="font-size: 20px;" width="100%">
+																				<% if @course_register.vat_name.present? %>
+																				   <div><strong><%= @course_register.vat_name %></strong></div>
+																				<% end %>
+																				<% if @course_register.vat_address.present? %>
+																				   <div><strong><%= @course_register.vat_address %></strong></div>>
+																				<% end %>
+																				<% if @course_register.vat_code.present? %>
+																				   <div><strong><%= @course_register.vat_code %></strong></div>
+																				<% end %>
+																		</div>
+																<% else %>
+																		Not required
+																<% end %>
+															
+														</div>
+												</div>
+										
+										
+								   </div>
+								   <div class="col-md-2">
+										<% if @course_register.total != @course_register.price %>
+												<div class="form-group">
+													 <label class="form-label">Sum Price</label>
+													 <span class="help"></span>
+													 <div class="input-with-iconx right">
+														  <div class="text-right" style="font-size: 20px;" width="100%">
+																<strong class=""><%= format_price(@course_register.price.to_f) %></strong>
+														  </div>
+														 
+													 </div>
+												</div>
+										<% end %>
+										<% if @course_register.discount_program.present? %>
+												<div class="form-group">
+													 <label class="form-label">Discount Program</label>
+													 <span class="help"></span>
+													 <div class="input-with-iconx right">
+														  <div class="text-right" style="font-size: 20px;" width="100%">
+																<strong class=""><%= format_price(@course_register.discount_program_amount) %></strong>
+																<div><%= "("+@course_register.discount_program.name+")" %></div>
+														  </div>
+														 
+													 </div>
+												</div>
+										<% end %>
+										<% if @course_register.discount.to_f > 0 %>
+												<div class="form-group">
+													 <label class="form-label">Other discount/credit</label>
+													 <span class="help"></span>
+													 <div class="input-with-icon right">
+														  <div class="text-right" style="font-size: 20px;" width="100%">
+																<strong class=""><%= format_price(@course_register.discount.to_f) %></strong>
+														  </div>
+														 
+													 </div>
+												</div>
+										<% end %>
+										<div class="form-group">
+											 <label class="form-label">Total Price</label>
+											 <span class="help"></span>
+											 <div class="input-with-icon right">
+												  <div class="text-right" style="font-size: 20px;" width="100%">
+														<strong class=""><%= format_price(@course_register.total) %></strong>
+												  </div>
+												 
+											 </div>
+										</div>										
+								   </div>
+								   
+								   
+								   
+								   
+							  </div>
+							  
+							  
+							  	
+						 </div>
+					 </div>

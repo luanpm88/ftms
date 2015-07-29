@@ -290,7 +290,7 @@ class Contact < ActiveRecord::Base
     ActionView::Base.send(:include, Rails.application.routes.url_helpers)
     link_helper = ActionController::Base.helpers
     
-    @course = Contact.find(params[:courses])
+    @course = Course.find(params[:courses])
     
     @records = self.filters(params, user)
     
@@ -824,6 +824,8 @@ class Contact < ActiveRecord::Base
       return address
     elsif preferred_mailing == "company"
       return referrer.address
+    elsif preferred_mailing == "ftms"
+      return "FTMS"
     else
       return mailing_address
     end
@@ -836,6 +838,61 @@ class Contact < ActiveRecord::Base
   
   def book_count
     books.uniq.count
+  end
+  
+  def vat_name
+    if invoice_required == true
+      return invoice_info.nil? ? "" : invoice_info.name
+    else
+      return ""
+    end    
+  end
+  def vat_code
+    if invoice_required == true
+      return invoice_info.nil? ? "" : invoice_info.tax_code
+    else
+      return ""
+    end 
+  end
+  def vat_address
+    if invoice_required == true
+      return invoice_info.nil? ? "" : invoice_info.address
+    else
+      return ""
+    end
+  end
+  
+  def update_bases(bases)
+    result = []
+    bases.each do |row|
+      if row[1]["course_type_id"].present? && row[1]["name"].present? && row[1]["password"].present?
+        item = {}
+        item[:course_type_id] = row[1]["course_type_id"]
+        item[:name] = row[1]["name"]
+        item[:password] = row[1]["password"]
+        
+        result << item
+      end
+    end
+    
+    self.bases = result.to_json
+  end
+  
+  def base_items
+    arr = self.bases.present? ? JSON.parse(self.bases) : []
+    result = []
+    arr.each do |item|
+      one = item
+      one["course_type"] = CourseType.find(one["course_type_id"])
+      
+      result << one
+    end
+    
+    return result
+  end
+  
+  def books_contact(book)
+    books_contacts.where(book_id: book.id).first
   end
   
 end

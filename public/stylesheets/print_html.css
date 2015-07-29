@@ -14,7 +14,6 @@
       padding: 20px;
   }
   .page * {
-    font-family: "Times New Roman";
     font-size: 18px;    
   }
   p {
@@ -168,4 +167,22 @@ table {
 body {
   margin: 0;
   background: #fff;
+}
+img {
+  border: none
+}
+.logo img {
+  width: 300px !important;
+  border: none !important;
+}
+i.icon {
+  color: #fff;
+}
+h1 {
+    font-size: 30px !important;
+    font-weight: bold;
+    margin: 30px;
+}
+.page {
+  background: #f9f9f9;
 }

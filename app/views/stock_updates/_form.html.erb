@@ -1,0 +1,92 @@
+       <div class="row">
+            <div class="col-md-12">
+              <div class="grid simple">
+                <div class="grid-title no-border">
+                  <h4>Update <span class="semi-bold"><%= @stock_update.book.name %></span></h4>
+                  
+                </div>     
+                
+                
+                
+                
+                <div class="grid-body no-border">
+                  
+                  
+                  <% if @stock_update.errors.any? %>
+                    <div class="alert alert-error">
+                      <button data-dismiss="alert" class="close"></button>
+                      <div id="error_explanation">
+                        <h5><%= pluralize(@stock_update.errors.count, "error") %> prohibited this stock update from being saved:</h5>
+                  
+                        <ul>
+                        <% @stock_update.errors.full_messages.each do |msg| %>
+                          <li><%= msg %></li>
+                        <% end %>
+                        </ul>
+                      </div>
+                    </div>
+                  <% end %>
+                    
+                 
+                  
+                  
+                  <%= form_for(@stock_update) do |f| %>
+					
+					<%= hidden_field_tag("tab_page", 1) if params[:tab_page] %>
+                    <%=f.hidden_field :book_id %>
+
+							  
+                              <div class="col-md-3">
+                                <div class="form-group">
+                                    <label class="form-label"><%= f.label :type %></label>
+                                    <span class="help">(required)</span>
+                                    <div class="input-with-icon  right">                                       
+                                            <i class=""></i>
+                                            <div class="input-with-icon  right">
+                                                  <select name="stock_update[type_name]" class="modern_select width100 required">
+                                                        <option <%= 'selected="selected"' if @stock_update.type_name == "import" %> value="import">Import</option>
+                                                        <option <%= 'selected="selected"' if @stock_update.type_name == "export" %> value="export">Export</option>
+                                                  </select>
+                                            </div>
+                                    </div>
+                                </div>
+                              </div>					  
+                              
+                              <div class="col-md-3">
+                                    <div class="form-group">
+                                      <label class="form-label"><%= f.label :quantity %></label>
+                                      <span class="help">(required)</span>
+                                      <div class="input-with-icon  right">                                       
+                                          <i class=""></i>
+                                            <%= f.text_field :quantity, :class => "form-control required number_input_0 text-center" %>
+                                      </div>
+                                    </div>
+                              </div>
+                              
+                              <div class="col-md-6">
+                                    <div class="form-group">
+                                      <label class="form-label"><%= f.label :note %></label>
+                                      <span class="help">(required)</span>
+                                      <div class="input-with-icon  right">                                       
+                                          <i class=""></i>
+                                            <%= f.text_area :note, :class => "form-control required" %>
+                                      </div>
+                                    </div>
+                              </div>
+							  
+							  
+			
+						 
+					<div class="form-actions">  
+						 <div class="pull-right">
+						 <button type="submit" class="btn btn-success btn-cons"><i class="icon-ok"></i> Save</button>
+						  <%= link_to 'Cancel', users_path, :class => "btn btn-white btn-cons cancel-but" %>
+					   </div>
+					</div>
+							  
+						<% end %>
+			   </div>
+			 </div>
+            </div>
+			
+     </div>

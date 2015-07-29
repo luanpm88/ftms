@@ -1806,7 +1806,7 @@ display:none;
 	display:inline-block;
 	top:-5px;
 	position:relative;
-	width: 83%;
+	width: 70%;
 }
 .page-title p{
 	color:#63696d;
@@ -8258,10 +8258,10 @@ td .logo {
     font-size: 18px;
     color: #333;
 }
-.ajax-check-radio i.true {
+.check-radio i.true {
     color: #3c763d;
 }
-.ajax-check-radio i.false {
+.check-radio i.false {
 }
 .old_imported, .new_imported {
     color: #3c763d;

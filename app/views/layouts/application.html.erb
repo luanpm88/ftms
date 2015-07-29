@@ -318,7 +318,7 @@
    <!-- END MINI-WIGETS -->
    
    <!-- BEGIN SIDEBAR MENU -->	
-    <p class="menu-title">BROWSE <span class="pull-right"><a href="javascript:;"><i class="icon-refresh"></i></a></span></p>
+    <!--<p class="menu-title">BROWSE <span class="pull-right"><a href="javascript:;"><i class="icon-refresh"></i></a></span></p>-->
     <ul>
 		
 		
@@ -399,13 +399,14 @@
 		<% end %>
 		
 		<% if can? :read, BankAccount %>
-			<li <% if params[:controller] == "bank_accounts" %> class="active open"<% end %>>
+			<li <% if ["bank_accounts","payment_records"].include?params[:controller] %> class="active open"<% end %>>
 			  <%= link_to contacts_url do %>
 			<i class="icon-list-alt"></i>
 			<span class="title">Accounting</span>
-			<span class="arrow<% if params[:controller] == "bank_accounts" %> open<% end %>"></span>
+			<span class="arrow<% if ["bank_accounts","payment_records"].include?params[:controller] %> open<% end %>"></span>
 			  <% end %>
 			  <ul class="sub-menu">
+				<li<% if params[:controller] == "payment_records" %> class="active"<% end %>><%= link_to 'Payment Record', payment_records_path(tab_page:1), class: "tab_page" %></li>
 				<li<% if params[:controller] == "bank_accounts" %> class="active"<% end %>><%= link_to 'Bank Account', bank_accounts_path(tab_page:1), class: "tab_page" %></li>
 
 			  </ul>

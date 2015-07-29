@@ -23,6 +23,7 @@ class CourseRegistersController < ApplicationController
     @contact = !params[:contact_id].present? ? Contact.new : Contact.find(params[:contact_id])
     
     @course_register.created_date = Time.now.strftime("%d-%b-%Y")
+    @course_register.debt_date = Time.now.strftime("%d-%b-%Y")
     @course_register.mailing_address = @contact.default_mailing_address
     @course_register.contact_id = @contact.id
   end
@@ -106,6 +107,6 @@ class CourseRegistersController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def course_register_params
-      params.require(:course_register).permit(:discount, :contact_id, :mailing_address, :payment_type, :bank_account_id, :discount_program_id, :created_date, :user_id)
+      params.require(:course_register).permit(:debt_date, :invoice_required, :vat_name, :vat_code, :vat_address, :discount, :contact_id, :mailing_address, :payment_type, :bank_account_id, :discount_program_id, :created_date, :user_id)
     end
 end

@@ -1,0 +1,29 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <strong>Type:</strong>
+  <%= @stock_update.type %>
+</p>
+
+<p>
+  <strong>Book:</strong>
+  <%= @stock_update.book_id %>
+</p>
+
+<p>
+  <strong>Quantity:</strong>
+  <%= @stock_update.quantity %>
+</p>
+
+<p>
+  <strong>Created date:</strong>
+  <%= @stock_update.created_date %>
+</p>
+
+<p>
+  <strong>User:</strong>
+  <%= @stock_update.user_id %>
+</p>
+
+<%= link_to 'Edit', edit_stock_update_path(@stock_update) %> |
+<%= link_to 'Back', stock_updates_path %>

@@ -542,7 +542,8 @@ CREATE TABLE contacts (
     base_id character varying,
     base_password character varying,
     account_manager_id integer,
-    preferred_mailing character varying
+    preferred_mailing character varying,
+    bases text
 );
 
 
@@ -779,7 +780,14 @@ CREATE TABLE course_registers (
     bank_account_id integer,
     discount_program_id integer,
     contact_id integer,
-    discount numeric
+    discount numeric,
+    vat_name character varying,
+    vat_code character varying,
+    vat_address character varying,
+    invoice_required boolean,
+    debt_date timestamp without time zone,
+    cache_delivery_status character varying,
+    cache_payment_status character varying
 );
 
 
@@ -938,6 +946,74 @@ ALTER SEQUENCE courses_phrases_id_seq OWNED BY courses_phrases.id;
 
 
 --
+-- Name: deliveries; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE TABLE deliveries (
+    id integer NOT NULL,
+    course_register_id integer,
+    contact_id integer,
+    delivery_date timestamp without time zone,
+    user_id integer,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL,
+    status integer
+);
+
+
+--
+-- Name: deliveries_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE deliveries_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: deliveries_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE deliveries_id_seq OWNED BY deliveries.id;
+
+
+--
+-- Name: delivery_details; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE TABLE delivery_details (
+    id integer NOT NULL,
+    delivery_id integer,
+    book_id integer,
+    quantity integer,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL
+);
+
+
+--
+-- Name: delivery_details_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE delivery_details_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: delivery_details_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE delivery_details_id_seq OWNED BY delivery_details.id;
+
+
+--
 -- Name: discount_programs; Type: TABLE; Schema: public; Owner: -; Tablespace: 
 --
 
@@ -1078,6 +1154,44 @@ CREATE SEQUENCE parent_contacts_id_seq
 --
 
 ALTER SEQUENCE parent_contacts_id_seq OWNED BY parent_contacts.id;
+
+
+--
+-- Name: payment_records; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE TABLE payment_records (
+    id integer NOT NULL,
+    course_register_id integer,
+    amount numeric,
+    debt_date timestamp without time zone,
+    bank_account_id integer,
+    user_id integer,
+    note text,
+    payment_date timestamp without time zone,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL,
+    status integer
+);
+
+
+--
+-- Name: payment_records_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE payment_records_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: payment_records_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE payment_records_id_seq OWNED BY payment_records.id;
 
 
 --
@@ -1282,6 +1396,42 @@ CREATE SEQUENCE states_id_seq
 --
 
 ALTER SEQUENCE states_id_seq OWNED BY states.id;
+
+
+--
+-- Name: stock_updates; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE TABLE stock_updates (
+    id integer NOT NULL,
+    type_name character varying,
+    book_id integer,
+    quantity integer,
+    created_date timestamp without time zone,
+    user_id integer,
+    note text,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL
+);
+
+
+--
+-- Name: stock_updates_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE stock_updates_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: stock_updates_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE stock_updates_id_seq OWNED BY stock_updates.id;
 
 
 --
@@ -1548,6 +1698,20 @@ ALTER TABLE ONLY courses_phrases ALTER COLUMN id SET DEFAULT nextval('courses_ph
 -- Name: id; Type: DEFAULT; Schema: public; Owner: -
 --
 
+ALTER TABLE ONLY deliveries ALTER COLUMN id SET DEFAULT nextval('deliveries_id_seq'::regclass);
+
+
+--
+-- Name: id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY delivery_details ALTER COLUMN id SET DEFAULT nextval('delivery_details_id_seq'::regclass);
+
+
+--
+-- Name: id; Type: DEFAULT; Schema: public; Owner: -
+--
+
 ALTER TABLE ONLY discount_programs ALTER COLUMN id SET DEFAULT nextval('discount_programs_id_seq'::regclass);
 
 
@@ -1570,6 +1734,13 @@ ALTER TABLE ONLY notifications ALTER COLUMN id SET DEFAULT nextval('notification
 --
 
 ALTER TABLE ONLY parent_contacts ALTER COLUMN id SET DEFAULT nextval('parent_contacts_id_seq'::regclass);
+
+
+--
+-- Name: id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY payment_records ALTER COLUMN id SET DEFAULT nextval('payment_records_id_seq'::regclass);
 
 
 --
@@ -1612,6 +1783,13 @@ ALTER TABLE ONLY settings ALTER COLUMN id SET DEFAULT nextval('settings_id_seq':
 --
 
 ALTER TABLE ONLY states ALTER COLUMN id SET DEFAULT nextval('states_id_seq'::regclass);
+
+
+--
+-- Name: id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY stock_updates ALTER COLUMN id SET DEFAULT nextval('stock_updates_id_seq'::regclass);
 
 
 --
@@ -1837,6 +2015,22 @@ ALTER TABLE ONLY courses
 
 
 --
+-- Name: deliveries_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+--
+
+ALTER TABLE ONLY deliveries
+    ADD CONSTRAINT deliveries_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: delivery_details_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+--
+
+ALTER TABLE ONLY delivery_details
+    ADD CONSTRAINT delivery_details_pkey PRIMARY KEY (id);
+
+
+--
 -- Name: discount_programs_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
 --
 
@@ -1866,6 +2060,14 @@ ALTER TABLE ONLY notifications
 
 ALTER TABLE ONLY parent_contacts
     ADD CONSTRAINT parent_contacts_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: payment_records_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+--
+
+ALTER TABLE ONLY payment_records
+    ADD CONSTRAINT payment_records_pkey PRIMARY KEY (id);
 
 
 --
@@ -1914,6 +2116,14 @@ ALTER TABLE ONLY settings
 
 ALTER TABLE ONLY states
     ADD CONSTRAINT states_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: stock_updates_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+--
+
+ALTER TABLE ONLY stock_updates
+    ADD CONSTRAINT stock_updates_pkey PRIMARY KEY (id);
 
 
 --
@@ -2158,4 +2368,32 @@ INSERT INTO schema_migrations (version) VALUES ('20150722090024');
 INSERT INTO schema_migrations (version) VALUES ('20150723013855');
 
 INSERT INTO schema_migrations (version) VALUES ('20150723042643');
+
+INSERT INTO schema_migrations (version) VALUES ('20150727025749');
+
+INSERT INTO schema_migrations (version) VALUES ('20150727025802');
+
+INSERT INTO schema_migrations (version) VALUES ('20150727025816');
+
+INSERT INTO schema_migrations (version) VALUES ('20150727033034');
+
+INSERT INTO schema_migrations (version) VALUES ('20150727063109');
+
+INSERT INTO schema_migrations (version) VALUES ('20150727065758');
+
+INSERT INTO schema_migrations (version) VALUES ('20150727070153');
+
+INSERT INTO schema_migrations (version) VALUES ('20150728090215');
+
+INSERT INTO schema_migrations (version) VALUES ('20150729010405');
+
+INSERT INTO schema_migrations (version) VALUES ('20150729020843');
+
+INSERT INTO schema_migrations (version) VALUES ('20150729034433');
+
+INSERT INTO schema_migrations (version) VALUES ('20150729034451');
+
+INSERT INTO schema_migrations (version) VALUES ('20150729042837');
+
+INSERT INTO schema_migrations (version) VALUES ('20150729042854');
 

@@ -12,6 +12,8 @@ class Book < ActiveRecord::Base
   has_many :book_prices
   has_many :books_contacts
   
+  has_many :stock_updates
+  
   mount_uploader :image, BookUploader
   
   pg_search_scope :search,
@@ -93,21 +95,42 @@ class Book < ActiveRecord::Base
     @records = @records.limit(params[:length]).offset(params["start"])
     data = []
     
-    actions_col = 9
+    actions_col = 10
+    itemsx = []
     @records.each do |item|
-      item = [
+      itemx = [
               item.cover_link,
               item.book_link,
-              item.display_volumns,
+              "", #item.display_volumns,
               '<div class="text-center">'+item.course_types.map(&:short_name).join(", ")+"</div>",
               '<div class="text-center">'+item.subjects.map(&:name).join(", ")+"</div>",
               '<div class="text-left">'+item.publisher.to_s+"</div>",
               '<div class="text-center">'+item.display_prices+"</div>",
+              '<div class="text-center">'+item.stock.to_s+"</div>",
               '<div class="text-center">'+item.created_at.strftime("%d-%b-%Y")+"</div>", 
               '<div class="text-center">'+item.user.staff_col+"</div>",
               ''
             ]
-      data << item
+      data << itemx
+      itemsx << item
+      
+      item.volumns.each do |vol|
+        itemy = [
+              "",
+              "",
+              vol.book_link,
+              "",
+              "",
+              "",
+              "",
+              '<div class="text-center">'+vol.stock.to_s+"</div>",
+              '<div class="text-center">'+vol.created_at.strftime("%d-%b-%Y")+"</div>", 
+              "",
+              ''
+            ]
+        data << itemy
+        itemsx << vol
+      end
       
     end
     
@@ -118,7 +141,7 @@ class Book < ActiveRecord::Base
     }
     result["data"] = data
     
-    return {result: result, items: @records, actions_col: actions_col}
+    return {result: result, items: itemsx, actions_col: actions_col}
     
   end
   
@@ -163,14 +186,14 @@ class Book < ActiveRecord::Base
       item = [
               item.cover_link,
               item.book_link,
-              item.display_volumns,
+              @student.books_contact(item).volumns.map(&:name).join(", "),
               '<div class="text-center">'+item.course_types.map(&:short_name).join(", ")+"</div>",
               '<div class="text-center">'+item.subjects.map(&:name).join(", ")+"</div>",
               '<div class="text-left">'+item.publisher.to_s+"</div>",
-              '<div class="text-center">'+item.display_prices+"</div>",
-              '<div class="text-center">'+item.created_at.strftime("%d-%b-%Y")+"</div>", 
-              '<div class="text-center">'+item.user.staff_col+"</div>",
-              ''
+              '<div class="text-right">'+ApplicationController.helpers.format_price(@student.books_contact(item).total)+"</div>",
+              '<div class="text-center">'+ @student.books_contact(item).course_register.created_date.strftime("%d-%b-%Y")+"</div>",
+              '<div class="text-center">'+ @student.books_contact(item).course_register.display_delivery_status+"</div>", 
+              '<div class="text-center">'+item.user.staff_col+"</div>"
             ]
       data << item
       
@@ -275,6 +298,24 @@ class Book < ActiveRecord::Base
     arr = subject_ids.nil? ? [] : JSON.parse(subject_ids)
     
     return Subject.where(id: arr)
+  end
+  
+  def type_name
+    course_types.map(&:short_name).join(", ")
+  end
+  
+  def stock
+    total = 0
+    total += stock_updates.where(type_name: "import").sum(:quantity)
+    total -= stock_updates.where(type_name: "export").sum(:quantity)
+    
+    #delivery
+    total -= Delivery.joins(:course_register => :books_contacts).where(status: 1).where(books_contacts: { book_id: self.id }).count
+    
+    # Delivery.joins(:course_register => :books_contacts).where(books_contacts: {book_id: 1}).map { |d| d.course_register.books_contacts.map(&:volumn_ids).join("")}.join("")
+
+    
+    return total
   end
   
 end

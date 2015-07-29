@@ -1,0 +1,32 @@
+<?xml version="1.0"?>
+<Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet"
+  xmlns:o="urn:schemas-microsoft-com:office:office"
+  xmlns:x="urn:schemas-microsoft-com:office:excel"
+  xmlns:ss="urn:schemas-microsoft-com:office:spreadsheet"
+  xmlns:html="http://www.w3.org/TR/REC-html40">
+  <Worksheet ss:Name="Sheet1">
+    <Table>
+      <Row>
+        <Cell><Data ss:Type="String">Created On</Data></Cell>
+        <Cell><Data ss:Type="String">Student</Data></Cell>
+        <Cell><Data ss:Type="String">Address</Data></Cell>
+        <Cell><Data ss:Type="String">Company</Data></Cell>
+        <Cell><Data ss:Type="String">Phone</Data></Cell>
+        <Cell><Data ss:Type="String">Book List</Data></Cell>
+      </Row>
+      
+      <% @course_registers.each do |cr| %>
+        <Row>
+          <Cell><Data ss:Type="String"><%= cr.created_date.strftime("%d-%b-%Y") %></Data></Cell>
+          <Cell><Data ss:Type="String"><%= cr.contact.display_name %></Data></Cell>
+          <Cell><Data ss:Type="String"><%= cr.mailing_address %></Data></Cell>
+          <Cell><Data ss:Type="String"><%= cr.contact.referrer.display_name if !cr.contact.referrer.nil? %></Data></Cell>
+          <Cell><Data ss:Type="String"><%= cr.contact.mobile %></Data></Cell>
+          <Cell><Data ss:Type="String"><% cr.books.each_with_index do |row, index| %><%= row[:book].name %> (<%= row[:book].type_name %>): <%= row[:volumns].map(&:name).join("; ") %><% end %>
+          </Data></Cell>        
+        </Row>
+      <% end %>
+
+    </Table>
+  </Worksheet>
+</Workbook>

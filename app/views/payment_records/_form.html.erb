@@ -1,0 +1,148 @@
+       <div class="row">
+            <div class="col-md-12">
+              <div class="grid simple">
+                <div class="grid-title no-border">
+                  <h4>Payment <span class="semi-bold">Details</span></h4>
+                  
+                </div>     
+                
+                
+                
+                
+                <div class="grid-body no-border">
+                  
+                  
+                  <% if @payment_record.errors.any? %>
+                    <div class="alert alert-error">
+                      <button data-dismiss="alert" class="close"></button>
+                      <div id="error_explanation">
+                        <h5><%= pluralize(@payment_record.errors.count, "error") %> prohibited this payment from being saved:</h5>
+                  
+                        <ul>
+                        <% @payment_record.errors.full_messages.each do |msg| %>
+                          <li><%= msg %></li>
+                        <% end %>
+                        </ul>
+                      </div>
+                    </div>
+                  <% end %>
+                    
+                 
+                  
+                  
+                  <%= form_for(@payment_record) do |f| %>
+					
+					<%= hidden_field_tag("tab_page", 1) if params[:tab_page] %>
+                    <%= f.hidden_field :course_register_id %>
+					
+					<div class="row column-seperation">
+						 <div class="col-md-8">
+							  
+                              <div class="row">
+                                <div class="col-md-3">
+                                  <div class="form-group">
+                                        <label class="form-label"><%= f.label :student %></label>
+                                        <span class="help"></span>
+                                        <div class="input-with-iconz">                                       
+                                            <strong><%= @course_register.contact.display_name %></strong>
+                                        </div>
+                                  </div>
+                                </div>
+                                <div class="col-md-3">
+                                  <div class="form-group">
+                                        <label class="form-label"><%= f.label :bank_account %></label>
+                                        <span class="help"></span>
+                                        <div class="input-with-iconx">                                       
+                                             <strong><%= @course_register.bank_account.name %></strong>
+                                        </div>
+                                   </div>	
+                                </div>
+                                <div class="col-md-3">
+                                  <div class="form-group">
+                                        <label class="form-label"><%= f.label :total %></label>
+                                        <span class="help"></span>
+                                        <div class="input-with-iconx">                                       
+                                             <strong><%= format_price(@course_register.total) %></strong>
+                                        </div>
+                                   </div>	
+                                </div>
+                                <div class="col-md-3">
+                                  <div class="form-group">
+                                        <label class="form-label"><%= f.label :remain %></label>
+                                        <span class="help"></span>
+                                        <div class="input-with-iconx">                                       
+                                             <strong><%= format_price(@course_register.remain_amount) %></strong>
+                                        </div>
+                                   </div>	
+                                </div>
+                                <div class="col-md-4">
+                                  <div class="form-group">
+                                        <label class="form-label"><%= f.label :pay_amout %></label>
+                                        <span class="help">(required)</span>
+                                        <div class="input-with-iconx">                                       
+                                            <%= f.text_field :amount, :class => "form-control price_input required" %>
+                                        </div>
+                                   </div>	
+                                </div>
+                                <div class="col-md-4">
+                                  <div class="form-group">
+                                        <label class="form-label"><%= f.label :payment_date %></label>
+                                        <span class="help">(required)</span>
+                                        <div class="input-with-icon  right">                                       
+                                             <i class=""></i>
+                                             <div class="input-append success date col-md-10 no-padding">
+                                               <%= f.text_field :payment_date, :class => "form-control required", value: @payment_record.debt_date %>
+                                               <span class="add-on"><span class="arrow"></span><i class="icon-th"></i></span>
+                                             </div>
+                                             <br style="clear: both" />
+                                        </div>
+                                   </div>	
+                                </div>
+                                <div class="col-md-4">
+                                  <div class="form-group">
+                                        <label class="form-label"><%= f.label :debt_date %></label>
+                                        <span class="help"></span>
+                                        <div class="input-with-icon  right">                                       
+                                             <i class=""></i>
+                                             <div class="input-append success date col-md-10 no-padding">
+                                               <%= f.text_field :debt_date, :class => "form-control", value: @payment_record.debt_date %>
+                                               <span class="add-on"><span class="arrow"></span><i class="icon-th"></i></span>
+                                             </div>
+                                             <br style="clear: both" />
+                                        </div>
+                                   </div>	
+                                </div>
+                              </div>
+							  							  
+							  
+							  
+							  
+							  
+						 </div>
+						 <div class="col-md-4">
+							  <div class="form-group">
+								<label class="form-label"><%= f.label :note %></label>
+								<span class="help"></span>
+								<div class="input-with-icon  right">                                       
+									<i class=""></i>
+									  <%= f.text_area :note, :class => "form-control" %>
+								</div>
+							  </div>
+						 </div>
+						 
+						 
+					</div>
+						 
+					<div class="form-actions">  
+						 <div class="pull-right">
+						 <button type="submit" class="btn btn-success btn-cons"><i class="icon-ok"></i> Pay</button>
+						  <%= link_to 'Cancel', users_path, :class => "btn btn-white btn-cons cancel-but" %>
+					   </div>
+					</div>
+							  
+						<% end %>
+			   </div>
+			 </div>
+            </div>
+			
+     </div>

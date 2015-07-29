@@ -1,4 +1,18 @@
 Hkerp::Application.routes.draw do
+  resources :payment_records do
+    collection do
+      get :print
+      get :datatable
+    end
+  end
+  resources :stock_updates
+  resources :delivery_details
+  resources :deliveries do
+    collection do
+      get :print
+      get :delivery_list
+    end
+  end
   resources :books_contacts
   resources :book_prices
   resources :bank_accounts do

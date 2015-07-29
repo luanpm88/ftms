@@ -138,6 +138,15 @@ class Ability
       can :read, CourseRegister
       can :create, CourseRegister
       can :update, CourseRegister
+      can :deliver_stock, CourseRegister do |cr|
+        cr.books.count > 0 && !cr.delivered?
+      end
+      can :delivery_print, CourseRegister do |cr|
+        cr.delivered?
+      end
+      can :pay_registration, CourseRegister do |cr|
+        !cr.paid?
+      end
       
       can :course_register, Contact do |contact|
         contact.contact_types.include?(ContactType.student) || contact.contact_types.include?(ContactType.inquiry)
@@ -171,6 +180,24 @@ class Ability
       can :update, BankAccount
       
       can :courses_phrases_select, CoursesPhrase
+      
+      can :datatable, Delivery
+      can :read, Delivery
+      can :create, Delivery
+      can :print, Delivery
+      can :delivery_list, Delivery
+      
+      can :read, DeliveryDetail
+      can :create, DeliveryDetail
+      
+      can :read, StockUpdate
+      can :create, StockUpdate
+      
+      can :datatable, PaymentRecord
+      can :read, PaymentRecord
+      can :create, PaymentRecord
+      can :print, PaymentRecord
+      
     end
     
   end

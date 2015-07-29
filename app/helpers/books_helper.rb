@@ -4,6 +4,10 @@ module BooksHelper
                     <button class="btn btn-mini btn-white btn-demo-space dropdown-toggle" data-toggle="dropdown">Actions <span class="caret"></span></button>'
       actions += '<ul class="dropdown-menu">'      
       
+      if can? :create, StockUpdate
+        actions += '<li>'+ActionController::Base.helpers.link_to('Import/Export', {controller: "stock_updates", action: "new", book_id: item.id, tab_page: 1}, psrc: books_path(tab_page: 1), title: "#{item.name}: Import/Export", class: "tab_page")+'</li>'        
+      end
+      
       if can? :new, item
         actions += '<li>'+ActionController::Base.helpers.link_to('New Volumn', {controller: "books", action: "new", parent_id: item.id, tab_page: 1}, psrc: books_path(tab_page: 1), title: "#{item.name}: New Volumn", class: "tab_page")+'</li>'        
       end

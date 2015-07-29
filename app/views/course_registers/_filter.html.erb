@@ -1,36 +1,65 @@
               <div class="grid simple ">
-                  <div class="grid-body no-border filters course-filter">
-                  <div class="row order-filters">
-                      
-							<div class="col-md-3">
-								<h4>Intake</h4>
-								<div class="date_select_filter">
-									<div class="input-with-icon date-group-my right">                                       
-									<%= date_select(:filter, :intake, {include_blank: true, use_short_month: true}) %>
-									</div>
-								</div>
-							</div>							
-							<div class="col-md-2">
-								<h4>Program</h4>							
-								<%= select_tag 'course_types[]', options_for_select(CourseType.all.collect{ |u| [u.short_name, u.id] }), class: "modern_select width100", multiple: "multiple" %>
-							</div>							
-							<div class="col-md-2">
-								<h4>Paper</h4>							
-								<%= select_tag 'subjects[]', options_for_select(Subject.all.collect{ |u| [u.name, u.id] }), class: "modern_select width100", multiple: "multiple" %>
-							</div>							
-							<div class="col-md-3">
-								<h4>Course</h4>							
-								<input style="width:100%;margin-bottom: 5px;" name="courses" data="<%= courses_path(format: "json") %>" class="select2-ajax-courses" value="<%= @course.id if !@course.nil? %>" text="<%= @course.display_name if !@course.nil? %>" />
-							</div>
-                            
-                            <div class="col-md-3 student-course-register-filter">
-                                <h4>Student</h4>                        
-                                <div class="lecturers-filter-box">
-                                    <input style="width:100%;margin-bottom: 5px;" name="student" data="<%= contacts_path(is_individual: true, contact_type_id: ContactType.student.id,format: "json") %>" class="select2-ajax-contacts" value="<%= @contact.id if !@contact.nil? %>" text="<%= @contact.display_name if !@contact.nil? %>" />
-                                </div>
-                            </div>
-                      
-                      
-                  </div>
+                  <div class="grid-body no-border filters course-register-filter">
+						<div class="row order-filters">
+							
+								  <div class="col-md-3">
+									  <h4>Intake</h4>
+									  <div class="date_select_filter">
+										  <div class="input-with-icon date-group-my right">                                       
+										  <%= date_select(:filter, :intake, {include_blank: true, use_short_month: true}) %>
+										  </div>
+									  </div>
+								  </div>							
+								  <div class="col-md-2">
+									  <h4>Program</h4>							
+									  <%= select_tag 'course_types[]', options_for_select(CourseType.all.collect{ |u| [u.short_name, u.id] }), class: "modern_select width100", multiple: "multiple" %>
+								  </div>							
+								  <div class="col-md-2">
+									  <h4>Paper</h4>							
+									  <%= select_tag 'subjects[]', options_for_select(Subject.all.collect{ |u| [u.name, u.id] }), class: "modern_select width100", multiple: "multiple" %>
+								  </div>							
+								  <div class="col-md-2">
+									  <h4>Course</h4>							
+									  <input style="width:100%;margin-bottom: 5px;" name="courses" data="<%= courses_path(format: "json") %>" class="select2-ajax-courses" value="<%= @course.id if !@course.nil? %>" text="<%= @course.display_name if !@course.nil? %>" />
+								  </div>
+								  
+								  <div class="col-md-3 student-course-register-filter">
+									  <h4>Student</h4>                        
+									  <div class="lecturers-filter-box">
+										  <input style="width:100%;margin-bottom: 5px;" name="student" data="<%= contacts_path(is_individual: true, contact_type_id: ContactType.student.id,format: "json") %>" class="select2-ajax-contacts" value="<%= @contact.id if !@contact.nil? %>" text="<%= @contact.display_name if !@contact.nil? %>" />
+									  </div>
+								  </div>
+							
+							
+						</div>
+						<div class="row order-filters">
+							
+								  <div class="col-md-2">
+									  <h4>Payment Status</h4>
+										<div class="input-with-icon  right">                                       
+											<i class=""></i>
+											<select name="payment_statuses" class="modern_select width100">
+												<option value="">All</option>
+												<option value="out_of_date">Out of Date</option>
+												<option value="debt">Debt</option>
+												<option value="paid">Paid</option>
+											</select>
+										</div>
+								  </div>
+								  
+								  <div class="col-md-2">
+									  <h4>Delivery Status</h4>
+										<div class="input-with-icon  right">                                       
+											<i class=""></i>
+											<select name="delivery_statuses" class="modern_select width100">
+												<option value="">All</option>
+												<option value="delivered">Delivered</option>
+												<option value="not_delivered">Not Delivered</option>
+											</select>
+										</div>
+								  </div>	
+								  
+							
+						</div>
                   </div>		    
 				</div>

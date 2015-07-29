@@ -79,7 +79,8 @@ class ContactsController < ApplicationController
     @contact.user_id = current_user.id
     @contact.sex = "male"
     
-    
+    #base
+    @contact.update_bases(params[:bases])    
     
     if params[:contact_tag].present?
       @contact_tag = ContactTag.find(params[:contact_tag])
@@ -125,7 +126,8 @@ class ContactsController < ApplicationController
     s_params[:course_type_ids] = contact_params[:course_type_ids][0].split(",") if contact_params[:course_type_ids].present?
     s_params[:lecturer_course_type_ids] = contact_params[:lecturer_course_type_ids][0].split(",") if contact_params[:lecturer_course_type_ids].present?
     
-    
+    #base
+    @contact.update_bases(params[:bases])  
     
     respond_to do |format|
       if @contact.update(s_params)
@@ -331,6 +333,6 @@ class ContactsController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def contact_params
-      params.require(:contact).permit(:mailing_address, :preferred_mailing, :account_manager_id, :base_id, :base_password, :invoice_required, :invoice_info_id, :payment_type, :preferred_mailing, :birthday, :sex, :referrer_id, :is_individual, :mobile_2, :email_2, :first_name, :last_name, :image, :city_id, :website, :name, :phone, :mobile, :fax, :email, :address, :tax_code, :note, :account_number, :bank, :contact_type_id, :parent_ids => [], :agent_ids => [], :company_ids => [], :contact_type_ids => [], :course_type_ids => [], :lecturer_course_type_ids => [])
+      params.require(:contact).permit(:bases, :mailing_address, :preferred_mailing, :account_manager_id, :base_id, :base_password, :invoice_required, :invoice_info_id, :payment_type, :preferred_mailing, :birthday, :sex, :referrer_id, :is_individual, :mobile_2, :email_2, :first_name, :last_name, :image, :city_id, :website, :name, :phone, :mobile, :fax, :email, :address, :tax_code, :note, :account_number, :bank, :contact_type_id, :parent_ids => [], :agent_ids => [], :company_ids => [], :contact_type_ids => [], :course_type_ids => [], :lecturer_course_type_ids => [])
     end
 end

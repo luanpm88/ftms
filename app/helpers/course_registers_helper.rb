@@ -5,9 +5,47 @@ module CourseRegistersHelper
                     <button class="btn btn-'+size+' btn-white btn-demo-space dropdown-toggle" data-toggle="dropdown">Actions <span class="caret"></span></button>'
       actions += '<ul class="dropdown-menu">'      
       
-      if can? :read, Course
+      group_1 = 0
+      if can? :pay_registration, item
+        actions += '<li>'+ActionController::Base.helpers.link_to('Pay', {controller: "payment_records", action: "new", course_register_id: item.id, tab_page: 1}, title: "Pay: #{item.contact.display_name}", class: "tab_page")+'</li>'
+        group_1 += 1
+      end
+      
+      if can? :deliver_stock, item
+        actions += '<li>'+ActionController::Base.helpers.link_to('Deliver Stock', {controller: "deliveries", action: "new", course_register_id: item.id, tab_page: 1}, title: "Deliver Stock: #{item.contact.display_name}", class: "tab_page")+'</li>'
+        group_1 += 1
+      end
+      
+      actions += '<li class="divider"></li>' if group_1 > 0
+      
+      
+       
+      group_2 = 0
+      if can? :delivery_print, item
+        actions += '<li>'+ActionController::Base.helpers.link_to("<i class=\"icon icon-print\"></i> Deliery [#{item.delivery.delivery_date.strftime("%d-%b-%Y")}]".html_safe, {controller: "deliveries", action: "show", id: item.delivery.id, tab_page: 1}, title: "#{item.contact.display_name}: Deliery [#{item.delivery.delivery_date.strftime("%d-%b-%Y")}]", class: "tab_page")+'</li>'
+        #actions += '<li>'+ActionController::Base.helpers.link_to("<i class=\"icon icon-print\"></i> Deliery [#{item.delivery.delivery_date.strftime("%d-%b-%Y")}]".html_safe, {controller: "deliveries", action: "print", id: item.delivery.id, tab_page: 1}, title: "Delivery Ticket", target: "_blank")+'</li>'
+        group_2 += 1
+      end
+      
+      actions += '<li class="divider"></li>' if group_2 > 0
+      
+      group_3 = 0
+      item.all_payment_records.each do |pr|
+        if can? :print, pr
+          actions += '<li>'+ActionController::Base.helpers.link_to("<i class=\"icon icon-print\"></i> Receipt [#{pr.payment_date.strftime("%d-%b-%Y")}]".html_safe, {controller: "payment_records", action: "show", id: pr.id, tab_page: 1}, title: "#{item.contact.display_name}: Receipt [#{pr.payment_date.strftime("%d-%b-%Y")}]", class: "tab_page")+'</li>'
+          #actions += '<li>'+ActionController::Base.helpers.link_to("<i class=\"icon icon-print\"></i> Receipt [#{pr.payment_date.strftime("%d-%b-%Y")}]".html_safe, {controller: "payment_records", action: "print", id: pr.id}, target: "_blank")+'</li>'        
+          group_3 += 1
+        end
+      end
+      
+      actions += '<li class="divider"></li>' if group_3 > 0
+      
+      if can? :read, item
         actions += '<li>'+ActionController::Base.helpers.link_to('View Detail', {controller: "course_registers", action: "show", id: item.id, tab_page: 1}, title: "Course Register Detail: #{item.contact.display_name}", class: "tab_page")+'</li>'
       end
+      
+      
+      
       #
       #if can? :course_register, item
       #  actions += '<li>'+ActionController::Base.helpers.link_to('Add Course', {controller: "course_registers", action: "new", contact_id: item.id, tab_page: 1}, title: "#{item.display_name}: Course Register", class: "tab_page")+'</li>'        
