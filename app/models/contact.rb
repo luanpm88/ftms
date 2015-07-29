@@ -801,7 +801,7 @@ class Contact < ActiveRecord::Base
   end
   
   def course_count_link
-    course_list_link("["+courses.count.to_s+"]")
+    courses.count == 0 ? "" : self.course_list_link("["+courses.count.to_s+"]")
   end
   
   def json_encode_course_type_ids_names

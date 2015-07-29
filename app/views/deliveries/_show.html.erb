@@ -46,7 +46,7 @@
 
 <div class="page">
   <div class="logo">
-    <img src="<%= params[:action] == "print" ? "file://"+File.join(Rails.root, 'public', 'img', 'FTMSGlobalNew.png') : url_for("/img/FTMSGlobalNew.png") %>" class="login-logo" />
+    <img src="<%= params[:action] == "print" ? "file://"+File.join(Rails.root, 'public', 'img', 'FTMSGlobalNew_transparent.png') : url_for("/img/FTMSGlobalNew_transparent.png") %>" class="login-logo" />
   </div>
   
   <div class="heading">
@@ -116,7 +116,7 @@
           <%= row[:book].type_name %>
         </td>
         <td class="text-center">
-          <%= row[:volumns].map(&:name).join("<br />") %>
+          <%= row[:volumns].map(&:name).join("<br />").html_safe %>
         </td>
       </tr>  
     <% end %>

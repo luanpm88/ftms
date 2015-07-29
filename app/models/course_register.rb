@@ -416,6 +416,7 @@ class CourseRegister < ActiveRecord::Base
   end
   
   def delivery_status
+    return "" if self.books.count == 0
     delivered? ? "delivered" : "not_delivered"
   end
   

@@ -22,7 +22,7 @@ class PaymentRecord < ActiveRecord::Base
   end
   
   def self.filter(params, user)
-     @records = self.all
+     @records = self.where(status: 1)
      
      if params["students"].present?
       @records = @records.joins(:course_register)
@@ -51,7 +51,7 @@ class PaymentRecord < ActiveRecord::Base
       end
       order += " "+params["order"]["0"]["dir"]
     else
-      order = "payment_records.payment_date"
+      order = "payment_records.payment_date DESC, payment_records.created_at DESC"
     end    
     @records = @records.order(order) if !order.nil?    
     
