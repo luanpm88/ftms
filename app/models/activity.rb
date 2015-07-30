@@ -22,6 +22,9 @@ class Activity < ActiveRecord::Base
   
   def self.filter(params, user)
     @records = self.all
+    @records = @records.where(contact_id: params[:contact_id]) if params[:contact_id].present?
+    
+    return @records
   end
   
   def self.datatable(params, user)

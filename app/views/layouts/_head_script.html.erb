@@ -1245,7 +1245,7 @@
 			"ajax": {
 				"url": "<%= datatable_activities_path %>",
 				"data": function ( d ) {
-					
+					d.contact_id = $(".activity-filter input[name='activity[contact_id]']").val()
 				}
 			},
 			"columnDefs": [ { "targets": [0,1,2,3], "orderable": false } ],
