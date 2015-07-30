@@ -27,7 +27,7 @@
 					<div class="grid-body no-border">
 					  
 					  
-						 <ul class="nav nav-pills inner-tab" id="tab-01">
+						 <ul class="nav nav-pills inner-tab contact-tabs" id="tab-01">
 								<li class="<%= "active" if ["information",nil].include?(params[:tab]) %>"><a href="#information">Information</a></li>
 								<% if @contact.contact_types.include?(ContactType.student) %>
 										<li class="<%= "active" if ["course"].include?(params[:tab]) %>">
@@ -178,8 +178,7 @@
 																</thead>                                        
 															</table>
 													</div>
-												</div>
-									
+												</div>									
 											</div>
 									
 										</div>

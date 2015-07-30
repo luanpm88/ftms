@@ -8331,3 +8331,15 @@ td .logo {
     width: 100%;
     z-index: 1;
 }
+.nav-pills > li > a {
+    border: solid 1px #efefef;
+}
+.nav-pills > li.active> a {
+    border: none;
+}
+.nav-pills > li:first-child {
+    padding-left: 0;
+}
+.contact-tabs {
+    margin-bottom: 20px;
+}

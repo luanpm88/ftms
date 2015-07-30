@@ -68,8 +68,7 @@ class CourseRegister < ActiveRecord::Base
         cc.discount = row[1]["discount"]
       end
     end
-    
-    contact.update_info
+
   end
   
   def update_books_contacts(cids)
@@ -345,8 +344,9 @@ class CourseRegister < ActiveRecord::Base
   end
   
   def display_delivery_status
+    
     return "" if books.count == 0
-    result = "<a class=\"check-radio ajax-check-radioz\" href=\"\"><i class=\"#{delivered?.to_s} icon-check#{delivered? ? "" : "-empty"}\"></i></a>"
+    result = "<a class=\"check-radio ajax-check-radioz\" href=\"#c\"><i class=\"#{delivered?.to_s} icon-check#{delivered? ? "" : "-empty"}\"></i></a>"
     #result += "<div class=\"nowrap\">"+ActionController::Base.helpers.link_to("<i class=\"icon icon-print\"></i> ".html_safe+delivery.delivery_date.strftime("%d-%b-%Y"), {controller: "deliveries", action: "print", id: delivery.id, tab_page: 1}, title: "Delivery Ticket", target: "_blank")+"</div>" if delivery.present?
     
     return result.html_safe
