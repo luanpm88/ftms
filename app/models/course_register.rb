@@ -23,6 +23,8 @@ class CourseRegister < ActiveRecord::Base
                       }
                   }
   
+  after_create :update_statuses
+  
   def all_deliveries
     deliveries.where(status: 1).order("delivery_date DESC, created_at DESC")
   end
