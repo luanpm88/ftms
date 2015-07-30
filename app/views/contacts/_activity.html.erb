@@ -1,0 +1,53 @@
+                                        <%= form_for(@activity) do |f| %>
+                                          <%= f.hidden_field :contact_id %>
+                                            <h4><strong>New Activity</strong></h4>
+                                            <div class="grid simple ">
+                                              <div class="grid-body no-border filters course-filter">  
+                                                <div class="row order-filters">
+                                                  <div class="col-md-4">
+                                                    <div class="form-group">
+                                                        
+                                                        <div class="input-with-iconx right">                                       
+                                                                <i class=""></i>
+                                                                <%= f.text_area :note, :class => "form-control required", pattern: ".{3,}", required: "reauired", title: "3 characters minimum" %>
+                                                        </div>
+                                                    </div>
+                                                  </div>
+                                                  <div class="col-md-4">
+                                                    <div class="form-group">                                                        
+                                                        <a href="#" class="submit btn btn-success btn-cons"><i class="icon-ok"></i> Add</a>
+                                                    </div>
+                                                  </div>
+                                                </div>
+                                                
+                                              </div>
+                                            </div>
+                                        <% end %>
+                                        
+                                        <div class="row">
+											<div class="col-md-12">
+												
+												<div class="grid simple ">
+													<div class="grid-title no-border">
+														<h4>Activity  <span class="semi-bold">Log</span></h4>
+														
+													</div>
+													<div class="grid-body no-border">
+														 
+															<table class="table table-striped no-more-tables datatable-activities no-filter">
+                                                                    <thead>
+                                                                        <tr>                                                
+                                                                            <th width="100%">Note</th>
+                                                                            <th class="text-center" width="1%">Created At</th>
+                                                                            <th class="text-center" width="1%">Staff</th>                                                                            
+                                                                            <th class="text-right" width="1%">Actions</th>
+                                                                        </tr>
+                                                                    </thead>                                        
+                                                                </table>
+                                                            
+													</div>
+												</div>
+									
+											</div>
+									
+										</div>

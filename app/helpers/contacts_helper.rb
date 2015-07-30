@@ -14,6 +14,10 @@ module ContactsHelper
         actions += '<li>'+ActionController::Base.helpers.link_to('Add Course', {controller: "course_registers", action: "new", contact_id: item.id, tab_page: 1}, title: "#{item.display_name}: Course Register", class: "tab_page")+'</li>'        
       end
       
+      if can? :read, Activity
+        actions += '<li>'+ActionController::Base.helpers.link_to('Activity Log', {controller: "contacts", action: "edit", id: item.id, tab_page: 1, tab: "activity"}, title: "#{item.display_name}: Activity Log", class: "tab_page")+'</li>'        
+      end
+      
       
       
       actions += '</ul></div></div>'

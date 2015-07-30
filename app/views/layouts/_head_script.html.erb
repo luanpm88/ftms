@@ -1238,6 +1238,22 @@
 			"iDisplayLength": 25
 	    });
 		
+		//Datatable contacts
+	    $('.datatable-activities').dataTable( {
+			"processing": true,
+			"serverSide": true,
+			"ajax": {
+				"url": "<%= datatable_activities_path %>",
+				"data": function ( d ) {
+					
+				}
+			},
+			"columnDefs": [ { "targets": [0,1,2,3], "orderable": false } ],
+			"order": [],
+			"aLengthMenu": [[10, 25, 50, 75, 100], [10, 25, 50, 75, 100]],
+			"iDisplayLength": 25
+	    });
+		
 	    $('select[name="DataTables_Table_0_length"]').select2({allowClear: true});
 		
 		//ajax select2 for contacts
@@ -2008,6 +2024,69 @@
 					box.find(".modern_select").select2()
 				}
 			});
+		});
+		
+		$(document).on("click", "#new_activity .submit", function(e) {
+			e.preventDefault()
+			
+			if (!$("#new_activity").valid()) {
+				return
+			}
+			
+			$( "#new_activity" ).addClass("loading")
+			
+			var data = $( "#new_activity" ).serialize();
+			var url = $( "#new_activity" ).attr("action");
+			
+			$.ajax({
+				url : url,
+				type: "POST",
+				data: data,
+				success:function(data, textStatus, jqXHR)
+				{
+					$( "#new_activity textarea" ).val("")
+					$( "#new_activity" ).removeClass("loading")
+					$('.datatable-activities').dataTable().fnFilter();
+				}
+			});
+		});
+		
+		$(document).on("click", ".activity_destroy", function(e) {
+			e.preventDefault()
+			
+			var url = $(this).attr("href")
+			
+			if(confirm("Are you sure!")) {
+				$.ajax({
+					url : url,
+					type: "DELETE",
+					success:function(data, textStatus, jqXHR)
+					{
+						$('.datatable-activities').dataTable().fnFilter();
+					}
+				});
+			}
+			
+			//if (!$("#new_activity").valid()) {
+			//	return
+			//}
+			//
+			//$( "#new_activity" ).addClass("loading")
+			//
+			//var data = $( "#new_activity" ).serialize();
+			//var url = $( "#new_activity" ).attr("action");
+			//
+			//$.ajax({
+			//	url : url,
+			//	type: "POST",
+			//	data: data,
+			//	success:function(data, textStatus, jqXHR)
+			//	{
+			//		$( "#new_activity textarea" ).val("")
+			//		$( "#new_activity" ).removeClass("loading")
+			//		$('.datatable-activities').dataTable().fnFilter();
+			//	}
+			//});
 		});
 	})
 	

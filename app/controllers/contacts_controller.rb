@@ -66,6 +66,7 @@ class ContactsController < ApplicationController
   # GET /contacts/1/edit
   def edit
     @student = @contact
+    @activity = Activity.new(contact_id: @contact.id)
   end
 
   # POST /contacts

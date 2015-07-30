@@ -8320,3 +8320,14 @@ td .logo {
     padding-left: 10px;
     border-left: solid 1px #aaa;
 }
+
+#new_activity.loading::before {
+    background: rgba(0, 0, 0, 0.1) url("../img/loading.gif") no-repeat scroll center center / 50px auto;
+    color: rgba(0, 0, 0, 0);
+    content: "aa";
+    display: block;
+    height: 120px;
+    position: absolute;
+    width: 100%;
+    z-index: 1;
+}

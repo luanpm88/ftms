@@ -42,7 +42,11 @@
 										<li class="<%= "active" if ["payment"].include?(params[:tab]) %>">
 										  <a href="#payment">Payment Record</a>
 										</li>
+										
 								<% end %>
+								<li class="<%= "active" if ["activity"].include?(params[:tab]) %>">
+										<a href="#activity">Activity Log</a>
+								</li>
 						 </ul>
 						 <div class="tools"> <a href="javascript:;" class="collapse"></a> <a href="#grid-config" data-toggle="modal" class="config"></a> <a href="javascript:;" class="reload"></a> <a href="javascript:;" class="remove"></a> </div>
 						 <div class="tab-content" style="margin-bottom: 0;">
@@ -184,6 +188,9 @@
 			
 								<div class="tab-pane <%= "active" if ["payment"].include?(params[:tab]) %>" id="payment">
 										<%= render "payment" %>
+								</div>
+								<div class="tab-pane <%= "active" if ["activity"].include?(params[:tab]) %>" id="activity">
+										<%= render "activity" %>
 								</div>
 						 </div>
 								  

@@ -198,7 +198,12 @@ class Ability
       can :create, PaymentRecord
       can :print, PaymentRecord
       
+      can :datatable, Activity
+      can :read, Activity
+      can :create, Activity
+      can :destroy, Activity do |a|
+        a.user == user
+      end
     end
-    
   end
 end

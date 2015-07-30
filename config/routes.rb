@@ -1,4 +1,9 @@
 Hkerp::Application.routes.draw do
+  resources :activities do
+    collection do
+      get :datatable
+    end
+  end
   resources :payment_records do
     collection do
       get :print
