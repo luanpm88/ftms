@@ -2,6 +2,7 @@ class PaymentRecord < ActiveRecord::Base
   belongs_to :bank_account
   belongs_to :course_register
   belongs_to :user
+  belongs_to :bank_account
   
   include PgSearch
   
@@ -24,9 +25,30 @@ class PaymentRecord < ActiveRecord::Base
   def self.filter(params, user)
      @records = self.where(status: 1)
      
-     if params["students"].present?
+    if params["students"].present?
       @records = @records.joins(:course_register)
       @records = @records.where("course_registers.contact_id IN (#{params["students"]})")
+    end
+    
+    if params["from_date"].present?
+      @records = @records.where("payment_records.payment_date >= ?", params["from_date"].to_datetime.beginning_of_day)
+    end
+    if params["to_date"].present?
+      @records = @records.where("payment_records.payment_date <= ?", params["to_date"].to_datetime.end_of_day)
+    end
+    
+    if params["account_manager"].present?
+      @records = @records.joins(:course_register => :contact)
+      @records = @records.where("contacts.account_manager_id = ?", params["account_manager"])
+    end
+    
+    if params["bank_account"].present?
+      @records = @records.where("payment_records.bank_account_id = ?", params["bank_account"])
+    end
+    
+    if params["courses"].present?
+      @records = @records.joins(:course_register => :contacts_courses)
+      @records = @records.where("contacts_courses.course_id = ?", params["courses"])
     end
      
      return @records
@@ -44,7 +66,7 @@ class PaymentRecord < ActiveRecord::Base
       case params["order"]["0"]["column"]
       when "0"
         order = "payment_records.payment_date"
-      when "2"
+      when "4"
         order = "payment_records.payment_date"
       else
         order = "payment_records.payment_date"
@@ -60,21 +82,28 @@ class PaymentRecord < ActiveRecord::Base
     
     data = []
     
-    actions_col = 7
+    actions_col = 8
     @records.each do |item|
       item = [
               item.course_register.contact.display_name,
+              '<div class="text-left">'+item.course_register.course_list(false)+"</div>",
+              '<div class="text-right">'+ApplicationController.helpers.format_price(item.course_register.total)+"</div>",
               '<div class="text-right">'+ApplicationController.helpers.format_price(item.amount)+"</div>",
               '<div class="text-center">'+item.payment_date.strftime("%d-%b-%Y")+"</div>",
-              '<div class="text-left">'+item.note+"</div>",
-              #'<div class="text-center">'+item.course_register.display_payment_status+"</div>",
-              '<div class="text-center">'+item.course_register.course_register_link+"</div>",
-              '<div class="text-right">'+ApplicationController.helpers.format_price(item.course_register.remain_amount)+"</div>",
-              
-              
-              
-              '<div class="text-center">'+item.course_register.user.staff_col+"</div>",  
+              '<div class="text-center">'+item.bank_account.name+"</div>",
+              '<div class="text-right">'+ApplicationController.helpers.format_price(item.course_register.remain_amount(item.payment_date))+"</div>",
+              '<div class="text-center">'+item.course_register.contact.account_manager.staff_col+"</div>",
               ""
+              #'<div class="text-right">'+ApplicationController.helpers.format_price(item.amount)+"</div>",
+              #'<div class="text-center">'+item.payment_date.strftime("%d-%b-%Y")+"</div>",
+              #'<div class="text-left">'+item.note+"</div>",
+              ##'<div class="text-center">'+item.course_register.display_payment_status+"</div>",
+              #'<div class="text-center">'+item.course_register.course_register_link+"</div>",
+              #'<div class="text-right">'+ApplicationController.helpers.format_price(item.course_register.remain_amount)+"</div>",
+              #
+              #
+              #
+              #'<div class="text-center">'+item.course_register.user.staff_col+"</div>",  
             ]
       data << item
       
@@ -94,4 +123,9 @@ class PaymentRecord < ActiveRecord::Base
   def amount=(new)
     self[:amount] = new.to_s.gsub(/\,/, '')
   end
+  
+  def trash
+    self.update_attribute(:status, 0)
+  end
+  
 end

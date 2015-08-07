@@ -50,12 +50,15 @@
                                 </div>
                                 <div class="col-md-3">
                                   <div class="form-group">
-                                        <label class="form-label"><%= f.label :bank_account %></label>
-                                        <span class="help"></span>
-                                        <div class="input-with-iconx">                                       
-                                             <strong><%= @course_register.bank_account.name %></strong>
-                                        </div>
-                                   </div>	
+										<label class="form-label"><%= f.label :bank_acount %></label>
+										<span class="help">(required)</span>
+										<div class="input-with-icon  right">                                       
+											 <i class=""></i>
+											 <div class="input-with_add_butz">												   													   
+												  <%= select_tag 'payment_record[bank_account_id]', options_for_select(BankAccount.all.collect{ |u| [u.name, u.id] }, @course_register.bank_account.id), class: "modern_select width100 required" %>
+											 </div>
+										</div>
+								   </div>	
                                 </div>
                                 <div class="col-md-3">
                                   <div class="form-group">
@@ -68,16 +71,18 @@
                                 </div>
                                 <div class="col-md-3">
                                   <div class="form-group">
-                                        <label class="form-label"><%= f.label :remain %></label>
+                                        <label class="form-label"><%= f.label :receivable %></label>
                                         <span class="help"></span>
                                         <div class="input-with-iconx">                                       
                                              <strong><%= format_price(@course_register.remain_amount) %></strong>
                                         </div>
                                    </div>	
                                 </div>
+							  </div>
+							  <div class="row">
                                 <div class="col-md-4">
                                   <div class="form-group">
-                                        <label class="form-label"><%= f.label :pay_amout %></label>
+                                        <label class="form-label"><%= f.label :paid_amout %></label>
                                         <span class="help">(required)</span>
                                         <div class="input-with-iconx">                                       
                                             <%= f.text_field :amount, :class => "form-control price_input required" %>
@@ -91,7 +96,7 @@
                                         <div class="input-with-icon  right">                                       
                                              <i class=""></i>
                                              <div class="input-append success date col-md-10 no-padding">
-                                               <%= f.text_field :payment_date, :class => "form-control required", value: @payment_record.debt_date %>
+                                               <%= f.text_field :payment_date, :class => "form-control required", value: @payment_record.payment_date.strftime("%d-%b-%Y") %>
                                                <span class="add-on"><span class="arrow"></span><i class="icon-th"></i></span>
                                              </div>
                                              <br style="clear: both" />
@@ -100,12 +105,12 @@
                                 </div>
                                 <div class="col-md-4">
                                   <div class="form-group">
-                                        <label class="form-label"><%= f.label :debt_date %></label>
+                                        <label class="form-label"><%= f.label :expected_date_of_collection %></label>
                                         <span class="help"></span>
                                         <div class="input-with-icon  right">                                       
                                              <i class=""></i>
                                              <div class="input-append success date col-md-10 no-padding">
-                                               <%= f.text_field :debt_date, :class => "form-control", value: @payment_record.debt_date %>
+                                               <%= f.text_field :debt_date, :class => "form-control", value: @payment_record.debt_date.strftime("%d-%b-%Y") %>
                                                <span class="add-on"><span class="arrow"></span><i class="icon-th"></i></span>
                                              </div>
                                              <br style="clear: both" />

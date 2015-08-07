@@ -101,22 +101,22 @@
       <th width="1%">No.</th>
       <th>Title</th>
       <th class="text-center">Book Type</th>
-      <th class="text-center">Book Vol.</th>
+      <th class="text-center">Quantity</th>
     </tr>
-    <% @delivery.course_register.books.each_with_index do |row, index| %>
+    <% @delivery.delivery_details.each_with_index do |d, index| %>
       <tr>
         <td class="text-center">
           <div><%= index+1 %></div>
           
         </td>
         <td class="text-left">
-          <div><strong><%= row[:book].name %></strong></div>          
+          <div><strong><%= d.book.name %></strong></div>          
         </td>
         <td class="text-center">
-          <%= row[:book].type_name %>
+          <%= d.book.type_name %>
         </td>
         <td class="text-center">
-          <%= row[:volumns].map(&:name).join("<br />").html_safe %>
+          <%= d.quantity %>
         </td>
       </tr>  
     <% end %>

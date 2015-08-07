@@ -22,8 +22,8 @@ class PaymentRecordsController < ApplicationController
     @course_register = CourseRegister.find(params[:course_register_id])
     @payment_record.course_register = @course_register
     
-    @payment_record.payment_date = Time.now.strftime("%d-%b-%Y")
-    @payment_record.debt_date = Time.now.strftime("%d-%b-%Y")
+    @payment_record.payment_date = Time.now
+    @payment_record.debt_date = Time.now
     
     @payment_record.amount = @course_register.remain_amount
   end
@@ -100,6 +100,15 @@ class PaymentRecordsController < ApplicationController
                           :right  => 0},
             }
   end
+  
+  def trash
+    @payment_record.trash
+    
+    respond_to do |format|
+      format.html { redirect_to params[:tab_page].present? ? "/home/close_tab" : payment_records_path, notice: 'Payment was successfully updated.' }
+      format.json { head :no_content }
+    end
+  end
 
   private
     # Use callbacks to share common setup or constraints between actions.
@@ -109,6 +118,6 @@ class PaymentRecordsController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def payment_record_params
-      params.require(:payment_record).permit(:payment_date, :course_register_id, :amount, :debt_date, :user_id, :note)
+      params.require(:payment_record).permit(:bank_account_id, :payment_date, :course_register_id, :amount, :debt_date, :user_id, :note)
     end
 end

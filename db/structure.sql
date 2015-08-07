@@ -292,7 +292,8 @@ CREATE TABLE books_contacts (
     discount numeric,
     volumn_ids text,
     created_at timestamp without time zone NOT NULL,
-    updated_at timestamp without time zone NOT NULL
+    updated_at timestamp without time zone NOT NULL,
+    quantity integer
 );
 
 
@@ -576,7 +577,9 @@ CREATE TABLE contacts (
     base_password character varying,
     account_manager_id integer,
     preferred_mailing character varying,
-    bases text
+    bases text,
+    status text,
+    draft_for integer
 );
 
 
@@ -2446,4 +2449,10 @@ INSERT INTO schema_migrations (version) VALUES ('20150729042837');
 INSERT INTO schema_migrations (version) VALUES ('20150729042854');
 
 INSERT INTO schema_migrations (version) VALUES ('20150730013825');
+
+INSERT INTO schema_migrations (version) VALUES ('20150803043519');
+
+INSERT INTO schema_migrations (version) VALUES ('20150805015401');
+
+INSERT INTO schema_migrations (version) VALUES ('20150805072337');
 

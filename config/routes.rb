@@ -8,6 +8,7 @@ Hkerp::Application.routes.draw do
     collection do
       get :print
       get :datatable
+      get :trash
     end
   end
   resources :stock_updates
@@ -16,6 +17,7 @@ Hkerp::Application.routes.draw do
     collection do
       get :print
       get :delivery_list
+      get :trash
     end
   end
   resources :books_contacts
@@ -183,6 +185,11 @@ Hkerp::Application.routes.draw do
       get :seminar_students
       post :export_list
       get :related_info_box
+      
+      get :approve_new
+      get :approve_education_consultant
+      
+      get :approved
     end
   end
 

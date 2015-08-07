@@ -1,7 +1,7 @@
 class DeliveriesController < ApplicationController
   load_and_authorize_resource
   
-  before_action :set_delivery, only: [:pdf, :show, :edit, :update, :destroy]
+  before_action :set_delivery, only: [:trash, :pdf, :show, :edit, :update, :destroy]
 
   # GET /deliveries
   # GET /deliveries.json
@@ -21,7 +21,7 @@ class DeliveriesController < ApplicationController
     @course_register = CourseRegister.find(params[:course_register_id])
     @delivery = Delivery.new
     @delivery.course_register_id = @course_register.id
-    @delivery.delivery_date = Time.now.strftime("%d-%b-%Y")
+    @delivery.delivery_date = Time.now
   end
 
   # GET /deliveries/1/edit
@@ -35,7 +35,7 @@ class DeliveriesController < ApplicationController
     @delivery.user = current_user
     @delivery.status = 1
     
-    #authorize! :deliver_stock, @delivery.course_register
+   @delivery.update_deliveries(params[:delivery_details])
 
     respond_to do |format|
       if @delivery.save
@@ -91,11 +91,20 @@ class DeliveriesController < ApplicationController
   end
   
   def delivery_list
-    @course_registers = CourseRegister.all_waiting_deliveries
+    @bc_list = BooksContact.all_delivery_waiting
     
     respond_to do |format|
       format.html
       format.xls
+    end
+  end
+  
+  def trash
+    @delivery.trash
+    
+    respond_to do |format|
+      format.html { redirect_to params[:tab_page].present? ? "/home/close_tab" : deliveries_path, notice: 'Delivery was successfully updated.' }
+      format.json { head :no_content }
     end
   end
 

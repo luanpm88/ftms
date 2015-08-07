@@ -5,7 +5,7 @@ module PaymentRecordsHelper
       actions += '<ul class="dropdown-menu">'      
       
       if can? :print, item
-        actions += '<li>'+ActionController::Base.helpers.link_to("<i class=\"icon icon-print\"></i> Receipt [#{item.payment_date.strftime("%d-%b-%Y")}]".html_safe, {controller: "payment_records", action: "print", id: item.id}, target: "_blank")+'</li>'        
+        actions += '<li>'+ActionController::Base.helpers.link_to("<i class=\"icon icon-print\"></i> Receipt [#{item.payment_date.strftime("%d-%b-%Y")}]".html_safe, {controller: "payment_records", action: "show", id: item.id, tab_page: 1}, title: "Receipt [#{item.payment_date.strftime("%d-%b-%Y")}]", class: "tab_page")+'</li>'        
       end
       
       actions += '</ul></div></div>'

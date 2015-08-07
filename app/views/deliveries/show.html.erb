@@ -4,6 +4,7 @@
 
 	  <div>
           <%= link_to("<i class=\"icon icon-print\"></i> Print".html_safe, {controller: "deliveries", action: "print", id: @delivery.id}, class: "btn btn-primary", target: "_blank") %>
+		  <%= link_to("<i class=\"icon icon-trash\"></i> Trash".html_safe, {controller: "deliveries", action: "trash", id: @delivery.id, tab_page: 1}, class: "btn btn-warning") %>
 	  </div>
       
 	  <br style="clear: both" />

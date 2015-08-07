@@ -7,12 +7,14 @@ class Book < ActiveRecord::Base
   belongs_to :user
   belongs_to :parent, :class_name => "Book"
 
-  has_many :volumns, :foreign_key => "parent_id", :class_name => "Book"
+  #has_many :volumns, :foreign_key => "parent_id", :class_name => "Book"
   
   has_many :book_prices
   has_many :books_contacts
   
   has_many :stock_updates
+  
+  has_many :delivery_details
   
   mount_uploader :image, BookUploader
   
@@ -75,7 +77,7 @@ class Book < ActiveRecord::Base
       case params["order"]["0"]["column"]
       when "1"
         order = "books.name"
-      when "5"
+      when "4"
         order = "books.publisher"
       when "7"
         order = "books.created_at"
@@ -95,13 +97,12 @@ class Book < ActiveRecord::Base
     @records = @records.limit(params[:length]).offset(params["start"])
     data = []
     
-    actions_col = 10
+    actions_col = 9
     itemsx = []
     @records.each do |item|
       itemx = [
               item.cover_link,
               item.book_link,
-              "", #item.display_volumns,
               '<div class="text-center">'+item.course_types.map(&:short_name).join(", ")+"</div>",
               '<div class="text-center">'+item.subjects.map(&:name).join(", ")+"</div>",
               '<div class="text-left">'+item.publisher.to_s+"</div>",
@@ -113,24 +114,7 @@ class Book < ActiveRecord::Base
             ]
       data << itemx
       itemsx << item
-      
-      item.volumns.each do |vol|
-        itemy = [
-              "",
-              "",
-              vol.book_link,
-              "",
-              "",
-              "",
-              "",
-              '<div class="text-center">'+vol.stock.to_s+"</div>",
-              '<div class="text-center">'+vol.created_at.strftime("%d-%b-%Y")+"</div>", 
-              "",
-              ''
-            ]
-        data << itemy
-        itemsx << vol
-      end
+
       
     end
     
@@ -161,9 +145,9 @@ class Book < ActiveRecord::Base
       case params["order"]["0"]["column"]
       when "1"
         order = "books.name"
-      when "5"
+      when "4"
         order = "books.publisher"
-      when "7"
+      when "6"
         order = "books.created_at"
       else
         order = "books.name"
@@ -186,14 +170,14 @@ class Book < ActiveRecord::Base
       item = [
               item.cover_link,
               item.book_link,
-              @student.books_contact(item).volumns.map(&:name).join(", "),
               '<div class="text-center">'+item.course_types.map(&:short_name).join(", ")+"</div>",
               '<div class="text-center">'+item.subjects.map(&:name).join(", ")+"</div>",
               '<div class="text-left">'+item.publisher.to_s+"</div>",
               '<div class="text-right">'+ApplicationController.helpers.format_price(@student.books_contact(item).total)+"</div>",
               '<div class="text-center">'+ @student.books_contact(item).course_register.created_date.strftime("%d-%b-%Y")+"</div>",
               '<div class="text-center">'+ @student.books_contact(item).course_register.display_delivery_status+"</div>", 
-              '<div class="text-center">'+item.user.staff_col+"</div>"
+              '<div class="text-center">'+item.user.staff_col+"</div>",
+              ""
             ]
       data << item
       
@@ -311,9 +295,6 @@ class Book < ActiveRecord::Base
     
     #delivery
     total -= Delivery.joins(:course_register => :books_contacts).where(status: 1).where(books_contacts: { book_id: self.id }).count
-    
-    # Delivery.joins(:course_register => :books_contacts).where(books_contacts: {book_id: 1}).map { |d| d.course_register.books_contacts.map(&:volumn_ids).join("")}.join("")
-
     
     return total
   end

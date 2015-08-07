@@ -1,8 +1,8 @@
        <div class="row">
             <div class="col-md-12">
               <div class="grid simple">
-                <div class="grid-title no-border">
-                  <h4>Delivery <span class="semi-bold">Details</span></h4>
+                <div class="grid-titlex no-borderx">
+                  <h4><span class="semi-bold">Materials Delivery</span></h4>
                   
                 </div>     
                 
@@ -36,7 +36,7 @@
                     <%= f.hidden_field :course_register_id %>
 					
 					<div class="row column-seperation">
-						 <div class="col-md-6">
+						 <div class="col-md-5">
                               <div class="row">
                                   <div class="col-md-6">
                                       <div class="form-group">
@@ -91,31 +91,41 @@
                               
 							  
 						 </div>
-						 <div class="col-md-6">
+						 <div class="col-md-7">
 							  <div class="form-group">
                                     <label class="form-label"><%= f.label :items %></label>
                                     <span class="help"></span>
                                     <div class="input-with-iconx">                                       
                                          <table class="table">
                                             <tr>
-                                              <th>Name</th>
-                                              <th class="text-center">Deliver</th>
-                                              <th class="text-center">Stock</th>
+                                              <th>Description</th>
+											  <th class="text-center">Ordered Quantity</th>
+											  <th class="text-center">To-be-delivered Quantity</th>
+                                              <th class="text-center">Delivered Quantity</th>
+                                              <th class="text-center">Remain Stock</th>
                                             </tr>
                                             
-                                            <% @course_register.books.each do |row| %>
-                                              <tr>
-                                                <td>
-                                                  <div><strong><%= row[:book].name %></strong></div>
-                                                  <%= row[:volumns].map(&:name).join(", ") %>
-                                                </td>
-                                                <td class="text-center">
-                                                  1
-                                                </td>
-                                                <td class="text-center">
-                                                  1000
-                                                </td>
-                                              </tr>  
+                                            <% @course_register.books_contacts.each_with_index do |bc,index| %>
+												  <% if !bc.delivered? %>
+													   <tr class="delivery_line_item">
+														 <td>
+														   <div><strong><%= bc.book.name %></strong></div>
+														 </td>
+														 <td class="text-center">
+														   <%= bc.quantity %>
+														 </td>
+														 <td class="text-center">
+														   <span class="to-be-delivered" rel="<%= bc.remain %>"><%= bc.remain - bc.max_delivery %></span>
+														 </td>
+														 <td class="text-center">
+														   <%= hidden_field_tag "delivery_details["+index.to_s+"][book_id]", bc.book_id %>
+														   <%= select_tag "delivery_details["+index.to_s+"][quantity]", options_for_select((bc.remain.downto(0)).map {|num| [num,num]}, bc.max_delivery), class: "modern_select width100 required delivered_count" %>
+														 </td>
+														 <td class="text-center">
+															<span class="stock" rel="<%= bc.book.stock %>"><%= bc.book.stock - bc.max_delivery %></span>
+														 </td>
+													   </tr>
+												  <% end %>
                                             <% end %>
                                             
                                          </table>

@@ -7,9 +7,12 @@ class CourseRegister < ActiveRecord::Base
   belongs_to :contact
   belongs_to :discount_program
   belongs_to :bank_account
-  has_many :deliveries
   
-  has_many :payment_records
+  
+  
+  has_many :deliveries, :dependent => :destroy
+  
+  has_many :payment_records, :dependent => :destroy
   
   include PgSearch
   
@@ -52,7 +55,6 @@ class CourseRegister < ActiveRecord::Base
     
     #change contact type when add course
     contact.update_info
-    
   end
   
   def update_contacts_courses(cids)
@@ -74,14 +76,13 @@ class CourseRegister < ActiveRecord::Base
   end
   
   def update_books_contacts(cids)
-    contact = self.contact
-    
+    contact = self.contact    
     cids.each do |row|
       if row[1]["book_id"].present?
         cc = self.books_contacts.new
         cc.book_id = row[1]["book_id"]
+        cc.quantity = row[1]["quantity"]
         cc.contact_id = contact.id
-        cc.volumn_ids = row[1]["volumn_ids"].present? ? "["+row[1]["volumn_ids"].join("][")+"]" : ""        
         cc.price = row[1]["price"]
         cc.discount_program_id = row[1]["discount_program_id"]
         cc.discount = row[1]["discount"]
@@ -118,7 +119,7 @@ class CourseRegister < ActiveRecord::Base
     end
     
     if params["payment_statuses"].present?
-      @records = @records.where(cache_payment_status: params["payment_statuses"])
+      @records = @records.where("cache_payment_status LIKE ?", "%"+params["payment_statuses"]+"%")
     end
     
     course_ids = nil
@@ -170,7 +171,7 @@ class CourseRegister < ActiveRecord::Base
               item.course_list,
               item.book_list,
               '<div class="text-center">'+item.display_delivery_status+"</div>",
-              '<div class="text-right"><label class="col_label top0">Total:</label>'+ApplicationController.helpers.format_price(item.total)+"<label class=\"col_label top0\">Paid:</label>"+ApplicationController.helpers.format_price(item.paid_amount)+"<label class=\"col_label top0\">Remain:</label>"+ApplicationController.helpers.format_price(item.remain_amount)+"</div>",
+              '<div class="text-right"><label class="col_label top0">Total:</label>'+ApplicationController.helpers.format_price(item.total)+"<label class=\"col_label top0\">Paid:</label>"+ApplicationController.helpers.format_price(item.paid_amount)+"<label class=\"col_label top0\">Receivable:</label>"+ApplicationController.helpers.format_price(item.remain_amount)+"</div>",
               '<div class="text-center">'+item.display_payment_status+item.payment+"</div>",
               '<div class="text-center">'+item.created_date.strftime("%d-%b-%Y")+"</div>",
               '<div class="text-center">'+item.user.staff_col+"</div>",
@@ -249,11 +250,11 @@ class CourseRegister < ActiveRecord::Base
     
   end
   
-  def course_list
+  def course_list(phrase_list=true)
     arr = []
     courses.each do |row|
       arr << "<div><strong>"+row[:course].display_name+"</strong></div>"
-      arr << "<div class=\"courses_phrases_list\">"+Course.render_courses_phrase_list(row[:courses_phrases])+"</div>"
+      arr << "<div class=\"courses_phrases_list\">"+Course.render_courses_phrase_list(row[:courses_phrases])+"</div>" if phrase_list
       
     end
     
@@ -276,7 +277,7 @@ class CourseRegister < ActiveRecord::Base
     arr = []
     books.each do |row|
       arr << "<div><strong>"+row[:book].name+"</strong></div>"
-      arr << row[:volumns].map(&:name).join(", ")
+      #arr << row[:volumns].map(&:name).join(", ")
     end
     
     return arr.join("")
@@ -287,7 +288,7 @@ class CourseRegister < ActiveRecord::Base
     books_contacts.each do |bc|
       item = {}
       item[:book] = bc.book
-      item[:volumns] = bc.volumns
+      #item[:volumns] = bc.volumns
       arr << item
     end    
     return arr
@@ -345,60 +346,92 @@ class CourseRegister < ActiveRecord::Base
     books_contacts.count
   end
   
-  def display_delivery_status
-    
+  def display_delivery_status    
     return "" if books.count == 0
-    result = "<a class=\"check-radio ajax-check-radioz\" href=\"#c\"><i class=\"#{delivered?.to_s} icon-check#{delivered? ? "" : "-empty"}\"></i></a>"
-    #result += "<div class=\"nowrap\">"+ActionController::Base.helpers.link_to("<i class=\"icon icon-print\"></i> ".html_safe+delivery.delivery_date.strftime("%d-%b-%Y"), {controller: "deliveries", action: "print", id: delivery.id, tab_page: 1}, title: "Delivery Ticket", target: "_blank")+"</div>" if delivery.present?
     
-    return result.html_safe
+    if delivered?
+      return "<a class=\"check-radio ajax-check-radioz\" href=\"#c\"><i class=\"#{delivered?.to_s} icon-check#{delivered? ? "" : "-empty"}\"></i></a>"
+    else
+      return "<div class=\"nowrap check-radio\">"+ActionController::Base.helpers.link_to("<i class=\"#{delivered?.to_s} icon-check#{delivered? ? "" : "-empty"}\"></i>".html_safe, {controller: "deliveries", action: "new", course_register_id: self.id, tab_page: 1}, title: "Deliver Stock: #{self.contact.display_name}", title: 'Materials Delivery', class: "tab_page")+"</div>"
+    end
+
+  end
+  
+  def delivery_info
+    #if delivered?
+    #  return "On"+delivery.delivery_date.strftime("%d-%b-%Y")+""
+    #end    
   end
   
   def delivered?
-    delivery.present?
-  end
-  
-  def delivery
-    all_deliveries.first
+    self.books_contacts.each do |bc|
+      if !bc.delivered?
+        return false
+      end      
+    end
+    return true
   end
   
   def self.all_waiting_deliveries
-    self.includes(:delivery, :books_contacts).where(deliveries: {id: nil}).where.not(books_contacts: {id: nil})
+    self.includes(:deliveries, :books_contacts).where(deliveries: {id: nil}).where.not(books_contacts: {id: nil})
   end
   
-  def paid_amount
-    all_payment_records.sum(:amount)
+  def paid_amount(date=nil)
+    records = all_payment_records
+    if date.present?
+      records = records.where("payment_date <= ?", date)
+    end
+    return records.sum(:amount)
   end
   
   def paid?
     paid_amount == total
   end
   
-  def remain_amount
-    total - paid_amount
+  def remain_amount(date=nil)
+    total - paid_amount(date)
   end
   
   def payment_status
+    str = []
     if paid?
-      return "paid"
-    elsif debt?
-      return "debt"
+      str << "fully_paid"
     else
-      return "out_of_date"
-    end    
+      str << "receivable"
+    end
+    if out_of_date?    
+      str << "chase_for_payment"
+    end
+    
+    return str
   end
   
   def display_payment_status
-    "<div class=\"#{payment_status} text-center\">#{payment_status}</div>".html_safe
+    line = []
+    payment_status.each do |s|
+      line << "<div class=\"#{s} text-center\">#{s}</div>".html_safe
+    end
+    
+    return line.join("")
   end
   
   def debt?
     return false if paid?
     
+    return real_debt_date.nil? ? false : real_debt_date >= Time.now
+  end
+  
+  def out_of_date?
+    return false if paid?
+    
+    return real_debt_date.nil? ? false : real_debt_date < Time.now
+  end
+  
+  def real_debt_date
     if !last_payment.nil?
-      last_payment.debt_date >= Time.now
+      self.last_payment.debt_date
     else
-      debt_date.nil? ? false : debt_date >= Time.now
+      self.debt_date
     end
   end
   
@@ -410,12 +443,19 @@ class CourseRegister < ActiveRecord::Base
     ActionController::Base.helpers.link_to("<i class=\"icon icon-list-alt\"></i> #{contact.display_name} [#{created_date.strftime("%d-%b-%Y")}]".html_safe, {controller: "course_registers", action: "show", id: self.id, tab_page: 1}, title: "Course Register Detail: #{self.contact.display_name}", class: "tab_page")
   end
   
+  def self.update_all_statuses
+    self.all.each do |c|
+      c.update_statuses
+      c.save
+    end
+  end
+  
   def update_statuses
     # delivery
     self.update_attribute(:cache_delivery_status, self.delivery_status)
     
     # payment
-    self.update_attribute(:cache_payment_status, self.payment_status)
+    self.update_attribute(:cache_payment_status, self.payment_status.join(","))
   end
   
   def delivery_status

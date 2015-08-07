@@ -42,7 +42,7 @@ class ContactsController < ApplicationController
   # GET /contacts/new
   def new
     @contact = Contact.new
-    @contact.account_manager = current_user
+    #@contact.account_manager = current_user
     
     if !params[:is_individual].nil? && params[:is_individual] == "false"
       @contact.is_individual = false
@@ -98,7 +98,8 @@ class ContactsController < ApplicationController
       if @contact.save
         if params[:contact_tag].present?
           @contact.update_tag(@contact_tag, current_user)
-        end
+        end        
+        @contact.update_status("create", current_user)
 
         format.html { redirect_to params[:tab_page].present? ? {action: "edit", id: @contact.id,tab_page: 1} : contacts_url, notice: 'Contact was successfully created.' }
         format.json { render action: 'show', status: :created, location: @contact }
@@ -128,13 +129,17 @@ class ContactsController < ApplicationController
     s_params[:lecturer_course_type_ids] = contact_params[:lecturer_course_type_ids][0].split(",") if contact_params[:lecturer_course_type_ids].present?
     
     #base
-    @contact.update_bases(params[:bases])  
+    @contact.update_bases(params[:bases])
+    
+    # save history
+    draft = @contact.save_draft(current_user)
     
     respond_to do |format|
       if @contact.update(s_params)
         if params[:contact_tag].present?
           @contact.update_tag(@contact_tag, current_user)
-        end
+        end        
+        @contact.update_status("update", current_user, draft)
         
         format.html { redirect_to params[:tab_page].present? ? {action: "edit",id: @contact.id,tab_page: 1} : contacts_url, notice: 'Contact was successfully updated.' }
         format.json { head :no_content }
@@ -157,7 +162,6 @@ class ContactsController < ApplicationController
   
   def import    
     @result = Contact.import(params[:file])
-
   end
   
   def ajax_new    
@@ -324,6 +328,37 @@ class ContactsController < ApplicationController
     end
     
     render layout: nil
+  end
+  
+  def approve_new
+    @contact.approve_new(current_user)
+    
+    respond_to do |format|
+      format.html { redirect_to params[:tab_page].present? ? "/contacts/approved" : @contact }
+      format.json { render action: 'show', status: :created, location: @subject }
+    end
+  end
+  
+  def approve_education_consultant
+    @contact.approve_education_consultant(current_user)    
+    
+    respond_to do |format|
+      format.html { redirect_to params[:tab_page].present? ? "/contacts/approved" : @contact }
+      format.json { render action: 'show', status: :created, location: @subject }
+    end
+  end
+  
+  def approve_update
+    @contact.approve_update(current_user)
+    
+    respond_to do |format|
+      format.html { redirect_to params[:tab_page].present? ? "/contacts/approved" : @contact }
+      format.json { render action: 'show', status: :created, location: @subject }
+    end
+  end
+  
+  def approved
+    render layout: "content"
   end
 
   private

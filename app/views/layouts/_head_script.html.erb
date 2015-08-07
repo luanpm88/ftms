@@ -75,6 +75,10 @@
 	}
 	
 	function updateBookForm(program, subject, number) {
+		if ($(".new_course_register_page").length == 0){
+			return
+		}
+		
 		var url = "<%= stock_select_books_path %>"
 		var program_id = ""
 		var subject_id = ""
@@ -116,13 +120,17 @@
 			if (!$(this).hasClass("hidden") && box.find('input[name="contacts_courses['+number+'][course_id]"]').val() != "") {
 				
 				var line_total = 0
+				var quantity = 0
 				var price = 0
 				var price_discount_program = 0
 				var price_discount = 0
-        
+				
+				if(box.find('input[name="books_contacts['+number+'][quantity]"]').length) {
+				  quantity = parseFloat(box.find('input[name="books_contacts['+number+'][quantity]"]').val())
+				}				
 				if(box.find('select[name="books_contacts['+number+'][price]"]').length) {
-				  price = parseFloat(box.find('select[name="books_contacts['+number+'][price]"]').val())
-				}        
+				  price = parseFloat(box.find('select[name="books_contacts['+number+'][price]"]').val())*quantity
+				}
 				if(box.find('input[name="books_contacts['+number+'][discount]"]').length && box.find('input[name="books_contacts['+number+'][discount]"]').val() != "") {
 				  price_discount = parseFloat(box.find('input[name="books_contacts['+number+'][discount]"]').val().replace(/,/g,""))
 				}       
@@ -348,24 +356,24 @@
 	}
 	
 	function changeMailingPreferred(input) {		
-		if (input.val() == "company" && $('input[name="contact[referrer_id]"]').val() == "") {
+		if (input.select2("val") == "company" && $('input[name="contact[referrer_id]"]').select2("val") == "") {
 			alert("Must choose company first!")
-			input.select2("val", 'home');
+			input.select2("val", 'ftms');
 		}
 		
-		if (input.val() == "company" || input.val() == "home" || input.val() == "ftms") {
+		if (input.select2("val") == "company" || input.select2("val") == "home" || input.select2("val") == "ftms") {
 			$('.mailing_address_box').hide()
-			$('.mailing_address_box').val("")
+			$('.mailing_address_box').select2("val", "")
 		} else {
 			$('.mailing_address_box').show()
 		}
 	}
 	
 	function changeComanyTrigger(input) {
-		if (input.val() == "") {
+		if (input.select2("val") == "") {
 			$('select[name="contact[payment_type]"]').select2("val","self-financed")
-			if ($('select[name="contact[preferred_mailing]"]').val() == "company") {
-				$('select[name="contact[preferred_mailing]"]').select2("val", 'home');
+			if ($('select[name="contact[preferred_mailing]"]').select2("val") == "company") {
+				$('select[name="contact[preferred_mailing]"]').select2("val", 'ftms');
 			}
 		}
 	}
@@ -524,7 +532,8 @@
 		//	$(".main-frame")[0].contentWindow.reloadDatatable()
 		//} else {
 			$('iframe#'+tid).attr("src",$('iframe#'+tid).attr("src"))
-		//}		
+		//}
+		
 	}
 	function closeTab(tid) {
 		//open parent		
@@ -541,12 +550,20 @@
 		$('.tab-content div#'+tid).remove()
 		
 		if(active) {
-          $('#main-tab li:last-child a').tab('show')
+			$('#main-tab li:last-child a').tab('show')
+			
+			if($(".tab-pane.active .main-frame").length > 0) {
+				$(".tab-pane.active .main-frame")[0].contentWindow.reloadDatatable()
+			} else {
+				//reloadTab($('#main-tab li.active a').attr("rel"))
+			}
         }
         
         $(document).scrollTop(0);
 		
 		clearInterval(tabs[tid])
+		
+		
 	}
 	var tabs = Array()
 	function openTab(tsrc, tname, psrc, pname) {
@@ -591,6 +608,9 @@
 		  
 		  reloadTab(tid)
 		}
+		
+		
+		
 		$(document).scrollTop(0);
 		if($(window).width() <= 750 && $('.page-sidebar').css("display") == "block") {
 			$('#main-menu-toggle').trigger("click");
@@ -828,7 +848,7 @@
 					}
 				}
 			},
-			"columnDefs": [ { "targets": [0,1,3,4,5,6,7,8,9], "orderable": false } ],
+			"columnDefs": [ { "targets": [0,1,3,4,5,6,7,8,9,10], "orderable": false } ],
 			"order": [],
 			"aLengthMenu": [[10, 25, 50, 75, 100], [10, 25, 50, 75, 100]],
 			"iDisplayLength": 25
@@ -1039,7 +1059,7 @@
 					}
 				}
 			},
-			"columnDefs": [ { "targets": [0,2,3,4,6,7,9,10], "orderable": false } ],
+			"columnDefs": [ { "targets": [0,2,3,5,6,8,9], "orderable": false } ],
 			"order": [],
 			"aLengthMenu": [[10, 25, 50, 75, 100], [10, 25, 50, 75, 100]],
 			"iDisplayLength": 25
@@ -1229,10 +1249,27 @@
 				"url": "<%= datatable_payment_records_path %>",
 				"data": function ( d ) {
 					d.students = $(".payment-record-filter input[name='filter[students[]]']").val()
-					
+					if($(".payment-record-filter select[name='course_types[]']").val()) {
+						d.course_types = $(".payment-record-filter select[name='course_types[]']").val()
+					}					
+					if($(".payment-record-filter input[name='courses']").val()) {
+						d.courses =  $(".payment-record-filter input[name='courses']").val()
+					}
+					if($(".payment-record-filter input[name='from_date']").val()) {
+						d.from_date =  $(".payment-record-filter input[name='from_date']").val()
+					}
+					if($(".payment-record-filter input[name='to_date']").val()) {
+						d.to_date =  $(".payment-record-filter input[name='to_date']").val()
+					}
+					if($(".payment-record-filter select[name='bank_account']").val()) {
+						d.bank_account =  $(".payment-record-filter select[name='bank_account']").val()
+					}
+					if($(".payment-record-filter input[name='account_manager']").val()) {
+						d.account_manager =  $(".payment-record-filter input[name='account_manager']").val()
+					}
 				}
 			},
-			"columnDefs": [ { "targets": [0,1,3,4,5,6,7], "orderable": false } ],
+			"columnDefs": [ { "targets": [0,1,2,3,5,6,7,8], "orderable": false } ],
 			"order": [],
 			"aLengthMenu": [[10, 25, 50, 75, 100], [10, 25, 50, 75, 100]],
 			"iDisplayLength": 25
@@ -2066,28 +2103,18 @@
 					}
 				});
 			}
-			
-			//if (!$("#new_activity").valid()) {
-			//	return
-			//}
-			//
-			//$( "#new_activity" ).addClass("loading")
-			//
-			//var data = $( "#new_activity" ).serialize();
-			//var url = $( "#new_activity" ).attr("action");
-			//
-			//$.ajax({
-			//	url : url,
-			//	type: "POST",
-			//	data: data,
-			//	success:function(data, textStatus, jqXHR)
-			//	{
-			//		$( "#new_activity textarea" ).val("")
-			//		$( "#new_activity" ).removeClass("loading")
-			//		$('.datatable-activities').dataTable().fnFilter();
-			//	}
-			//});
 		});
+		
+		$(document).on("change", ".delivered_count", function() {
+			var value = $(this).val()
+			var remain_box = $(this).parents(".delivery_line_item").find(".to-be-delivered")
+			var stock_box = $(this).parents(".delivery_line_item").find(".stock")
+			var remain = parseInt(remain_box.attr("rel"))
+			var stock = parseInt(stock_box.attr("rel"))
+			
+			remain_box.html(remain - value)
+			stock_box.html(stock - value)
+		})
 	})
 	
 

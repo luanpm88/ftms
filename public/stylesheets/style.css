@@ -1798,7 +1798,7 @@ display:none;
   letter-spacing: -1px;
   display: block;
   color: #666;
-   margin: 0 0 10px;
+   margin: 0 0 0;
   font-weight: 300;
   font-family: 'Open Sans';
 }
@@ -8342,4 +8342,39 @@ td .logo {
 }
 .contact-tabs {
     margin-bottom: 20px;
+}
+.receivable {
+    color: #337ab7;
+}
+.chase_for_payment {
+    color: #ce4844;
+}
+.no_education_consultant {
+    background: #aa6708;
+}
+.new_pending {
+    background: #aa6708;
+}
+.education_consultant_pending {
+    background: #aa6708;
+}
+.update_pending {
+    background: #aa6708;
+}
+.badge.active {
+    color: #fff;
+}
+.top-buts .but {
+    display: inline;
+}
+.top-buts {
+    float: right;
+    margin-top: -50px;
+    text-align: right;
+}
+.draft * {
+    color: #aa6708 !important;
+}
+.mbt-5 {
+    margin-bottom: 5px;
 }

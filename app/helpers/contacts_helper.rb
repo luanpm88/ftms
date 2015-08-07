@@ -2,23 +2,25 @@ module ContactsHelper
   
   def render_contacts_actions(item, size=nil)
     size = size.nil? ? "mini" : size
-    actions = '<div class="text-right"><div class="btn-group actions">
+    actions = '<div class="text-right but"><div class="btn-group actions">
                     <button class="btn btn-'+size+' btn-white btn-demo-space dropdown-toggle" data-toggle="dropdown">Actions <span class="caret"></span></button>'
       actions += '<ul class="dropdown-menu">'      
       
-      #if can? :read, Course
-      #  actions += '<li>'+item.course_list_link+'</li>'        
-      #end
+      if can? :approve_new, item
+        actions += '<li>'+ActionController::Base.helpers.link_to('Approve New', {controller: "contacts", action: "approve_new", id: item.id, tab_page: 1}, title: "#{item.display_name}: Approve New", class: "tab_page")+'</li>'        
+      end
       
-      if can? :course_register, item
-        actions += '<li>'+ActionController::Base.helpers.link_to('Add Course', {controller: "course_registers", action: "new", contact_id: item.id, tab_page: 1}, title: "#{item.display_name}: Course Register", class: "tab_page")+'</li>'        
+      if can? :approve_education_consultant, item
+        actions += '<li>'+ActionController::Base.helpers.link_to('Approve Education Consultant', {controller: "contacts", action: "approve_education_consultant", id: item.id, tab_page: 1}, title: "#{item.display_name}: Approve Education Consultant", class: "tab_page")+'</li>'        
+      end
+      
+      if can? :add_course, item
+        actions += '<li>'+ActionController::Base.helpers.link_to('Add Course', {controller: "course_registers", action: "new", contact_id: item.id, tab_page: 1}, psrc: course_registers_path(tab_page: 1), title: "#{item.display_name}: Course Register", class: "tab_page")+'</li>'        
       end
       
       if can? :read, Activity
         actions += '<li>'+ActionController::Base.helpers.link_to('Activity Log', {controller: "contacts", action: "edit", id: item.id, tab_page: 1, tab: "activity"}, title: "#{item.display_name}: Activity Log", class: "tab_page")+'</li>'        
       end
-      
-      
       
       actions += '</ul></div></div>'
       
@@ -32,6 +34,22 @@ module ContactsHelper
       
       ContactTag.all.each do |tag|
         actions += '<li rel="'+item.id.to_s+'" tag_id="'+tag.id.to_s+'" class="contact_tag_item '+tag.name.downcase.gsub(" ","_")+'">'+ActionController::Base.helpers.link_to(tag.name, "#", title: tag.description)+'</li>'        
+      end
+      
+      actions += '</ul></div></div>'
+      
+      return actions.html_safe
+  end
+  
+  def render_history_actions(item)
+    return "" if item.drafts.empty?
+    
+      actions = '<div class="text-right but"><div class="btn-group actions">
+                    <button class="btn btn-big btn-white btn-demo-space dropdown-toggle" data-toggle="dropdown">Histories <span class="caret"></span></button>'
+      actions += '<ul class="dropdown-menu">'
+      
+      item.drafts.order("created_at DESC").each do |d|
+        actions += '<li>'+ActionController::Base.helpers.link_to("#{d.created_at.strftime("%d-%b-%Y %I:%M %p")}", {controller: "contacts", action: "edit", id: d.id, tab_page: 1}, title: "[#{d.created_at.strftime("%d-%b-%Y %I:%M %p")}] #{d.display_name}", class: "tab_page")+'</li>'        
       end
       
       actions += '</ul></div></div>'

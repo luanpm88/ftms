@@ -102,12 +102,13 @@ class BooksController < ApplicationController
   
   def student_books
     result = Book.student_books(params, current_user)
+    @student = Contact.find(params[:student])
     
-    #result[:items].each_with_index do |item, index|
-    #  actions = render_book_actions(item)
-    #  
-    #  result[:result]["data"][index][result[:actions_col]] = actions
-    #end
+    result[:items].each_with_index do |item, index|
+      actions = render_student_book_actions(item, @student)
+      
+      result[:result]["data"][index][result[:actions_col]] = actions
+    end
     
     render json: result[:result]
   end

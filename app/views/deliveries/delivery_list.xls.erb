@@ -12,20 +12,65 @@
         <Cell><Data ss:Type="String">Address</Data></Cell>
         <Cell><Data ss:Type="String">Company</Data></Cell>
         <Cell><Data ss:Type="String">Phone</Data></Cell>
-        <Cell><Data ss:Type="String">Book List</Data></Cell>
+        <Cell><Data ss:Type="String">Description</Data></Cell>
+        <Cell><Data ss:Type="String">Quantity</Data></Cell>
       </Row>
-      
-      <% @course_registers.each do |cr| %>
-        <Row>
-          <Cell><Data ss:Type="String"><%= cr.created_date.strftime("%d-%b-%Y") %></Data></Cell>
-          <Cell><Data ss:Type="String"><%= cr.contact.display_name %></Data></Cell>
-          <Cell><Data ss:Type="String"><%= cr.mailing_address %></Data></Cell>
-          <Cell><Data ss:Type="String"><%= cr.contact.referrer.display_name if !cr.contact.referrer.nil? %></Data></Cell>
-          <Cell><Data ss:Type="String"><%= cr.contact.mobile %></Data></Cell>
-          <Cell><Data ss:Type="String"><% cr.books.each_with_index do |row, index| %><%= row[:book].name %> (<%= row[:book].type_name %>): <%= row[:volumns].map(&:name).join("; ") %><% end %>
-          </Data></Cell>        
-        </Row>
+      <%
+        statistics = []
+        group = {}
+        group_name = ""
+        count = 0
+      %>
+      <% @bc_list.each_with_index do |bc, index| %>
+        
+          <%
+            if group_name != bc.book.name
+              if group_name != ""
+                group[:name] = group_name
+                group[:count] = count
+                statistics << group
+              end
+              
+              group = {}
+              group_name = bc.book.name
+              count = bc.remain
+            else
+              count += bc.remain
+            end            
+          %>
+            <% if bc.remain > 0 %>
+                <Row>
+                  <Cell><Data ss:Type="String"><%= bc.course_register.created_date.strftime("%d-%b-%Y") %></Data></Cell>
+                  <Cell><Data ss:Type="String"><%= bc.course_register.contact.display_name %></Data></Cell>
+                  <Cell><Data ss:Type="String"><%= bc.course_register.mailing_address %></Data></Cell>
+                  <Cell><Data ss:Type="String"><%= bc.course_register.contact.referrer.display_name if !bc.course_register.contact.referrer.nil? %></Data></Cell>
+                  <Cell><Data ss:Type="String"><%= bc.course_register.contact.mobile %></Data></Cell>
+                  <Cell><Data ss:Type="String"><%= bc.book.name %> (<%= bc.book.type_name %>)</Data></Cell>
+                  <Cell><Data ss:Type="Number"><%= bc.remain %></Data></Cell>
+                </Row>
+            <% end %>
+            
+          <%
+            if @bc_list.count == index+1
+                group[:name] = group_name
+                group[:count] = count
+                statistics << group
+            end            
+          %>
+          
       <% end %>
+      
+      <% statistics.each do |row| %>
+            <Row>
+              <Cell><Data ss:Type="String"></Data></Cell>
+              <Cell><Data ss:Type="String"></Data></Cell>
+              <Cell><Data ss:Type="String"></Data></Cell>
+              <Cell><Data ss:Type="String"></Data></Cell>
+              <Cell><Data ss:Type="String"></Data></Cell>
+              <Cell><Data ss:Type="String"><%= row[:name] %></Data></Cell>
+              <Cell><Data ss:Type="Number"><%= row[:count] %></Data></Cell>
+            </Row>
+        <% end %>
 
     </Table>
   </Worksheet>

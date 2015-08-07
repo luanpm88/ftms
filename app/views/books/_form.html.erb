@@ -82,22 +82,7 @@
 												<%= f.text_field :name, :class => "form-control required" %>
 											  </div>
 										</div>
-										
-										<% if !@book.parent.nil? %>
-											 <div class="form-group">
-											   <label class="form-label"><%= f.label :parent %></label>
-											   <span class="help"></span>
-											   <div class="input-with-icon  right">                                       
-												   <i class=""></i>
-												   <div class="input-with_add_but">
-													   <%= link_to '<i class="icon-plus"></i>'.html_safe, new_book_path, title: "New Book", :class => 'btn btn-sm btn-small btn-white tab_page' %>
-													   <input style="width:100%;margin-bottom: 5px;" name="book[parent_id]" data="<%= books_path(format: "json") %>" class="select2-ajax-books" value="<%= @book.parent_id %>" text="<%= @book.parent.name if !@book.parent.nil? %>" />
-												  </div>
-											   </div>
-											 </div>
-										<% end %>
-										
-										<% if @book.parent.nil? %>
+
 											 <div class="form-group">
 												  <label class="form-label"><label>Program</label></label>
 												  <span class="help"></span>
@@ -120,7 +105,6 @@
 													   </div>
 												  </div>
 											 </div>
-										<% end %>
 										
 										
 										
@@ -136,7 +120,7 @@
 												<%= f.text_field :publisher, :class => "form-control", value: (!@book.parent.nil? && !@book.parent.publisher.nil? ? @book.parent.publisher : "") %>
 										  </div>
 										</div>
-										<% if @book.parent.nil? %>
+
 											 <div class="form-group">
 											  <label class="form-label"><%= f.label :stock_price %></label>
 											  <span class="help">(required)</span>
@@ -156,7 +140,7 @@
 												  <% end %>
 											  </div>
 											</div>
-										<% end %>
+
 								   </div>
 								   
 							  </div>

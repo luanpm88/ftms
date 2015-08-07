@@ -16,6 +16,9 @@ User.create(:email => "manager@ftmsglobal.edu.vn", :password => "aA456321@", :pa
 Role.create(name: "admin")
 Role.create(name: "user")
 Role.create(name: "manager")
+Role.create(name: "sales_admin")
+Role.create(name: "education_consultant")
+
 
 # Default role for user
 User.all.each do |user|

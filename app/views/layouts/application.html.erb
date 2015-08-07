@@ -378,13 +378,14 @@
 			  <% end %>
 			  <ul class="sub-menu">
 				<li<% if params[:controller] == "contacts" %> class="active"<% end %>><%= link_to 'Contact Management', contacts_url(tab_page:1), class: "tab_page" %></li>
-				<li<% if params[:controller] == "contact_tags" %> class="active"<% end %>><%= link_to 'Tag Management', contact_tags_path(tab_page:1), class: "tab_page" %></li>
-				
+				<% if can? :view, ContactTag %>
+					<li<% if params[:controller] == "contact_tags" %> class="active"<% end %>><%= link_to 'Tag Management', contact_tags_path(tab_page:1), class: "tab_page" %></li>
+				<% end %>				
 			  </ul>
 			</li>
 		<% end %>
 		
-		<% if can? :read, Contact %>
+		<% if can? :read, DiscountProgram %>
 			<li <% if params[:controller] == "discount_programs" %> class="active open"<% end %>>
 			  <%= link_to contacts_url do %>
 			<i class="icon-chevron-sign-down"></i>
@@ -393,7 +394,6 @@
 			  <% end %>
 			  <ul class="sub-menu">
 				<li<% if params[:controller] == "discount_programs" %> class="active"<% end %>><%= link_to 'Discount Program', discount_programs_path(tab_page:1), class: "tab_page" %></li>
-
 			  </ul>
 			</li>
 		<% end %>

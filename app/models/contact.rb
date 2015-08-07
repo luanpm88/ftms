@@ -9,7 +9,7 @@ class Contact < ActiveRecord::Base
   validates :mobile, presence: true, if: :is_individual?
   #validates :birthday, presence: true, if: :is_individual?
   #validates :sex, presence: true, if: :is_individual?
-  validates :account_manager_id, presence: true, if: :is_individual?
+  #validates :account_manager_id, presence: true, if: :is_individual?
   
   validate :not_exist
   
@@ -59,6 +59,8 @@ class Contact < ActiveRecord::Base
   
   has_many :course_registers
   
+  has_many :drafts, :class_name => "Contact", :foreign_key => "draft_for"
+  
   after_validation :update_cache
   before_validation :check_type
   
@@ -72,6 +74,12 @@ class Contact < ActiveRecord::Base
     end
     
     return result
+  end
+  
+  def self.update_all_info
+    self.all.each do |c|
+      c.update_info
+    end
   end
   
   def update_info
@@ -122,18 +130,24 @@ class Contact < ActiveRecord::Base
   #  self[:mobile_2] = Contact.format_mobile(value)
   #end
   def not_exist
+    return true if self.draft?
+    
     exist = []
     
     if is_individual
-      exist += Contact.where("(LOWER(name) = ? AND LOWER(email) = ?) OR (LOWER(name) = ? AND LOWER(mobile) = ?)", name.downcase, email.downcase, name.downcase, mobile.downcase) if mobile.present?
+      exist += Contact.main_contacts.where("(LOWER(name) = ? AND LOWER(email) = ?) OR (LOWER(name) = ? AND LOWER(mobile) = ?)", name.downcase, email.downcase, name.downcase, mobile.downcase) if mobile.present?
     else
-      exist += Contact.where("LOWER(name) = ?", name.downcase) if name.present?
+      exist += Contact.main_contacts.where("LOWER(name) = ?", name.downcase) if name.present?
     end
     
     if !exist_contacts.empty?
       cs = exist_contacts.map {|c| c.contact_link}
       errors.add(:base, "There are/is contact(s) with the same information: #{cs.join(";")}".html_safe)
     end
+  end
+  
+  def draft?
+    !draft_for.nil?
   end
   
   def exist_contacts
@@ -254,7 +268,7 @@ class Contact < ActiveRecord::Base
     @records = @records.limit(params[:length]).offset(params["start"])
     data = []
     
-    actions_col = 9
+    actions_col = 10
     @records.each do |item|
       item = [
               "<div class=\"checkbox check-default\"><input name=\"ids[]\" id=\"checkbox#{item.id}\" type=\"checkbox\" value=\"#{item.id}\"><label for=\"checkbox#{item.id}\"></label></div>",
@@ -266,6 +280,7 @@ class Contact < ActiveRecord::Base
               '<div class="text-center">'+item.course_count_link+"</div>",
               '<div class="text-center contact_tag_box" rel="'+item.id.to_s+'">'+ContactsController.helpers.render_contact_tags_selecter(item)+"</div>",
               '<div class="text-center">'+item.account_manager_col+"</div>",
+              '<div class="text-center">'+item.display_statuses+"</div>",
               '',
             ]
       data << item
@@ -510,7 +525,7 @@ class Contact < ActiveRecord::Base
   end
   
   def self.main_contacts
-    self.all
+    self.where(draft_for: nil)
   end
   
   def self.import(file)
@@ -679,7 +694,7 @@ class Contact < ActiveRecord::Base
                 }
   
   def self.full_text_search(params)
-    records = self.all
+    records = self.main_contacts
     if params[:is_individual].present?
       records = records.where(is_individual: params[:is_individual])
     end
@@ -893,6 +908,118 @@ class Contact < ActiveRecord::Base
   
   def books_contact(book)
     books_contacts.where(book_id: book.id).first
+  end
+  
+  def update_status(action, user, older = nil)
+    statuses = []
+    
+    # when create new contact
+    if action == "create"      
+      # check if the contact is student
+      if is_individual?        
+        self.add_status("new_pending")      
+        
+        if self.account_manager.present?
+          self.add_status("education_consultant_pending")   
+        end        
+      else
+        # auto active if contact is company/organization
+        statuses << "active"
+      end
+    end
+    
+    # when update exist contact
+    if action == "update"
+      # check if the contact is student
+      if is_individual?
+        self.delete_status("new_pending") 
+        self.add_status("update_pending")
+        
+        # check if change account manager
+        if self.account_manager != older.account_manager
+          self.add_status("education_consultant_pending")
+        end        
+      else
+      end
+    end
+    
+    # check if has account manager
+    if !self.account_manager.present?
+      self.add_status("no_education_consultant")
+    else
+      self.delete_status("no_education_consultant")
+    end
+    
+    self.check_active
+  end  
+  
+  def statuses
+    status.to_s.split("][").map {|s| s.gsub("[","").gsub("]","")}
+  end
+  
+  def display_statuses
+    return "" if statuses.empty?
+    result = statuses.map {|s| "<span class=\"badge user-role badge-info contact-status #{s}\">#{s}</span>"}
+    result.join(" ").html_safe
+  end
+  
+  
+  def approve_new(user)
+    if statuses.include?("new_pending")
+      self.save_draft(user)    
+      self.delete_status("new_pending")
+    end
+  end
+  
+  def approve_education_consultant(user)
+    if statuses.include?("education_consultant_pending")
+      self.save_draft(user)    
+      self.delete_status("education_consultant_pending")
+    end
+  end
+  
+  def approve_update(user)
+    if statuses.include?("update_pending")
+      self.save_draft(user)    
+      self.delete_status("update_pending")
+    end
+  end
+  
+  def check_active
+    if !statuses.include?("update_pending") && !statuses.include?("new_pending") && !statuses.include?("education_consultant_pending") && !statuses.include?("no_education_consultant")
+      add_status("active")
+    else
+      delete_status("active")
+    end    
+  end
+  
+  def set_statuses(arr)
+    self.update_attribute(:status, "["+arr.join("][")+"]")
+  end
+  
+  def add_status(st)
+    sts = self.statuses
+    if !sts.include?(st)
+      sts << st
+      self.set_statuses(sts)
+    end   
+  end
+  
+  def delete_status(st)
+    sts = self.statuses
+    sts.delete(st)
+    
+    self.set_statuses(sts)
+  end
+  
+  def save_draft(user)
+    new_contact = self.dup
+    new_contact.draft_for = self.id
+    new_contact.user_id = user.id
+    
+    new_contact.save
+    
+    return new_contact
   end
   
 end

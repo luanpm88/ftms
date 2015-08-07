@@ -40,6 +40,8 @@ class CourseRegistersController < ApplicationController
     @course_register.update_contacts_courses(params[:contacts_courses])
     @course_register.update_books_contacts(params[:books_contacts])
     
+    authorize! :add_course, @course_register.contact
+    
     respond_to do |format|
       if @course_register.save    
         Contact.find(@course_register.contact.id).update_info

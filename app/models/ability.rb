@@ -59,17 +59,11 @@ class Ability
       can :ajax_show, Contact
       can :ajax_new, Contact
       can :ajax_create, Contact
-      can :ajax_list_agent, Contact
-      can :ajax_list_supplier_agent, Contact
-      can :ajax_destroy, Contact do |c|
-        c.user_id == user.id && c.contact_types.include?(ContactType.agent) && Order.where("agent_id = ? OR supplier_agent_id = ?", c.id, c.id).count == 0
-      end
-      can :ajax_edit, Contact do |c|
-        c.user_id == user.id && c.contact_types.include?(ContactType.agent) && Order.where("agent_id = ? OR supplier_agent_id = ?", c.id, c.id).count == 0
-      end
-      can :ajax_update, Contact do |c|
-        c.user_id == user.id && c.contact_types.include?(ContactType.agent) && Order.where("agent_id = ? OR supplier_agent_id = ?", c.id, c.id).count == 0
-      end
+      can :course_students, Contact
+      can :seminar_students, Contact
+      can :export_list, Contact
+      can :related_info_box, Contact
+      
       
       can :read, City
       can :read, State
@@ -87,6 +81,12 @@ class Ability
       
       can :ajax_quick_info, Contact
       can :ajax_select_box, Subject
+      
+      can :datatable, CourseType
+      can :read, CourseType
+      
+      can :datatable, Activity
+      can :read, Activity
     end
     
     if user.has_role? "manager"
@@ -97,7 +97,6 @@ class Ability
       can :read, CourseType
       can :create, CourseType
       can :update, CourseType
-      #can :destroy, CourseType
       
       can :datatable, Subject
       can :read, Subject
@@ -118,6 +117,17 @@ class Ability
       can :seminar_students, Contact
       can :export_list, Contact
       can :related_info_box, Contact
+      can :add_course, Contact do |c|
+        c.statuses.include?("active")
+      end
+      can :approved, Contact
+
+      can :approve_new, Contact, Contact do |c|
+        c.statuses.include?("new_pending")
+      end
+      can :approve_education_consultant, Contact do |c|
+        c.statuses.include?("education_consultant_pending") && c.account_manager.present?
+      end
       
       can :datatable, Book
       can :student_books, Book
@@ -141,9 +151,7 @@ class Ability
       can :deliver_stock, CourseRegister do |cr|
         cr.books.count > 0 && !cr.delivered?
       end
-      can :delivery_print, CourseRegister do |cr|
-        cr.delivered?
-      end
+      can :delivery_print, CourseRegister
       can :pay_registration, CourseRegister do |cr|
         !cr.paid?
       end
@@ -186,6 +194,7 @@ class Ability
       can :create, Delivery
       can :print, Delivery
       can :delivery_list, Delivery
+      can :trash, Delivery
       
       can :read, DeliveryDetail
       can :create, DeliveryDetail
@@ -197,6 +206,7 @@ class Ability
       can :read, PaymentRecord
       can :create, PaymentRecord
       can :print, PaymentRecord
+      can :trash, PaymentRecord
       
       can :datatable, Activity
       can :read, Activity
