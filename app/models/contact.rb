@@ -931,9 +931,8 @@ class Contact < ActiveRecord::Base
     # when update exist contact
     if action == "update"
       # check if the contact is student
-      if is_individual?
-        self.delete_status("new_pending") 
-        self.add_status("update_pending")
+      if is_individual?        
+        self.add_status("update_pending") if !self.has_status("new_pending") 
         
         ## check if change account manager
         #if self.account_manager != older.account_manager
@@ -1010,6 +1009,10 @@ class Contact < ActiveRecord::Base
     sts.delete(st)
     
     self.set_statuses(sts)
+  end
+  
+  def has_status(st)
+    self.statuses.include?(st)
   end
   
   def save_draft(user)
