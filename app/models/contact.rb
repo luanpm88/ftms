@@ -943,9 +943,7 @@ class Contact < ActiveRecord::Base
       end
     end
     
-    
-    
-    self.check_active
+    self.check_statuses
   end  
   
   def statuses
