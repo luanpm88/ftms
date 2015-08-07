@@ -919,9 +919,9 @@ class Contact < ActiveRecord::Base
       if is_individual?        
         self.add_status("new_pending")      
         
-        if self.account_manager.present?
-          self.add_status("education_consultant_pending")   
-        end        
+        #if self.account_manager.present?
+        #  self.add_status("education_consultant_pending")   
+        #end        
       else
         # auto active if contact is company/organization
         statuses << "active"
@@ -935,20 +935,15 @@ class Contact < ActiveRecord::Base
         self.delete_status("new_pending") 
         self.add_status("update_pending")
         
-        # check if change account manager
-        if self.account_manager != older.account_manager
-          self.add_status("education_consultant_pending")
-        end        
+        ## check if change account manager
+        #if self.account_manager != older.account_manager
+        #  self.add_status("education_consultant_pending")
+        #end        
       else
       end
     end
     
-    # check if has account manager
-    if !self.account_manager.present?
-      self.add_status("no_education_consultant")
-    else
-      self.delete_status("no_education_consultant")
-    end
+    
     
     self.check_active
   end  
@@ -985,7 +980,14 @@ class Contact < ActiveRecord::Base
     end
   end
   
-  def check_active
+  def check_statuses
+    # check if has account manager
+    if !self.account_manager.present?
+      self.add_status("no_education_consultant")
+    else
+      self.delete_status("no_education_consultant")
+    end
+    
     if !statuses.include?("update_pending") && !statuses.include?("new_pending") && !statuses.include?("education_consultant_pending") && !statuses.include?("no_education_consultant")
       add_status("active")
     else
