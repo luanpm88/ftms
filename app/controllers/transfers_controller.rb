@@ -36,10 +36,10 @@ class TransfersController < ApplicationController
 
     respond_to do |format|
       if @transfer.save
-        format.html { redirect_to @transfer, notice: 'Transfer was successfully created.' }
+        format.html { redirect_to params[:tab_page].present? ? "/home/close_tab" : @transfer, notice: 'Transfer was successfully created.' }
         format.json { render action: 'show', status: :created, location: @transfer }
       else
-        format.html { render action: 'new' }
+        format.html { render action: 'new', tab_page: params[:tab_page] }
         format.json { render json: @transfer.errors, status: :unprocessable_entity }
       end
     end
@@ -50,10 +50,10 @@ class TransfersController < ApplicationController
   def update
     respond_to do |format|
       if @transfer.update(transfer_params)
-        format.html { redirect_to @transfer, notice: 'Transfer was successfully updated.' }
+        format.html { redirect_to params[:tab_page].present? ? "/home/close_tab" : @transfer, notice: 'Transfer was successfully updated.' }
         format.json { head :no_content }
       else
-        format.html { render action: 'edit' }
+        format.html { render action: 'edit', tab_page: params[:tab_page] }
         format.json { render json: @transfer.errors, status: :unprocessable_entity }
       end
     end
