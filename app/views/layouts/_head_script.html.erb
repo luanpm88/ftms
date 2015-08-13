@@ -315,7 +315,7 @@
 		var url = "<%= courses_phrases_checkboxs_courses_path %>"
 		var course_id = input.val()
 		var number = input.attr("box_number")
-		var full_url = url+'?id='+course_id+'&number='+number
+		var full_url = url+'?id='+course_id+'&number='+number+'&contact_id='+$('input[name="course_register[contact_id]"]').select2("val")
 		var box = $('.registration_phrase_box_'+number)
 		
 		if (course_id == "") {
@@ -846,9 +846,13 @@
 					if($(".contact-filter input[name='courses_phrases']").val()) {
 						d.courses_phrases =  $(".contact-filter input[name='courses_phrases']").val()
 					}
+					
+					if($(".contact-filter select[name='status']").val()) {
+						d.status =  $(".contact-filter select[name='status']").val()
+					}
 				}
 			},
-			"columnDefs": [ { "targets": [0,1,3,4,5,6,7,8,9,10], "orderable": false } ],
+			"columnDefs": [ { "targets": [0,1,3,4,5,6,7,8,10], "orderable": false } ],
 			"order": [],
 			"aLengthMenu": [[10, 25, 50, 75, 100], [10, 25, 50, 75, 100]],
 			"iDisplayLength": 25
@@ -901,6 +905,10 @@
 					
 					if($(".contact-filter input[name='courses_phrases']").val()) {
 						d.courses_phrases =  $(".contact-filter input[name='courses_phrases']").val()
+					}
+					
+					if($(".contact-filter select[name='status']").val()) {
+						d.status =  $(".contact-filter select[name='status']").val()
 					}
 				}				
 			},
@@ -960,6 +968,10 @@
 					
 					if($(".contact-filter input[name='courses_phrases']").val()) {
 						d.courses_phrases =  $(".contact-filter input[name='courses_phrases']").val()
+					}
+					
+					if($(".contact-filter select[name='status']").val()) {
+						d.status =  $(".contact-filter select[name='status']").val()
 					}
 				}
 			},
@@ -1286,6 +1298,22 @@
 				}
 			},
 			"columnDefs": [ { "targets": [0,1,2,3], "orderable": false } ],
+			"order": [],
+			"aLengthMenu": [[10, 25, 50, 75, 100], [10, 25, 50, 75, 100]],
+			"iDisplayLength": 25
+	    });
+		
+		//Datatable subjects
+	    $('.datatable-transfers').dataTable( {
+			"processing": true,
+			"serverSide": true,
+			"ajax": {
+				"url": "<%= datatable_transfers_path %>",
+				"data": function ( d ) {
+					//d.course_types = $("select[name='filter[course_types[]]']").val()
+				}
+			},
+			"columnDefs": [ { "targets": [0,1,2,3,4,5,7,8], "orderable": false } ],
 			"order": [],
 			"aLengthMenu": [[10, 25, 50, 75, 100], [10, 25, 50, 75, 100]],
 			"iDisplayLength": 25
@@ -2114,6 +2142,22 @@
 			
 			remain_box.html(remain - value)
 			stock_box.html(stock - value)
+		})
+		
+		$(document).on("keyup", ".transer_amount input", function() {
+			var price = 0
+			var fee = 0
+	
+			if($('input[name="transfer[money]"]').val() != "") {
+			  price = parseFloat($('input[name="transfer[money]"]').val().replace(/,/g,""))
+			}
+			if($('input[name="transfer[admin_fee]"]').val() != "") {
+			  fee = parseFloat($('input[name="transfer[admin_fee]"]').val().replace(/,/g,""))
+			}
+			
+			total = price - fee
+			
+			$(".transfer_total").html(ReplaceNumberWithDots(total.toFixed(0)))
 		})
 	})
 	

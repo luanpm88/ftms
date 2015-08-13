@@ -174,7 +174,7 @@ class Course < ActiveRecord::Base
               '<div class="text-left nowrap">'+item.program_paper_name+"</div>",
               '<div class="text-left">'+item.courses_phrase_list_by_sudent(@student)+"</div>",
               '<div class="text-center nowrap">'+item.display_lecturer+"</div>",             
-              '<div class="text-center">'+item.course_register(@student).created_date.strftime("%d-%b-%Y")+"</div>",              
+              '<div class="text-center">'+item.list_course_registers_by_student(@student)+"</div>",              
               "", 
             ]
       
@@ -215,9 +215,13 @@ class Course < ActiveRecord::Base
   end
   
   def courses_phrases_by_sudent(student)
-    cc = contacts_course(student)
-    if !cc.nil?
-      return CoursesPhrase.where(id: (cc.courses_phrases.map(&:id)))
+    ccs = contacts_courses_by_student(student)
+    if !ccs.empty?
+      ids = []
+      ccs.each do |cc|
+        ids += cc.courses_phrases.map(&:id)
+      end
+      return CoursesPhrase.where(id: ids)
     else
       return []
     end
@@ -227,8 +231,20 @@ class Course < ActiveRecord::Base
     contacts_courses.where(contact_id: student.id).first
   end
   
+  def contacts_courses_by_student(student)
+    contacts_courses.where(contact_id: student.id)
+  end
+  
   def course_register(student)
     CourseRegister.find(contacts_course(student).course_register_id)
+  end
+  
+  def course_registers_by_student(student)
+    CourseRegister.where(id: (contacts_courses_by_student(student).map {|cc| cc.course_register_id}))
+  end
+  
+  def list_course_registers_by_student(student)
+    (course_registers_by_student(student).map {|cr| cr.course_register_link}).join("<br />").html_safe
   end
   
   

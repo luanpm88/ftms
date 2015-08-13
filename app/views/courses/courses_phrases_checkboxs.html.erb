@@ -14,14 +14,26 @@
                         
                         <h5 style="margin-top: 0;"><strong><%= group_name %></strong></h5>
                     <% end %>
-                    <div class="row-fluid phrase_checkbox">
-                         <div class="checkbox check-success">
-                             <%= check_box_tag "contacts_courses["+params[:number].to_s+"][courses_phrase_ids][]", courses_phrase.id, true, {id: "checkbox_"+params[:number]+ "_"+courses_phrase.id.to_s} %>
-                             <label for="checkbox_<%= params[:number] %>_<%= courses_phrase.id %>">
-                                  [<%= courses_phrase.start_at.strftime("%d-%b-%Y") %>]
-                             </label>
-                         </div>
-                    </div>
+                    
+                    <% if !CoursesPhrase.find(courses_phrase.id).registered?(Contact.find(params[:contact_id])) %>
+                        <div class="row-fluid phrase_checkbox">
+                             <div class="checkbox check-success">
+                                 <%= check_box_tag "contacts_courses["+params[:number].to_s+"][courses_phrase_ids][]", courses_phrase.id, true, {id: "checkbox_"+params[:number]+ "_"+courses_phrase.id.to_s} %>
+                                 <label for="checkbox_<%= params[:number] %>_<%= courses_phrase.id %>">
+                                      [<%= courses_phrase.start_at.strftime("%d-%b-%Y") %>]
+                                 </label>
+                             </div>
+                        </div>
+                    <% else %>
+                        <div class="row-fluid phrase_checkbox" title="Registered">
+                             <div class="checkbox check-default">
+                                 <%= check_box_tag "disabled", courses_phrase.id, true, {id: "checkbox_"+params[:number]+ "_"+courses_phrase.id.to_s, disabled: "disabled"} %>
+                                 <label for="checkbox_<%= params[:number] %>_<%= courses_phrase.id %>">
+                                      [<%= courses_phrase.start_at.strftime("%d-%b-%Y") %>]
+                                 </label>
+                             </div>
+                        </div>
+                    <% end %>
                     
                 
             <% end %>

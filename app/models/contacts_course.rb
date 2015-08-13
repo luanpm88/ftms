@@ -30,4 +30,7 @@ class ContactsCourse < ActiveRecord::Base
     
     return discount_program.type_name == "percent" ? (discount_program.rate/100)*price : discount_program.rate
   end
+  
+  
+  
 end

@@ -29,9 +29,11 @@
 												 
 												 <div class="row">
 													  <div class="col-md-6">
-														   <div class="form-group">
+															<%= render "field_history", drafts: @contact.field_history("is_individual"), type: "is_individual" %>
+														   <div class="form-group" style="clear:both">
 																
 																<span class="help"></span>
+																
 																<div class="input-with-icon right">                                       
 																	 <div class="radio radio-success" style="padding: 5px">
 																		  <input id="yes" type="radio" name="contact[is_individual]" value="true"  <% if @contact.is_individual %>checked="checked"<% end %>>
@@ -171,6 +173,7 @@
 												 <div class="form-group">
 													  <label class="form-label"><%= f.label :full_name %></label>
 													  <span class="help">(required)</span>
+													  <%= render "field_history", drafts: @contact.field_history("name"), type: "name" %>
 													  <div class="input-with-icon  right">                                       
 															  <i class=""></i>
 															  <%= f.text_field :name, rel: related_info_box_contacts_path(type: "name", id: @contact.id), :class => "form-control related_info_input required" %>
@@ -186,6 +189,8 @@
 														   <div class="form-group">
 																<label class="form-label"><%= f.label :address %></label>
 																<span class="help">(required)</span>
+																<%= render "field_history", drafts: @contact.field_history("address"), type: "address" %>
+																
 																<div class="input-with-icon  right">                                       
 																		<i class=""></i>
 																		<%= f.text_field :address, :class => "form-control required" %>
@@ -209,6 +214,8 @@
 														   <div class="form-group">
 																<label class="form-label"><%= f.label :email %></label>
 																<span class="help">(required)</span>
+																<%= render "field_history", drafts: @contact.field_history("email"), type: "email" %>
+																
 																<div class="input-with-iconx right">                                       
 																		<i class=""></i>
 																		<%= f.text_field :email, rel: related_info_box_contacts_path(type: "email", id: @contact.id), :class => "form-control required email related_info_input" %>
@@ -222,6 +229,7 @@
 													  <div class="col-md-6">
 														   <div class="form-group">
 																<label class="form-label"><%= f.label :email_2 %></label>
+																<%= render "field_history", drafts: @contact.field_history("email_2"), type: "email_2" %>
 																<span class="help"></span>
 																<div class="input-with-icon  right">                                       
 																		<i class=""></i>
@@ -261,6 +269,7 @@
 																<div class="form-group">
 																	 <label class="form-label">Gender</label>
 																	 <span class="help"></span>
+																	 <%= render "field_history", drafts: @contact.field_history("sex"), type: "sex" %>
 																	 <div class="input-with-icon right">                                       
 																		  <div class="radio radio-success" style="padding: 5px">
 																			   <input class="required" id="male" type="radio" name="contact[sex]" value="male" <% if @contact.sex == "male" %>checked="checked"<% end %>>
@@ -274,6 +283,7 @@
 														   <div class="col-md-6">
 																 <div class="form-group">
 																	  <label class="form-label"><%= f.label :birthday %></label>
+																	  <%= render "field_history", drafts: @contact.field_history("birthday"), type: "birthday" %>
 																	  <span class="help"></span>
 																	  <div class="input-with-icon  right">                                       
 																		   <i class=""></i>
@@ -317,6 +327,8 @@
 																<div class="form-group">
 																	 <label class="form-label"><%= f.label :mobile %></label>
 																	 <span class="help">(required)</span>
+																	 <%= render "field_history", drafts: @contact.field_history("mobile"), type: "mobile" %>
+																	 
 																	 <div class="input-with-iconx  right">                                       
 																		  <i class=""></i>
 																		  <%= f.text_field :mobile, rel: related_info_box_contacts_path(type: "mobile", id: @contact.id), :class => "form-control required related_info_input" %>
@@ -330,6 +342,7 @@
 														   <div class="col-md-6">
 																<div class="form-group">
 																	 <label class="form-label"><%= f.label :mobile_2 %></label>
+																	 <%= render "field_history", drafts: @contact.field_history("mobile_2"), type: "mobile_2" %>
 																	 <span class="help"></span>
 																	 <div class="input-with-icon  right">                                       
 																			 <i class=""></i>
@@ -343,6 +356,7 @@
 														   <div class="col-md-6">													   
 																<div class="form-group">
 																	 <label class="form-label"><%= f.label :company %></label>
+																	 <%= render "field_history", drafts: @contact.field_history("referrer_id"), type: "referrer_id" %>
 																	 <span class="help"></span>
 																	 <div class="input-with-icon  right">                                       
 																		  <i class=""></i>
@@ -366,6 +380,8 @@
 																<div class="form-group">
 																	 <label class="form-label"><%= f.label :payment_type %></label>
 																	 <span class="help">(required)</span>
+																	 <%= render "field_history", drafts: @contact.field_history("payment_type"), type: "payment_type" %>
+																	 
 																	 <div class="input-with-icon right">
 																		  <select name="contact[payment_type]" class="modern_select width100 required">
 																				<option <%= 'selected="selected"' if @contact.payment_type == "self-financed" %> value="self-financed">Self-financed</option>
@@ -378,6 +394,7 @@
 																<div class="form-group">
 																	 <label class="form-label"><%= f.label :invoice_required %></label>
 																	 <span class="help">(required)</span>
+																	 <%= render "field_history", drafts: @contact.field_history("invoice_required"), type: "invoice_required" %>
 																	 <div class="radio radio-success" style="padding: 5px">
 																		  <input class="invoice_required" id="invoice_yes" type="radio" name="contact[invoice_required]" value="true" <% if @contact.invoice_required %>checked="checked"<% end %>>
 																		  <label for="invoice_yes">Yes</label>
@@ -393,6 +410,7 @@
 																<div class="form-group">
 																	 <label class="form-label"><%= f.label :invoice_info %></label>
 																	 <span class="help">(required)</span>
+																	 <%= render "field_history", drafts: @contact.field_history("invoice_info_id"), type: "invoice_info_id" %>
 																	 <div class="input-with-icon  right">                                       
 																		  <i class=""></i>
 																		  <div class="input-with_add_but">
@@ -415,6 +433,7 @@
 																<div class="form-group">
 																	 <label class="form-label"><i class="icon-truck"></i> Preferred mailing</label>
 																	 <span class="help"></span>
+																	 <%= render "field_history", drafts: @contact.field_history("preferred_mailing"), type: "preferred_mailing" %>
 																	 <div class="input-with-icon  right">
 																		  <select name="contact[preferred_mailing]" class="modern_select width100 required">
 																				<option <%= 'selected="selected"' if @contact.preferred_mailing == "ftms" %> value="ftms">FTMS</option>
@@ -439,25 +458,27 @@
 													   <div class="row">
 															<div class="col-md-12">													   
 																<div class="form-group">
-																	 <label class="form-label"><%= f.label :account_manager %></label>
-																	 <span class="help"></span>
+																	 <label class="form-label"><%= f.label :education_consultant %></label>
+																	 <span class="help">(required)</span>
+																	 <%= render "field_history", drafts: @contact.field_history("account_manager_id"), type: "account_manager_id" %>
 																	 <div class="input-with-icon right">                                       
 																		  <i class=""></i>
 																		  <div class="input-with_add_but_">																			   
-																			   <input style="width:100%;margin-bottom: 5px;" name="contact[account_manager_id]" data="<%= users_path(format: "json") %>" class="select2-ajax-users" value="<%= @contact.account_manager_id %>" text="<%= @contact.account_manager.name if !@contact.account_manager.nil? %>" />
+																			   <input style="width:100%;margin-bottom: 5px;" name="contact[account_manager_id]" data="<%= users_path(format: "json") %>" class="select2-ajax-users required" value="<%= @contact.account_manager_id %>" text="<%= @contact.account_manager.name if !@contact.account_manager.nil? %>" />
 																		  </div>
 																	 </div>
 																</div>			
 														   </div>
 													   </div>
 													  
+													  <%= render "field_history", drafts: @contact.field_history("bases"), type: "bases" %>
 													  
 													  <% num = 0 %>
 													  <% @contact.base_items.each do |base| %>
 													  
 															
-															<div class="row base_box">
-																  <div class="col-md-4">													   
+															<div class="row base_box" style="clear: both">
+																  <div class="col-md-3">													   
 																	  <div class="form-group">
 																		   <label class="form-label"><label>Program #<%= num+1 %></label></label>
 																		   <span class="help"></span>
@@ -470,7 +491,7 @@
 																			</div>
 																	  </div>								
 																 </div>
-																 <div class="col-md-4">													   
+																 <div class="col-md-3">													   
 																	  <div class="form-group">
 																		   <label class="form-label"><label>ID #<%= num+1 %></label></label>
 																		   <span class="help"></span>
@@ -480,13 +501,23 @@
 																		   </div>
 																	  </div>								
 																 </div>
-																 <div class="col-md-4">
+																 <div class="col-md-3">
 																	  <div class="form-group">
 																		   <label class="form-label"><label>Password #<%= num+1 %></label></label>
 																		   <span class="help"></span>
 																		   <div class="input-with-icon  right">                                       
 																				   <i class=""></i>
 																				   <%= text_field_tag "bases[#{num}][password]", base["password"], :class => "form-control" %>
+																		   </div>
+																	  </div>								
+																 </div>
+																 <div class="col-md-3">
+																	  <div class="form-group">
+																		   <label class="form-label"><label>Status #<%= num+1 %></label></label>
+																		   <span class="help"></span>
+																		   <div class="input-with-icon  right">                                       
+																				   <i class=""></i>
+																				   <%= select_tag "bases[#{num}][status]", options_for_select(Contact.base_status_options,base["status"]), class: "modern_select width100" %>
 																		   </div>
 																	  </div>								
 																 </div>
@@ -498,7 +529,7 @@
 													  
 													  <% (num..9).each do |number| %>
 															<div class="row base_box" <%= "style='display:none'".html_safe if number > num %>>
-																  <div class="col-md-4">													   
+																  <div class="col-md-3">													   
 																	  <div class="form-group">
 																		   <label class="form-label"><label>Program #<%= number+1 %></label></label>
 																		   <span class="help"></span>
@@ -511,7 +542,7 @@
 																			</div>
 																	  </div>								
 																 </div>
-																 <div class="col-md-4">													   
+																 <div class="col-md-3">													   
 																	  <div class="form-group">
 																		   <label class="form-label"><label>ID #<%= number+1 %></label></label>
 																		   <span class="help"></span>
@@ -521,13 +552,23 @@
 																		   </div>
 																	  </div>								
 																 </div>
-																 <div class="col-md-4">
+																 <div class="col-md-3">
 																	  <div class="form-group">
 																		   <label class="form-label"><label>Password #<%= number+1 %></label></label>
 																		   <span class="help"></span>
 																		   <div class="input-with-icon  right">                                       
 																				   <i class=""></i>
 																				   <%= text_field_tag "bases[#{number}][password]", "", :class => "form-control" %>
+																		   </div>
+																	  </div>								
+																 </div>
+																 <div class="col-md-3">
+																	  <div class="form-group">
+																		   <label class="form-label"><label>Status #<%= num+1 %></label></label>
+																		   <span class="help"></span>
+																		   <div class="input-with-icon  right">                                       
+																				   <i class=""></i>
+																				   <%= select_tag "bases[#{num}][status]", options_for_select(Contact.base_status_options), class: "modern_select width100" %>
 																		   </div>
 																	  </div>								
 																 </div>
@@ -623,6 +664,7 @@
 												 <div class="form-group">
 													  <label class="form-label"><%= f.label :background %></label>
 													  <span class="help"></span>
+													  <%= render "field_history", drafts: @contact.field_history("note"), type: "note" %>
 													  <div class="input-with-icon  right">                                       
 															  <i class=""></i>
 															  <%= f.text_area :note, :class => "form-control", style: "height: 160px" %>

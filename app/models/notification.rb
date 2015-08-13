@@ -65,7 +65,13 @@ class Notification < ActiveRecord::Base
     end
   end
   
-  
+  def self.contact_pending_count(user)
+    records = Contact.main_contacts.where("contacts.status LIKE ?","%_pending]%")
+    if user.has_role?("education_consultant") && !user.has_role?("admin") && !user.has_role?("manager")
+      records = records.where(account_manager: user.id)
+    end
+    return records.count
+  end
   
   
 end

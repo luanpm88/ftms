@@ -1,4 +1,9 @@
 Hkerp::Application.routes.draw do
+  resources :transfers do
+    collection do
+      get :datatable
+    end
+  end
   resources :activities do
     collection do
       get :datatable
@@ -186,10 +191,15 @@ Hkerp::Application.routes.draw do
       post :export_list
       get :related_info_box
       
+      get :delete
+      
       get :approve_new
       get :approve_education_consultant
+      get :approve_update
+      get :approve_delete
       
       get :approved
+      get :field_history
     end
   end
 

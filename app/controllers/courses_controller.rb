@@ -120,7 +120,6 @@ class CoursesController < ApplicationController
       render layout: nil
     end
     
-    
   end
   
   def course_price_select

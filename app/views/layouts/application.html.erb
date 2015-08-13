@@ -375,11 +375,17 @@
 			<i class="icon-group"></i>
 			<span class="title">Contact</span>
 			<span class="arrow<% if params[:controller] == "contacts" %> open<% end %>"></span>
+			<span class="badge badge-important pull-right alert-level1"><%= Notification.contact_pending_count(current_user) %></span>
 			  <% end %>
 			  <ul class="sub-menu">
-				<li<% if params[:controller] == "contacts" %> class="active"<% end %>><%= link_to 'Contact Management', contacts_url(tab_page:1), class: "tab_page" %></li>
+				<li<% if params[:controller] == "contacts" %> class="active"<% end %>>
+					<a title="Contact Management (pending)" href="<%= url_for(contacts_url(tab_page:1, status: "pending")) %>" class="tab_page badge badge-important pull-right alert-level2"><%= Notification.contact_pending_count(current_user) %></a>
+					<%= link_to 'Contact Management', contacts_url(tab_page:1), class: "tab_page" %>
+				</li>
 				<% if can? :view, ContactTag %>
-					<li<% if params[:controller] == "contact_tags" %> class="active"<% end %>><%= link_to 'Tag Management', contact_tags_path(tab_page:1), class: "tab_page" %></li>
+					<li<% if params[:controller] == "contact_tags" %> class="active"<% end %>>						
+						<%= link_to 'Tag Management', contact_tags_path(tab_page:1), class: "tab_page" %>
+					</li>
 				<% end %>				
 			  </ul>
 			</li>

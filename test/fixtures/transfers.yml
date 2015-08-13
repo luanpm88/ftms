@@ -1,0 +1,15 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  contact_id: 1
+  user_id: 1
+  transfer_date: 2015-08-10 17:42:05
+  hours: 1
+  money: 9.99
+
+two:
+  contact_id: 1
+  user_id: 1
+  transfer_date: 2015-08-10 17:42:05
+  hours: 1
+  money: 9.99

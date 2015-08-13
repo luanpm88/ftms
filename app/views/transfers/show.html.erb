@@ -1,0 +1,29 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <strong>Contact:</strong>
+  <%= @transfer.contact_id %>
+</p>
+
+<p>
+  <strong>User:</strong>
+  <%= @transfer.user_id %>
+</p>
+
+<p>
+  <strong>Transfer date:</strong>
+  <%= @transfer.transfer_date %>
+</p>
+
+<p>
+  <strong>Hours:</strong>
+  <%= @transfer.hours %>
+</p>
+
+<p>
+  <strong>Money:</strong>
+  <%= @transfer.money %>
+</p>
+
+<%= link_to 'Edit', edit_transfer_path(@transfer) %> |
+<%= link_to 'Back', transfers_path %>

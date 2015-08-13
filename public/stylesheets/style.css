@@ -8378,3 +8378,53 @@ td .logo {
 .mbt-5 {
     margin-bottom: 5px;
 }
+.history-list {
+    border: 1px dashed #ccc;
+    padding: 10px;
+}
+.history-list li {
+    border-bottom: 1px solid #efefef;
+    list-style: outside none none;
+    margin-bottom: 5px;
+    padding-bottom: 5px;
+    color: #333;
+    padding: 0;
+}
+.history-list li:last-child {
+    border-bottom: 0px solid #ccc;
+    margin-bottom: 0;
+    padding-bottom: 0;
+}
+.contact-field-history {
+    cursor: pointer;
+    float: right;
+    font-size: 20px;
+    margin-top: 2px;
+}
+.time-span {
+    font-size: 90%;
+    color: #999;
+    display: block;
+    text-align: right;
+}
+.big-info {
+    font-size: 18px;
+}
+.page-sidebar ul.sub-menu li a.badge {
+    background: #fff none repeat scroll 0 0;
+    color: #5e5e5e;
+    font-family: "Open Sans";
+    font-size: 11px;
+    font-weight: 700;
+    margin: 6px;
+    padding: 4px 7px !important;
+    text-shadow: none;
+    width: auto;
+    color: #f35958;
+}
+.delete_pending {
+    background: #f35958;
+}
+.deleted {
+    background: grey;
+}

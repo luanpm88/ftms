@@ -4,12 +4,12 @@ class ContactsController < ApplicationController
   include ContactsHelper
   
   load_and_authorize_resource
-  before_action :set_contact, only: [:course_register, :ajax_quick_info, :ajax_tag_box, :ajax_edit, :ajax_update, :show, :edit, :update, :destroy, :ajax_destroy, :ajax_show, :ajax_list_agent, :ajax_list_supplier_agent]
+  before_action :set_contact, only: [:delete, :course_register, :ajax_quick_info, :ajax_tag_box, :ajax_edit, :ajax_update, :show, :edit, :update, :destroy, :ajax_destroy, :ajax_show, :ajax_list_agent, :ajax_list_supplier_agent]
 
   # GET /contacts
   # GET /contacts.json
   def index
-    @types = [ContactType.student.id.to_s]
+    @types = [ContactType.student.id.to_s,ContactType.inquiry.id.to_s]
     @individual_statuses = ["true"]
     
     if params[:course_id]
@@ -91,8 +91,6 @@ class ContactsController < ApplicationController
           filename = params[:headshot_url].split("/").last
           @contact.image = File.open("public/headshots/"+filename)
     end
-    
-    
 
     respond_to do |format|
       if @contact.save
@@ -100,6 +98,8 @@ class ContactsController < ApplicationController
           @contact.update_tag(@contact_tag, current_user)
         end        
         @contact.update_status("create", current_user)
+        
+        @contact.save_draft(current_user)
 
         format.html { redirect_to params[:tab_page].present? ? {action: "edit", id: @contact.id,tab_page: 1} : contacts_url, notice: 'Contact was successfully created.' }
         format.json { render action: 'show', status: :created, location: @contact }
@@ -131,15 +131,29 @@ class ContactsController < ApplicationController
     #base
     @contact.update_bases(params[:bases])
     
-    # save history
-    draft = @contact.save_draft(current_user)
-    
     respond_to do |format|
       if @contact.update(s_params)
         if params[:contact_tag].present?
           @contact.update_tag(@contact_tag, current_user)
         end        
-        @contact.update_status("update", current_user, draft)
+        @contact.update_status("update", current_user)
+        
+        @contact.save_draft(current_user)
+        
+        format.html { redirect_to params[:tab_page].present? ? {action: "edit",id: @contact.id,tab_page: 1} : contacts_url, notice: 'Contact was successfully updated.' }
+        format.json { head :no_content }
+      else
+        format.html { render action: 'edit', tab_page: params[:tab_page] }
+        format.json { render json: @contact.errors, status: :unprocessable_entity }
+      end
+    end
+  end
+  
+  def delete
+    
+    respond_to do |format|
+      if @contact.delete
+        @contact.save_draft(current_user)
         
         format.html { redirect_to params[:tab_page].present? ? {action: "edit",id: @contact.id,tab_page: 1} : contacts_url, notice: 'Contact was successfully updated.' }
         format.json { head :no_content }
@@ -319,9 +333,9 @@ class ContactsController < ApplicationController
     @contacts = nil
     
     if params[:value].strip.present? && params[:type].strip.present?
-      @contacts = Contact.all
+      @contacts = Contact.main_contacts
       
-      @contacts = Contact.where.not(id: params[:id].strip) if params[:id].present?
+      @contacts = @contacts.where.not(id: params[:id].strip) if params[:id].present?
       
       @contacts = @contacts.where("LOWER(#{params[:type]}) = ?", params[:value].strip.downcase)
       
@@ -331,6 +345,8 @@ class ContactsController < ApplicationController
   end
   
   def approve_new
+    authorize! :approve_new, @contact
+    
     @contact.approve_new(current_user)
     
     respond_to do |format|
@@ -340,6 +356,8 @@ class ContactsController < ApplicationController
   end
   
   def approve_education_consultant
+    authorize! :approve_education_consultant, @contact
+    
     @contact.approve_education_consultant(current_user)    
     
     respond_to do |format|
@@ -349,7 +367,20 @@ class ContactsController < ApplicationController
   end
   
   def approve_update
+    authorize! :approve_update, @contact
+    
     @contact.approve_update(current_user)
+    
+    respond_to do |format|
+      format.html { redirect_to params[:tab_page].present? ? "/contacts/approved" : @contact }
+      format.json { render action: 'show', status: :created, location: @subject }
+    end
+  end
+  
+  def approve_delete
+    authorize! :approve_delete, @contact
+    
+    @contact.approve_delete(current_user)
     
     respond_to do |format|
       format.html { redirect_to params[:tab_page].present? ? "/contacts/approved" : @contact }
@@ -359,6 +390,12 @@ class ContactsController < ApplicationController
   
   def approved
     render layout: "content"
+  end
+  
+  def field_history
+    @drafts = @contact.field_history(params[:type])
+    
+    render layout: nil
   end
 
   private

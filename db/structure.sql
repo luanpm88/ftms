@@ -569,7 +569,7 @@ CREATE TABLE contacts (
     mailing_address character varying,
     payment_type character varying,
     invoice_info_id integer,
-    invoice_required boolean DEFAULT true,
+    invoice_required boolean DEFAULT false,
     cache_course_type_ids text,
     cache_intakes text,
     cache_subjects text,
@@ -816,14 +816,14 @@ CREATE TABLE course_registers (
     bank_account_id integer,
     discount_program_id integer,
     contact_id integer,
-    discount numeric,
     vat_name character varying,
     vat_code character varying,
     vat_address character varying,
     invoice_required boolean,
     debt_date timestamp without time zone,
     cache_delivery_status character varying,
-    cache_payment_status character varying
+    cache_payment_status character varying,
+    discount numeric
 );
 
 
@@ -1504,6 +1504,44 @@ ALTER SEQUENCE subjects_id_seq OWNED BY subjects.id;
 
 
 --
+-- Name: transfers; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE TABLE transfers (
+    id integer NOT NULL,
+    contact_id integer,
+    user_id integer,
+    transfer_date timestamp without time zone,
+    hours integer,
+    money numeric,
+    admin_fee numeric,
+    transfer_for integer,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL,
+    courses_phrase_ids text
+);
+
+
+--
+-- Name: transfers_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE transfers_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: transfers_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE transfers_id_seq OWNED BY transfers.id;
+
+
+--
 -- Name: users; Type: TABLE; Schema: public; Owner: -; Tablespace: 
 --
 
@@ -1840,6 +1878,13 @@ ALTER TABLE ONLY stock_updates ALTER COLUMN id SET DEFAULT nextval('stock_update
 --
 
 ALTER TABLE ONLY subjects ALTER COLUMN id SET DEFAULT nextval('subjects_id_seq'::regclass);
+
+
+--
+-- Name: id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY transfers ALTER COLUMN id SET DEFAULT nextval('transfers_id_seq'::regclass);
 
 
 --
@@ -2186,6 +2231,14 @@ ALTER TABLE ONLY subjects
 
 
 --
+-- Name: transfers_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+--
+
+ALTER TABLE ONLY transfers
+    ADD CONSTRAINT transfers_pkey PRIMARY KEY (id);
+
+
+--
 -- Name: users_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
 --
 
@@ -2418,8 +2471,6 @@ INSERT INTO schema_migrations (version) VALUES ('20150722090024');
 
 INSERT INTO schema_migrations (version) VALUES ('20150723013855');
 
-INSERT INTO schema_migrations (version) VALUES ('20150723042643');
-
 INSERT INTO schema_migrations (version) VALUES ('20150727025749');
 
 INSERT INTO schema_migrations (version) VALUES ('20150727025802');
@@ -2455,4 +2506,10 @@ INSERT INTO schema_migrations (version) VALUES ('20150803043519');
 INSERT INTO schema_migrations (version) VALUES ('20150805015401');
 
 INSERT INTO schema_migrations (version) VALUES ('20150805072337');
+
+INSERT INTO schema_migrations (version) VALUES ('20150811004205');
+
+INSERT INTO schema_migrations (version) VALUES ('20150811005236');
+
+INSERT INTO schema_migrations (version) VALUES ('20150811022717');
 

@@ -1,0 +1,51 @@
+<% if !drafts.empty? %>
+  <i class="icon icon-time contact-field-history" rel="history-<%= type %>" onclick="$('.history-<%= type %>').toggle()"></i>
+  <ul class="history-list history-<%= type %>" style="display: none">
+    <% value = "-1" %>
+    <% drafts.each do |c| %>
+      
+      <% if value != c[type] && ["note","payment_type","mobile","mobile_2","email_2","email","name","address"].include?(type) %>
+        <li><%= c[type].empty? ? "[empty]" : c[type] %> <span class="nowrap time-span"><%= c.created_at.strftime("%d-%b-%Y, %I:%M %p") %></span></li>
+      <% end %>
+      
+      <% if value != c[type] && ["referrer_id"].include?(type) %>
+        <li><%= c.referrer.contact_link %> <span class="nowrap time-span"><%= c.created_at.strftime("%d-%b-%Y, %I:%M %p") %></span></li>
+      <% end %>
+      
+      <% if value != c[type] && ["invoice_info_id"].include?(type) %>
+        <li><%= c.invoice_info.contact_link %> <span class="nowrap time-span"><%= c.created_at.strftime("%d-%b-%Y, %I:%M %p") %></span></li>
+      <% end %>
+      
+      <% if value != c[type] && ["birthday"].include?(type) %>
+        <li><%= c.birthday.strftime("%d-%b-%Y") %> <span class="nowrap time-span"><%= c.created_at.strftime("%d-%b-%Y, %I:%M %p") %></span></li>
+      <% end %>
+      
+      <% if value != c[type] && ["sex"].include?(type) %>
+        <li><%=  c[type].capitalize %> <span class="nowrap time-span"><%= c.created_at.strftime("%d-%b-%Y, %I:%M %p") %></span></li>
+      <% end %>
+      
+      <% if value != c[type] && ["invoice_required"].include?(type) %>
+        <li><%= c[type] ? "Yes" : "No" %> <span class="nowrap time-span"><%= c.created_at.strftime("%d-%b-%Y, %I:%M %p") %></span></li>
+      <% end %>
+      
+      <% if value != c[type] && ["preferred_mailing"].include?(type) %>
+        <li><%=  c[type].capitalize %>:  <%= c.preferred_mailing_address %><span class="nowrap time-span"><%= c.created_at.strftime("%d-%b-%Y, %I:%M %p") %></span></li>
+      <% end %>
+      
+      <% if value != c[type] && ["account_manager_id"].include?(type) %>
+        <li class="text-center"><%=  c.account_manager.staff_col %><span class="nowrap time-span"><%= c.created_at.strftime("%d-%b-%Y, %I:%M %p") %></span></li>
+      <% end %>
+      
+      <% if value != c[type] && ["bases"].include?(type) %>
+        <li><%= c.base_items.empty? ? "[empty]" : (c.base_items.map {|item| item["course_type"].short_name+"-"+item["name"]+"-"+item["password"].to_s}).join("; ") %><span class="nowrap time-span"><%= c.created_at.strftime("%d-%b-%Y, %I:%M %p") %></span></li>
+      <% end %>
+      
+      <% if value != c[type] && ["is_individual"].include?(type) %>
+        <li><%= c[type] ? "Individual" : "Company/Organization" %> <span class="nowrap time-span"><%= c.created_at.strftime("%d-%b-%Y, %I:%M %p") %></span></li>
+      <% end %>
+      
+      
+      <% value = c[type] %>
+    <% end %>
+  </ul>
+<% end %>

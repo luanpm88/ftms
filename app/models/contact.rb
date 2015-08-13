@@ -57,9 +57,14 @@ class Contact < ActiveRecord::Base
   has_many :contacts_lecturer_course_types
   has_many :lecturer_course_types, :through => :contacts_lecturer_course_types, :source => :course_type
   
-  has_many :course_registers
+  has_many :course_registers, :dependent => :destroy
   
   has_many :drafts, :class_name => "Contact", :foreign_key => "draft_for"
+  belongs_to :draft_for_contact, :class_name => "Contact", :foreign_key => "draft_for"
+  
+  has_one :current_revision, -> { order created_at: :desc }, class_name: 'Contact', foreign_key: "draft_for"
+  
+  has_many :transfers
   
   after_validation :update_cache
   before_validation :check_type
@@ -225,6 +230,18 @@ class Contact < ActiveRecord::Base
       @records = @records.where(conds.join(" OR "))
     end
     
+    if params[:status].present?
+      if params[:status] == "pending"
+        @records = @records.where("contacts.status LIKE ?","%_pending]%")
+      else
+        @records = @records.where("contacts.status LIKE ?","%[#{params[:status]}]%")
+      end
+    end
+    
+    if !params[:status].present? || params[:status] != "deleted"
+      @records = @records.where("contacts.status NOT LIKE ?","%[deleted]%")
+    end
+    
     # Areas filter
     cities_ids = []
     if params[:area_ids].present?
@@ -255,6 +272,9 @@ class Contact < ActiveRecord::Base
       case params["order"]["0"]["column"]
       when "2"
         order = "contacts.name"
+      when "9"
+        @records = @records.includes(:current_revision)
+        order = "current_revisions_contacts.created_at"
       else
         order = "contacts.name"
       end
@@ -885,6 +905,7 @@ class Contact < ActiveRecord::Base
         item[:course_type_id] = row[1]["course_type_id"]
         item[:name] = row[1]["name"]
         item[:password] = row[1]["password"]
+        item[:status] = row[1]["status"]
         
         result << item
       end
@@ -917,14 +938,15 @@ class Contact < ActiveRecord::Base
     if action == "create"      
       # check if the contact is student
       if is_individual?        
-        self.add_status("new_pending")      
+        self.add_status("new_pending")
         
-        #if self.account_manager.present?
-        #  self.add_status("education_consultant_pending")   
-        #end        
+        # check if education consultant peding
+        if self.account_manager.present?
+          self.add_status("education_consultant_pending")
+        end        
       else
         # auto active if contact is company/organization
-        statuses << "active"
+        self.add_status("active")
       end
     end
     
@@ -932,12 +954,12 @@ class Contact < ActiveRecord::Base
     if action == "update"
       # check if the contact is student
       if is_individual?        
-        self.add_status("update_pending") if !self.has_status("new_pending") 
+        self.add_status("update_pending") if !self.has_status("new_pending")
         
-        ## check if change account manager
-        #if self.account_manager != older.account_manager
-        #  self.add_status("education_consultant_pending")
-        #end        
+        # check if education consultant peding
+        if self.account_manager != self.current.account_manager
+          self.add_status("education_consultant_pending")
+        end
       else
       end
     end
@@ -951,41 +973,51 @@ class Contact < ActiveRecord::Base
   
   def display_statuses
     return "" if statuses.empty?
-    result = statuses.map {|s| "<span class=\"badge user-role badge-info contact-status #{s}\">#{s}</span>"}
+    result = statuses.map {|s| "<span title=\"Last updated: #{current.created_at.strftime("%d-%b-%Y, %I:%M %p")}\" class=\"badge user-role badge-info contact-status #{s}\">#{s}</span>"}
     result.join(" ").html_safe
   end
   
   
   def approve_new(user)
-    if statuses.include?("new_pending")
-      self.save_draft(user)    
-      self.delete_status("new_pending")
+    
+    
+    if statuses.include?("new_pending")          
+      self.delete_status("new_pending")      
+      self.check_statuses
+      
+      self.save_draft(user)
     end
   end
   
   def approve_education_consultant(user)
     if statuses.include?("education_consultant_pending")
-      self.save_draft(user)    
-      self.delete_status("education_consultant_pending")
+      self.delete_status("education_consultant_pending")      
+      self.check_statuses
+      
+      self.save_draft(user)
     end
   end
   
   def approve_update(user)
     if statuses.include?("update_pending")
-      self.save_draft(user)    
       self.delete_status("update_pending")
+      self.check_statuses
+      
+      self.save_draft(user) 
+    end
+  end
+  
+  def approve_delete(user)
+    if statuses.include?("delete_pending")
+      self.set_statuses(["deleted"])
+      self.check_statuses
+      
+      self.save_draft(user)
     end
   end
   
   def check_statuses
-    # check if has account manager
-    if !self.account_manager.present?
-      self.add_status("no_education_consultant")
-    else
-      self.delete_status("no_education_consultant")
-    end
-    
-    if !statuses.include?("update_pending") && !statuses.include?("new_pending") && !statuses.include?("education_consultant_pending") && !statuses.include?("no_education_consultant")
+    if !statuses.include?("deleted") && !statuses.include?("delete_pending") && !statuses.include?("update_pending") && !statuses.include?("new_pending") && !statuses.include?("education_consultant_pending") && !statuses.include?("no_education_consultant")
       add_status("active")
     else
       delete_status("active")
@@ -993,7 +1025,7 @@ class Contact < ActiveRecord::Base
   end
   
   def set_statuses(arr)
-    self.update_attribute(:status, "["+arr.join("][")+"]")
+    self.update_attribute(:status, "["+arr.join("][")+"]")    
   end
   
   def add_status(st)
@@ -1001,7 +1033,7 @@ class Contact < ActiveRecord::Base
     if !sts.include?(st)
       sts << st
       self.set_statuses(sts)
-    end   
+    end
   end
   
   def delete_status(st)
@@ -1020,9 +1052,111 @@ class Contact < ActiveRecord::Base
     new_contact.draft_for = self.id
     new_contact.user_id = user.id
     
+    new_contact.contact_types = self.contact_types
+    new_contact.course_types = self.course_types
+    new_contact.lecturer_course_types = self.lecturer_course_types
+    
+    new_contact.save
+    
+    # copy image
+    new_contact = self.current
+    new_contact.image = File.open(self.image_url) if self.image.present?    
     new_contact.save
     
     return new_contact
+  end
+  
+  def current
+    return drafts.order("created_at DESC").first
+  end
+  
+  def older
+    if !draft?
+      return drafts.order("created_at DESC").second
+    else
+      return draft_for_contact.drafts.where("created_at < ?", self.created_at).order("created_at DESC").first
+    end
+  end
+  
+  def active_older
+    if !draft?
+      olders = drafts.order("created_at DESC").where("status LIKE ?", "%[active]%")
+      return statuses.include?("active") ? olders.second : olders.first
+    else
+      return draft_for_contact.drafts.where("created_at < ?", self.created_at).where("status LIKE ?", "%[active]%").order("created_at DESC").first
+    end
+  end
+  
+  def field_history(type,value=nil)
+    drafts = self.drafts
+    value = value.nil? ? self[type] : value
+    drafts = drafts.where("created_at < ?", self.current.created_at) if self.current.present?
+    drafts = drafts.where("#{type} IS NOT NUll AND #{type} != ?", value)
+    drafts = drafts.where("created_at >= ?", self.active_older.created_at) if !self.active_older.nil?
+    drafts = drafts.order("created_at DESC")
+    
+    return drafts
+  end
+  
+  def preferred_mailing_address
+    case preferred_mailing
+    when "ftms"
+      result = "FTMS address"
+    when "home"
+      result = self.address
+    when "company"
+      result = self.referrer.address
+    when "other"
+      result = self.mailing_address
+    else
+    end
+    
+    return result
+  end
+  
+  def display_bases
+    result = []
+    base_items.each do |b|
+      result << b["name"]
+    end
+  end
+  
+  def current_contacts_courses
+    self.contacts_courses.includes(:course).order("courses.intake DESC")
+  end
+  
+  def budget_hour
+    all_transfers.sum(:hour)
+  end
+  
+  def budget_money
+    all_transfers.sum(:money) - all_transfers.sum(:admin_fee)
+  end
+  
+  def all_transfers
+    transfers
+  end
+  
+  def self.status_options
+    [
+      ["All",""],
+      ["Pending...","pending"],
+      ["Active","active"],
+      ["New Pending","new_pending"],
+      ["Education Consultant Pending","education_consultant_pending"],
+      ["Update Pending","update_pending"],
+      ["Delete Pending","delete_pending"],
+      ["Deleted","deleted"]
+    ]
+  end
+  
+  def self.base_status_options
+    [["In Progress","in_progress"],["Completed","completed"]]
+  end
+  
+  def delete    
+    self.set_statuses(["delete_pending"])
+    return true
   end
   
 end

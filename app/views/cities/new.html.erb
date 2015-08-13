@@ -3,3 +3,7 @@
 <%= render 'form' %>
 
 <%= link_to 'Back', cities_path %>
+<a href="<%= cities_path %>">Back</a>
+<a href="<%= url_for(controller: "cities", action: "index") %>">Back</a>
+<%= link_to 'Back', url_for(controller: "cities", action: "index") %>
+<%= link_to 'Back', {controller: "cities", action: "index"} %>

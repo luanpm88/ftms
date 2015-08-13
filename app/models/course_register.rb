@@ -440,7 +440,7 @@ class CourseRegister < ActiveRecord::Base
   end
   
   def course_register_link
-    ActionController::Base.helpers.link_to("<i class=\"icon icon-list-alt\"></i> #{contact.display_name} [#{created_date.strftime("%d-%b-%Y")}]".html_safe, {controller: "course_registers", action: "show", id: self.id, tab_page: 1}, title: "Course Register Detail: #{self.contact.display_name}", class: "tab_page")
+    ActionController::Base.helpers.link_to("<i class=\"icon icon-list-alt\"></i> Course Register [#{created_date.strftime("%d-%b-%Y")}]".html_safe, {controller: "course_registers", action: "show", id: self.id, tab_page: 1}, title: "Course Register Detail: #{self.contact.display_name} [#{created_date.strftime("%d-%b-%Y")}]", class: "tab_page")
   end
   
   def self.update_all_statuses

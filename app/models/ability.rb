@@ -55,6 +55,9 @@ class Ability
       can :update, Contact do |contact|
         contact.user_id == user.id
       end
+      can :delete, Contact do |c|
+        !c.statuses.include?("delete_pending") && !c.statuses.include?("deleted")
+      end
       
       can :ajax_show, Contact
       can :ajax_new, Contact
@@ -87,6 +90,18 @@ class Ability
       
       can :datatable, Activity
       can :read, Activity
+    end
+    
+    if user.has_role? "education_consultant"
+      can :approve_new, Contact do |c|
+        c.statuses.include?("new_pending") && c.account_manager  == user
+      end
+      can :approve_update, Contact do |c|
+        c.statuses.include?("update_pending") && c.account_manager  == user
+      end
+      can :approve_delete, Contact do |c|
+        c.statuses.include?("delete_pending") && c.account_manager  == user
+      end
     end
     
     if user.has_role? "manager"
@@ -122,12 +137,19 @@ class Ability
       end
       can :approved, Contact
 
-      can :approve_new, Contact, Contact do |c|
+      can :approve_new, Contact do |c|
         c.statuses.include?("new_pending")
+      end
+      can :approve_update, Contact do |c|
+        c.statuses.include?("update_pending")
       end
       can :approve_education_consultant, Contact do |c|
         c.statuses.include?("education_consultant_pending") && c.account_manager.present?
       end
+      can :approve_delete, Contact do |c|
+        c.statuses.include?("delete_pending")
+      end
+      can :field_history, Contact
       
       can :datatable, Book
       can :student_books, Book
@@ -154,10 +176,12 @@ class Ability
       can :delivery_print, CourseRegister
       can :pay_registration, CourseRegister do |cr|
         !cr.paid?
-      end
-      
+      end      
       can :course_register, Contact do |contact|
         contact.contact_types.include?(ContactType.student) || contact.contact_types.include?(ContactType.inquiry)
+      end
+      can :transfer_course, Contact do |contact|
+        contact.contact_types.include?(ContactType.student)
       end
       
       can :datatable, Seminar
@@ -214,6 +238,10 @@ class Ability
       can :destroy, Activity do |a|
         a.user == user
       end
+      
+      can :datatable, Transfer
+      can :read, Transfer
+      can :create, Transfer
     end
   end
 end

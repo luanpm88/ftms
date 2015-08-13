@@ -1,0 +1,232 @@
+       <div class="row">
+            <div class="col-md-12">
+              <div class="grid simple">
+                <div class="grid-title no-border">
+                  <h4>Course <span class="semi-bold">List</span></h4>
+                  
+                </div>     
+                
+                
+                
+                
+                <div class="grid-body no-border">
+                  
+                  
+                  <% if @transfer.errors.any? %>
+                    <div class="alert alert-error">
+                      <button data-dismiss="alert" class="close"></button>
+                      <div id="error_explanation">
+                        <h5><%= pluralize(@transfer.errors.count, "error") %> prohibited from being saved:</h5>
+                  
+                        <ul>
+                        <% @transfer.errors.full_messages.each do |msg| %>
+                          <li><%= msg %></li>
+                        <% end %>
+                        </ul>
+                      </div>
+                    </div>
+                  <% end %>
+                    
+                 
+                  
+                  
+                  <%= form_for(@transfer) do |f| %>
+					
+					<%= hidden_field_tag("tab_page", 1) if params[:tab_page] %>
+                    <%= f.hidden_field :contact_id %>
+					
+					<div class="row column-seperation">
+                          
+                          <% @transfer.contact.current_contacts_courses.each_with_index do |cc,index| %>
+                              <% cc = ContactsCourse.find(cc.id) %>
+                              
+                              <%= '</div><div class="row column-seperation">'.html_safe if index%2 == 0 && index > 0 %>
+                              
+                              <div class="col-md-6">
+                                  <h4><strong><%= cc.course.name %></strong></h4>
+                                  <% group_name = "" %>
+                                  <% ContactsCourse.find(cc.id).courses_phrases.includes(:phrase).order("phrases.name DESC, courses_phrases.start_at").each do |courses_phrase| %>
+                
+                                          <% if group_name != courses_phrase.phrase.name %>
+                                              <% if group_name != "" %><br style="clear: both" /><% end %>
+                                              <% group_name = courses_phrase.phrase.name %>
+                                              
+                                              <h5 style="margin-top: 0;"><strong><%= group_name %></strong></h5>
+                                          <% end %>
+                                          
+                                          
+                                          <% if !courses_phrase.transferred?(@transfer.contact) %>
+                                            <div class="row-fluid phrase_checkbox">
+                                                 <div class="checkbox check-success">
+                                                     <%= check_box_tag "transfer[courses_phrase_ids][]", courses_phrase.id, false, {id: "checkbox_"+courses_phrase.id.to_s} %>
+                                                     <label for="checkbox_<%= courses_phrase.id %>">
+                                                          [<%= courses_phrase.start_at.strftime("%d-%b-%Y") %>]
+                                                     </label>
+                                                 </div>
+                                            </div>
+                                          <% else %>
+                                            <div class="row-fluid phrase_checkbox" title="Transferred">
+                                                 <div class="checkbox check-success">
+                                                     <%= check_box_tag "disabled", courses_phrase.id, false, {id: "checkbox_"+courses_phrase.id.to_s, disabled: "disabled"} %>
+                                                     <label for="checkbox_<%= courses_phrase.id %>">
+                                                          [<%= courses_phrase.start_at.strftime("%d-%b-%Y") %>]
+                                                     </label>
+                                                 </div>
+                                            </div>
+                                          <% end %>
+                                          
+                                      
+                                  <% end %>
+                                  <br style="clear: both" />
+                                  <hr />
+                                  <!--<h4>Registered Information</h4>-->
+                                  <div class="row column-seperation">
+                                    <div class="col-md-3">
+                                      <div class="form-group">
+                                          <%= f.label :registered_on %>
+                                          <span class="help"></span>
+                                          <div class="input-with-iconz right">                                       
+                                              <strong><%= cc.course_register.created_date.strftime("%d-%b-%Y") %></strong>
+                                          </div>
+                                      </div>
+									  
+										<div class="form-group">
+											 <label class="form-label">Upfront?</label>
+											 <span class="help"></span>
+											 <div class="input-with-iconz  text-right">                                       
+												  <div><strong>
+												  <%= cc.upfront == true ? "Yes" : "No" %>
+												  </strong></div>                                                             
+											 </div>
+										</div>
+                                    </div>
+                                    <div class="col-md-3">
+                                          <div class="form-group">
+                                                <label class="form-label">Price</label>
+                                                <span class="help"></span>
+                                                <div class="input-with-iconz  text-right">                                       
+                                                     <strong><%= format_price(cc.price) %></strong>
+                                                </div>
+                                          </div>
+                                     </div>
+                                     <div class="col-md-3">
+                                        <div class="form-group">
+                                              <label class="form-label">Dist.Program</label>
+                                              <span class="help"></span>
+                                              <div class="input-with-iconz  text-right">                                       
+                                                        <div><strong><%= format_price(cc.discount_program_amount) %></strong></div>
+                                                   
+                                              </div>
+                                        </div>
+                                        <% if cc.discount.to_f > 0 %>
+                                                <div class="form-group">
+                                                        <label class="form-label">Other</label>
+                                                        <span class="help"></span>
+                                                        <div class="input-with-iconz  text-right">                                       
+                                                             <div><strong><%= format_price(cc.discount.to_f) %></strong></div>
+                                                             
+                                                        </div>
+                                                </div>
+                                        <% end %>
+                                     </div>
+                                     <div class="col-md-3">
+                                          <div class="form-group">
+                                                <label class="form-label">Total</label>
+                                                <span class="help"></span>
+                                                <div class="input-with-iconz text-right">                                       
+                                                     <strong style="font-size: 18px"><%= format_price(cc.total) %></strong>
+                                                </div>
+                                          </div>
+                                     </div>
+                                  </div>
+                                  
+                              </div>
+                              
+                          <% end %>
+
+					</div>
+                    <br />
+                    <h3>Infomrmation</h3>
+                    
+                    <div class="row transer_amount">
+						 <div class="col-md-2">
+                          <div class="form-group">
+                              <label class="form-label"><%= f.label :for_contact %></label>
+                              <span class="help">(required)</span>
+                              <div class="input-with-icon  right">                                       
+                                  <i class=""></i>
+                                  <input style="width:100%;margin-bottom: 5px;" name="transfer[transfer_for]" data="<%= contacts_path(is_individual: true,format: "json") %>" class="select2-ajax-students required" text="<%= @transfer.transferred_contact.display_name %>" value="<%= @transfer.transferred_contact.id %>" />
+                              </div>
+                          </div>
+                        </div>
+                      <div class="col-md-2">
+                          <div class="form-group">
+                              <label class="form-label"><%= f.label :date %></label>
+                              <span class="help">(required)</span>
+
+                                  <div class="input-with-icon  right">                                       
+                                       <i class=""></i>
+                                       <div class="input-append success date col-md-10 no-padding">
+											 <%= f.text_field :transfer_date, :class => "form-control text-center", value: (@transfer.transfer_date.nil? ? "" : @transfer.transfer_date.strftime("%d-%b-%Y")) %>
+											 <span class="add-on"><span class="arrow"></span><i class="icon-th"></i></span>
+                                       </div>
+                                       <br style="clear: both" />
+                                  </div>
+
+                          </div>
+                        </div>
+                        <div class="col-md-2">
+                          <div class="form-group">
+                              <label class="form-label"><%= f.label :hours %></label>
+                              <span class="help">(required)</span>
+                              <div class="input-with-icon  right">                                       
+                                  <i class=""></i>
+                                    <%= f.text_field :hours, :class => "form-control number_input_0 text-center required" %>
+                              </div>
+                          </div>
+                        </div>
+                        <div class="col-md-2">
+                          <div class="form-group">
+                              <label class="form-label"><%= f.label :money %></label>
+                              <span class="help">(required)</span>
+                              <div class="input-with-iconz right">                                       
+                                  <i class=""></i>
+                                    <%= f.text_field :money, :class => "form-control price_input required" %>
+                              </div>
+                          </div>
+                        </div>
+                        <div class="col-md-2">
+                          <div class="form-group">
+                              <label class="form-label"><%= f.label :admin_fee %></label>
+                              <span class="help">(required)</span>
+                              <div class="input-with-iconz right">                                       
+                                  <i class=""></i>
+                                    <%= f.text_field :admin_fee, :class => "form-control price_input required" %>
+                              </div>
+                          </div>
+                        </div>
+                        <div class="col-md-2">
+                          <div class="form-group">
+                              <label class="form-label"><%= f.label :total %></label>
+                              <span class="help">(required)</span>
+                              <div class="input-with-iconz right text-right">                                       
+                                  <strong style="font-weight: bold;font-size: 18px" class="transfer_total"></strong>
+                              </div>
+                          </div>
+                        </div>
+                    </div>
+                    
+						 
+					<div class="form-actions">  
+						 <div class="pull-right">
+						 <button type="submit" class="btn btn-success btn-cons"><i class="icon-ok"></i> Save</button>
+						  <%= link_to 'Cancel', users_path, :class => "btn btn-white btn-cons cancel-but" %>
+					   </div>
+					</div>
+							  
+				<% end %>
+			   </div>
+			 </div>
+            </div>
+			
+     </div>
