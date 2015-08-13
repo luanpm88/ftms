@@ -52,6 +52,16 @@ class Ability
       can :read, Contact
       can :datatable, Contact
       can :create, Contact
+      can :update_tag, Contact
+      can :course_students, Contact
+      can :seminar_students, Contact
+      can :export_list, Contact
+      can :related_info_box, Contact
+      can :add_course, Contact do |c|
+        c.statuses.include?("active")
+      end
+      
+      
       can :update, Contact do |contact|
         contact.user_id == user.id
       end

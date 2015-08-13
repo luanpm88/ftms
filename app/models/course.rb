@@ -197,11 +197,11 @@ class Course < ActiveRecord::Base
     arr = []
     group_name = ""
     list.each do |p|
-      if group_name != p.phrase.name
-        arr << "<div><strong class=\"width100\">#{p.phrase.name}</strong></div>"
-        group_name = p.phrase.name
-      end
-      arr << "[#{p.start_at.strftime("%d-%b-%Y")}] "
+        if group_name != p.phrase.name
+          arr << "<div><strong class=\"width100\">#{p.phrase.name}</strong></div>"
+          group_name = p.phrase.name
+        end
+        arr << "[#{p.start_at.strftime("%d-%b-%Y")}] "
     end
     return "<div>"+arr.join("").html_safe+"</div>"
   end
@@ -211,7 +211,7 @@ class Course < ActiveRecord::Base
   end
   
   def courses_phrase_list_by_sudent(student)
-    Course.render_courses_phrase_list(courses_phrases_by_sudent(student).joins(:phrase).order("phrases.name, courses_phrases.start_at"))    
+    Course.render_courses_phrase_list(courses_phrases_by_sudent(student).includes(:phrase).order("phrases.name, courses_phrases.start_at"))    
   end
   
   def courses_phrases_by_sudent(student)
@@ -219,7 +219,9 @@ class Course < ActiveRecord::Base
     if !ccs.empty?
       ids = []
       ccs.each do |cc|
-        ids += cc.courses_phrases.map(&:id)
+        cc.courses_phrases.each do |cp|
+          ids << cp.id if cp.registered?(student)
+        end
       end
       return CoursesPhrase.where(id: ids)
     else

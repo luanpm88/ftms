@@ -1517,7 +1517,8 @@ CREATE TABLE transfers (
     admin_fee numeric,
     transfer_for integer,
     created_at timestamp without time zone NOT NULL,
-    updated_at timestamp without time zone NOT NULL
+    updated_at timestamp without time zone NOT NULL,
+    courses_phrase_ids text
 );
 
 
@@ -2509,4 +2510,6 @@ INSERT INTO schema_migrations (version) VALUES ('20150805072337');
 INSERT INTO schema_migrations (version) VALUES ('20150811004205');
 
 INSERT INTO schema_migrations (version) VALUES ('20150811005236');
+
+INSERT INTO schema_migrations (version) VALUES ('20150811022717');
 

@@ -15,7 +15,8 @@ class Transfer < ActiveRecord::Base
                         prefix: true
                       }
                   }
-                  
+  
+
   def self.datatable(params, user)
     ActionView::Base.send(:include, Rails.application.routes.url_helpers)
     link_helper = ActionController::Base.helpers    
