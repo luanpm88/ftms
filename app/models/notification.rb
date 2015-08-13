@@ -70,7 +70,7 @@ class Notification < ActiveRecord::Base
     if user.has_role?("education_consultant") && !user.has_role?("admin") && !user.has_role?("manager")
       records = records.where(account_manager: user.id)
     end
-    return records.count > 0 ? "" : records.count
+    return records.count == 0 ? "" : records.count
   end
   
   
