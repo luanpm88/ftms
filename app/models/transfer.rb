@@ -49,7 +49,7 @@ class Transfer < ActiveRecord::Base
       item = [
               '<div class="text-left">'+item.transfer_date.strftime("%d-%b-%Y")+"</div>",
               '<div class="text-left">'+item.description+"</div>",
-              '<div class="text-center">'+item.hours.to_s+"</div>",
+              '<div class="text-center">'+item.hour.to_s+"</div>",
               '<div class="text-right">'+ApplicationController.helpers.format_price(item.money)+"</div>",
               '<div class="text-right">'+ApplicationController.helpers.format_price(item.admin_fee.to_f)+"</div>",
               '<div class="text-right">'+ApplicationController.helpers.format_price(item.total)+"</div>",
