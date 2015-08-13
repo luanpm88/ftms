@@ -4,7 +4,7 @@ class CreateTransfers < ActiveRecord::Migration
       t.integer :contact_id
       t.integer :user_id
       t.datetime :transfer_date
-      t.integer :hours
+      t.integer :hour
       t.decimal :money
       t.decimal :admin_fee
       t.integer :transfer_for
