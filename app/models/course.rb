@@ -207,11 +207,11 @@ class Course < ActiveRecord::Base
   end
   
   def courses_phrase_list
-    Course.render_courses_phrase_list(courses_phrases.joins(:phrase).order("phrases.name, courses_phrases.start_at"))
+    Course.render_courses_phrase_list(courses_phrases.joins(:phrase).order("phrases.id, courses_phrases.start_at"))
   end
   
   def courses_phrase_list_by_sudent(student)
-    Course.render_courses_phrase_list(courses_phrases_by_sudent(student).includes(:phrase).order("phrases.name, courses_phrases.start_at"))    
+    Course.render_courses_phrase_list(courses_phrases_by_sudent(student).includes(:phrase).order("phrases.id, courses_phrases.start_at"))    
   end
   
   def courses_phrases_by_sudent(student)
