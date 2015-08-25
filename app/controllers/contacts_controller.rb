@@ -9,7 +9,7 @@ class ContactsController < ApplicationController
   # GET /contacts
   # GET /contacts.json
   def index
-    @types = [ContactType.student.id.to_s,ContactType.inquiry.id.to_s]
+    @types = [ContactType.student.id.to_s,ContactType.inquiry.id.to_s,ContactType.lecturer.id.to_s]
     @individual_statuses = ["true"]
     
     if params[:course_id]

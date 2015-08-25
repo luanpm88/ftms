@@ -15,10 +15,15 @@ class Course < ActiveRecord::Base
   has_and_belongs_to_many :contacts
   has_many :contacts_courses
   
-  has_many :courses_phrases
+  has_many :courses_phrases, :dependent => :destroy
   has_and_belongs_to_many :phrases
   
-  has_many :course_prices
+  has_many :course_prices, :dependent => :destroy
+  
+  has_many :drafts, :class_name => "Course", :foreign_key => "parent_id"
+  belongs_to :parent, :class_name => "Course", :foreign_key => "parent_id"
+  
+  has_one :current, -> { order created_at: :desc }, class_name: 'Course', foreign_key: "parent_id"
   
   pg_search_scope :search,
                   against: [:description],
@@ -33,13 +38,20 @@ class Course < ActiveRecord::Base
                         prefix: true
                       }
                   }
-                  
+  
+
+  def self.main_courses
+    self.where(parent_id: nil)
+  end
+  
   def self.full_text_search(q)
-    self.order("courses.intake DESC").search(q).limit(50).map {|model| {:id => model.id, :text => model.display_name} }
+    self.main_courses.order("courses.intake DESC").search(q).limit(50).map {|model| {:id => model.id, :text => model.display_name} }
   end
   
   def course_exist
-    exist = Course.where("course_type_id = ? AND subject_id = ? AND EXTRACT(YEAR FROM courses.intake) = ? AND EXTRACT(MONTH FROM courses.intake) = ?",
+    return false if draft?
+    
+    exist = Course.main_courses.where("course_type_id = ? AND subject_id = ? AND EXTRACT(YEAR FROM courses.intake) = ? AND EXTRACT(MONTH FROM courses.intake) = ?",
                           self.course_type_id, self.subject_id, self.intake.year, self.intake.month
                         )
     
@@ -50,7 +62,7 @@ class Course < ActiveRecord::Base
   end
   
   def self.filters(params, user)
-    @records = self.joins(:course_type,:subject)
+    @records = self.main_courses.joins(:course_type,:subject)
     
     @records = @records.search(params["search"]["value"]) if !params["search"]["value"].empty?
     @records = @records.where("EXTRACT(YEAR FROM courses.intake) = ? ", params["intake_year"]) if params["intake_year"].present?
@@ -66,6 +78,17 @@ class Course < ActiveRecord::Base
     if params["lecturers"].present?
       @records = @records.where("courses.lecturer_id IN (#{params["lecturers"]})") if params["lecturers"].present?
     end
+    
+    if params[:status].present?
+      if params[:status] == "pending"
+        @records = @records.where("courses.status LIKE ?","%_pending]%")
+      else
+        @records = @records.where("courses.status LIKE ?","%[#{params[:status]}]%")
+      end
+    end    
+    #if !params[:status].present? || params[:status] != "deleted"
+    #  @records = @records.where("courses.status NOT LIKE ?","%[deleted]%")
+    #end
     
     return @records
   end
@@ -98,7 +121,7 @@ class Course < ActiveRecord::Base
     @records = @records.limit(params[:length]).offset(params["start"])
     data = []
     
-    actions_col = 8
+    actions_col = 9
     @records.each do |item|
       item = [
               '<div class="text-left nowrap">'+item.display_intake+"</div>",
@@ -109,6 +132,7 @@ class Course < ActiveRecord::Base
               '<div class="text-center">'+item.student_count_link+"</div>",              
               '<div class="text-center">'+item.created_at.strftime("%d-%b-%Y")+"</div>",
               '<div class="text-center">'+item.user.staff_col+"</div>",
+              '<div class="text-center">'+item.display_statuses+"</div>",
               "", 
             ]
       data << item
@@ -337,6 +361,172 @@ class Course < ActiveRecord::Base
         new_price.save
       end      
     end
+  end
+  
+  def draft?
+    !parent.nil?
+  end
+  
+  def update_status(action, user, older = nil)
+    statuses = []
+    
+    # when create new contact
+    if action == "create"      
+      # check if the contact is student
+      self.add_status("new_pending")
+    end
+    
+    # when update exist contact
+    if action == "update"
+      # just update when exist active
+      self.add_status("update_pending") if !self.has_status("new_pending")
+    end
+    
+    self.check_statuses
+  end  
+  
+  def statuses
+    status.to_s.split("][").map {|s| s.gsub("[","").gsub("]","")}
+  end
+  
+  def display_statuses
+    return "" if statuses.empty?
+    result = statuses.map {|s| "<span title=\"Last updated: #{current.created_at.strftime("%d-%b-%Y, %I:%M %p")}; By: #{current.user.name}\" class=\"badge user-role badge-info contact-status #{s}\">#{s}</span>"}
+    result.join(" ").html_safe
+  end
+  
+  
+  def approve_new(user)
+    if statuses.include?("new_pending")          
+      self.delete_status("new_pending")      
+      self.check_statuses
+      
+      self.save_draft(user)
+    end
+  end
+  
+  def approve_update(user)
+    if statuses.include?("update_pending")
+      self.delete_status("update_pending")
+      self.check_statuses
+      
+      self.save_draft(user) 
+    end
+  end
+  
+  def approve_delete(user)
+    if statuses.include?("delete_pending")
+      self.set_statuses(["deleted"])
+      self.check_statuses
+      
+      self.save_draft(user)
+    end
+  end
+  
+  def check_statuses
+    if !statuses.include?("deleted") && !statuses.include?("delete_pending") && !statuses.include?("update_pending") && !statuses.include?("new_pending") && !statuses.include?("education_consultant_pending") && !statuses.include?("no_education_consultant")
+      add_status("active")
+    else
+      delete_status("active")
+    end    
+  end
+  
+  def set_statuses(arr)
+    self.update_attribute(:status, "["+arr.join("][")+"]")    
+  end
+  
+  def add_status(st)
+    sts = self.statuses
+    if !sts.include?(st)
+      sts << st
+      self.set_statuses(sts)
+    end
+  end
+  
+  def delete_status(st)
+    sts = self.statuses
+    sts.delete(st)
+    
+    self.set_statuses(sts)
+  end
+  
+  def has_status(st)
+    self.statuses.include?(st)
+  end
+  
+  def older
+    if !draft?
+      return drafts.order("created_at DESC").second
+    else
+      return parent.drafts.where("created_at < ?", self.created_at).order("created_at DESC").first
+    end
+  end
+  
+  def active_older
+    if !draft?
+      olders = drafts.order("created_at DESC").where("status LIKE ?", "%[active]%")
+      return statuses.include?("active") ? olders.second : olders.first
+    else
+      return parent.drafts.where("created_at < ?", self.created_at).where("status LIKE ?", "%[active]%").order("created_at DESC").first
+    end
+  end
+  
+  def field_history(type,value=nil)
+    return [] if !self.current.nil? && self.current.statuses.include?("active")
+    
+    drafts = self.drafts
+    
+    drafts = drafts.where("created_at < ?", self.current.created_at) if self.current.present?    
+    drafts = drafts.where("created_at > ?", self.active_older.created_at) if !self.active_older.nil?    
+    drafts = drafts.order("created_at DESC")
+    
+    if type == "program_paper"
+      drafts = drafts.select {|u| u.course_type_id != self.course_type_id || u.subject_id != self.subject_id}
+    else
+      value = value.nil? ? self[type] : value
+      drafts = drafts.where("#{type} IS NOT NUll AND #{type} != ?", value)
+    end    
+    
+    
+    
+    return drafts
+  end
+  
+  def self.status_options
+    [
+      ["All",""],
+      ["Pending...","pending"],
+      ["Active","active"],
+      ["New Pending","new_pending"],
+      ["Update Pending","update_pending"],
+      ["Delete Pending","delete_pending"],
+      ["Deleted","deleted"]
+    ]
+  end
+  
+  def delete    
+    self.set_statuses(["delete_pending"])
+    return true
+  end
+  
+  def save_draft(user)
+    draft = self.dup
+    draft.parent_id = self.id
+    draft.user_id = user.id
+    
+    cps = []
+    self.courses_phrases.each do |cp|
+      draft.courses_phrases << cp.dup
+    end
+    
+    cps = []
+    self.course_prices.each do |cp|
+      draft.course_prices << cp.dup
+    end
+    
+    draft.save
+    
+    return draft
   end
   
 end

@@ -1,0 +1,129 @@
+<ul class="breadcrumb">
+        <li>
+          <p>YOU ARE HERE</p>
+        </li>
+                    <li>
+			<%= link_to 'Users', users_url %>
+                    </li>
+      </ul>
+      <div class="page-title"> <i class="icon-edit"></i>
+        <h3><span class="semi-bold">User Statistic</span></h3>
+      </div>
+      
+      <div class="grid simple ">
+        <form id="user-sales-statistic-filters-form" action="<%= url_for({controller: "users", action: "statistic"})%>">
+				<% if params[:tab_page] %>
+						 <%= hidden_field_tag "tab_page", 1 %>
+				<% end %>
+                  <div class="grid-body no-border filters sales_statistic-filter">
+                  <div class="row order-filters">
+						<div class="col-md-3">
+						  <h4>Intake</h4>  
+						  <div class="date_select_filter">
+							  <div class="input-with-icon date-group-my right">                                       
+										<%= date_select(:filter, :intake, {selected: @date, use_short_month: true}, class: "multiple") %>
+							  </div>
+						  </div>
+						</div>						
+						<div class="col-md-5">
+							<h4>Consultant</h4>
+							<div class="">
+								<%= select_tag 'users[]', options_for_select(User.all.collect{ |u| [u.name, u.id] }, params[:users]), class: "modern_select width100", multiple: "multiple" %>
+							</div>
+						</div>
+						<div class="col-md-2">
+                                <div class="">
+                                    <h4 style="color:#fff">...</h4>
+                                    <input type="submit" value="Go" class="btn btn-primary" />
+                                </div>
+                        </div>
+                  </div>
+                  </div>
+        </form>
+	  </div>
+      
+      <div class="row">
+          <div class="col-md-12">              
+              <div class="grid simple ">                  
+                  <div class="grid-body no-border">                       
+                          <table class="table no-more-tables no-filter">
+                              <thead>
+                                  <tr>                                                
+                                      <th>Consultant</th>
+									  
+                                      <th class="text-center">Program</th>
+									  <th class="text-center">Note Log</th>
+                                      <th class="text-right">Money</th>
+									  <th class="text-center">New Registered Count</th>
+									  <th class="text-center">New Contact</th>
+                                      <th class="text-center">Count For</th>
+									  <th width="1%" class="text-center">
+										
+									  </th>
+                                  </tr>
+                              </thead>
+								<% @result.each do |u| %>										
+										<tr class="total_row">
+												<td>
+														<%= u[:user].user_link %>
+												</td>
+												
+												<td class="text-center">
+														
+														All</td>
+												<td class="text-center">
+														<strong><%= u[:note] %></strong>
+												</td>
+												<td class="text-right">
+														<strong><%= format_price(u[:total]) %></strong>
+												</td>
+												
+												<td class="text-center">
+														<strong><%= u[:student] %></strong>
+												</td>
+												<td class="text-center">
+														<strong><%= u[:inquiry] %></strong>
+												</td>
+												<td class="text-center"><%= @date.strftime("%b-%Y") %></td>
+												<td>
+														<% if !u[:statistics].empty? %>
+																<a onclick="$('.detail-u-<%= u[:user].id %>').toggle()" href="#open">
+																		<i class="icon icon-ellipsis-horizontal"></i>
+																</a>
+														<% end %>
+												</td>
+										</tr>
+										<% u[:statistics].each do |row| %>	
+												<tr class="details_row detail-u-<%= u[:user].id %>" style="display: none">                                                
+													  <td>
+																
+													  </td>
+													  
+													  <td class="text-center">
+																<%= row[:course_type].short_name %>
+													  </td>
+													  <td></td>
+													  <td class="text-right">
+																<%= format_price(row[:total]) %>
+													  </td>
+													  <td class="text-center">
+																<%= row[:student] %>
+													  </td>
+													  <td class="text-center">
+																<%= row[:inquiry] %>
+													  </td>
+													  <td class="text-center">
+																<%= @date.strftime("%b-%Y") %>
+													  </td>
+													  <td></td>
+												</tr>
+										<% end %>
+								<% end %>
+                          </table>
+                  </div>
+              </div>
+  
+          </div>
+  
+      </div>
+	  

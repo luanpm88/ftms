@@ -39,6 +39,7 @@
                                        <div class="form-group">
                                          <label class="form-label"><%= f.label :intake %></label>
                                          <span class="help">(required)</span>
+										 <%= render "field_history", drafts: @course.field_history("intake"), type: "intake" %>
                                          <div class="input-with-icon date-group right">                                       
                                               <i class=""></i>
                                               <%= f.date_select :intake, use_short_month: true %>
@@ -47,8 +48,9 @@
                                   </div>
 								  <div class="col-md-7">
                                        <div class="form-group">
-										<label class="form-label"><%= f.label :Lecturer %></label>
+										<label class="form-label"><%= f.label :lecturer %></label>
 										<span class="help"></span>
+										<%= render "field_history", drafts: @course.field_history("lecturer_id"), type: "lecturer_id" %>
 										<div class="input-with-icon  right">                                       
 											 <i class=""></i>
 											 <div class="input-with_add_but">
@@ -66,6 +68,7 @@
 										<div class="form-group">
 											 <label class="form-label"><label>Course</label></label>
 											 <span class="help">(required)</span>
+											 <%= render "field_history", drafts: @course.field_history("program_paper"), type: "program_paper" %>
 											 <div class="input-with-icon date-group right">                                       
 												  <i class=""></i>
 												  <div class="input-with_add_but">

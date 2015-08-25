@@ -7655,7 +7655,7 @@ ul.filter {
 .pay_back {
     color: #aa6708;
 }
-.paid {
+.paid, .fully_paid {
     color: #3c763d;
 }
 .not_paid {
@@ -8430,4 +8430,7 @@ td .logo {
 }
 .deleted {
     background: grey;
+}
+.details_row td {
+    background: #f5f5f5 !important;
 }

@@ -35,46 +35,7 @@
 					<%= hidden_field_tag("tab_page", 1) if params[:tab_page] %>
                     
 					
-					 <div class="row column-seperation">
-						 <div class="col-md-12">
-							  <div class="row">
-								   <div class="col-md-3">
-										
-										<div class="form-group">
-										  <label class="form-label"><%= f.label :student %></label>
-										  <span class="help">(required)</span>
-										  <div class="input-with-iconz right">
-											 <input style="width:100%;margin-bottom: 5px;" name="course_register[contact_id]" data="<%= contacts_path(is_individual: true, format: "json") %>" class="select2-ajax-contacts required" value="<%= @contact.id %>" text="<%= @contact.display_name %>" />
-											 <!--<div style="margin: 0;font-size: 18px;font-weight: bold"><strong><%= @contact.display_name %></strong></div>-->
-										  </div>
-										</div>
-										
-								   </div>
-								   <div class="col-md-3">
-										
-										<div class="form-group">
-										  <label class="form-label"><%= f.label :budget_hour %></label>
-										  <span class="help"></span>
-										  <div class="input-with-iconz text-right">
-											 <strong class="big-info"><%= format_price(@contact.budget_hour) %></strong>
-										  </div>
-										</div>
-										
-								   </div>
-								   <div class="col-md-3">
-										
-										<div class="form-group">
-										  <label class="form-label"><%= f.label :budget_money %></label>
-										  <span class="help"></span>
-										  <div class="input-with-iconz text-right">
-											 <strong class="big-info"><%= format_price(@contact.budget_money) %></strong>
-										  </div>
-										</div>
-										
-								   </div>
-							  </div>
-						 </div>
-					 </div>
+					
 					 
 					<h3>Course Registration</h3> 
 					
@@ -222,11 +183,83 @@
 					
 					<br />
 					
+					<h3>Student Information</h3> 
+					
+					<div class="row column-seperation">
+						 <div class="col-md-12">
+							  <div class="row">
+								   <div class="col-md-3">
+										
+										<div class="form-group">
+										  <label class="form-label"><%= f.label :student %></label>
+										  <span class="help">(required)</span>
+										  <div class="input-with-iconz right">
+											 <input style="width:100%;margin-bottom: 5px;" name="course_register[contact_id]" data="<%= contacts_path(is_individual: true, format: "json") %>" class="select2-ajax-contacts required" value="<%= @contact.id %>" text="<%= @contact.display_name %>" />
+											 <!--<div style="margin: 0;font-size: 18px;font-weight: bold"><strong><%= @contact.display_name %></strong></div>-->
+										  </div>
+										</div>
+										
+								   </div>
+								   <div class="col-md-2">
+										
+										<div class="form-group">
+										  <label class="form-label"><label>Defer/Transfer Hour</label></label>
+										  <span class="help"></span>
+										  <div class="input-with-iconz text-right">
+											 <strong class="big-info"><%= format_price(@contact.budget_hour) %></strong>
+										  </div>
+										</div>
+										
+								   </div>
+								   <div class="col-md-2">
+										
+										<div class="form-group">
+										  <label class="form-label"><label>Defer/Transfer Money</label></label>
+										  <span class="help"></span>
+										  <div class="input-with-iconz text-right">
+											 <strong class="big-info transfer-total"><%= format_price(@contact.budget_money) %></strong>
+										  </div>
+										</div>
+										
+								   </div>
+								   <div class="col-md-2">
+										
+										<div class="form-group">
+										  <label class="form-label"><label>Used</label></label>
+										  <span class="help"></span>
+										  <div class="input-with-iconz text-right">
+											 <strong class="big-info transfer-used out_of_date">
+												  0
+											 </strong>
+										  </div>
+										</div>
+										
+								   </div>
+								   <div class="col-md-2">
+										
+										<div class="form-group">
+										  <label class="form-label"><label>Remain</label></label>
+										  <span class="help"></span>
+										  <div class="input-with-iconz text-right">
+											 <strong class="big-info transfer-remain paid">
+												  <%= format_price(@contact.budget_money) %>
+											 </strong>
+										  </div>
+										</div>
+										
+								   </div>
+							  </div>
+						 </div>
+					 </div>
+					
+					
+					<br />
+					
 					<h3>Payment Information</h3> 
 					
 					
 					<div class="row column-seperation">
-						 <div class="col-md-6">
+						 <div class="col-md-5">
 							  <div class="row">								   
 								   <div class="col-md-6">										
 										<div class="form-group">
@@ -316,6 +349,18 @@
 							  <div class="row">
 								   <div class="col-md-6">
 										<div class="form-group">
+											 <label class="form-label"><label>Deferred/Transferred Amount</label></label>
+											 <span class="help"></span>
+											 <div class="input-with-iconz right">                                       
+												  <i class=""></i>
+												   <div class="input-with_add_butz">
+													 <%= text_field_tag "course_register[transfer]", "", class: "form-control price_input price_transfer" %>
+												   </div>
+											 </div>
+										</div>
+								   </div>
+								   <div class="col-md-6">
+										<div class="form-group">
 											 <label class="form-label"><%= f.label :invoice_required %></label>
 											 <span class="help">(required)</span>
 											 <div class="radio radio-success" style="padding: 5px">
@@ -326,7 +371,10 @@
 											 </div>
 										</div>	
 								   </div>
-								   <div class="col-md-6 invoice-info-box">
+								   
+							  </div>
+							  <div class="row invoice-info-box">
+								   <div class="col-md-6">
 										<div class="form-group">
 											 <label class="form-label"><label>VAT Address</label></label>
 											 <span class="help"></span>
@@ -335,9 +383,7 @@
 											 </div>
 										</div>
 								   </div>
-							  </div>
-							  <div class="row invoice-info-box">
-								   <div class="col-md-8">
+								   <div class="col-md-6">
 										<div class="form-group">
 											 <label class="form-label"><label>VAT Name</label></label>
 											 <span class="help"></span>
@@ -346,7 +392,7 @@
 											 </div>
 										</div>
 								   </div>
-								   <div class="col-md-4">
+								   <div class="col-md-6">
 										<div class="form-group">
 											 <label class="form-label"><label>VAT Code</label></label>
 											 <span class="help"></span>
@@ -357,7 +403,7 @@
 								   </div>
 							  </div>
 						 </div>
-						 <div class="col-md-6">
+						 <div class="col-md-7">
 	 						  <div class="form-group">
 								   <label class="form-label"><label>Total Price</label></label>
 								   <span class="help"></span>
@@ -368,7 +414,7 @@
 												  <th class="text-center">Count</th>
 												  <th class="text-right">List Price</th>
 												  <th class="text-right">Discount Program</th>
-												  <th class="text-right">Other discount/credit</th>
+												  <th class="text-right">Other discount / credit</th>
 												  <th class="text-right">Total</th>
 											 </tr>
 											 <tr>
@@ -385,6 +431,7 @@
 												  <td width="50%" class="text-right">
 													   <strong class="total_course_other_discount_price"></strong>
 												  </td>
+
 												  <td width="50%" class="text-right">
 													   <strong class="total_course_price"></strong>
 												  </td>
@@ -404,6 +451,7 @@
 												  <td width="50%" class="text-right">
 													   <strong class="total_stock_other_discount_price"></strong>
 												  </td>
+
 												  <td class="text-right">
 													   <strong class="total_stock_price"></strong>
 												  </td>
@@ -421,9 +469,16 @@
 												  </td>
 											 </tr>
 											 <tr>
+												  <td class="text-right" colspan="5">Deferred/Transferred Amount</td>
+												  <td class="text-right">
+													   <strong class="total_registration_transfer"></strong>
+												  </td>
+											 </tr>
+											 <tr>
 												  <td class="text-right" colspan="5">Total</td>
 												  <td class="text-right">
 													   <strong class="total_registration_price"></strong>
+													   <input type="text" name="total_valid" style="height: 1px;border: none;background: none;padding: 0;margin-top: -20px;" />
 												  </td>
 											 </tr>
 										</table>
@@ -447,3 +502,29 @@
             </div>
 			
       </div>
+
+<script>
+	 $(document).ready(function() {
+		  jQuery.validator.addMethod("transfer", function(value, element) {
+			   var remain = parseFloat($('.transfer-remain').html().replace(/,/g,""))
+			   return remain >= 0.0
+		  }, "Tranferred amout is not valid.");
+		  jQuery.validator.addMethod("total", function(value, element) {
+			   var total = parseFloat($('.total_registration_price').html().replace(/,/g,""))
+			   return total >= 0.0
+		  }, "Total amount is not valid. Please check again.");
+		  
+		  jQuery.validator.addMethod("total_course", function(value, element) {
+			   var total = parseFloat($('.total_course_'+value).html().replace(/,/g,""))
+			   return total >= 0.0
+		  }, "Total amount is not valid. Please check again.");
+		  
+		  $("input[name='course_register[transfer]']").rules('add', {
+			   transfer: true
+		  });
+		  $("input[name='total_valid']").rules('add', {
+			   total: true
+		  });
+	 });
+</script>
+	 

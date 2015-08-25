@@ -18,10 +18,12 @@ class User < ActiveRecord::Base
   has_many :course_types
   has_many :subjects
   has_many :students, class_name: "Contact", :foreign_key => "account_manager_id"
+  has_many :activities
   
   validates :first_name, presence: true
   validates :last_name, presence: true
   validates :email, :presence => true, :uniqueness => true
+  
   
   
   def ability
@@ -240,6 +242,15 @@ class User < ActiveRecord::Base
     link_helper = ActionController::Base.helpers
     
     link_helper.link_to("<img class=\"round-ava\" src=\"#{self.avatar(:square)}\" width=\"35\" /><br /><span class=\"user-name\" />#{self.short_name}</span>".html_safe, {controller: "users", action: "show", id: self.id}, title: self.name, class: "fancybox.ajax fancybox_link")
+  end
+  
+  def user_link(title=nil)
+    ActionView::Base.send(:include, Rails.application.routes.url_helpers)
+    link_helper = ActionController::Base.helpers
+    
+    title = title.nil? ? name : title
+    
+    link_helper.link_to(title, {controller: "users", action: "edit", id: id, tab_page: 1}, class: "tab_page", title: name)
   end
   
   def self.restore_system(params)

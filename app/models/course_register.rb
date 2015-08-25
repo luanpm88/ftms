@@ -14,6 +14,8 @@ class CourseRegister < ActiveRecord::Base
   
   has_many :payment_records, :dependent => :destroy
   
+  has_one :last_payment_record, -> { order created_at: :desc }, class_name: 'PaymentRecord', foreign_key: "course_register_id"
+  
   include PgSearch
   
   pg_search_scope :search,
@@ -174,7 +176,7 @@ class CourseRegister < ActiveRecord::Base
               '<div class="text-right"><label class="col_label top0">Total:</label>'+ApplicationController.helpers.format_price(item.total)+"<label class=\"col_label top0\">Paid:</label>"+ApplicationController.helpers.format_price(item.paid_amount)+"<label class=\"col_label top0\">Receivable:</label>"+ApplicationController.helpers.format_price(item.remain_amount)+"</div>",
               '<div class="text-center">'+item.display_payment_status+item.payment+"</div>",
               '<div class="text-center">'+item.created_date.strftime("%d-%b-%Y")+"</div>",
-              '<div class="text-center">'+item.user.staff_col+"</div>",
+              '<div class="text-center">'+item.contact.account_manager.staff_col+"</div>",
               ""
             ]
       data << item
@@ -232,7 +234,7 @@ class CourseRegister < ActiveRecord::Base
               '<div class="text-right"><label class="col_label top0">Total:</label>'+ApplicationController.helpers.format_price(item.total)+"<label class=\"col_label top0\">Paid:</label>"+ApplicationController.helpers.format_price(item.paid_amount)+"<label class=\"col_label top0\">Remain:</label>"+ApplicationController.helpers.format_price(item.remain_amount)+"</div>",
               '<div class="text-center">'+item.display_payment_status+item.payment+"</div>",
               '<div class="text-center">'+item.created_date.strftime("%d-%b-%Y")+"</div>",
-              '<div class="text-center">'+item.user.staff_col+"</div>",
+              '<div class="text-center">'+item.contact.account_manager.staff_col+"</div>",
               ""
             ]
       data << item
@@ -316,7 +318,7 @@ class CourseRegister < ActiveRecord::Base
   end
   
   def total
-    price - discount.to_f - discount_program_amount - discount.to_f
+    price - discount.to_f - discount_program_amount - discount.to_f - transfer.to_f
   end
   
   def discount_program_amount
@@ -341,6 +343,7 @@ class CourseRegister < ActiveRecord::Base
   def discount=(new)
     self[:discount] = new.to_s.gsub(/\,/, '')
   end
+  
   
   def stock_count
     books_contacts.count

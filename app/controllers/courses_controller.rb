@@ -30,6 +30,7 @@ class CoursesController < ApplicationController
   # GET /courses/new
   def new
     @course = Course.new
+    @course.intake = Time.now.beginning_of_month
   end
 
   # GET /courses/1/edit
@@ -47,8 +48,12 @@ class CoursesController < ApplicationController
     
     respond_to do |format|
       if @course.save
+        @course.update_courses_phrases(params[:courses_phrases])
         new_price = @course.course_prices.new(prices: params[:course_prices], user_id: current_user.id)
         @course.update_price(new_price)
+        
+        @course.update_status("create", current_user)        
+        @course.save_draft(current_user)
         
         format.html { redirect_to params[:tab_page].present? ? "/home/close_tab" : @course, notice: 'Course was successfully created.' }
         format.json { render action: 'show', status: :created, location: @course }
@@ -70,6 +75,9 @@ class CoursesController < ApplicationController
         @course.update_courses_phrases(params[:courses_phrases])
         new_price = @course.course_prices.new(prices: params[:course_prices], user_id: current_user.id)
         @course.update_price(new_price)
+        
+        @course.update_status("update", current_user)        
+        @course.save_draft(current_user)
         
         format.html { redirect_to params[:tab_page].present? ? "/home/close_tab" : @course, notice: 'Course was successfully updated.' }
         format.json { head :no_content }
@@ -129,6 +137,49 @@ class CoursesController < ApplicationController
       @course = Course.find(params[:id])
       render layout: nil
     end
+  end
+  
+  def approve_new
+    authorize! :approve_new, @course
+    
+    @course.approve_new(current_user)
+    
+    respond_to do |format|
+      format.html { redirect_to params[:tab_page].present? ? "/courses/approved" : @contact }
+      format.json { render action: 'show', status: :created, location: @subject }
+    end
+  end
+  
+  def approve_update
+    authorize! :approve_update, @course
+    
+    @course.approve_update(current_user)
+    
+    respond_to do |format|
+      format.html { redirect_to params[:tab_page].present? ? "/courses/approved" : @contact }
+      format.json { render action: 'show', status: :created, location: @subject }
+    end
+  end
+  
+  def approve_delete
+    authorize! :approve_delete, @course
+    
+    @course.approve_delete(current_user)
+    
+    respond_to do |format|
+      format.html { redirect_to params[:tab_page].present? ? "/courses/approved" : @contact }
+      format.json { render action: 'show', status: :created, location: @subject }
+    end
+  end
+  
+  def approved
+    render layout: "content"
+  end
+  
+  def field_history
+    @drafts = @course.field_history(params[:type])
+    
+    render layout: nil
   end
 
   private

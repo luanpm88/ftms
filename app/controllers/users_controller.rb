@@ -155,6 +155,93 @@ class UsersController < ApplicationController
     render layout: "content" if params[:tab_page].present?
   end
   
+  def statistic
+    @date = Date.today
+    if params[:filter]
+      @date = @date.change(:year => params[:filter]["intake(1i)"].to_i, month: params[:filter]["intake(2i)"].to_i)
+    end
+        
+    @statistics = []
+    @users = User.order("users.first_name, users.last_name")
+    @users = @users.where(id: params[:users]) if params[:users].present?
+    
+    current_id = nil
+    
+    @result = []
+    @users.each do |u|
+      row = {statistics: []}
+      group_total = 0.0
+      inquiry_total = 0
+      student_total = 0
+      
+      @course_types = CourseType.order("short_name")
+      @course_types.each do |ct|
+        #@statistics << {user: u, course_type: ct}
+        
+        # sales
+        total = 0.0
+        @records = ContactsCourse.includes(:contact, :course_register, :course => :course_type)
+                              .where("course_registers.cache_payment_status LIKE ?", "%fully_paid%")                              
+                              .where(contacts: {account_manager_id: u.id})
+                              .where(course_types: {id: ct.id}) #.sum(:price)
+                              #.where("EXTRACT(YEAR FROM payment_records.payment_date) = ? ", @date.year)
+                              #.where("EXTRACT(MONTH FROM payment_records.payment_date) = ? ", @date.month)
+        
+        @records.each do |r|
+          sum = r.course_register.last_payment_record.payment_date <= DateTime.parse(@date.to_s).end_of_month &&  r.course_register.last_payment_record.payment_date >= DateTime.parse(@date.to_s).beginning_of_month ? r.price : 0.0
+          total += sum
+          group_total += sum
+        end
+        
+        # Inquiry
+        inquiry = 0
+        @inquiries = Contact.main_contacts.includes(:contact_types, :course_types)
+                            .where(account_manager_id: u.id)                            
+                            .where(course_types: {id: ct.id})
+                            .where("EXTRACT(YEAR FROM contacts.created_at) = ? ", @date.year)
+                            .where("EXTRACT(MONTH FROM contacts.created_at) = ? ", @date.month)
+        inquiry = @inquiries.count
+        #inquiry_total += @inquiries.count
+        
+        # Inquiry
+        student = 0
+        @students = ContactsCourse.includes(:course_register, :contact, :course => :course_type)
+                            .where(contacts: {account_manager_id: u.id})
+                            .where(course_types: {id: ct.id})
+                            .where("EXTRACT(YEAR FROM course_registers.created_date) = ? ", @date.year)
+                            .where("EXTRACT(MONTH FROM course_registers.created_date) = ? ", @date.month)
+        student = @students.count
+        student_total += @students.count
+        
+        row[:statistics] << {user: u, course_type: ct, inquiry: inquiry, student: student, total: total} if total > 0.0 || inquiry > 0 || student > 0
+
+      end
+      
+      note_count = u.activities.where("EXTRACT(YEAR FROM activities.created_at) = ? ", @date.year)
+                    .where("EXTRACT(MONTH FROM activities.created_at) = ? ", @date.month)
+                    .count
+      
+      @inquiries = Contact.main_contacts.includes(:contact_types, :course_types)
+                            .where(account_manager_id: u.id)                            
+                            .where(contact_types: {id: [ContactType.student.id, ContactType.inquiry.id]})
+                            .where("EXTRACT(YEAR FROM contacts.created_at) = ? ", @date.year)
+                            .where("EXTRACT(MONTH FROM contacts.created_at) = ? ", @date.month)
+      inquiry_total = @inquiries.count
+      
+      row[:note] = note_count
+      row[:user] = u
+      row[:inquiry] = inquiry_total
+      row[:student] = student_total
+      row[:course_type] = nil
+      row[:total] = group_total
+      
+      
+      @result << row
+    end
+    
+    
+  end
+  
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_user

@@ -1,0 +1,55 @@
+              <div class="grid simple ">
+                  <div class="grid-body no-border filters transfer-filter">
+						<div class="row order-filters">
+							
+									<div class="col-md-2">
+										<h4>From Date</h4>
+										<div class="date_select_filter">
+										<div class="input-with-icon  right">
+											<div class="input-append success date col-md-10 no-padding">
+												<%= text_field_tag :from_date, nil, :class => "datetime form-control" %>
+												<span class="add-on"><span class="arrow"></span><i class="icon-th"></i></span>
+											</div>
+											<br style="clear: both" />
+											
+										</div>
+										</div>
+									</div>
+									<div class="col-md-2">
+										<h4>To Date</h4>
+										<div class="date_select_filter">
+										<div class="input-with-icon  right">
+											<div class="input-append success date col-md-10 no-padding">
+												<%= text_field_tag :to_date, Time.now.strftime("%d-%b-%Y"), :class => "datetime form-control" %>
+												<span class="add-on"><span class="arrow"></span><i class="icon-th"></i></span>
+											</div>
+											<br style="clear: both" />
+										</div>
+										</div>
+									</div>
+									  
+									<div class="col-md-2">
+										<h4>Transferred From</h4>
+										<div class="">
+											<input style="width:100%;margin-bottom: 5px;" name="from_contact" data="<%= contacts_path(is_individual: true) %>" class="select2-ajax-contacts" />
+										</div>
+									</div>									
+									<div class="col-md-2">
+										<h4>Transferred To</h4>
+										<div class="">
+											<input style="width:100%;margin-bottom: 5px;" name="to_contact" data="<%= contacts_path(is_individual: true) %>" class="select2-ajax-contacts" />
+										</div>
+									</div>
+									
+									<div class="col-md-2 student-transfer-filter">
+										<h4>Related Contact</h4>
+										<div class="">
+											<input style="width:100%;margin-bottom: 5px;" name="contact" data="<%= contacts_path(is_individual: true) %>" class="select2-ajax-contacts" value="<%= @contact.id if !@contact.nil? %>" text="<%= @contact.display_name if !@contact.nil? %>" />
+										</div>
+									</div>
+							
+							
+						</div>
+						
+                  </div>		    
+				</div>

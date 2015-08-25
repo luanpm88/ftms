@@ -1,0 +1,21 @@
+<% if !drafts.empty? %>
+  <i class="icon icon-time contact-field-history" rel="history-<%= type %>" onclick="$('.history-<%= type %>').toggle()"></i>
+  <ul class="history-list history-<%= type %>" style="display: none">
+    <% value = "-1" %>
+    <% drafts.each do |c| %>
+      
+      <% if value != c[type] && ["intake"].include?(type) %>
+        <li><%= c.intake.strftime("%b-%Y") %> <span class="nowrap time-span"><%= c.created_at.strftime("%d-%b-%Y, %I:%M %p") %></span></li>
+      <% end %>
+      <% if value != c[type] && ["lecturer_id"].include?(type) %>
+        <li><%= !c.lecturer.present? ? "[empty]" : c.lecturer.display_name %> <span class="nowrap time-span"><%= c.created_at.strftime("%d-%b-%Y, %I:%M %p") %></span></li>
+      <% end %>
+      <% if value != c[type] && ["program_paper"].include?(type) %>
+        <li><%= c.program_paper_name %> <span class="nowrap time-span"><%= c.created_at.strftime("%d-%b-%Y, %I:%M %p") %></span></li>
+      <% end %>
+      
+      
+      <% value = c[type] %>
+    <% end %>
+  </ul>
+<% end %>

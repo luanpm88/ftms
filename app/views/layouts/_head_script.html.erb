@@ -1,5 +1,15 @@
 <script>
 	
+	function updateTransferInfo() {		
+		if($('input[name="course_register[transfer]"]').length && $('input[name="course_register[transfer]"]').val() != "") {
+			var transfer = parseFloat($('input[name="course_register[transfer]"]').val().replace(/,/g,""))
+			var total = parseFloat($('.transfer-total').html().replace(/,/g,""))
+			var remain = total - transfer
+			$(".transfer-used").html($('input[name="course_register[transfer]"]').val())
+			$(".transfer-remain").html(ReplaceNumberWithDots(remain.toFixed(0)))
+		}
+	}
+	
 	function updateStockPriceForm(input) {
 		
 		var url = "<%= stock_price_form_books_path %>"
@@ -179,6 +189,7 @@
 		var stock = parseFloat($(".total_stock_price").html().replace(/,/g,""))
 		var price_discount_program = 0
 		var price_discount = 0
+		var price_transfer = 0
 		
 		if($('input[name="course_register[discount_program_id]"]').length && $('input[name="course_register[discount_program_id]"]').val() != "") {
 			var text = $('input[name="course_register[discount_program_id]"]').select2("data").text
@@ -194,14 +205,18 @@
 		if($('input[name="course_register[discount]"]').length && $('input[name="course_register[discount]"]').val() != "") {
 			price_discount = parseFloat($('input[name="course_register[discount]"]').val().replace(/,/g,""))
 		}
+		if($('input[name="course_register[transfer]"]').length && $('input[name="course_register[transfer]"]').val() != "") {
+			price_transfer = parseFloat($('input[name="course_register[transfer]"]').val().replace(/,/g,""))
+		}
 		
-		var total = course + stock - price_discount_program - price_discount
+		var total = course + stock - price_discount_program - price_discount - price_transfer
 		
 		$(".total_registration_discount_program").html(ReplaceNumberWithDots(price_discount_program.toFixed(0)))
-		$(".total_registration_discount").html(ReplaceNumberWithDots(price_discount.toFixed(0)))
+		$(".total_registration_discount").html(ReplaceNumberWithDots(price_discount.toFixed(0)))		
+		$(".total_registration_transfer").html(ReplaceNumberWithDots(price_transfer.toFixed(0)))
 		$(".total_registration_price").html(ReplaceNumberWithDots(total.toFixed(0)))
 		
-		
+		updateTransferInfo()
 	}
 	
 	function calculateCoursePriceForm() {
@@ -304,9 +319,15 @@
 					}
 				});
 				
-				format_price(box.find('input.price_input'));
+				format_price(box.find('input.price_input'));				
 				
 				calculateCoursePriceForm()
+				
+				$("input[name='total_course']").each(function() {
+					$(this).rules('add', {
+						 total_course: true
+					});
+				});
 			}
 		});
 	}
@@ -1027,9 +1048,13 @@
 					d.subjects = $(".course-filter select[name='filter[subjects[]]']").val()
 					d.students = $(".course-filter input[name='filter[students[]]']").val()
 					d.lecturers = $(".course-filter input[name='filter[lecturers[]]']").val()
+					
+					if($(".course-filter select[name='status']").val()) {
+						d.status =  $(".course-filter select[name='status']").val()
+					}
 				}
 			},
-			"columnDefs": [ { "targets": [2,3,4,5,7,8], "orderable": false } ],
+			"columnDefs": [ { "targets": [2,3,4,5,7,8,9], "orderable": false } ],
 			"order": [],
 			"aLengthMenu": [[10, 25, 50, 75, 100], [10, 25, 50, 75, 100]],
 			"iDisplayLength": 25
@@ -1048,6 +1073,10 @@
 					d.subjects = $(".course-filter select[name='filter[subjects[]]']").val()
 					d.students = $(".course-filter input[name='filter[students[]]']").val()
 					d.lecturers = $(".course-filter input[name='filter[lecturers[]]']").val()
+					
+					if($(".course-filter select[name='status']").val()) {
+						d.status =  $(".course-filter select[name='status']").val()
+					}
 				}
 			},
 			"columnDefs": [ { "targets": [2,3,5], "orderable": false } ],
@@ -1310,10 +1339,24 @@
 			"ajax": {
 				"url": "<%= datatable_transfers_path %>",
 				"data": function ( d ) {
-					//d.course_types = $("select[name='filter[course_types[]]']").val()
+					if($(".transfer-filter input[name='from_date']").val()) {
+						d.from_date =  $(".transfer-filter input[name='from_date']").val()
+					}
+					if($(".transfer-filter input[name='to_date']").val()) {
+						d.to_date =  $(".transfer-filter input[name='to_date']").val()
+					}
+					if($(".transfer-filter input[name='to_contact']").val()) {
+						d.to_contact =  $(".transfer-filter input[name='to_contact']").val()
+					}
+					if($(".transfer-filter input[name='from_contact']").val()) {
+						d.from_contact =  $(".transfer-filter input[name='from_contact']").val()
+					}
+					if($(".transfer-filter input[name='contact']").val()) {
+						d.contact =  $(".transfer-filter input[name='contact']").val()
+					}
 				}
 			},
-			"columnDefs": [ { "targets": [0,1,2,3,4,5,7,8], "orderable": false } ],
+			"columnDefs": [ { "targets": [0,1,2,3,4,5,6,7,9,10], "orderable": false } ],
 			"order": [],
 			"aLengthMenu": [[10, 25, 50, 75, 100], [10, 25, 50, 75, 100]],
 			"iDisplayLength": 25
@@ -1801,7 +1844,7 @@
 		
 		$('.date-group select').select2();
 		
-		$('.payment-record-filter select, .payment-record-filter input, .course-filter select, .course-filter input, .book-filter input, .book-filter select, .course-register-filter input, .course-register-filter select').change(function() {
+		$('.transfer-filter select, .transfer-filter input,.payment-record-filter select, .payment-record-filter input, .course-filter select, .course-filter input, .book-filter input, .book-filter select, .course-register-filter input, .course-register-filter select').change(function() {
 			$('.datatable-courses').dataTable().fnFilter();
 			$('.datatable-student-courses').dataTable().fnFilter();
 			$('.datatable-subjects').dataTable().fnFilter();
@@ -1812,6 +1855,7 @@
 			$('.datatable-course-registers').dataTable().fnFilter();
 			$('.datatable-student-course-registers').dataTable().fnFilter();
 			$('.datatable-payment-records').dataTable().fnFilter();
+			$('.datatable-transfers').dataTable().fnFilter();
 		});
 		
 		checkContactType()
@@ -2064,10 +2108,10 @@
 		$(document).on("keyup", ".stock_box input", function(e) {
 			calculateStockPriceForm()
 		});
-		$('input[name="course_register[discount_program_id]"], input[name="course_register[discount]"]').change(function() {
+		$('input[name="course_register[discount_program_id]"], input[name="course_register[discount]"], input[name="course_register[transfer]"]').change(function() {
 			updateTotalRegsitrationPrice()
 		})
-		$('input[name="course_register[discount]"]').keyup(function() {
+		$('input[name="course_register[discount]"], input[name="course_register[transfer]"]').keyup(function() {
 			updateTotalRegsitrationPrice()
 		})
 		

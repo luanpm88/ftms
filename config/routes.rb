@@ -97,6 +97,14 @@ Hkerp::Application.routes.draw do
       get :student_courses
       get :courses_phrases_checkboxs
       get :course_price_select
+      
+      get :delete
+      get :approve_new
+      get :approve_update
+      get :approve_delete
+      
+      get :approved
+      get :field_history
     end
   end
   
@@ -161,6 +169,8 @@ Hkerp::Application.routes.draw do
     collection do
       get :avatar
       get :activity_log
+      
+      get :statistic
     end
   end
   

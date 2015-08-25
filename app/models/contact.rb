@@ -66,6 +66,8 @@ class Contact < ActiveRecord::Base
   
   has_many :transfers
   
+  has_many :transferred_records, :class_name => "Transfer", :foreign_key => "transfer_for"
+  
   after_validation :update_cache
   before_validation :check_type
   
@@ -102,7 +104,7 @@ class Contact < ActiveRecord::Base
     self.contact_types.delete(ContactType.student) if joined_course_types.empty?
     if !joined_course_types.empty?
       self.contact_types << ContactType.student if !self.contact_types.include?(ContactType.student)
-      self.contact_types.delete(ContactType.inquiry)
+      #self.course_types = self.course_types - joined_course_types
     end
   end
   
@@ -114,10 +116,10 @@ class Contact < ActiveRecord::Base
   end
   
   def first_name=(str)
-    self[:first_name] = str.strip
+    self[:first_name] = str.to_s.strip
   end
   def last_name=(str)
-    self[:last_name] = str.strip
+    self[:last_name] = str.to_s.strip
   end
   def name=(str)
     self[:name] = str.strip
@@ -236,11 +238,10 @@ class Contact < ActiveRecord::Base
       else
         @records = @records.where("contacts.status LIKE ?","%[#{params[:status]}]%")
       end
-    end
-    
-    if !params[:status].present? || params[:status] != "deleted"
-      @records = @records.where("contacts.status NOT LIKE ?","%[deleted]%")
-    end
+    end    
+    #if !params[:status].present? || params[:status] != "deleted"
+    #  @records = @records.where("contacts.status NOT LIKE ?","%[deleted]%")
+    #end
     
     # Areas filter
     cities_ids = []
@@ -973,7 +974,7 @@ class Contact < ActiveRecord::Base
   
   def display_statuses
     return "" if statuses.empty?
-    result = statuses.map {|s| "<span title=\"Last updated: #{current.created_at.strftime("%d-%b-%Y, %I:%M %p")}\" class=\"badge user-role badge-info contact-status #{s}\">#{s}</span>"}
+    result = statuses.map {|s| "<span title=\"Last updated: #{current.created_at.strftime("%d-%b-%Y, %I:%M %p")} / By: #{current.user.name}\" class=\"badge user-role badge-info contact-status #{s}\">#{s}</span>"}
     result.join(" ").html_safe
   end
   
@@ -1088,12 +1089,19 @@ class Contact < ActiveRecord::Base
   end
   
   def field_history(type,value=nil)
+    return [] if !self.current.nil? && self.current.statuses.include?("active")
+    
     drafts = self.drafts
-    value = value.nil? ? self[type] : value
-    drafts = drafts.where("created_at < ?", self.current.created_at) if self.current.present?
-    drafts = drafts.where("#{type} IS NOT NUll AND #{type} != ?", value)
-    drafts = drafts.where("created_at >= ?", self.active_older.created_at) if !self.active_older.nil?
+    
+    drafts = drafts.where("created_at < ?", self.current.created_at) if self.current.present?    
+    drafts = drafts.where("created_at > ?", self.active_older.created_at) if !self.active_older.nil?    
     drafts = drafts.order("created_at DESC")
+    
+    if false
+    else
+      value = value.nil? ? self[type] : value
+      drafts = drafts.where("#{type} IS NOT NUll AND #{type} != ?", value)
+    end    
     
     return drafts
   end
@@ -1126,15 +1134,15 @@ class Contact < ActiveRecord::Base
   end
   
   def budget_hour
-    all_transfers.sum(:hour)
+    all_transferred_records.sum(:hour)
   end
   
   def budget_money
-    all_transfers.sum(:money) - all_transfers.sum(:admin_fee)
+    all_transferred_records.sum(:money) - all_transferred_records.sum(:admin_fee)
   end
   
-  def all_transfers
-    transfers
+  def all_transferred_records
+    transferred_records
   end
   
   def self.status_options
@@ -1157,6 +1165,20 @@ class Contact < ActiveRecord::Base
   def delete    
     self.set_statuses(["delete_pending"])
     return true
+  end
+  
+  def rollback(user)
+    older = self.active_older
+    
+    self.update_attributes(older.attributes.select {|k,v| !["draft_for","id", "created_at", "updated_at"].include?(k) })
+    
+    self.contact_types = older.contact_types
+    self.course_types = older.course_types
+    self.lecturer_course_types = older.lecturer_course_types
+    
+    self.save
+    
+    self.save_draft(user)
   end
   
 end

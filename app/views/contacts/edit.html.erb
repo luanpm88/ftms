@@ -49,17 +49,19 @@
 												</li>
 												<li class="<%= "active" if ["course_registration"].include?(params[:tab]) %>">
 												  <a href="#course_registration">Course Registration (<%= @contact.course_register_count %>)</a>
-												</li>
-												<li class="<%= "active" if ["transfer"].include?(params[:tab]) %>">
-												  <a href="#transfer">Defer/Transfer</a>
-												</li>
+												</li>												
 												<li class="<%= "active" if ["payment"].include?(params[:tab]) %>">
 												  <a href="#payment">Payment Record</a>
 												</li>
 												
 										<% end %>
+										
+										<li class="<%= "active" if ["transfer"].include?(params[:tab]) %>">
+												<a href="#transfer">Defer/Transfer</a>
+										</li>
+										
 										<li class="<%= "active" if ["activity"].include?(params[:tab]) %>">
-												<a href="#activity">Activity Log</a>
+												<a href="#activity">Note Log</a>
 										</li>
 								
 								<% end %>
@@ -144,7 +146,7 @@
 																					<th class="text-right">Total</th>
 																					<th class="text-center">Payment Status</th>
 																					<th class="text-center">Created on</th>
-																					<th class="text-center" width="1%">Creator</th>
+																					<th class="text-center" width="1%">Consultant</th>
 																					<th class="text-right" width="1%">Actions</th>
 																				</tr>
 																			</thead>                                        
@@ -206,11 +208,13 @@
 												<%= render "payment" %>
 										</div>
 		
-										<div class="tab-pane <%= "active" if ["transfer"].include?(params[:tab]) %>" id="transfer">
+										
+		
+						<% end %>
+						
+								<div class="tab-pane <%= "active" if ["transfer"].include?(params[:tab]) %>" id="transfer">
 												<%= render "transfer" %>
 										</div>
-		
-								<% end %>
 		
 								<div class="tab-pane <%= "active" if ["activity"].include?(params[:tab]) %>" id="activity">
 										<%= render "activity" %>

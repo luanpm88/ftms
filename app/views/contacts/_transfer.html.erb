@@ -1,10 +1,10 @@
-	<h4><span class="semi-bold">Budget</span></h4>
+										<h4><span class="semi-bold">Defer/Transfer Status</span></h4>
 												 <div class="row column-seperation">
 													  
 													  <div class="col-md-3">
 														   
 														   <div class="form-group">
-															 <label class="form-label"><label>Budget Hour</label></label>
+															 <label class="form-label"><label>Defer/Transfer Hour</label></label>
 															 <span class="help"></span>
 															 <div class="input-with-iconz text-right">
 																<strong class="big-info"><%= format_price(@contact.budget_hour) %></strong>
@@ -15,7 +15,7 @@
 													  <div class="col-md-3">
 														   
 														   <div class="form-group">
-															 <label class="form-label"><label>Budget Money</label></label>
+															 <label class="form-label"><label>Defer/Transfer Money</label></label>
 															 <span class="help"></span>
 															 <div class="input-with-iconz text-right">
 																<strong class="big-info"><%= format_price(@contact.budget_money) %></strong>
@@ -24,6 +24,15 @@
 														   
 													  </div>
 												 </div>
+										
+										<%= render "transfers/filter" %>
+										
+										<style>
+												.student-transfer-filter {
+														position: absolute;
+														top: -90000px;
+												}
+										</style>
 											
 										<h4><span class="semi-bold">Payments List</span></h4>
 										<div class="row">
@@ -37,7 +46,9 @@
 														 
 															<table class="table table-striped no-more-tables datatable-transfers no-filter">
                                                                     <thead>
-                                                                        <tr>                                                
+                                                                        <tr>
+																				<th class="text-center">From</th>
+																				<th class="text-center">To</th>
                                                                                 <th>Date</th>
 																				<th class="text-left">Description</th>
 																				<th class="text-center">Hour</th>

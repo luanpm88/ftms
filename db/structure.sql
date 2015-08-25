@@ -823,7 +823,8 @@ CREATE TABLE course_registers (
     debt_date timestamp without time zone,
     cache_delivery_status character varying,
     cache_payment_status character varying,
-    discount numeric
+    discount numeric,
+    transfer numeric
 );
 
 
@@ -925,7 +926,9 @@ CREATE TABLE courses (
     created_at timestamp without time zone NOT NULL,
     updated_at timestamp without time zone NOT NULL,
     subject_id integer,
-    lecturer_id integer
+    lecturer_id integer,
+    status text,
+    parent_id integer
 );
 
 
@@ -1512,7 +1515,7 @@ CREATE TABLE transfers (
     contact_id integer,
     user_id integer,
     transfer_date timestamp without time zone,
-    hours integer,
+    hour integer,
     money numeric,
     admin_fee numeric,
     transfer_for integer,
@@ -2509,7 +2512,11 @@ INSERT INTO schema_migrations (version) VALUES ('20150805072337');
 
 INSERT INTO schema_migrations (version) VALUES ('20150811004205');
 
-INSERT INTO schema_migrations (version) VALUES ('20150811005236');
-
 INSERT INTO schema_migrations (version) VALUES ('20150811022717');
+
+INSERT INTO schema_migrations (version) VALUES ('20150818012431');
+
+INSERT INTO schema_migrations (version) VALUES ('20150818012500');
+
+INSERT INTO schema_migrations (version) VALUES ('20150821033006');
 

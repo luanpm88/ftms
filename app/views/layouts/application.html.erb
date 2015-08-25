@@ -30,7 +30,7 @@
 <!-- END CORE CSS FRAMEWORK -->
 
 <!-- BEGIN CSS TEMPLATE -->
-<%= stylesheet_link_tag "style.css?v=17" %>
+<%= stylesheet_link_tag "style.css?v=18" %>
 <%= stylesheet_link_tag "responsive.css" %>
 <%= stylesheet_link_tag "custom-icon-set.css" %>
 <!-- END CSS TEMPLATE -->
@@ -324,17 +324,24 @@
 		
 		
 		<% if can? :course_features, User %>
-			<li <% if ["course_registers","course_types","subjects","courses"].include?(params[:controller]) %> class="active open"<% end %>>
+			<li <% if ["transfer","course_registers","course_types","subjects","courses"].include?(params[:controller]) %> class="active open"<% end %>>
 					<%= link_to "#" do %>
 						<i class="icon-briefcase"></i>
 						<span class="title">Course Admin</span>
 						<span class="arrow<% if ["course_registers","course_types","subjects","courses"].include?(params[:controller]) %> open<% end %>"></span>
+						<span class="badge badge-important pull-right alert-level1"><%= Notification.course_admin_count(current_user) %></span>
 					<% end %>
 					<ul class="sub-menu">
 						<li<% if params[:controller] == "course_registers" && params[:action] == "index" %> class="active"<% end %>><%= link_to 'Registration Management', course_registers_path(tab_page:1), class: "tab_page" %></li>
+						<li<% if params[:controller] == "transfers" %> class="active"<% end %>><%= link_to 'Defer/Transfer Management', transfers_path(tab_page:1), class: "tab_page" %></li>
 						<li<% if params[:controller] == "course_types" && params[:action] == "index" %> class="active"<% end %>><%= link_to 'Program Management', course_types_path(tab_page:1), class: "tab_page" %></li>
 						<li<% if params[:controller] == "subjects" && params[:action] == "index" %> class="active"<% end %>><%= link_to 'Paper Management', subjects_path(tab_page:1), class: "tab_page" %></li>						
-						<li<% if params[:controller] == "courses" && params[:action] == "index" %> class="active"<% end %>><%= link_to 'Course Management', courses_path(tab_page:1), class: "tab_page" %></li>
+						<li<% if params[:controller] == "courses" && params[:action] == "index" %> class="active"<% end %>>
+							<a title="Contact Management (pending)" href="<%= url_for(courses_url(tab_page:1, status: "pending")) %>" class="tab_page noti">
+								<span class="badge badge-important pull-right alert-level2"><%= Notification.course_pending_count(current_user) %></span>
+							</a>
+							<%= link_to 'Course Management', courses_path(tab_page:1), class: "tab_page" %>
+						</li>
 						<li<% if params[:controller] == "phrases" && params[:action] == "index" %> class="active"<% end %>><%= link_to 'Phrase Management', phrases_path(tab_page:1), class: "tab_page" %></li>											
 					</ul>
 			</li>
@@ -416,12 +423,27 @@
 			  <ul class="sub-menu">
 				<li<% if params[:controller] == "payment_records" %> class="active"<% end %>><%= link_to 'Payment Record', payment_records_path(tab_page:1), class: "tab_page" %></li>
 				<li<% if params[:controller] == "bank_accounts" %> class="active"<% end %>><%= link_to 'Bank Account', bank_accounts_path(tab_page:1), class: "tab_page" %></li>
+				
 
 			  </ul>
 			</li>
 		<% end %>
 		
-		
+		<% if current_user.has_role?("manager") || current_user.has_role?("admin") %>
+			<li <% if params[:controller] == "users" %> class="active open"<% end %>>
+					<%= link_to contacts_url do %>
+					  <i class="icon-user"></i>
+					  <span class="title">User</span>
+					  <span class="arrow<% if params[:controller] == "users" %> open<% end %>"></span>
+					<% end %>
+					<ul class="sub-menu">
+						
+						<li<% if params[:controller] == "users" && params[:action] == "index" %> class="active"<% end %>><%= link_to 'User Management', users_path(tab_page:1), class: "tab_page" %></li>
+						<li<% if params[:controller] == "users" && params[:action] == "statistic" %> class="active"<% end %>><%= link_to 'Statistic', statistic_users_path(tab_page:1), class: "tab_page" %></li>
+						
+					</ul>
+			</li>
+		<% end %>
 	
 		<% if current_user.has_role? "admin" %>
 			<li <% if params[:controller] == "users" %> class="active open"<% end %>>

@@ -66,11 +66,34 @@ class Notification < ActiveRecord::Base
   end
   
   def self.contact_pending_count(user)
-    records = Contact.main_contacts.where("contacts.status LIKE ?","%_pending]%")
+    if !user.has_role?("education_consultant") && !user.has_role?("admin") && !user.has_role?("manager")
+      return ""
+    end       
+    
     if user.has_role?("education_consultant") && !user.has_role?("admin") && !user.has_role?("manager")
+      records = Contact.main_contacts.where("contacts.status LIKE ? OR contacts.status LIKE ? OR contacts.status LIKE ?","%[new_pending]%","%[update_pending]%","%[delete_pending]%")
       records = records.where(account_manager: user.id)
     end
+    
+    if user.has_role?("admin") || user.has_role?("manager")
+      records = Contact.main_contacts.where("contacts.status LIKE ?","%_pending]%")
+    end
+    
     return records.count == 0 ? "" : records.count
+  end
+  
+  def self.course_pending_count(user)
+    if !user.has_role?("admin") && !user.has_role?("manager")
+      return ""
+    end
+    
+    records = Course.main_courses.where("courses.status LIKE ?","%pending]%")
+    
+    return records.count == 0 ? "" : records.count
+  end
+  
+  def self.course_admin_count(user)
+    self.course_pending_count(user)
   end
   
   
