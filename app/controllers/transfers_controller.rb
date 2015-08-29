@@ -33,6 +33,7 @@ class TransfersController < ApplicationController
   def create
     @transfer = Transfer.new(transfer_params)
     @transfer.user = current_user
+    @transfer.update_transfer_details(params[:transfer_details])
 
     respond_to do |format|
       if @transfer.save

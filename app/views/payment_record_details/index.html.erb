@@ -1,0 +1,31 @@
+<p id="notice"><%= notice %></p>
+
+<h1>Listing Payment Record Details</h1>
+
+<table>
+  <thead>
+    <tr>
+      <th>Contacts course</th>
+      <th>Books contact</th>
+      <th>Amount</th>
+      <th colspan="3"></th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% @payment_record_details.each do |payment_record_detail| %>
+      <tr>
+        <td><%= payment_record_detail.contacts_course_id %></td>
+        <td><%= payment_record_detail.books_contact_id %></td>
+        <td><%= payment_record_detail.amount %></td>
+        <td><%= link_to 'Show', payment_record_detail %></td>
+        <td><%= link_to 'Edit', edit_payment_record_detail_path(payment_record_detail) %></td>
+        <td><%= link_to 'Destroy', payment_record_detail, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<br>
+
+<%= link_to 'New Payment record detail', new_payment_record_detail_path %>

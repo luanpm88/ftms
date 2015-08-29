@@ -1,4 +1,33 @@
 <script>
+	function updatePaymentRecord() {
+		var total = 0
+		$(".payment_box").each(function() {
+			if($(this).find('.detail_paid').val() != "") {
+				total += parseFloat($(this).find('.detail_paid').val().replace(/,/g,""))
+			}
+		})		
+		$(".payment-record-paid").html(ReplaceNumberWithDots(total.toFixed(0)))
+		
+		// remain
+		var receivable = parseFloat($('.payment-record-remain').attr("rel"))
+		var remain = receivable - total
+		
+		$(".payment-record-remain").html(ReplaceNumberWithDots(remain.toFixed(0)))
+	}
+	
+	function updatePaymentRecordDetails(input) {
+		var box = input.parents(".payment_box")
+		var paid = 0
+		if(box.find('.detail_paid').val() != "") {
+			paid = parseFloat(box.find('.detail_paid').val().replace(/,/g,""))
+		}
+		var total = parseFloat(box.find('.detail_remain').attr("rel"))
+		
+		var remain = total - paid
+		
+		box.find('.detail_remain').html(ReplaceNumberWithDots(remain.toFixed(0)))
+		updatePaymentRecord()
+	}
 	
 	function updateTransferInfo() {		
 		if($('input[name="course_register[transfer]"]').length && $('input[name="course_register[transfer]"]').val() != "") {
@@ -7,11 +36,22 @@
 			var remain = total - transfer
 			$(".transfer-used").html($('input[name="course_register[transfer]"]').val())
 			$(".transfer-remain").html(ReplaceNumberWithDots(remain.toFixed(0)))
+			
+			// Transfer Hour			
+			var hour_total = parseFloat($('.transfer-total-hour').html().replace(/,/g,""))
+			var hour_transfer = (parseFloat(transfer)/parseFloat(total))*parseFloat(hour_total)
+			if (hour_total == 0) {
+				hour_transfer = 0
+			}
+			var hour_remain = hour_total - hour_transfer
+			
+			$(".transfer-used-hour").html(hour_transfer.toFixed(2))
+			$(".transfer-remain-hour").html(hour_remain.toFixed(2))
+			$("input[name='course_register[transfer_hour]']").val(hour_transfer)
 		}
 	}
 	
-	function updateStockPriceForm(input) {
-		
+	function updateStockPriceForm(input) {		
 		var url = "<%= stock_price_form_books_path %>"
 		var book_id = input.select2("val")
 		var number = input.attr("box_number")
@@ -2061,6 +2101,15 @@
 				next.hide()
 			}
 		})
+		$('.price_line input').click(function() {
+			var val = $(this).val()
+			var next = $(this).parent().next()
+			if (val != "" || parseInt(val) > 0) {
+				next.show()
+			} else {
+				next.hide()
+			}
+		})
 		
 		calculateCoursePriceForm()
 		$(document).on("change", ".phrase_box input, .phrase_box select", function(e) {
@@ -2097,7 +2146,7 @@
 		})
 		
 		$(document).on("change", 'select.stock_select', function() {			
-			updateVolumnForm($(this))
+			//updateVolumnForm($(this))
 			updateStockPriceForm($(this))
 		})
 		
@@ -2203,6 +2252,10 @@
 			
 			$(".transfer_total").html(ReplaceNumberWithDots(total.toFixed(0)))
 		})
+		
+		$(".payment_box .detail_paid").keyup(function() {
+			updatePaymentRecordDetails($(this))
+		});
 	})
 	
 

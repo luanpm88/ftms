@@ -200,49 +200,55 @@
 										</div>
 										
 								   </div>
-								   <div class="col-md-2">
+								   <div class="col-md-3">
 										
 										<div class="form-group">
-										  <label class="form-label"><label>Defer/Transfer Hour</label></label>
+										  <label class="form-label"><label>Deferred/Transferred Status</label></label>
 										  <span class="help"></span>
 										  <div class="input-with-iconz text-right">
-											 <strong class="big-info"><%= format_price(@contact.budget_hour) %></strong>
-										  </div>
-										</div>
-										
-								   </div>
-								   <div class="col-md-2">
-										
-										<div class="form-group">
-										  <label class="form-label"><label>Defer/Transfer Money</label></label>
-										  <span class="help"></span>
-										  <div class="input-with-iconz text-right">
-											 <strong class="big-info transfer-total"><%= format_price(@contact.budget_money) %></strong>
-										  </div>
-										</div>
-										
-								   </div>
-								   <div class="col-md-2">
-										
-										<div class="form-group">
-										  <label class="form-label"><label>Used</label></label>
-										  <span class="help"></span>
-										  <div class="input-with-iconz text-right">
-											 <strong class="big-info transfer-used out_of_date">
-												  0
+											 <strong class="big-info">
+												  <i class="icon icon-time"></i> <span class="transfer-total-hour"><%= format_price(@contact.budget_hour) %></span>
+											 </strong>
+											 <br />
+											 <strong class="big-info">
+												  $
+												  <span class="transfer-total"><%= format_price(@contact.budget_money) %></span>
 											 </strong>
 										  </div>
 										</div>
 										
-								   </div>
-								   <div class="col-md-2">
-										
+								   </div>								   
+								   <div class="col-md-3">										
 										<div class="form-group">
-										  <label class="form-label"><label>Remain</label></label>
+										  <label class="form-label"><label>Deferred/Transferred Used</label></label>
 										  <span class="help"></span>
 										  <div class="input-with-iconz text-right">
-											 <strong class="big-info transfer-remain paid">
-												  <%= format_price(@contact.budget_money) %>
+											 <strong class="big-info out_of_date">
+												  <i class="icon icon-time"></i> <span class="transfer-used-hour">0</span>
+												  <%= hidden_field_tag "course_register[transfer_hour]", 0 %>
+											 </strong>
+											 <br />
+											 <strong class="big-info out_of_date">
+												  $
+												  <span class="transfer-used">0</span>
+											 </strong>											 
+										  </div>
+										</div>
+										
+								   </div>
+								   <div class="col-md-3">										
+										<div class="form-group">
+										  <label class="form-label"><label>Deferred/Transferred Remain</label></label>
+										  <span class="help"></span>
+										  <div class="input-with-iconz text-right">
+											 <strong class="big-info paid">
+												  <i class="icon icon-time"></i> <span class="transfer-remain-hour"><%= format_price(@contact.budget_hour) %></span>
+											 </strong>
+											 <br />
+											 
+											 <strong class="big-info paid">
+												  $
+												  <span class="transfer-remain"><%= format_price(@contact.budget_money) %></span>
 											 </strong>
 										  </div>
 										</div>
@@ -354,7 +360,7 @@
 											 <div class="input-with-iconz right">                                       
 												  <i class=""></i>
 												   <div class="input-with_add_butz">
-													 <%= text_field_tag "course_register[transfer]", "", class: "form-control price_input price_transfer" %>
+													   <%= text_field_tag "course_register[transfer]", "", class: "form-control price_input price_transfer" %>
 												   </div>
 											 </div>
 										</div>

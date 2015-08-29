@@ -55,11 +55,11 @@
                                           <% end %>
                                           
                                           
-                                          <% if !courses_phrase.transferred?(@transfer.contact) %>
+                                          <% if !courses_phrase.transferred?(cc) %>
                                             <div class="row-fluid phrase_checkbox">
                                                  <div class="checkbox check-success">
-                                                     <%= check_box_tag "transfer[courses_phrase_ids][]", courses_phrase.id, false, {id: "checkbox_"+courses_phrase.id.to_s} %>
-                                                     <label for="checkbox_<%= courses_phrase.id %>">
+                                                     <%= check_box_tag "transfer_details[#{cc.id}][courses_phrase_ids][]", courses_phrase.id, false, {id: "checkbox_"+cc.id.to_s+"_"+courses_phrase.id.to_s} %>
+                                                     <label for="checkbox_<%= cc.id %>_<%= courses_phrase.id %>">
                                                           [<%= courses_phrase.start_at.strftime("%d-%b-%Y") %>]
                                                      </label>
                                                  </div>
@@ -149,10 +149,10 @@
                     <h3>Infomrmation</h3>
                     
                     <div class="row transer_amount">
-						 <div class="col-md-2">
+						 <div class="col-md-3">
                           <div class="form-group">
                               <label class="form-label"><label>Defer/Transfer to</label></label>
-                              <span class="help">(required)</span>
+                              <span class="help"></span>
                               <div class="input-with-icon  right">                                       
                                   <i class=""></i>
                                   <input style="width:100%;margin-bottom: 5px;" name="transfer[transfer_for]" data="<%= contacts_path(is_individual: true,format: "json") %>" class="select2-ajax-students required" text="<%= @transfer.transferred_contact.display_name %>" value="<%= @transfer.transferred_contact.id %>" />
@@ -162,7 +162,7 @@
                       <div class="col-md-2">
                           <div class="form-group">
                               <label class="form-label"><%= f.label :date %></label>
-                              <span class="help">(required)</span>
+                              <span class="help"></span>
 
                                   <div class="input-with-icon  right">                                       
                                        <i class=""></i>
@@ -175,11 +175,11 @@
 
                           </div>
                         </div>
-                        <div class="col-md-2">
+                        <div class="col-md-1">
                           <div class="form-group">
                               <label class="form-label"><%= f.label :hour %></label>
-                              <span class="help">(required)</span>
-                              <div class="input-with-icon  right">                                       
+                              <span class="help"></span>
+                              <div class="input-with-iconz right">                                       
                                   <i class=""></i>
                                     <%= f.text_field :hour, :class => "form-control number_input_0 text-center required" %>
                               </div>
@@ -188,7 +188,7 @@
                         <div class="col-md-2">
                           <div class="form-group">
                               <label class="form-label"><%= f.label :money %></label>
-                              <span class="help">(required)</span>
+                              <span class="help"></span>
                               <div class="input-with-iconz right">                                       
                                   <i class=""></i>
                                     <%= f.text_field :money, :class => "form-control price_input required" %>
@@ -198,7 +198,7 @@
                         <div class="col-md-2">
                           <div class="form-group">
                               <label class="form-label"><%= f.label :admin_fee %></label>
-                              <span class="help">(required)</span>
+                              <span class="help"></span>
                               <div class="input-with-iconz right">                                       
                                   <i class=""></i>
                                     <%= f.text_field :admin_fee, :class => "form-control price_input required" %>
@@ -208,7 +208,7 @@
                         <div class="col-md-2">
                           <div class="form-group">
                               <label class="form-label"><%= f.label :total %></label>
-                              <span class="help">(required)</span>
+                              <span class="help"></span>
                               <div class="input-with-iconz right text-right">                                       
                                   <strong style="font-weight: bold;font-size: 18px" class="transfer_total"></strong>
                               </div>

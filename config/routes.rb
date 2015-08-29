@@ -1,4 +1,6 @@
 Hkerp::Application.routes.draw do
+  resources :transfer_details
+  resources :payment_record_details
   resources :transfers do
     collection do
       get :datatable
@@ -161,6 +163,9 @@ Hkerp::Application.routes.draw do
         get :delete_backup
         
         get :datatable
+        
+        get :import_from_old_system
+        post :import_from_old_system
       end
     end
   end

@@ -1,0 +1,19 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <strong>Transfer:</strong>
+  <%= @transfer_detail.transfer_id %>
+</p>
+
+<p>
+  <strong>Contacts course:</strong>
+  <%= @transfer_detail.contacts_course_id %>
+</p>
+
+<p>
+  <strong>Courses phrase ids:</strong>
+  <%= @transfer_detail.courses_phrase_ids %>
+</p>
+
+<%= link_to 'Edit', edit_transfer_detail_path(@transfer_detail) %> |
+<%= link_to 'Back', transfer_details_path %>

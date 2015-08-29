@@ -109,6 +109,6 @@ class CourseRegistersController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def course_register_params
-      params.require(:course_register).permit(:debt_date, :invoice_required, :vat_name, :vat_code, :vat_address, :discount, :contact_id, :mailing_address, :payment_type, :bank_account_id, :discount_program_id, :created_date, :user_id)
+      params.require(:course_register).permit(:transfer, :transfer_hour, :debt_date, :invoice_required, :vat_name, :vat_code, :vat_address, :discount, :contact_id, :mailing_address, :payment_type, :bank_account_id, :discount_program_id, :created_date, :user_id)
     end
 end

@@ -42,26 +42,31 @@
 								<% if !@contact.draft? %>
 										<% if @contact.contact_types.include?(ContactType.student) %>
 												<li class="<%= "active" if ["course"].include?(params[:tab]) %>">
-												  <a href="#course">Course List (<%= @contact.course_count %>)</a>
+												  <a href="#course">Course List  <span class="badge badge-info pull-right alert-level1"><%= @contact.course_count if @contact.course_count > 0 %></span></a>
 												</li>
 												<li class="<%= "active" if ["book"].include?(params[:tab]) %>">
-												  <a href="#book">Stock List (<%= @contact.book_count %>)</a>
+												  <a href="#book">Stock List   <span class="badge badge-info pull-right alert-level1"><%= @contact.book_count if @contact.book_count > 0 %></span></a>
 												</li>
 												<li class="<%= "active" if ["course_registration"].include?(params[:tab]) %>">
-												  <a href="#course_registration">Course Registration (<%= @contact.course_register_count %>)</a>
+												  <a href="#course_registration">Course Registration <span class="badge badge-info pull-right alert-level1"><%= @contact.course_register_count if @contact.course_register_count > 0 %></span></a>
 												</li>												
 												<li class="<%= "active" if ["payment"].include?(params[:tab]) %>">
-												  <a href="#payment">Payment Record</a>
+												  <a href="#payment">Payment Record
+														 <span class="badge badge-info pull-right alert-level1"><%= @contact.payment_count if @contact.payment_count > 0 %></span>
+												  </a>
 												</li>
 												
 										<% end %>
 										
 										<li class="<%= "active" if ["transfer"].include?(params[:tab]) %>">
-												<a href="#transfer">Defer/Transfer</a>
+												<a href="#transfer">Defer/Transfer <span class="badge badge-info pull-right alert-level1"><%= @contact.transfer_count if @contact.transfer_count > 0 %></span></a>
 										</li>
 										
 										<li class="<%= "active" if ["activity"].include?(params[:tab]) %>">
-												<a href="#activity">Note Log</a>
+												<a href="#activity">
+														Note Log
+														<span class="badge badge-info pull-right alert-level1"><%= @contact.activities.count if @contact.activities.count > 0 %></span>
+												</a>
 										</li>
 								
 								<% end %>
@@ -128,7 +133,7 @@
 												
 												<div class="row">
 														<div class="col-md-12">
-															<%= link_to 'New Registration', new_course_register_path(conact_id: @contact.id, tab_page: 1), psrc: course_registers_path(tab_page:1), title: "New Registration", :class => 'btn btn-primary btn-cons tab_page' %>
+															<%= link_to 'New Registration', new_course_register_path(contact_id: @contact.id, tab_page: 1), psrc: course_registers_path(tab_page:1, contact_id: @contact.id), title: "#{@contact.display_name}: Add Course", :class => 'btn btn-primary btn-cons tab_page' %>
 															<div class="grid simple ">
 																<div class="grid-title no-border">
 																	<h4>Listing  <span class="semi-bold">Registration</span></h4>

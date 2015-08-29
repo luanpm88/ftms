@@ -4,9 +4,9 @@ class Contact < ActiveRecord::Base
   include PgSearch
   
   #validates :address, presence: true
-  validates :email, presence: true
+  #validates :email, presence: true
   validates :name, presence: true
-  validates :mobile, presence: true, if: :is_individual?
+  #validates :mobile, presence: true, if: :is_individual?
   #validates :birthday, presence: true, if: :is_individual?
   #validates :sex, presence: true, if: :is_individual?
   #validates :account_manager_id, presence: true, if: :is_individual?
@@ -68,8 +68,16 @@ class Contact < ActiveRecord::Base
   
   has_many :transferred_records, :class_name => "Transfer", :foreign_key => "transfer_for"
   
+  has_many :payment_records
+  
+  has_many :activities, :dependent => :destroy
+  
   after_validation :update_cache
   before_validation :check_type
+  
+  def all_course_registers
+    course_registers
+  end
   
   def self.format_mobile(string)
     result = string.gsub(/\D/, '')
@@ -101,10 +109,11 @@ class Contact < ActiveRecord::Base
   def check_type
     self.course_types = [] if !contact_types.include?(ContactType.inquiry)
     self.lecturer_course_types = [] if !contact_types.include?(ContactType.lecturer)
-    self.contact_types.delete(ContactType.student) if joined_course_types.empty?
+    # self.contact_types.delete(ContactType.student) if joined_course_types.empty?
     if !joined_course_types.empty?
       self.contact_types << ContactType.student if !self.contact_types.include?(ContactType.student)
-      #self.course_types = self.course_types - joined_course_types
+      self.course_types = self.course_types - joined_course_types
+      self.contact_types.delete(ContactType.inquiry) if self.course_types.empty?
     end
   end
   
@@ -139,14 +148,6 @@ class Contact < ActiveRecord::Base
   def not_exist
     return true if self.draft?
     
-    exist = []
-    
-    if is_individual
-      exist += Contact.main_contacts.where("(LOWER(name) = ? AND LOWER(email) = ?) OR (LOWER(name) = ? AND LOWER(mobile) = ?)", name.downcase, email.downcase, name.downcase, mobile.downcase) if mobile.present?
-    else
-      exist += Contact.main_contacts.where("LOWER(name) = ?", name.downcase) if name.present?
-    end
-    
     if !exist_contacts.empty?
       cs = exist_contacts.map {|c| c.contact_link}
       errors.add(:base, "There are/is contact(s) with the same information: #{cs.join(";")}".html_safe)
@@ -160,7 +161,7 @@ class Contact < ActiveRecord::Base
   def exist_contacts
     exist = []    
     if is_individual
-      exist += Contact.where("(LOWER(name) = ? AND LOWER(email) = ?) OR (LOWER(name) = ? AND LOWER(mobile) = ?)", name.downcase, email.downcase, name.downcase, mobile.downcase)
+      exist += Contact.where("(LOWER(name) = ? AND LOWER(email) = ?) OR (LOWER(name) = ? AND LOWER(mobile) = ?)", name.downcase, email.downcase, name.downcase, mobile.downcase) if mobile.present? && name.present? && email.present?
     else
       exist += Contact.where("LOWER(name) = ?", name.downcase) if name.present?
     end
@@ -798,7 +799,24 @@ class Contact < ActiveRecord::Base
   end
   
   def course_register_count
-    course_registers.count
+    all_course_registers.count
+  end
+  
+  def all_transfers
+    Transfer.where("contact_id = ? OR transfer_for = ?", self.id, self.id)
+  end
+  
+  def transfer_count
+    all_transfers.count
+  end
+  
+  def payment_count
+    count = 0
+    all_course_registers.each do |cr|
+      count += cr.all_payment_records.count
+    end
+    
+    return count
   end
   
   def contact_tag
@@ -1071,6 +1089,14 @@ class Contact < ActiveRecord::Base
     return drafts.order("created_at DESC").first
   end
   
+  def revisions
+    drafts.where("status LIKE ?", "%[active]%")
+  end
+  
+  def first_revision
+    revisions.order("created_at").first
+  end
+  
   def older
     if !draft?
       return drafts.order("created_at DESC").second
@@ -1134,11 +1160,11 @@ class Contact < ActiveRecord::Base
   end
   
   def budget_hour
-    all_transferred_records.sum(:hour)
+    all_transferred_records.sum(:hour) - all_course_registers.sum(:transfer_hour)
   end
   
   def budget_money
-    all_transferred_records.sum(:money) - all_transferred_records.sum(:admin_fee)
+    all_transferred_records.sum(:money) - all_transferred_records.sum(:admin_fee) - all_course_registers.sum(:transfer)
   end
   
   def all_transferred_records
@@ -1180,5 +1206,7 @@ class Contact < ActiveRecord::Base
     
     self.save_draft(user)
   end
+  
+  
   
 end

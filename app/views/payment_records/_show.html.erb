@@ -74,7 +74,7 @@
         <strong>Amount:</strong>
       </td>
       <td colspan="2">
-        <%= format_price(@payment_record.amount) %> <%= Setting.get("currency_code") %>
+        <%= format_price(@payment_record.total) %> <%= Setting.get("currency_code") %>
       </td>
       
     </tr>

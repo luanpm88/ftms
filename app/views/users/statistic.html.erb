@@ -53,10 +53,10 @@
 									  
                                       <th class="text-center">Program</th>
 									  <th class="text-center">Note Log</th>
-                                      <th class="text-right">Money</th>
-									  <th class="text-center">New Registered Count</th>
-									  <th class="text-center">New Contact</th>
-                                      <th class="text-center">Count For</th>
+                                      <th class="text-right">Sales</th>
+									  <th class="text-center">Paper</th>
+									  <th class="text-center">New Inquiry</th>
+									  <th class="text-center">New Student</th>									  
 									  <th width="1%" class="text-center">
 										
 									  </th>
@@ -77,14 +77,15 @@
 												<td class="text-right">
 														<strong><%= format_price(u[:total]) %></strong>
 												</td>
-												
 												<td class="text-center">
-														<strong><%= u[:student] %></strong>
-												</td>
+														<strong><%= u[:paper] %></strong>
+												</td>												
 												<td class="text-center">
 														<strong><%= u[:inquiry] %></strong>
 												</td>
-												<td class="text-center"><%= @date.strftime("%b-%Y") %></td>
+												<td class="text-center">
+														<strong><%= u[:student] %></strong>
+												</td>
 												<td>
 														<% if !u[:statistics].empty? %>
 																<a onclick="$('.detail-u-<%= u[:user].id %>').toggle()" href="#open">
@@ -107,13 +108,13 @@
 																<%= format_price(row[:total]) %>
 													  </td>
 													  <td class="text-center">
-																<%= row[:student] %>
-													  </td>
+																<%= row[:paper] %>
+													  </td>													  
 													  <td class="text-center">
 																<%= row[:inquiry] %>
 													  </td>
 													  <td class="text-center">
-																<%= @date.strftime("%b-%Y") %>
+																<%= row[:student] %>
 													  </td>
 													  <td></td>
 												</tr>

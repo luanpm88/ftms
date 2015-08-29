@@ -4,7 +4,10 @@ class Transfer < ActiveRecord::Base
   belongs_to :contact
   belongs_to :user
   
+  
   belongs_to :transferred_contact, class_name: "Contact", foreign_key: "transfer_for"
+  
+  has_many :transfer_details, :dependent => :destroy
   
   pg_search_scope :search,
                   against: [:money],
@@ -117,34 +120,25 @@ class Transfer < ActiveRecord::Base
     self[:admin_fee] = new.to_s.gsub(/\,/, '')
   end
   
-  def courses_phrases
-    cp_ids = self.courses_phrase_ids.split("][").map {|s| s.gsub("[","").gsub("]","") }
-    return CoursesPhrase.where(id: cp_ids).includes(:course).order("courses.intake, start_at")
-  end
-  
-  def courses_phrase_ids=(ids)
-    self[:courses_phrase_ids] = "["+(ids.map {|s| s.strip.to_i}).join("][")+"]"
-  end
-  
   def description
     arr = []
-    group_name = ""
-    course_name = ""
-    courses_phrases.each do |p|
-      
-      if course_name != p.course.display_name
-        arr << "</div>" if course_name != ""
-        arr << "<div><strong>"+p.course.display_name+"</strong></div><div class=\"courses_phrases_list\">"
-        course_name = p.course.display_name
-      end
-      
-      if group_name != p.name
-        arr << "<div><strong class=\"width100\">#{p.phrase.name}</strong></div>"
-        group_name = p.name
-      end
-      arr << "[#{p.start_at.strftime("%d-%b-%Y")}] "
+    transfer_details.each do |td|      
+      arr << "<div><strong>"+td.contacts_course.course.display_name+"</strong></div>"
+      arr << "<div class=\"courses_phrases_list\">"+Course.render_courses_phrase_list(td.courses_phrases)+"</div>"
     end
     return "<div>"+arr.join("").html_safe+"</div></div>"
+  end
+  
+  def update_transfer_details(params)
+    params.each do |row|
+      cc = ContactsCourse.find(row[0])
+      if cc.present? && row[1]["courses_phrase_ids"].present?
+        pd = self.transfer_details.new
+        pd.courses_phrase_ids = row[1]["courses_phrase_ids"]
+        pd.contacts_course_id = row[0]
+      end
+    end
+
   end
   
 end

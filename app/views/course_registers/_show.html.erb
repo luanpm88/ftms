@@ -1,4 +1,4 @@
-<h3>Course Registration</h3> 
+				  <h3>Course Registration</h3> 
 					
 					 
 					<div class="phrase_box_list">
@@ -292,6 +292,18 @@
 													 <div class="input-with-icon right">
 														  <div class="text-right" style="font-size: 20px;" width="100%">
 																<strong class=""><%= format_price(@course_register.discount.to_f) %></strong>
+														  </div>
+														 
+													 </div>
+												</div>
+										<% end %>
+										<% if @course_register.transfer.to_f > 0 %>
+												<div class="form-group">
+													 <label class="form-label">Deferred/Tranferred</label>
+													 <span class="help"></span>
+													 <div class="input-with-icon right">
+														  <div class="text-right" style="font-size: 20px;" width="100%">
+																<strong class=""><%= format_price(@course_register.transfer.to_f) %></strong>
 														  </div>
 														 
 													 </div>

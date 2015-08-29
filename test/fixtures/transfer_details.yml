@@ -1,0 +1,11 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  transfer_id: 1
+  contacts_course_id: 1
+  courses_phrase_ids: MyText
+
+two:
+  transfer_id: 1
+  contacts_course_id: 1
+  courses_phrase_ids: MyText

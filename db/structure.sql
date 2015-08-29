@@ -579,7 +579,8 @@ CREATE TABLE contacts (
     preferred_mailing character varying,
     bases text,
     status text,
-    draft_for integer
+    draft_for integer,
+    "tmp_StudentID" text
 );
 
 
@@ -823,8 +824,9 @@ CREATE TABLE course_registers (
     debt_date timestamp without time zone,
     cache_delivery_status character varying,
     cache_payment_status character varying,
+    transfer numeric,
     discount numeric,
-    transfer numeric
+    transfer_hour numeric
 );
 
 
@@ -858,7 +860,8 @@ CREATE TABLE course_types (
     description text,
     user_id integer,
     created_at timestamp without time zone NOT NULL,
-    updated_at timestamp without time zone NOT NULL
+    updated_at timestamp without time zone NOT NULL,
+    "tmp_CourseTypeID" text
 );
 
 
@@ -1196,13 +1199,46 @@ ALTER SEQUENCE parent_contacts_id_seq OWNED BY parent_contacts.id;
 
 
 --
+-- Name: payment_record_details; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE TABLE payment_record_details (
+    id integer NOT NULL,
+    contacts_course_id integer,
+    books_contact_id numeric,
+    amount numeric,
+    payment_record_id integer,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL
+);
+
+
+--
+-- Name: payment_record_details_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE payment_record_details_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: payment_record_details_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE payment_record_details_id_seq OWNED BY payment_record_details.id;
+
+
+--
 -- Name: payment_records; Type: TABLE; Schema: public; Owner: -; Tablespace: 
 --
 
 CREATE TABLE payment_records (
     id integer NOT NULL,
     course_register_id integer,
-    amount numeric,
     debt_date timestamp without time zone,
     bank_account_id integer,
     user_id integer,
@@ -1210,7 +1246,8 @@ CREATE TABLE payment_records (
     payment_date timestamp without time zone,
     created_at timestamp without time zone NOT NULL,
     updated_at timestamp without time zone NOT NULL,
-    status integer
+    status integer,
+    bank_ref character varying
 );
 
 
@@ -1483,7 +1520,8 @@ CREATE TABLE subjects (
     description text,
     user_id integer,
     created_at timestamp without time zone NOT NULL,
-    updated_at timestamp without time zone NOT NULL
+    updated_at timestamp without time zone NOT NULL,
+    "tmp_SubjectID" text
 );
 
 
@@ -1507,6 +1545,39 @@ ALTER SEQUENCE subjects_id_seq OWNED BY subjects.id;
 
 
 --
+-- Name: transfer_details; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE TABLE transfer_details (
+    id integer NOT NULL,
+    transfer_id integer,
+    contacts_course_id integer,
+    courses_phrase_ids text,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL
+);
+
+
+--
+-- Name: transfer_details_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE transfer_details_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: transfer_details_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE transfer_details_id_seq OWNED BY transfer_details.id;
+
+
+--
 -- Name: transfers; Type: TABLE; Schema: public; Owner: -; Tablespace: 
 --
 
@@ -1515,13 +1586,12 @@ CREATE TABLE transfers (
     contact_id integer,
     user_id integer,
     transfer_date timestamp without time zone,
-    hour integer,
+    hour numeric,
     money numeric,
     admin_fee numeric,
     transfer_for integer,
     created_at timestamp without time zone NOT NULL,
-    updated_at timestamp without time zone NOT NULL,
-    courses_phrase_ids text
+    updated_at timestamp without time zone NOT NULL
 );
 
 
@@ -1824,6 +1894,13 @@ ALTER TABLE ONLY parent_contacts ALTER COLUMN id SET DEFAULT nextval('parent_con
 -- Name: id; Type: DEFAULT; Schema: public; Owner: -
 --
 
+ALTER TABLE ONLY payment_record_details ALTER COLUMN id SET DEFAULT nextval('payment_record_details_id_seq'::regclass);
+
+
+--
+-- Name: id; Type: DEFAULT; Schema: public; Owner: -
+--
+
 ALTER TABLE ONLY payment_records ALTER COLUMN id SET DEFAULT nextval('payment_records_id_seq'::regclass);
 
 
@@ -1881,6 +1958,13 @@ ALTER TABLE ONLY stock_updates ALTER COLUMN id SET DEFAULT nextval('stock_update
 --
 
 ALTER TABLE ONLY subjects ALTER COLUMN id SET DEFAULT nextval('subjects_id_seq'::regclass);
+
+
+--
+-- Name: id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY transfer_details ALTER COLUMN id SET DEFAULT nextval('transfer_details_id_seq'::regclass);
 
 
 --
@@ -2162,6 +2246,14 @@ ALTER TABLE ONLY parent_contacts
 
 
 --
+-- Name: payment_record_details_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+--
+
+ALTER TABLE ONLY payment_record_details
+    ADD CONSTRAINT payment_record_details_pkey PRIMARY KEY (id);
+
+
+--
 -- Name: payment_records_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
 --
 
@@ -2231,6 +2323,14 @@ ALTER TABLE ONLY stock_updates
 
 ALTER TABLE ONLY subjects
     ADD CONSTRAINT subjects_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: transfer_details_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+--
+
+ALTER TABLE ONLY transfer_details
+    ADD CONSTRAINT transfer_details_pkey PRIMARY KEY (id);
 
 
 --
@@ -2519,4 +2619,26 @@ INSERT INTO schema_migrations (version) VALUES ('20150818012431');
 INSERT INTO schema_migrations (version) VALUES ('20150818012500');
 
 INSERT INTO schema_migrations (version) VALUES ('20150821033006');
+
+INSERT INTO schema_migrations (version) VALUES ('20150825073356');
+
+INSERT INTO schema_migrations (version) VALUES ('20150825074720');
+
+INSERT INTO schema_migrations (version) VALUES ('20150825075717');
+
+INSERT INTO schema_migrations (version) VALUES ('20150825080624');
+
+INSERT INTO schema_migrations (version) VALUES ('20150825091546');
+
+INSERT INTO schema_migrations (version) VALUES ('20150826024703');
+
+INSERT INTO schema_migrations (version) VALUES ('20150826040511');
+
+INSERT INTO schema_migrations (version) VALUES ('20150826040701');
+
+INSERT INTO schema_migrations (version) VALUES ('20150828084243');
+
+INSERT INTO schema_migrations (version) VALUES ('20150828084433');
+
+INSERT INTO schema_migrations (version) VALUES ('20150828091606');
 

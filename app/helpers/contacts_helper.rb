@@ -72,13 +72,13 @@ module ContactsHelper
   end
   
   def render_history_actions(item)
-    return "" if item.drafts.empty?
+    return "" if item.revisions.empty?
     
       actions = '<div class="text-right but"><div class="btn-group actions">
                     <button class="btn btn-big btn-white btn-demo-space dropdown-toggle" data-toggle="dropdown">Histories <span class="caret"></span></button>'
       actions += '<ul class="dropdown-menu">'
       
-      item.drafts.order("created_at DESC").each do |d|
+      item.revisions.order("created_at DESC").each do |d|
         actions += '<li>'+ActionController::Base.helpers.link_to("#{d.created_at.strftime("%d-%b-%Y %I:%M %p")}", {controller: "contacts", action: "edit", id: d.id, tab_page: 1}, title: "[#{d.created_at.strftime("%d-%b-%Y %I:%M %p")}] #{d.display_name}", class: "tab_page")+'</li>'        
       end
       

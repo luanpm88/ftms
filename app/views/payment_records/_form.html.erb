@@ -39,7 +39,7 @@
 						 <div class="col-md-8">
 							  
                               <div class="row">
-                                <div class="col-md-3">
+                                <div class="col-md-4">
                                   <div class="form-group">
                                         <label class="form-label"><%= f.label :student %></label>
                                         <span class="help"></span>
@@ -48,7 +48,7 @@
                                         </div>
                                   </div>
                                 </div>
-                                <div class="col-md-3">
+                                <div class="col-md-4">
                                   <div class="form-group">
 										<label class="form-label"><%= f.label :bank_acount %></label>
 										<span class="help">(required)</span>
@@ -60,35 +60,19 @@
 										</div>
 								   </div>	
                                 </div>
-                                <div class="col-md-3">
+							  <div class="col-md-4">
                                   <div class="form-group">
-                                        <label class="form-label"><%= f.label :total %></label>
-                                        <span class="help"></span>
-                                        <div class="input-with-iconx">                                       
-                                             <strong><%= format_price(@course_register.total) %></strong>
-                                        </div>
-                                   </div>	
-                                </div>
-                                <div class="col-md-3">
-                                  <div class="form-group">
-                                        <label class="form-label"><%= f.label :receivable %></label>
-                                        <span class="help"></span>
-                                        <div class="input-with-iconx">                                       
-                                             <strong><%= format_price(@course_register.remain_amount) %></strong>
-                                        </div>
-                                   </div>	
-                                </div>
-							  </div>
-							  <div class="row">
-                                <div class="col-md-4">
-                                  <div class="form-group">
-                                        <label class="form-label"><%= f.label :paid_amout %></label>
+                                        <label class="form-label"><%= f.label :bank_ref %></label>
                                         <span class="help">(required)</span>
                                         <div class="input-with-iconx">                                       
-                                            <%= f.text_field :amount, :class => "form-control price_input required" %>
+                                            <%= f.text_field :bank_ref, :class => "form-control required" %>
                                         </div>
                                    </div>	
                                 </div>
+                                
+							  </div>
+							  <div class="row">
+                                
                                 <div class="col-md-4">
                                   <div class="form-group">
                                         <label class="form-label"><%= f.label :payment_date %></label>
@@ -103,6 +87,7 @@
                                         </div>
                                    </div>	
                                 </div>
+								
                                 <div class="col-md-4">
                                   <div class="form-group">
                                         <label class="form-label"><%= f.label :expected_date_of_collection %></label>
@@ -120,7 +105,35 @@
                               </div>
 							  							  
 							  
-							  
+							  <div class="row">
+								   <div class="col-md-4">
+										<div class="form-group">
+											  <label class="form-label"><%= f.label :total %></label>
+											  <span class="help"></span>
+											  <div class="input-with-iconx text-right">                                       
+												   <strong class="big-info"><%= format_price(@course_register.total) %></strong>
+											  </div>
+										</div>	
+								   </div>
+								   <div class="col-md-4">
+										<div class="form-group">
+											  <label class="form-label"><%= f.label :paid %></label>
+											  <span class="help"></span>
+											  <div class="input-with-iconx text-right">                                       
+												   <strong class="big-info payment-record-paid">0</strong>
+											  </div>
+										 </div>	
+								   </div>
+								   <div class="col-md-4">
+										<div class="form-group">
+											  <label class="form-label"><%= f.label :receivable %></label>
+											  <span class="help"></span>
+											  <div class="input-with-iconx text-right">                                       
+												   <strong class="big-info payment-record-remain" rel="<%= @course_register.remain_amount %>"><%= format_price(@course_register.remain_amount) %></strong>
+											  </div>
+										 </div>	
+								   </div>
+							  </div>
 							  
 							  
 						 </div>
@@ -138,6 +151,182 @@
 						 
 					</div>
 						 
+						 
+						 
+					
+					
+					<h3>Course Registration</h3> 
+					
+					 
+					<div class="phrase_box_list">
+                          <% number = 0 %>
+                          <% @course_register.contacts_courses.each do |cc| %>
+							  <div class="row phrase_box payment_box phrase_box_<%= number.to_s %>" rel="<%= number %>">
+								   <div class="phrase_box_label">Course #<%= number+1 %></div>
+
+								   <div class="col-md-12">
+										<hr />
+								   </div>
+								   <div class="col-md-12">
+										<div class="row column-seperation">
+											 <div class="col-md-1">													   
+												  <div class="form-group">
+													   <label class="form-label">Upfront?</label>
+													   <span class="help"></span>
+													   <div class="input-with-icon right">                                       
+															<strong><%= cc.upfront ? "Yes" : "No" %></strong>
+													   </div>
+												  </div>									
+											 </div>
+											 <div class="col-md-2">
+												  <div class="form-group">
+														<label class="form-label">Course</label>
+														<span class="help"></span>
+														<div class="input-with-iconz  right">                                       
+															 <strong><%= cc.course.name %></strong>
+														</div>
+												  </div>
+											 </div>
+                                             <div class="col-md-3">
+												  <div class="form-group">
+														<label class="form-label">Phrase</label>
+														<span class="help"></span>
+														<div class="input-with-iconz  right">                                       
+															 <%= cc.courses_phrase_list.html_safe %>
+														</div>
+												  </div>
+											 </div>                                             
+                                             <div class="col-md-2">
+												  <div class="form-group">
+														<label class="form-label">Total</label>
+														<span class="help"></span>
+														<div class="input-with-iconz text-right">                                       
+															 <strong style="font-size: 18px" class="detail_total"><%= format_price(cc.total) %></strong>
+														</div>
+												  </div>
+											 </div>
+											 <div class="col-md-2">
+												  <div class="form-group">
+														<label class="form-label">Paid</label>
+														<span class="help"></span>
+														<div class="input-with-iconz">                                       
+															 <%= text_field_tag "payment_record_details[#{cc.id}][amount]", "", class: "form-control price_input detail_paid" %>
+														</div>
+												  </div>
+											 </div>
+											 <div class="col-md-2">
+												  <div class="form-group">
+														<label class="form-label">Receivable</label>
+														<span class="help"></span>
+														<div class="input-with-iconz text-right">                                       
+															 <strong style="font-size: 18px" class="detail_remain" rel="<%= cc.remain %>"><%= format_price(cc.remain) %></strong>
+														</div>
+												  </div>
+											 </div>
+										</div>
+										
+										
+								   </div>
+								  
+							  </div>
+						  
+                            <% number += 1 %>
+                          <% end %>
+						 
+						 <hr />
+						 
+					</div>
+						 
+					
+					<% if @course_register.books_contacts.count > 0 %>
+								<h3>Stock Registration</h3>
+								
+								<div class="stock_box_list">
+									  <% number = 0 %>
+									  <% @course_register.books_contacts.each do |bc| %>
+										  <div class="row column-seperation payment_box stock_box stock_box_<%= number.to_s %>" rel="<%= number %>">
+											   <div class="stock_box_label">Book #<%= number+1 %></div>
+											   <div class="col-md-12">
+													<hr />
+											   </div>
+											   <div class="col-md-12">
+													<div class="row column-seperation">
+														<div class="col-md-1" style="margin-top: 5px">
+														  <%= bc.book.cover_link %>
+														</div>
+														 <div class="col-md-3">
+															  <div class="form-group">
+																	<label class="form-label">Book</label>
+																	<span class="help"></span>
+																	<div class="input-with-iconz  right">                                       
+																		 <strong><%= bc.book.name %></strong>
+																	</div>
+															  </div>
+														 </div>
+														 
+														 <div class="col-md-2">
+															  <div class="form-group">
+																	<label class="form-label">Price</label>
+																	<span class="help"></span>
+																	<div class="input-with-iconz  text-right">                                       
+																		 <strong><%= format_price(bc.price) %></strong>
+																	</div>
+															  </div>
+															  <div class="form-group">
+																	<label class="form-label">Quantity</label>
+																	<span class="help"></span>
+																	<div class="input-with-iconz  text-right">                                       
+																		 <strong><%= bc.quantity %></strong>
+																	</div>
+															  </div>
+														 </div>
+														 <div class="col-md-2">
+																 <div class="form-group">
+																	   <label class="form-label">Total</label>
+																	   <span class="help"></span>
+																	   <div class="input-with-iconz text-right">                                       
+																			<strong style="font-size: 18px" class="detail_total"><%= format_price(bc.total) %></strong>
+																	   </div>
+																 </div>
+															</div>
+															<div class="col-md-2">
+																 <div class="form-group">
+																	   <label class="form-label">Paid</label>
+																	   <span class="help"></span>
+																	   <div class="input-with-iconz">                                       
+																			<%= text_field_tag "stock_payment_record_details[#{bc.id}][amount]", "", class: "form-control price_input detail_paid" %>
+																	   </div>
+																 </div>
+															</div>
+															<div class="col-md-2">
+																 <div class="form-group">
+																	   <label class="form-label">Receivable</label>
+																	   <span class="help"></span>
+																	   <div class="input-with-iconz text-right">                                       
+																			<strong style="font-size: 18px" class="detail_remain" rel="<%= bc.remain_amount %>"><%= format_price(bc.remain_amount) %></strong>
+																	   </div>
+																 </div>
+															</div>
+													</div>
+													
+													
+											   </div>
+										  </div>
+										  
+										<% number += 1 %>
+									 <% end %>
+									 
+									 <hr />
+									 
+								</div>
+								
+								<br />
+								
+						<% end %>
+					
+					
+					
+						 
 					<div class="form-actions">  
 						 <div class="pull-right">
 						 <button type="submit" class="btn btn-success btn-cons"><i class="icon-ok"></i> Pay</button>
@@ -145,9 +334,32 @@
 					   </div>
 					</div>
 							  
-						<% end %>
+					
+					
+					<% end %>
 			   </div>
 			 </div>
             </div>
 			
      </div>
+
+
+<script>
+	 $(document).ready(function() {
+		  jQuery.validator.addMethod("payment_detail", function(value, element) {
+			   var val = 0
+			   if (value != "") {
+					val = parseFloat(value.replace(/,/g,""))
+			   }
+			   var total = parseFloat($(element).parents(".payment_box").find(".detail_remain").attr("rel"))
+			   return val <= total
+		  }, "Paid amount is not valid. Please check again.");
+		  
+		  
+		  $(".detail_paid").each(function(){
+			   $(this).rules('add', {
+					payment_detail: true
+			   });
+		  });
+	 });
+</script>

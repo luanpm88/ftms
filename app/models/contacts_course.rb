@@ -31,6 +31,19 @@ class ContactsCourse < ActiveRecord::Base
     return discount_program.type_name == "percent" ? (discount_program.rate/100)*price : discount_program.rate
   end
   
+  def paid
+    records = course_register.all_payment_records
+    
+    total = 0.00
+    records.each do |p|
+      total += p.payment_record_details.where(contacts_course_id: self.id).sum(:amount)
+    end
+    return total
+  end
+  
+  def remain
+    total - paid
+  end
   
   
 end

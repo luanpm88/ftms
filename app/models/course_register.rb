@@ -256,7 +256,7 @@ class CourseRegister < ActiveRecord::Base
     arr = []
     courses.each do |row|
       arr << "<div><strong>"+row[:course].display_name+"</strong></div>"
-      arr << "<div class=\"courses_phrases_list\">"+Course.render_courses_phrase_list(row[:courses_phrases])+"</div>" if phrase_list
+      arr << "<div class=\"courses_phrases_list\">"+Course.render_courses_phrase_list(row[:courses_phrases],row[:contacts_course])+"</div>" if phrase_list
       
     end
     
@@ -269,6 +269,7 @@ class CourseRegister < ActiveRecord::Base
       item = {}
       item[:course] = cc.course
       item[:courses_phrases] = cc.courses_phrases
+      item[:contacts_course] = cc
       arr << item
     end
     
@@ -342,6 +343,9 @@ class CourseRegister < ActiveRecord::Base
   
   def discount=(new)
     self[:discount] = new.to_s.gsub(/\,/, '')
+  end  
+  def transfer=(new)
+    self[:transfer] = new.to_s.gsub(/\,/, '')
   end
   
   
@@ -384,7 +388,12 @@ class CourseRegister < ActiveRecord::Base
     if date.present?
       records = records.where("payment_date <= ?", date)
     end
-    return records.sum(:amount)
+    
+    total = 0.00
+    records.each do |p|
+      total += p.total
+    end
+    return total #records.sum(:amount)
   end
   
   def paid?

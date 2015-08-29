@@ -8,7 +8,7 @@ class CoursesController < ApplicationController
   # GET /courses
   # GET /courses.json
   def index
-    @courses = Course.all
+    @courses = Course.all_courses
     
     if params[:student_id]
       @student = Contact.find(params[:student_id])

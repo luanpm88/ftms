@@ -8434,3 +8434,6 @@ td .logo {
 .details_row td {
     background: #f5f5f5 !important;
 }
+.transferred {
+    color: #aa6708;
+}

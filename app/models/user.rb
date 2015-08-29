@@ -282,4 +282,93 @@ class User < ActiveRecord::Base
     
   end
   
+  # "Book"
+  # "BookData"
+  # "Companies"
+  # "Counsultant"
+  # "Course"
+  ###SAVED############################# "CourseType"
+  ############EMPTY#################### "CusDetail"
+  # "Delivery"
+  # "Invoice"
+  # "InvoiceDetail"
+  # "LinkStudent"
+  # "NoteDetail"
+  ### "Student"
+  ############EMPTY#################### "Student_temp"
+  # "Subject"
+  ############EMPTY#################### "Ucrs"
+  ############NO NEEDED################ "UserLevel"
+  ############NO NEEDED################ "UserRole"
+  ############EMPTY#################### "Venue"
+  # "Tags"
+  def self.import_from_old_sustem(file)
+    dir = "tmp"
+    file_name =  file.original_filename
+    file_path = File.join(dir, file_name)
+    File.open(file_path, "wb") { |f| f.write(file.read) }
+    
+    database = Mdb.open(file_path)
+    result = {contacts: [], course_types: [], subjects: [], subjects_tmp: []}
+    
+    ### STUDENT
+    database[:Student].each do |row|
+      contact = Contact.new
+      contact.tmp_StudentID = row[:StudentID]
+      contact.name = row[:StudentName]
+      contact.birthday = row[:StudentBirth].to_date
+      contact.address = row[:StudentHomeAdd]
+      contact.email = row[:StudentEmail1] if row[:StudentEmail1].present?
+      contact.email_2 = row[:StudentEmail2]
+      contact.mobile = row[:StudentHandPhone] if row[:StudentHandPhone].present?
+      contact.mobile_2 = row[:StudentOffPhone]
+      contact.phone = row[:StudentHomePhone]
+      contact.fax = row[:StudentFax]
+      contact.sex = row[:StudentTitle] == "2" ? "female" : "male"
+      
+                        
+      result[:contacts] << contact
+    end
+    
+    ### COURSE TYPE ### SAVED ### 
+    CourseType.destroy_all
+    database[:CourseType].each do |row|
+      item = CourseType.new
+      item.tmp_CourseTypeID = row[:CourseTypeID]
+      item.name = row[:CourseTypeName]
+      item.short_name = row[:CourseTypeShortName].nil? ? row[:CourseTypeName] : row[:CourseTypeShortName]
+      item.save
+
+      result[:course_types] << item
+    end
+    
+    # SUBJECT
+    Subject.destroy_all
+    database[:Subject].each do |row|
+      item = Subject.new
+      item.tmp_SubjectID = row[:SubjectID]
+      item.name = row[:SubjectID].split(row[:CourseID])[1] + " -- " + User.remove_head_draft(row[:SubjectID].split(row[:CourseID])[1]) if !row[:SubjectID].split(row[:CourseID])[1].nil?
+
+      result[:subjects] << item
+      result[:subjects_tmp] << row
+    end
+    
+    
+    return result
+  end
+  
+  def self.remove_head_draft(s)
+    count = 1
+    r = s
+    s.each_char do |c|
+      if /[[:alnum:]]/.match(c).nil?
+        r = s[count..-1]
+      else
+        break
+      end
+      count += 1
+    end
+    return r
+  end
+  
 end

@@ -47,4 +47,18 @@ class BooksContact < ActiveRecord::Base
     remain == 0
   end
   
+  def paid_amount
+    records = course_register.all_payment_records
+    
+    total = 0.00
+    records.each do |p|
+      total += p.payment_record_details.where(books_contact_id: self.id).sum(:amount)
+    end
+    return total
+  end
+  
+  def remain_amount
+    total - paid_amount
+  end
+  
 end

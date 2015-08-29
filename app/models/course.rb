@@ -39,6 +39,9 @@ class Course < ActiveRecord::Base
                       }
                   }
   
+  def self.all_courses
+    self.where("status IS NOT NULL AND status LIKE ?", "%[active]%").order("created_at DESC")
+  end
 
   def self.main_courses
     self.where(parent_id: nil)
@@ -217,7 +220,7 @@ class Course < ActiveRecord::Base
     
   end
   
-  def self.render_courses_phrase_list(list)
+  def self.render_courses_phrase_list(list, contacts_course = nil)
     arr = []
     group_name = ""
     list.each do |p|
@@ -225,7 +228,11 @@ class Course < ActiveRecord::Base
           arr << "<div><strong class=\"width100\">#{p.phrase.name}</strong></div>"
           group_name = p.phrase.name
         end
-        arr << "[#{p.start_at.strftime("%d-%b-%Y")}] "
+        
+        if contacts_course.present?
+          transferred = !p.transferred?(contacts_course) ? "" : "transferred"
+        end
+        arr << "<span class=\"#{transferred}\" title=\"#{transferred}\">[#{p.start_at.strftime("%d-%b-%Y")}]</span> "
     end
     return "<div>"+arr.join("").html_safe+"</div>"
   end

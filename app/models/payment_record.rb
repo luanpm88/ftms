@@ -3,6 +3,9 @@ class PaymentRecord < ActiveRecord::Base
   belongs_to :course_register
   belongs_to :user
   belongs_to :bank_account
+  belongs_to :contact
+  
+  has_many :payment_record_details
   
   include PgSearch
   
@@ -88,7 +91,7 @@ class PaymentRecord < ActiveRecord::Base
               item.course_register.contact.display_name,
               '<div class="text-left">'+item.course_register.course_list(false)+"</div>",
               '<div class="text-right">'+ApplicationController.helpers.format_price(item.course_register.total)+"</div>",
-              '<div class="text-right">'+ApplicationController.helpers.format_price(item.amount)+"</div>",
+              '<div class="text-right">'+ApplicationController.helpers.format_price(item.total)+'</div>',
               '<div class="text-center">'+item.payment_date.strftime("%d-%b-%Y")+"</div>",
               '<div class="text-center">'+item.bank_account.name+"</div>",
               '<div class="text-right">'+ApplicationController.helpers.format_price(item.course_register.remain_amount(item.payment_date))+"</div>",
@@ -120,12 +123,38 @@ class PaymentRecord < ActiveRecord::Base
     
   end
   
-  def amount=(new)
-    self[:amount] = new.to_s.gsub(/\,/, '')
-  end
+  
   
   def trash
     self.update_attribute(:status, 0)
+  end
+  
+  def update_payment_record_details(params)
+    params.each do |row|
+      cc = ContactsCourse.find(row[0])
+      if cc.present? && row[1]["amount"].present?
+        pd = self.payment_record_details.new
+        pd.amount = row[1]["amount"]
+        pd.contacts_course_id = row[0]
+      end
+    end
+
+  end
+  
+  def update_stock_payment_record_details(params)
+    params.each do |row|
+      cc = ContactsCourse.find(row[0])
+      if cc.present? && row[1]["amount"].present?
+        pd = self.payment_record_details.new
+        pd.amount = row[1]["amount"]
+        pd.books_contact_id = row[0]
+      end
+    end
+
+  end
+  
+  def total
+    payment_record_details.sum(:amount)
   end
   
 end

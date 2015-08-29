@@ -1,0 +1,201 @@
+                <ul class="breadcrumb">
+                    <li>
+                        <p>YOU ARE HERE</p>
+                    </li> 
+                    <li>Amin</li>
+                </ul>
+                
+				<div class="page-title">
+                        <i class="icon-user"></i>
+                    	<h3>Import - <span class="semi-bold"> From Old System</span></h3>	
+                </div>
+				
+				<% if !@result.nil? %>
+					<h4>COURSE TYPES</h4>
+					<div class="row">
+						<div class="col-md-12">
+							<table class="table">
+								<tr>
+									<th>tmp/SubjectID</th>
+									<th>/CourseID</th>
+									<th>name/SubjectName</th>
+									<th>/SubjectLecturer</th>
+									<th>/StartDate</th>
+									<th>/EndDate</th>
+									<th>/BelongTo</th>
+									<th>/SubjectPhrase</th>						
+									<th>STATUS</th>
+								</tr>
+								
+								<% @result[:subjects].each_with_index do |item,index| %>
+									<tr>
+										<td><%= item.tmp_SubjectID %></td>
+										<td><%= @result[:subjects_tmp][index][:CourseID] %></td>
+										<td></td>
+										<td><%= item.name %></td>
+										<td></td>
+										<td></td>
+										<td></td>
+										<td></td>
+										<td><%= item.valid? %></td>
+									</tr>
+								<% end %>
+								
+							</table>
+						</div>
+					</div>
+					
+					
+					<h4>COURSE TYPES</h4>
+					<div class="row">
+						<div class="col-md-12">
+							<table class="table">
+								<tr>
+									<th>tmp/CourseTypeID</th>
+									<th>name/CourseTypeName</th>
+									<th>short_name/CourseTypeShortName</th>
+									<th>/CourseDiscount</th>
+									<th>/CourseDiscountValue</th>
+									<th>/CourseInquiry</th>
+															
+									<th>STATUS</th>
+								</tr>
+								
+								<% @result[:course_types].each do |item| %>
+									<tr>
+										<td><%= item.tmp_CourseTypeID %></td>
+										<td><%= item.name %></td>
+										<td><%= item.short_name %></td>
+										<td></td>
+										<td></td>
+										<td></td>
+										
+										<td><%= item.valid? %></td>
+									</tr>
+								<% end %>
+								
+							</table>
+						</div>
+					</div>
+					
+					<h4>CONTACTS</h4>
+					<div class="row">
+						<div class="col-md-12">
+							<table class="table">
+								<tr>
+									<th>tmp/StudentID</th>
+									<th>/CounsultantID</th>
+									<th>sex/StudentTitle (0 ????)</th>
+									<th>name/StudentName</th>
+									<th>birthday/StudentBirth</th>
+									<th>/StudentACCANo</th>
+									<th>/StudentCompany</th>
+									<th>/StudentVATCode</th>
+									<th>/StudentOffice</th>
+									<th>/StudentLocation</th>
+									<th>address/StudentHomeAdd</th>
+									<th>/StudentPrefferMailling</th>
+									<th>email/StudentEmail1</th>
+									<th>email_2/StudentEmail2</th>
+									<th>mobile/StudentHandPhone</th>
+									<th>mobile_2/StudentOffPhone</th>
+									<th>phone/StudentHandPhone</th>
+									<th>fax/StudentFax</th>
+									<th>StudentTags</th>
+									<th>StudentType</th>									
+									<th>STATUS</th>
+								</tr>
+								
+								<% @result[:contacts].each do |contact| %>
+									<tr>
+										<td><%= contact.tmp_StudentID %></td>
+										<td></td>
+										<td><%= contact.sex %></td>
+										<td><%= contact.name %></td>
+										<td><%= contact.birthday.to_date %></td>
+										<td></td>
+										<td></td>
+										<td></td>
+										<td></td>
+										<td></td>
+										<td><%= contact.address %></td>
+										<td></td>
+										<td><%= contact.email %></td>
+										<td><%= contact.email_2 %></td>
+										<td><%= contact.mobile %></td>
+										<td><%= contact.mobile_2 %></td>
+										<td><%= contact.phone %></td>
+										<td><%= contact.fax %></td>
+										<td></td>
+										<td></td>
+										<td></td>
+									</tr>
+								<% end %>
+								
+							</table>
+						</div>
+					</div>
+				<% end %>
+				
+				
+				<div class="row column-seperation">
+				  
+				  <div class="col-md-6">                        
+                    <div class="grid simple">
+                      <div class="grid-title no-border">
+                        <h4>Select <span class="semi-bold">Options</span></h4>
+                        <div class="tools"> <a href="javascript:;" class="collapse"></a> <a href="#grid-config" data-toggle="modal" class="config"></a> <a href="javascript:;" class="reload"></a> <a href="javascript:;" class="remove"></a> </div>
+                      </div>  
+                                      
+                       <div class="grid-body no-border">
+							
+                        
+                                          <%= form_tag("", multipart: true) do |f| %>
+												
+												<% if params[:tab_page] %>
+													<%= hidden_field_tag "tab_page", 1 %>
+												<% end %>
+												
+                                                      <div class="form-group">
+															<label class="form-label">Environment</label>
+															<span class="help">(required)</span>
+															<div class="input-with-icon  right">                                       
+																<i class=""></i>
+																<select class="required modern_select width100" name="environment">
+																	<option value="">None</option>
+																	<option value="development">Development</option>
+																	<option value="production">Production</option>
+																</select>
+															</div>
+														  </div>
+									
+													   
+									
+													   <div class="form-group">
+                                                            <div class="input-with-icon  right">                                       
+                                                                    <i class=""></i>
+                                                                    <div class="nice">
+																		<%= file_field 'upload', 'datafile', class: "required" %>
+																	</div>
+                                                            </div>
+                                                        </div>
+                                  
+                                  
+                                                        <div class="form-actions">  
+                                                            <div class="pull-right">
+                                                              <input type="submit" name="import" class="btn btn-success btn-cons" value="Restore" />
+                                                            </div>
+                                                        </div>
+                                          
+                                          <% end %>
+                                  
+                       </div>
+                       
+                       
+                                    
+                    </div>
+                  </div>
+                  
+                  
+                  
+                </div>

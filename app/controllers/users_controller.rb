@@ -173,6 +173,7 @@ class UsersController < ApplicationController
       group_total = 0.0
       inquiry_total = 0
       student_total = 0
+      paper_total = 0
       
       @course_types = CourseType.order("short_name")
       @course_types.each do |ct|
@@ -180,40 +181,73 @@ class UsersController < ApplicationController
         
         # sales
         total = 0.0
-        @records = ContactsCourse.includes(:contact, :course_register, :course => :course_type)
-                              .where("course_registers.cache_payment_status LIKE ?", "%fully_paid%")                              
-                              .where(contacts: {account_manager_id: u.id})
-                              .where(course_types: {id: ct.id}) #.sum(:price)
-                              #.where("EXTRACT(YEAR FROM payment_records.payment_date) = ? ", @date.year)
-                              #.where("EXTRACT(MONTH FROM payment_records.payment_date) = ? ", @date.month)
+        @records = PaymentRecord.includes(:course_register => :contact)
+                              .where(status: 1)
+                              .where(contacts: {account_manager_id: u.id}) #.where(course_types: {id: ct.id}) #.sum(:price)                              
+                              .where("EXTRACT(YEAR FROM payment_records.payment_date) = ? ", @date.year)
+                              .where("EXTRACT(MONTH FROM payment_records.payment_date) = ? ", @date.month)
         
-        @records.each do |r|
-          sum = r.course_register.last_payment_record.payment_date <= DateTime.parse(@date.to_s).end_of_month &&  r.course_register.last_payment_record.payment_date >= DateTime.parse(@date.to_s).beginning_of_month ? r.price : 0.0
-          total += sum
-          group_total += sum
+        @records.each do |pr|
+          pr.payment_record_details.each do |prd|
+            if prd.contacts_course.course.course_type_id == ct.id
+              total += prd.amount
+              group_total += prd.amount
+            end             
+          end
         end
         
-        # Inquiry
+        
+        # Inquiry # Student
         inquiry = 0
-        @inquiries = Contact.main_contacts.includes(:contact_types, :course_types)
-                            .where(account_manager_id: u.id)                            
-                            .where(course_types: {id: ct.id})
+        student = 0
+        @contacts = Contact.main_contacts.includes(:contact_types, :course_types)
+                            .where(account_manager_id: u.id)
+                            .where(is_individual: true)                            
                             .where("EXTRACT(YEAR FROM contacts.created_at) = ? ", @date.year)
                             .where("EXTRACT(MONTH FROM contacts.created_at) = ? ", @date.month)
-        inquiry = @inquiries.count
-        #inquiry_total += @inquiries.count
         
-        # Inquiry
-        student = 0
-        @students = ContactsCourse.includes(:course_register, :contact, :course => :course_type)
+        @contacts.each do |c|
+          transform = 0
+          
+          if !c.first_revision.nil? && c.first_revision.contact_types.include?(ContactType.inquiry)
+            inquiry += 1
+            inquiry_total += 1
+            
+            # find transform revision
+            transform_revision_count = c.revisions.includes(:contact_types)
+                                                  .where(contact_types: {id: ContactType.student.id})
+                                                  .where("EXTRACT(YEAR FROM contacts.created_at) = ? ", @date.year)
+                                                  .where("EXTRACT(MONTH FROM contacts.created_at) = ? ", @date.month)
+                                                  .count
+            if transform_revision_count > 0
+              transform = 1
+            end
+          end            
+          if !c.first_revision.nil? && c.first_revision.contact_types.include?(ContactType.student)          
+            student += 1
+            student_total += 1
+          end
+          
+          inquiry -= transform
+          inquiry_total -= transform
+          student += transform
+          student_total += transform
+          
+        end
+        
+        # Paper
+        paper = 0
+        @papers = ContactsCourse.includes(:course_register, :contact, :course => :course_type)
                             .where(contacts: {account_manager_id: u.id})
                             .where(course_types: {id: ct.id})
                             .where("EXTRACT(YEAR FROM course_registers.created_date) = ? ", @date.year)
                             .where("EXTRACT(MONTH FROM course_registers.created_date) = ? ", @date.month)
-        student = @students.count
-        student_total += @students.count
+        paper = @papers.count
+        paper_total += @papers.count
         
-        row[:statistics] << {user: u, course_type: ct, inquiry: inquiry, student: student, total: total} if total > 0.0 || inquiry > 0 || student > 0
+        
+        
+        row[:statistics] << {user: u, course_type: ct, paper: paper, inquiry: inquiry, student: student, total: total} if total > 0.0 || paper > 0 || inquiry > 0 || student > 0
 
       end
       
@@ -221,15 +255,10 @@ class UsersController < ApplicationController
                     .where("EXTRACT(MONTH FROM activities.created_at) = ? ", @date.month)
                     .count
       
-      @inquiries = Contact.main_contacts.includes(:contact_types, :course_types)
-                            .where(account_manager_id: u.id)                            
-                            .where(contact_types: {id: [ContactType.student.id, ContactType.inquiry.id]})
-                            .where("EXTRACT(YEAR FROM contacts.created_at) = ? ", @date.year)
-                            .where("EXTRACT(MONTH FROM contacts.created_at) = ? ", @date.month)
-      inquiry_total = @inquiries.count
       
       row[:note] = note_count
       row[:user] = u
+      row[:paper] = paper_total
       row[:inquiry] = inquiry_total
       row[:student] = student_total
       row[:course_type] = nil
@@ -240,6 +269,12 @@ class UsersController < ApplicationController
     end
     
     
+  end
+  
+  def import_from_old_system
+    if params[:import]
+      @result = User.import_from_old_sustem(params['upload']['datafile'])
+    end
   end
   
   private

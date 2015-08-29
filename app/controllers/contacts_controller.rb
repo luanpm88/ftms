@@ -9,7 +9,7 @@ class ContactsController < ApplicationController
   # GET /contacts
   # GET /contacts.json
   def index
-    @types = [ContactType.student.id.to_s,ContactType.inquiry.id.to_s,ContactType.lecturer.id.to_s]
+    @types = [] #[ContactType.student.id.to_s,ContactType.inquiry.id.to_s,ContactType.lecturer.id.to_s]
     @individual_statuses = ["true"]
     
     if params[:course_id]
@@ -97,8 +97,7 @@ class ContactsController < ApplicationController
         if params[:contact_tag].present?
           @contact.update_tag(@contact_tag, current_user)
         end        
-        @contact.update_status("create", current_user)
-        
+        @contact.update_status("create", current_user)        
         @contact.save_draft(current_user)
 
         format.html { redirect_to params[:tab_page].present? ? {action: "edit", id: @contact.id,tab_page: 1} : contacts_url, notice: 'Contact was successfully created.' }

@@ -24,8 +24,6 @@ class PaymentRecordsController < ApplicationController
     
     @payment_record.payment_date = Time.now
     @payment_record.debt_date = Time.now
-    
-    @payment_record.amount = @course_register.remain_amount
   end
 
   # GET /payment_records/1/edit
@@ -38,6 +36,8 @@ class PaymentRecordsController < ApplicationController
     @payment_record = PaymentRecord.new(payment_record_params)
     @payment_record.user = current_user
     @payment_record.status = 1
+    @payment_record.update_payment_record_details(params[:payment_record_details]) if params[:payment_record_details].present?
+    @payment_record.update_stock_payment_record_details(params[:stock_payment_record_details]) if params[:stock_payment_record_details].present?
 
     respond_to do |format|
       if @payment_record.save
@@ -109,6 +109,8 @@ class PaymentRecordsController < ApplicationController
       format.json { head :no_content }
     end
   end
+  
+  
 
   private
     # Use callbacks to share common setup or constraints between actions.
