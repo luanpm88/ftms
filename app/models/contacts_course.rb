@@ -5,6 +5,10 @@ class ContactsCourse < ActiveRecord::Base
   belongs_to :course_register
   belongs_to :discount_program
   
+  def self.all_contacts_courses
+    ContactsCourse.all
+  end
+  
   def courses_phrases
     cp_ids = self.courses_phrase_ids.split("][").map {|s| s.gsub("[","").gsub("]","") }
     return CoursesPhrase.where(id: cp_ids)

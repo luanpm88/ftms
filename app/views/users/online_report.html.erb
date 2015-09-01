@@ -1,0 +1,56 @@
+<div class="grid simple " id="contact_filter">
+					<div class="grid-body no-border filters contact-filter">
+					<div class="row order-filters">
+						
+					<%= form_tag(online_report_users_path(format: "xls"), {class: "listing_form", method: "post", target: "_blank"}) do |f| %>
+							<div class="col-md-2 type-contact-filter">
+								<h4>Report Type</h4>
+                                <div class="input-with-icon right">
+                                      <select name="type" class="modern_select is_individual width100">
+                                          <option value="cma">CMA</option>
+                                          <option value="ucrs">UCRS</option>
+                                      </select>											
+                                </div>
+                            </div>
+							
+							<div class="col-md-3">
+								<h4>For Exam</h4>
+								<div class="date_select_filter date_mbe">
+									<%= select_tag 'year', options_for_select(((Time.now.year-10)..(Time.now.year+10)).each { |u| [u, u] }, Time.now.year), class: "modern_select" %>
+                                    <%= select_tag 'month', options_for_select((Course.months_with_CBE.each { |u| [u, u] }), Time.now.month), class: "modern_select" %>
+								</div>
+							</div>
+							
+							<div class="col-md-4">
+								<h4>Program</h4>							
+								<%= select_tag 'course_types[]', options_for_select(CourseType.all.collect{ |u| [u.short_name, u.id] }), class: "modern_select width100", multiple: "multiple" %>
+							</div>
+							
+							<div class="col-md-2">
+                                <div class="">
+                                    <h4 style="color:#fff">...</h4>
+                                    <input type="submit" name="export" value="Export to Excel" class="btn btn-primary" />
+                                </div>
+                            </div>
+					<% end %>
+
+					</div>
+					</div>		    
+				</div>
+							
+							
+					<% if params[:export] %>
+										<%= params[:course_types]  %><%= @report.count %>sssss
+					<% end %>
+							<br />
+							<br />
+							<br />
+							<br />
+							<br />
+							<br />
+							<br />
+							<br />
+							<br />
+							<br />
+							<br />
+							

@@ -931,7 +931,9 @@ CREATE TABLE courses (
     subject_id integer,
     lecturer_id integer,
     status text,
-    parent_id integer
+    parent_id integer,
+    for_exam_year integer,
+    for_exam_month character varying
 );
 
 
@@ -1636,7 +1638,9 @@ CREATE TABLE users (
     last_name character varying,
     phone_ext character varying,
     mobile character varying,
-    image character varying
+    image character varying,
+    "tmp_ConsultantID" text,
+    name text
 );
 
 
@@ -2641,4 +2645,10 @@ INSERT INTO schema_migrations (version) VALUES ('20150828084243');
 INSERT INTO schema_migrations (version) VALUES ('20150828084433');
 
 INSERT INTO schema_migrations (version) VALUES ('20150828091606');
+
+INSERT INTO schema_migrations (version) VALUES ('20150831092449');
+
+INSERT INTO schema_migrations (version) VALUES ('20150831093658');
+
+INSERT INTO schema_migrations (version) VALUES ('20150901010656');
 

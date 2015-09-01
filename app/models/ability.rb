@@ -214,6 +214,7 @@ class Ability
       can :course_features, User
       can :book_features, User
       can :statistic, User
+      can :online_report, User
       
       can :datatable, CourseType
       can :read, CourseType

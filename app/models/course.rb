@@ -40,7 +40,7 @@ class Course < ActiveRecord::Base
                   }
   
   def self.all_courses
-    self.where("status IS NOT NULL AND status LIKE ?", "%[active]%").order("created_at DESC")
+    self.main_courses.where("status IS NOT NULL AND status LIKE ?", "%[active]%").order("created_at DESC")
   end
 
   def self.main_courses
@@ -232,7 +232,7 @@ class Course < ActiveRecord::Base
         if contacts_course.present?
           transferred = !p.transferred?(contacts_course) ? "" : "transferred"
         end
-        arr << "<span class=\"#{transferred}\" title=\"#{transferred}\">[#{p.start_at.strftime("%d-%b-%Y")}]</span> "
+        arr << "<span class=\"#{transferred}\" title=\"#{transferred}\">[#{p.start_at.strftime("%d-%b-%Y") if p.start_at.present?}]</span> "
     end
     return "<div>"+arr.join("").html_safe+"</div>"
   end
@@ -534,6 +534,14 @@ class Course < ActiveRecord::Base
     draft.save
     
     return draft
+  end
+  
+  def self.months_with_CBE
+    months = [""]
+    (1..12).each do |m|
+      months << m
+    end
+    months += ["CBE_1H","CBE_2H"]
   end
   
 end

@@ -31,6 +31,7 @@ class CoursesController < ApplicationController
   def new
     @course = Course.new
     @course.intake = Time.now.beginning_of_month
+    @course.for_exam_year = Time.now.year
   end
 
   # GET /courses/1/edit
@@ -190,6 +191,6 @@ class CoursesController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def course_params
-      params.require(:course).permit(:lecturer_id, :description, :user_id, :intake, :course_type_id, :course_type_ids => [])
+      params.require(:course).permit(:for_exam_year, :for_exam_month, :lecturer_id, :description, :user_id, :intake, :course_type_id, :course_type_ids => [])
     end
 end

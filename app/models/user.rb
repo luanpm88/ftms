@@ -20,8 +20,8 @@ class User < ActiveRecord::Base
   has_many :students, class_name: "Contact", :foreign_key => "account_manager_id"
   has_many :activities
   
-  validates :first_name, presence: true
-  validates :last_name, presence: true
+  #validates :first_name, presence: true
+  #validates :last_name, presence: true
   validates :email, :presence => true, :uniqueness => true
   
   
@@ -35,20 +35,21 @@ class User < ActiveRecord::Base
     roles.any? { |r| r.name == role_sym }
   end
   
-  def name
-    if !first_name.nil?
-      first_name + " " + last_name
-    else
-      email.gsub(/@(.+)/,'')
-    end
-  end
+  #def name
+  #  if !first_name.nil?
+  #    first_name + " " + last_name
+  #  else
+  #    email.gsub(/@(.+)/,'')
+  #  end
+  #end
   
   def short_name
-    if !first_name.nil?
-      first_name + " " + last_name.split(" ").first
-    else
-      email.gsub(/@(.+)/,'')
-    end
+    #if !first_name.nil?
+    #  first_name + " " + last_name.split(" ").first
+    #else
+    #  email.gsub(/@(.+)/,'')
+    #end
+    name
   end
   
   def add_role(role)
@@ -285,7 +286,7 @@ class User < ActiveRecord::Base
   # "Book"
   # "BookData"
   # "Companies"
-  # "Counsultant"
+  ###SAVED############################# "Counsultant"
   # "Course"
   ###SAVED############################# "CourseType"
   ############EMPTY#################### "CusDetail"
@@ -296,7 +297,7 @@ class User < ActiveRecord::Base
   # "NoteDetail"
   ### "Student"
   ############EMPTY#################### "Student_temp"
-  # "Subject"
+  ###SAVED############################# "Subject"
   ############EMPTY#################### "Ucrs"
   ############NO NEEDED################ "UserLevel"
   ############NO NEEDED################ "UserRole"
@@ -309,48 +310,88 @@ class User < ActiveRecord::Base
     File.open(file_path, "wb") { |f| f.write(file.read) }
     
     database = Mdb.open(file_path)
-    result = {contacts: [], course_types: [], subjects: [], subjects_tmp: []}
+    result = {contacts: [], course_types: [], subjects: [], subjects_tmp: [], users: []}
     
-    ### STUDENT
-    database[:Student].each do |row|
-      contact = Contact.new
-      contact.tmp_StudentID = row[:StudentID]
-      contact.name = row[:StudentName]
-      contact.birthday = row[:StudentBirth].to_date
-      contact.address = row[:StudentHomeAdd]
-      contact.email = row[:StudentEmail1] if row[:StudentEmail1].present?
-      contact.email_2 = row[:StudentEmail2]
-      contact.mobile = row[:StudentHandPhone] if row[:StudentHandPhone].present?
-      contact.mobile_2 = row[:StudentOffPhone]
-      contact.phone = row[:StudentHomePhone]
-      contact.fax = row[:StudentFax]
-      contact.sex = row[:StudentTitle] == "2" ? "female" : "male"
+    #### STUDENT
+    #Contact.destroy_all
+    #database[:Student].each do |row|
+    #  contact = Contact.new
+    #  contact.tmp_StudentID = row[:StudentID]
+    #  contact.name = row[:StudentName]
+    #  contact.birthday = row[:StudentBirth].to_date
+    #  contact.address = row[:StudentHomeAdd]
+    #  contact.email = row[:StudentEmail1] if row[:StudentEmail1].present?
+    #  contact.email_2 = row[:StudentEmail2]
+    #  contact.mobile = row[:StudentHandPhone] if row[:StudentHandPhone].present?
+    #  contact.mobile_2 = row[:StudentOffPhone]
+    #  contact.phone = row[:StudentHomePhone]
+    #  contact.fax = row[:StudentFax]
+    #  contact.sex = row[:StudentTitle] == "2" ? "female" : "male"
+    #  
+    #                    
+    #  result[:contacts] << contact
+    #end
+    #
+    #### COURSE TYPE ### SAVED ### 
+    #CourseType.destroy_all
+    #database[:CourseType].each do |row|
+    #  item = CourseType.new
+    #  item.tmp_CourseTypeID = row[:CourseTypeID]
+    #  item.name = row[:CourseTypeName]
+    #  item.short_name = row[:CourseTypeShortName].nil? ? row[:CourseTypeName] : row[:CourseTypeShortName]
+    #  item.save
+    #
+    #  result[:course_types] << item
+    #end
+    #
+    ## SUBJECT ### SAVED ### 
+    #Subject.destroy_all
+    #database[:Subject].each do |row|
+    #  item = Subject.new
+    #  item.tmp_SubjectID = row[:SubjectID]
+    #  
+    #  if !row[:SubjectID].split(row[:CourseID])[1].nil?
+    #    subject_name = User.remove_head_draft(row[:SubjectID].split(row[:CourseID])[1])
+    #    item.name = subject_name
+    #    
+    #    # find course type
+    #    ct = CourseType.where(short_name: row[:SubjectID].split(row[:CourseID])[0]).first
+    #    if !ct.nil?
+    #      # find exist subject
+    #      s = Subject.where("LOWER(name) = ?",subject_name.downcase).first
+    #      
+    #      if !s.nil?
+    #        s.course_types << ct if !s.course_types.include?(ct)
+    #        s.save
+    #      else
+    #        item.course_types << ct
+    #        item.save
+    #      end
+    #      
+    #    end
+    #  end
+    #  
+    #  
+    #  result[:subjects] << item
+    #  result[:subjects_tmp] << row
+    #end
+    
+    ### USER
+    User.where.not(tmp_ConsultantID: nil).destroy_all
+    database[:COUNSULTANT].each_with_index do |row,index|
+      item = User.new(:email => "unknown#{index}@ftmsglobal.edu.vn", :password => "aA456321@", :password_confirmation => "aA456321@")
+      item.tmp_ConsultantID = row[:ConsultantID]
+      #item.first_name = row[:ConsultantName].split(" ").last
+      #item.last_name = row[:ConsultantName].split(" ")
+      item.name = row[:ConsultantName].strip
+
+      item.roles << Role.where(name: "user").first
+      # item.roles << Role.where(name: "education_consultant").first
       
-                        
-      result[:contacts] << contact
-    end
-    
-    ### COURSE TYPE ### SAVED ### 
-    CourseType.destroy_all
-    database[:CourseType].each do |row|
-      item = CourseType.new
-      item.tmp_CourseTypeID = row[:CourseTypeID]
-      item.name = row[:CourseTypeName]
-      item.short_name = row[:CourseTypeShortName].nil? ? row[:CourseTypeName] : row[:CourseTypeShortName]
       item.save
+      
 
-      result[:course_types] << item
-    end
-    
-    # SUBJECT
-    Subject.destroy_all
-    database[:Subject].each do |row|
-      item = Subject.new
-      item.tmp_SubjectID = row[:SubjectID]
-      item.name = row[:SubjectID].split(row[:CourseID])[1] + " -- " + User.remove_head_draft(row[:SubjectID].split(row[:CourseID])[1]) if !row[:SubjectID].split(row[:CourseID])[1].nil?
-
-      result[:subjects] << item
-      result[:subjects_tmp] << row
+      result[:users] << item
     end
     
     
@@ -368,7 +409,36 @@ class User < ActiveRecord::Base
       end
       count += 1
     end
-    return r
+    return r.strip
+  end
+  
+  def self.get_online_report(type, year, month, course_types)
+    courses = Course.all_courses
+                      .where(course_type_id: course_types)
+                      .where(for_exam_year: year)
+                      .where(for_exam_month: month)
+                      
+    subjects = Subject.all_subjects.includes(:course_types).where(course_types: {id: course_types})
+        
+    students = Contact.main_contacts.includes(:contacts_courses)
+                                    .where(contacts_courses: {course_id: courses.select{|c| c.id}})
+                                    
+    report = []
+    students.each do |student|
+      row = {}
+      row["student"] = student
+      row["subjects"] = []
+      subjects.each do |subject|
+        s_row = {}
+        s_row["subject"] = subject
+        s_row["count"] = student.all_contacts_courses.includes(:course).where(courses: {subject_id: subject.id}).count
+        
+        row["subjects"] << s_row
+      end
+      report << row
+    end
+                      
+    return {data: report, subjects: subjects}
   end
   
 end

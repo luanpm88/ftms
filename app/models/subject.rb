@@ -18,6 +18,10 @@ class Subject < ActiveRecord::Base
                       }
                   }
   
+  def self.all_subjects
+    self.all
+  end
+  
   def self.datatable(params, user)
     ActionView::Base.send(:include, Rails.application.routes.url_helpers)
     link_helper = ActionController::Base.helpers    
@@ -58,7 +62,7 @@ class Subject < ActiveRecord::Base
               item.name,
               '<div class="text-center">'+item.programs_name+"</div>",
               '<div class="text-center">'+item.created_at.strftime("%Y-%m-%d")+"</div>",              
-              '<div class="text-center">'+item.user.staff_col+"</div>",
+              '<div class="text-center">'+item.staff_col+"</div>",
               "", 
             ]
       data << item
@@ -74,6 +78,10 @@ class Subject < ActiveRecord::Base
     
     return {result: result, items: @records, actions_col: actions_col}
     
+  end
+  
+  def staff_col
+    user.nil? ? "" : user.staff_col
   end
   
   def self.full_text_search(q)

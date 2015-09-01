@@ -75,6 +75,10 @@ class Contact < ActiveRecord::Base
   after_validation :update_cache
   before_validation :check_type
   
+  def all_contacts_courses
+    contacts_courses
+  end
+  
   def all_course_registers
     course_registers
   end

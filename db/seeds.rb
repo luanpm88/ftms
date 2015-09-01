@@ -10,8 +10,8 @@ ContactType.create(name: "Student", display_order: 1)
 ContactType.create(name: "Inquiry", display_order: 2)
 ContactType.create(name: "Lecturer", display_order: 3)
 
-User.create(:email => "admin@ftmsglobal.edu.vn", :password => "aA456321@", :password_confirmation => "aA456321@",:first_name => "Super",:last_name => "Admin")
-User.create(:email => "manager@ftmsglobal.edu.vn", :password => "aA456321@", :password_confirmation => "aA456321@",:first_name => "System",:last_name => "Manager")
+User.create(name: "Super Admin", :email => "admin@ftmsglobal.edu.vn", :password => "aA456321@", :password_confirmation => "aA456321@",:first_name => "Super",:last_name => "Admin")
+User.create(name: "Manager", :email => "manager@ftmsglobal.edu.vn", :password => "aA456321@", :password_confirmation => "aA456321@",:first_name => "System",:last_name => "Manager")
 
 Role.create(name: "admin")
 Role.create(name: "user")

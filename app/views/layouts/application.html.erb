@@ -423,7 +423,7 @@
 			  <ul class="sub-menu">
 				<li<% if params[:controller] == "payment_records" %> class="active"<% end %>><%= link_to 'Payment Record', payment_records_path(tab_page:1), class: "tab_page" %></li>
 				<li<% if params[:controller] == "bank_accounts" %> class="active"<% end %>><%= link_to 'Bank Account', bank_accounts_path(tab_page:1), class: "tab_page" %></li>
-				
+				<li<% if params[:controller] == "users" %> class="active"<% end %>><%= link_to 'Online Report', online_report_users_path(tab_page:1), class: "tab_page" %></li>				
 
 			  </ul>
 			</li>

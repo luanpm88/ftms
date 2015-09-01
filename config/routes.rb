@@ -176,6 +176,9 @@ Hkerp::Application.routes.draw do
       get :activity_log
       
       get :statistic
+      
+      get :online_report
+      post :online_report
     end
   end
   

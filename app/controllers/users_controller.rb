@@ -277,6 +277,17 @@ class UsersController < ApplicationController
     end
   end
   
+  def online_report
+    if params[:export]
+      @report = User.get_online_report(params[:type], params[:year], params[:month], params[:course_types])
+      
+      respond_to do |format|
+        format.html
+        format.xls {render "users/online_report_ucrs"}
+      end
+    end    
+  end
+  
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_user
@@ -285,6 +296,6 @@ class UsersController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def user_params
-      params.require(:user).permit(:mobile, :email, :first_name, :last_name, :ATT_No, :image, :password, :password_confirmation, :role_ids => [])
+      params.require(:user).permit(:name, :mobile, :email, :first_name, :last_name, :ATT_No, :image, :password, :password_confirmation, :role_ids => [])
     end
 end

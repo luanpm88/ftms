@@ -20,7 +20,7 @@
                              <div class="checkbox check-success">
                                  <%= check_box_tag "contacts_courses["+params[:number].to_s+"][courses_phrase_ids][]", courses_phrase.id, true, {id: "checkbox_"+params[:number]+ "_"+courses_phrase.id.to_s} %>
                                  <label for="checkbox_<%= params[:number] %>_<%= courses_phrase.id %>">
-                                      [<%= courses_phrase.start_at.strftime("%d-%b-%Y") %>]
+                                      [<%= courses_phrase.start_at.strftime("%d-%b-%Y")  if courses_phrase.start_at.present? %>]
                                  </label>
                              </div>
                         </div>
@@ -29,7 +29,7 @@
                              <div class="checkbox check-default">
                                  <%= check_box_tag "disabled", courses_phrase.id, true, {id: "checkbox_"+params[:number]+ "_"+courses_phrase.id.to_s, disabled: "disabled"} %>
                                  <label for="checkbox_<%= params[:number] %>_<%= courses_phrase.id %>">
-                                      [<%= courses_phrase.start_at.strftime("%d-%b-%Y") %>]
+                                      [<%= courses_phrase.start_at.strftime("%d-%b-%Y") if courses_phrase.start_at.present? %>]
                                  </label>
                              </div>
                         </div>
