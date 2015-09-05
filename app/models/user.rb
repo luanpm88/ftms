@@ -383,7 +383,7 @@ class User < ActiveRecord::Base
       item.short_name = row[:CourseTypeShortName].nil? ? row[:CourseTypeName] : row[:CourseTypeShortName]
       item.user = User.first
       item.save
-      item.add_status("new_pending")
+      item.add_status("active")
       item.save_draft(User.first)
     
       result[:course_types] << item
@@ -421,23 +421,23 @@ class User < ActiveRecord::Base
       result[:subjects_tmp] << row
     end
     
-    #### USER
-    #User.where.not(tmp_ConsultantID: nil).destroy_all
-    #database[:COUNSULTANT].each_with_index do |row,index|
-    #  item = User.new(:email => "unknown#{index}@ftmsglobal.edu.vn", :password => "aA456321@", :password_confirmation => "aA456321@")
-    #  item.tmp_ConsultantID = row[:ConsultantID]
-    #  #item.first_name = row[:ConsultantName].split(" ").last
-    #  #item.last_name = row[:ConsultantName].split(" ")
-    #  item.name = row[:ConsultantName].strip
-    #
-    #  item.roles << Role.where(name: "user").first
-    #  # item.roles << Role.where(name: "education_consultant").first
-    #  
-    #  item.save
-    #  
-    #
-    #  result[:users] << item
-    #end
+    ### USER
+    User.where.not(tmp_ConsultantID: nil).destroy_all
+    database[:COUNSULTANT].each_with_index do |row,index|
+      item = User.new(:email => "unknown#{index}@ftmsglobal.edu.vn", :password => "aA456321@", :password_confirmation => "aA456321@")
+      item.tmp_ConsultantID = row[:ConsultantID]
+      #item.first_name = row[:ConsultantName].split(" ").last
+      #item.last_name = row[:ConsultantName].split(" ")
+      item.name = row[:ConsultantName].strip
+    
+      item.roles << Role.where(name: "user").first
+      # item.roles << Role.where(name: "education_consultant").first
+      
+      item.save
+      
+    
+      result[:users] << item
+    end
     
     
     return result
