@@ -40,6 +40,7 @@
 							  <div class="form-group">
 								<label class="form-label"><%= f.label :name %></label>
 								<span class="help">(required)</span>
+								<%= render "field_history", drafts: @discount_program.field_history("name"), type: "name" %>
 								<div class="input-with-icon  right">                                       
 									<i class=""></i>
 									  <%= f.text_field :name, :class => "form-control required" %>
@@ -49,6 +50,7 @@
 							  <div class="form-group">
 								<label class="form-label"><%= f.label :description %></label>
 								<span class="help"></span>
+								<%= render "field_history", drafts: @discount_program.field_history("description"), type: "description" %>
 								<div class="input-with-icon  right">                                       
 									<i class=""></i>
 									  <%= f.text_area :description, :class => "form-control" %>
@@ -67,6 +69,7 @@
 										<div class="form-group">
 											<label class="form-label"><%= f.label :discount %></label>
 											<span class="help">(required)</span>
+											<%= render "field_history", drafts: @discount_program.field_history("rate"), type: "rate" %>
 											<div class="input-with-icon  right">                                       
 												<i class=""></i>
 												  <%= f.text_field :rate, :class => "form-control number_input required text-right" %>
@@ -77,7 +80,8 @@
 										<div class="form-group">
 											<label class="form-label"><%= f.label :type %></label>
 											<span class="help">(required)</span>
-											<div class="input-with-icon  right">                                       
+											<%= render "field_history", drafts: @discount_program.field_history("type_name"), type: "type_name" %>
+											<div class="input-with-icon right">                                       
 												<i class=""></i>
 												  <div class="input-with-icon right">
 													   <select name="discount_program[type_name]" class="modern_select width100 required">
@@ -95,6 +99,7 @@
                                           <div class="form-group">
                                               <label class="form-label"><%= f.label :start_at %></label>
                                               <span class="help">(required)</span>
+											  <%= render "field_history", drafts: @discount_program.field_history("start_at"), type: "start_at" %>
                                               <div class="input-with-icon  right">                                       
                                                    <i class=""></i>
                                                    <div class="input-append success date col-md-10 no-padding">
@@ -110,6 +115,7 @@
                                           <div class="form-group">
                                               <label class="form-label"><%= f.label :end_at %></label>
                                               <span class="help">(required)</span>
+											  <%= render "field_history", drafts: @discount_program.field_history("end_at"), type: "end_at" %>
                                               <div class="input-with-icon  right">                                       
                                                    <i class=""></i>
                                                    <div class="input-append success date col-md-10 no-padding">

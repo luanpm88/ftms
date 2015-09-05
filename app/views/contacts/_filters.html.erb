@@ -42,7 +42,7 @@
 							
 							<div class="col-md-2 personal-box">
 								<h4>Program</h4>							
-								<%= select_tag 'course_types[]', options_for_select(CourseType.all.collect{ |u| [u.short_name, u.id] }), class: "modern_select width100", multiple: "multiple" %>
+								<%= select_tag 'course_types[]', options_for_select(CourseType.active_course_types.collect{ |u| [u.short_name, u.id] }), class: "modern_select width100", multiple: "multiple" %>
 							</div>
 							
 							<div class="col-md-2 personal-box">
@@ -79,7 +79,7 @@
 							
 							<div class="col-md-2 personal-box">
 								<h4>Tag</h4>
-								<%= select_tag 'tags[]', options_for_select(ContactTag.all.collect{ |u| [u.name, u.id] }), class: "modern_select width100", multiple: "multiple" %>
+								<%= select_tag 'tags[]', options_for_select(ContactTag.active_contact_tags.collect{ |u| [u.name, u.id] }), class: "modern_select width100", multiple: "multiple" %>
 							</div>
 							
 							<div class="col-md-3 seminar-contact-filter personal-box">

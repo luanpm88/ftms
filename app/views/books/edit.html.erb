@@ -6,9 +6,21 @@
 			<%= link_to 'Stock Management', books_url %>
                     </li>
       </ul>
-      <div class="page-title"> <i class="icon-edit"></i>
-        <h3>Edit - <span class="semi-bold"><%= @book.name %></span></h3>
-      </div>
+      
+		<div class="page-title <%= "draft" if @book.draft? %>""> <i class="icon-briefcase"></i>
+		  <h3 class=""><span class="semi-bold"><%= @book.name %></span>
+		  <br /><%= "Changed at: #{@book.created_at.strftime("%d-%b-%Y %I:%M %p")} / By: #{@book.user.name}" if @book.draft? %>
+		  </h3>
+		</div>
+	  
+		<div class="top-buts">
+				<%= render_book_actions(@book, "big") if !@book.draft? %>
+				<%= render_book_history_actions(@book) %>
+		</div>
+		<div>
+				<%= @book.display_statuses if !@book.draft? %>
+		</div>
+		<br style="clear:both" />
       
 
 	  

@@ -13,6 +13,15 @@
       <% if value != c[type] && ["program_paper"].include?(type) %>
         <li><%= c.program_paper_name %> <span class="nowrap time-span"><%= c.created_at.strftime("%d-%b-%Y, %I:%M %p") %></span></li>
       <% end %>
+      <% if value != c[type] && ["for_exam"].include?(type) %>
+        <li><%= c.for_exam_year %>/<%= c.for_exam_month %> <span class="nowrap time-span"><%= c.created_at.strftime("%d-%b-%Y, %I:%M %p") %></span></li>
+      <% end %>
+      <% if value != c[type] && ["course_price"].include?(type) %>
+        <li><%= (c.prices.map{|p| format_price(p)}).join(" / ") %> <span class="nowrap time-span"><%= c.created_at.strftime("%d-%b-%Y, %I:%M %p") %></span></li>
+      <% end %>
+      <% if value != c[type] && ["phrases"].include?(type) %>
+        <li><%= c.courses_phrase_list.html_safe %> <span class="nowrap time-span"><%= c.created_at.strftime("%d-%b-%Y, %I:%M %p") %></span></li>
+      <% end %>
       
       
       <% value = c[type] %>

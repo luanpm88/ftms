@@ -1,7 +1,7 @@
 class ContactTagsController < ApplicationController
   include ContactTagsHelper
   load_and_authorize_resource
-  before_action :set_contact_tag, only: [:show, :edit, :update, :destroy]
+  before_action :set_contact_tag, only: [:delete, :show, :edit, :update, :destroy]
 
   # GET /contact_tags
   # GET /contact_tags.json
@@ -33,9 +33,13 @@ class ContactTagsController < ApplicationController
   # POST /contact_tags.json
   def create
     @contact_tag = ContactTag.new(contact_tag_params)
+    @contact_tag.user = current_user
 
     respond_to do |format|
       if @contact_tag.save
+        @contact_tag.update_status("create", current_user)        
+        @contact_tag.save_draft(current_user)
+        
         format.html { redirect_to params[:tab_page].present? ? "/home/close_tab" : @contact_tag, notice: 'Contact tag was successfully created.' }
         format.json { render action: 'show', status: :created, location: @contact_tag }
       else
@@ -50,6 +54,9 @@ class ContactTagsController < ApplicationController
   def update
     respond_to do |format|
       if @contact_tag.update(contact_tag_params)
+        @contact_tag.update_status("update", current_user)        
+        @contact_tag.save_draft(current_user)
+        
         format.html { redirect_to params[:tab_page].present? ? "/home/close_tab" : @contact_tag, notice: 'Contact tag was successfully updated.' }
         format.json { head :no_content }
       else
@@ -79,6 +86,68 @@ class ContactTagsController < ApplicationController
     
     render json: result[:result]
   end
+  
+  ########## BEGIN REVISION ###############
+  
+  def approve_new
+    authorize! :approve_new, @contact_tag
+    
+    @contact_tag.approve_new(current_user)
+    
+    respond_to do |format|
+      format.html { redirect_to params[:tab_page].present? ? "/contact_tags/approved" : @contact_tag }
+      format.json { render action: 'show', status: :created, location: @contact_tag }
+    end
+  end
+  
+  def approve_update
+    authorize! :approve_update, @contact_tag
+    
+    @contact_tag.approve_update(current_user)
+    
+    respond_to do |format|
+      format.html { redirect_to params[:tab_page].present? ? "/contact_tags/approved" : @contact_tag }
+      format.json { render action: 'show', status: :created, location: @contact_tag }
+    end
+  end
+  
+  def approve_delete
+    authorize! :approve_delete, @contact_tag
+    
+    @contact_tag.approve_delete(current_user)
+    
+    respond_to do |format|
+      format.html { redirect_to params[:tab_page].present? ? "/contact_tags/approved" : @contact_tag }
+      format.json { render action: 'show', status: :created, location: @contact_tag }
+    end
+  end
+  
+  def approved
+    render layout: "content"
+  end
+  
+  def field_history
+    @drafts = @contact_tag.field_history(params[:type])
+    
+    render layout: nil
+  end
+
+  def delete
+    
+    respond_to do |format|
+      if @contact_tag.delete
+        @contact_tag.save_draft(current_user)
+        
+        format.html { redirect_to "/home/close_tab" }
+        format.json { head :no_content }
+      else
+        format.html { render action: 'edit', tab_page: params[:tab_page] }
+        format.json { render json: @contact_tag.errors, status: :unprocessable_entity }
+      end
+    end
+  end
+  
+  ########## BEGIN REVISION ###############
 
   private
     # Use callbacks to share common setup or constraints between actions.

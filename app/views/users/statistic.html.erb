@@ -17,14 +17,31 @@
 				<% end %>
                   <div class="grid-body no-border filters sales_statistic-filter">
                   <div class="row order-filters">
-						<div class="col-md-3">
-						  <h4>Intake</h4>  
-						  <div class="date_select_filter">
-							  <div class="input-with-icon date-group-my right">                                       
-										<%= date_select(:filter, :intake, {selected: @date, use_short_month: true}, class: "multiple") %>
-							  </div>
-						  </div>
-						</div>						
+						<div class="col-md-2">
+								<h4>From Date</h4>
+								<div class="date_select_filter">
+								<div class="input-with-icon  right">
+									<div class="input-append success date col-md-10 no-padding">
+										<%= text_field_tag :from_date, @from_date.strftime("%Y-%m-%d"), :class => "datetime form-control" %>
+										<span class="add-on"><span class="arrow"></span><i class="icon-th"></i></span>
+									</div>
+									<br style="clear: both" />
+									
+								</div>
+								</div>
+							</div>
+							<div class="col-md-2">
+								<h4>To Date</h4>
+								<div class="date_select_filter">
+								<div class="input-with-icon  right">
+									<div class="input-append success date col-md-10 no-padding">
+										<%= text_field_tag :to_date, @to_date.strftime("%Y-%m-%d"), :class => "datetime form-control" %>
+										<span class="add-on"><span class="arrow"></span><i class="icon-th"></i></span>
+									</div>
+									<br style="clear: both" />
+								</div>
+								</div>
+						</div>					
 						<div class="col-md-5">
 							<h4>Consultant</h4>
 							<div class="">
@@ -54,6 +71,7 @@
                                       <th class="text-center">Program</th>
 									  <th class="text-center">Note Log</th>
                                       <th class="text-right">Sales</th>
+									  <th class="text-right">Receivable</th>
 									  <th class="text-center">Paper</th>
 									  <th class="text-center">New Inquiry</th>
 									  <th class="text-center">New Student</th>									  
@@ -76,6 +94,9 @@
 												</td>
 												<td class="text-right">
 														<strong><%= format_price(u[:total]) %></strong>
+												</td>
+												<td class="text-right">
+														<strong><%= format_price(u[:receivable]) %></strong>
 												</td>
 												<td class="text-center">
 														<strong><%= u[:paper] %></strong>
@@ -107,6 +128,9 @@
 													  <td class="text-right">
 																<%= format_price(row[:total]) %>
 													  </td>
+													  <td class="text-right">
+																<strong><%= format_price(row[:receivable]) %></strong>
+														</td>
 													  <td class="text-center">
 																<%= row[:paper] %>
 													  </td>													  

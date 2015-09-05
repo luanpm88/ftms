@@ -1,5 +1,5 @@
 class ContactsCoursesController < ApplicationController
-  before_action :set_contacts_course, only: [:show, :edit, :update, :destroy]
+  before_action :set_contacts_course, only: [:report_toggle, :show, :edit, :update, :destroy]
 
   # GET /contacts_courses
   # GET /contacts_courses.json
@@ -59,6 +59,12 @@ class ContactsCoursesController < ApplicationController
       format.html { redirect_to contacts_courses_url }
       format.json { head :no_content }
     end
+  end
+  
+  def report_toggle
+    @contacts_course.update_attribute(:report,!@contacts_course.report)
+    
+    render layout: nil
   end
 
   private

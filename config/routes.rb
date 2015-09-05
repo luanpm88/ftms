@@ -32,6 +32,17 @@ Hkerp::Application.routes.draw do
   resources :bank_accounts do
     collection do
       get :datatable
+      
+      ### revision ###
+      get :delete
+      get :approve_new
+      get :approve_update
+      get :approve_delete
+      
+      get :approved
+      get :field_history
+      
+      ####################
     end
   end
   resources :course_prices
@@ -40,6 +51,17 @@ Hkerp::Application.routes.draw do
   resources :discount_programs do
     collection do
       get :datatable
+      
+      ### revision ###
+      get :delete
+      get :approve_new
+      get :approve_update
+      get :approve_delete
+      
+      get :approved
+      get :field_history
+      
+      ####################
     end
   end
   resources :courses_phrases do
@@ -66,9 +88,24 @@ Hkerp::Application.routes.draw do
       post :import_list
       
       get :check_contact
+      
+      ### revision ###
+      get :delete
+      get :approve_new
+      get :approve_update
+      get :approve_delete
+      
+      get :approved
+      get :field_history
+      
+      ####################
     end
   end
-  resources :contacts_courses
+  resources :contacts_courses do
+    collection do
+      get :report_toggle
+    end
+  end
   resources :course_registers do
     collection do
       get :datatable
@@ -80,6 +117,17 @@ Hkerp::Application.routes.draw do
   resources :contact_tags do
     collection do
       get :datatable
+      
+      ### revision ###
+      get :delete
+      get :approve_new
+      get :approve_update
+      get :approve_delete
+      
+      get :approved
+      get :field_history
+      
+      ####################
     end
   end
   resources :books do
@@ -90,6 +138,17 @@ Hkerp::Application.routes.draw do
       get :volumn_checkboxs
       get :stock_price_form
       get :student_books
+      
+      ### revision ###
+      get :delete
+      get :approve_new
+      get :approve_update
+      get :approve_delete
+      
+      get :approved
+      get :field_history
+      
+      ####################
     end
   end
   
@@ -120,6 +179,17 @@ Hkerp::Application.routes.draw do
   resources :course_types do
     collection do
       get :datatable
+      
+      ### revision ###
+      get :delete
+      get :approve_new
+      get :approve_update
+      get :approve_delete
+      
+      get :approved
+      get :field_history
+      
+      ####################
     end
   end
   

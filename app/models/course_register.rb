@@ -255,8 +255,11 @@ class CourseRegister < ActiveRecord::Base
   def course_list(phrase_list=true)
     arr = []
     courses.each do |row|
-      arr << "<div><strong>"+row[:course].display_name+"</strong></div>"
+      
+      
+      arr << "<div class=\"nowrap\"><strong>"+row[:course].display_name+"</strong> <span>#{row[:contacts_course].report_toggle}</span></div>"
       arr << "<div class=\"courses_phrases_list\">"+Course.render_courses_phrase_list(row[:courses_phrases],row[:contacts_course])+"</div>" if phrase_list
+      #arr << "<div>#{no_ucrs_html}</div>"
       
     end
     

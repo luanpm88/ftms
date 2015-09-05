@@ -2,7 +2,8 @@ class CourseTypesController < ApplicationController
   include CourseTypesHelper
   load_and_authorize_resource
   
-  before_action :set_course_type, only: [:show, :edit, :update, :destroy]
+  # [delete] for revision-feature
+  before_action :set_course_type, only: [:delete, :show, :edit, :update, :destroy]
 
   # GET /course_types
   # GET /course_types.json
@@ -40,6 +41,9 @@ class CourseTypesController < ApplicationController
 
     respond_to do |format|
       if @course_type.save
+        @course_type.update_status("create", current_user)        
+        @course_type.save_draft(current_user)
+        
         format.html { redirect_to params[:tab_page].present? ? "/home/close_tab" : course_types_path, notice: 'Course type was successfully created.' }
         format.json { render action: 'show', status: :created, location: @course_type }
       else
@@ -54,6 +58,9 @@ class CourseTypesController < ApplicationController
   def update
     respond_to do |format|
       if @course_type.update(course_type_params)
+        @course_type.update_status("update", current_user)        
+        @course_type.save_draft(current_user)
+        
         format.html { redirect_to params[:tab_page].present? ? "/home/close_tab" : course_types_path, notice: 'Course type was successfully updated.' }
         format.json { head :no_content }
       else
@@ -83,6 +90,69 @@ class CourseTypesController < ApplicationController
     
     render json: result[:result]
   end
+  
+  
+  ########## BEGIN REVISION ###############
+  
+  def approve_new
+    authorize! :approve_new, @course_type
+    
+    @course_type.approve_new(current_user)
+    
+    respond_to do |format|
+      format.html { redirect_to params[:tab_page].present? ? "/course_types/approved" : @course_type }
+      format.json { render action: 'show', status: :created, location: @course_type }
+    end
+  end
+  
+  def approve_update
+    authorize! :approve_update, @course_type
+    
+    @course_type.approve_update(current_user)
+    
+    respond_to do |format|
+      format.html { redirect_to params[:tab_page].present? ? "/course_types/approved" : @course_type }
+      format.json { render action: 'show', status: :created, location: @course_type }
+    end
+  end
+  
+  def approve_delete
+    authorize! :approve_delete, @course_type
+    
+    @course_type.approve_delete(current_user)
+    
+    respond_to do |format|
+      format.html { redirect_to params[:tab_page].present? ? "/course_types/approved" : @course_type }
+      format.json { render action: 'show', status: :created, location: @course_type }
+    end
+  end
+  
+  def approved
+    render layout: "content"
+  end
+  
+  def field_history
+    @drafts = @course_types.field_history(params[:type])
+    
+    render layout: nil
+  end
+
+  def delete
+    
+    respond_to do |format|
+      if @course_type.delete
+        @course_type.save_draft(current_user)
+        
+        format.html { redirect_to "/home/close_tab" }
+        format.json { head :no_content }
+      else
+        format.html { render action: 'edit', tab_page: params[:tab_page] }
+        format.json { render json: @course_type.errors, status: :unprocessable_entity }
+      end
+    end
+  end
+  
+  ########## BEGIN REVISION ###############
 
   private
     # Use callbacks to share common setup or constraints between actions.

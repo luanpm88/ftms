@@ -55,7 +55,7 @@
 										<div class="input-with-icon  right">                                       
 											 <i class=""></i>
 											 <div class="input-with_add_butz">												   													   
-												  <%= select_tag 'payment_record[bank_account_id]', options_for_select(BankAccount.all.collect{ |u| [u.name, u.id] }, @course_register.bank_account.id), class: "modern_select width100 required" %>
+												  <%= select_tag 'payment_record[bank_account_id]', options_for_select(BankAccount.active_bank_accounts.collect{ |u| [u.name, u.id] }, @course_register.bank_account.id), class: "modern_select width100 required" %>
 											 </div>
 										</div>
 								   </div>	

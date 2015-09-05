@@ -6,9 +6,21 @@
 			<%= link_to 'Discount Program', discount_programs_url %>
                     </li>
       </ul>
-      <div class="page-title"> <i class="icon-edit"></i>
-        <h3>Edit Discount Program - <span class="semi-bold"><%= @discount_program.name %></span></h3>
-      </div>
+
+		<div class="page-title <%= "draft" if @discount_program.draft? %>""> <i class="icon-briefcase"></i>
+		  <h3 class=""><span class="semi-bold"><%= @discount_program.name %></span>
+		  <br /><%= "Changed at: #{@discount_program.created_at.strftime("%d-%b-%Y %I:%M %p")} / By: #{@discount_program.user.name}" if @discount_program.draft? %>
+		  </h3>
+		</div>
+	  
+		<div class="top-buts">
+				<%= render_discount_program_actions(@discount_program, "big") if !@discount_program.draft? %>
+				<%= render_discount_program_history_actions(@discount_program) %>
+		</div>
+		<div>
+				<%= @discount_program.display_statuses if !@discount_program.draft? %>
+		</div>
+		<br style="clear:both" />
       
 
 	  

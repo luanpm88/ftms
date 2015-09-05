@@ -8,6 +8,17 @@
                         <i class="icon-chevron-sign-down"></i>
                     	<h3>Discount - <span class="semi-bold"> Program</span></h3>	
                 </div>
+				
+				<div class="grid simple ">
+                  <div class="grid-body no-border filters discount-program-filter">
+                  <div class="row order-filters">						
+						<div class="col-md-3">
+							<h4>Status</h4>							
+							<%= select_tag 'status', options_for_select(DiscountProgram.status_options, params[:status]), class: "modern_select width100" %>
+						</div>
+                  </div>
+                  </div>		    
+				</div>
                 
                 <div class="row">
                     <div class="col-md-12">
@@ -28,6 +39,7 @@
                                                 <th class="text-center">Start At</th>
                                                 <th class="text-center">End At</th>
 												<th class="text-center" width="1%">Creator</th>
+												<th class="text-center" width="1%">Status</th>
 												<th class="text-right" width="1%">Actions</th>
                                             </tr>
                                         </thead>                                        

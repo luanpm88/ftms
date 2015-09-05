@@ -7645,7 +7645,7 @@ ul.filter {
     color: #aa6708;
 }
 .alert-level1 {
-    margin: 0 10px 0 0;
+    margin: 0 2px 0 0;
 }
 .alert-level2 {
     margin: 6px 6px 0 0;
@@ -8425,6 +8425,9 @@ td .logo {
 .page-sidebar ul.sub-menu li a.noti .badge {
     color: #f35958;
 }
+.page-sidebar ul.sub-menu li a.approved .badge {
+    color: #0AA699;
+}
 .delete_pending {
     background: #f35958;
 }
@@ -8443,5 +8446,9 @@ td .logo {
 .date_mbe #s2id_course_for_exam_month, .date_mbe #s2id_month {
     width: 120px;
 }
-
-
+.alert-level1 {
+    margin-right: 0 2px 0 0 !important;
+}
+.page-sidebar > ul > li > a {
+    padding-right: 5px !important;
+}

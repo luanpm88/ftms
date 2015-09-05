@@ -40,6 +40,7 @@
 							  <div class="form-group">
 								<label class="form-label"><%= f.label :short_name %></label>
 								<span class="help">(required)</span>
+								<%= render "field_history", drafts: @course_type.field_history("short_name"), type: "short_name" %>
 								<div class="input-with-icon  right">                                       
 									<i class=""></i>
 									  <%= f.text_field :short_name, :class => "form-control required" %>
@@ -49,6 +50,7 @@
 							  <div class="form-group">
 								<label class="form-label"><%= f.label :name %></label>
 								<span class="help">(required)</span>
+								<%= render "field_history", drafts: @course_type.field_history("name"), type: "name" %>
 								<div class="input-with-icon  right">                                       
 									<i class=""></i>
 									  <%= f.text_field :name, :class => "form-control required" %>
@@ -58,6 +60,7 @@
 							  <div class="form-group">
 								<label class="form-label"><%= f.label :description %></label>
 								<span class="help"></span>
+								<%= render "field_history", drafts: @course_type.field_history("description"), type: "description" %>
 								<div class="input-with-icon  right">                                       
 									<i class=""></i>
 									  <%= f.text_area :description, :class => "form-control" %>
@@ -74,8 +77,10 @@
 						 
 					<div class="form-actions">  
 						 <div class="pull-right">
-						 <button type="submit" class="btn btn-success btn-cons"><i class="icon-ok"></i> Save</button>
-						  <%= link_to 'Cancel', users_path, :class => "btn btn-white btn-cons cancel-but" %>
+							  <% if !@course_type.statuses.include?("deleted") %>
+								   <button type="submit" class="btn btn-success btn-cons"><i class="icon-ok"></i> Save</button>
+							  <% end %>
+							  <%= link_to 'Cancel', users_path, :class => "btn btn-white btn-cons cancel-but" %>
 					   </div>
 					</div>
 							  

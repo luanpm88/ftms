@@ -2,7 +2,7 @@ class SeminarsController < ApplicationController
   include SeminarsHelper
   load_and_authorize_resource
   
-  before_action :set_seminar, only: [:check_contact, :import_from_file, :show, :edit, :update, :destroy]
+  before_action :set_seminar, only: [:delete, :check_contact, :import_from_file, :show, :edit, :update, :destroy]
 
   # GET /seminars
   # GET /seminars.json
@@ -50,6 +50,9 @@ class SeminarsController < ApplicationController
 
     respond_to do |format|
       if @seminar.save
+        @seminar.update_status("create", current_user)        
+        @seminar.save_draft(current_user)
+        
         format.html { redirect_to params[:tab_page].present? ? "/home/close_tab" : @seminar, notice: 'Seminar was successfully created.' }
         format.json { render action: 'show', status: :created, location: @seminar }
       else
@@ -68,6 +71,9 @@ class SeminarsController < ApplicationController
     end
     respond_to do |format|
       if @seminar.save
+        @seminar.update_status("update", current_user)        
+        @seminar.save_draft(current_user)
+        
         format.html { redirect_to params[:tab_page].present? ? "/home/close_tab" : @seminar, notice: 'Seminar was successfully updated.' }
         format.json { head :no_content }
       else
@@ -124,6 +130,68 @@ class SeminarsController < ApplicationController
     
     render layout: nil
   end
+  
+  ########## BEGIN REVISION ###############
+  
+  def approve_new
+    authorize! :approve_new, @seminar
+    
+    @seminar.approve_new(current_user)
+    
+    respond_to do |format|
+      format.html { redirect_to params[:tab_page].present? ? "/seminars/approved" : @seminar }
+      format.json { render action: 'show', status: :created, location: @seminar }
+    end
+  end
+  
+  def approve_update
+    authorize! :approve_update, @seminar
+    
+    @seminar.approve_update(current_user)
+    
+    respond_to do |format|
+      format.html { redirect_to params[:tab_page].present? ? "/seminars/approved" : @seminar }
+      format.json { render action: 'show', status: :created, location: @seminar }
+    end
+  end
+  
+  def approve_delete
+    authorize! :approve_delete, @seminar
+    
+    @seminar.approve_delete(current_user)
+    
+    respond_to do |format|
+      format.html { redirect_to params[:tab_page].present? ? "/seminars/approved" : @seminar }
+      format.json { render action: 'show', status: :created, location: @seminar }
+    end
+  end
+  
+  def approved
+    render layout: "content"
+  end
+  
+  def field_history
+    @drafts = @seminar.field_history(params[:type])
+    
+    render layout: nil
+  end
+
+  def delete
+    
+    respond_to do |format|
+      if @seminar.delete
+        @seminar.save_draft(current_user)
+        
+        format.html { redirect_to "/home/close_tab" }
+        format.json { head :no_content }
+      else
+        format.html { render action: 'edit', tab_page: params[:tab_page] }
+        format.json { render json: @seminar.errors, status: :unprocessable_entity }
+      end
+    end
+  end
+  
+  ########## BEGIN REVISION ###############
 
   private
     # Use callbacks to share common setup or constraints between actions.

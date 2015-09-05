@@ -1,0 +1,14 @@
+<% if !drafts.empty? %>
+  <i class="icon icon-time contact-field-history" rel="history-<%= type %>" onclick="$('.history-<%= type %>').toggle()"></i>
+  <ul class="history-list history-<%= type %>" style="display: none">
+    <% value = "-1" %>
+    <% drafts.each do |c| %>
+      
+      <% if value != c[type] && ["name","short_name","description"].include?(type) %>
+        <li><%= c[type].empty? ? "[empty]" : c[type] %> <span class="nowrap time-span"><%= c.created_at.strftime("%d-%b-%Y, %I:%M %p") %></span></li>
+      <% end %>
+      
+      <% value = c[type] %>
+    <% end %>
+  </ul>
+<% end %>

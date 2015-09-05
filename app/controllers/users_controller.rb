@@ -156,9 +156,17 @@ class UsersController < ApplicationController
   end
   
   def statistic
-    @date = Date.today
-    if params[:filter]
-      @date = @date.change(:year => params[:filter]["intake(1i)"].to_i, month: params[:filter]["intake(2i)"].to_i)
+    #@date = Date.today
+    #if params[:filter]
+    #  @date = @date.change(:year => params[:filter]["intake(1i)"].to_i, month: params[:filter]["intake(2i)"].to_i)
+    #end
+    
+    if params[:from_date].present? && params[:to_date].present?
+      @from_date = params[:from_date].to_date
+      @to_date =  params[:to_date].to_date.end_of_day
+    else
+      @from_date = DateTime.now.beginning_of_month
+      @to_date =  DateTime.now
     end
         
     @statistics = []
@@ -174,6 +182,8 @@ class UsersController < ApplicationController
       inquiry_total = 0
       student_total = 0
       paper_total = 0
+      receivable_total = 0.00
+      
       
       @course_types = CourseType.order("short_name")
       @course_types.each do |ct|
@@ -184,8 +194,7 @@ class UsersController < ApplicationController
         @records = PaymentRecord.includes(:course_register => :contact)
                               .where(status: 1)
                               .where(contacts: {account_manager_id: u.id}) #.where(course_types: {id: ct.id}) #.sum(:price)                              
-                              .where("EXTRACT(YEAR FROM payment_records.payment_date) = ? ", @date.year)
-                              .where("EXTRACT(MONTH FROM payment_records.payment_date) = ? ", @date.month)
+                              .where("payment_records.payment_date >= ? AND payment_records.payment_date <= ? ", @from_date.beginning_of_day, @to_date.end_of_day)
         
         @records.each do |pr|
           pr.payment_record_details.each do |prd|
@@ -197,33 +206,45 @@ class UsersController < ApplicationController
         end
         
         
+        # receivable
+        receivable = 0
+        contacts_courses = ContactsCourse.includes(:course => :course_type, :course_register => :contact)
+                                          .where(course_types: {id: ct.id})
+                                          .where(contacts: {account_manager_id: u.id})
+                                          .where("course_registers.created_date >= ? AND course_registers.created_date <= ? ", @from_date.beginning_of_day, @to_date.end_of_day)
+        
+        contacts_courses.each do |cc|
+          receivable += cc.remain(@from_date, @to_date)
+        end
+
+        receivable_total += receivable
+        
+        
         # Inquiry # Student
         inquiry = 0
         student = 0
         @contacts = Contact.main_contacts.includes(:contact_types, :course_types)
                             .where(account_manager_id: u.id)
-                            .where(is_individual: true)                            
-                            .where("EXTRACT(YEAR FROM contacts.created_at) = ? ", @date.year)
-                            .where("EXTRACT(MONTH FROM contacts.created_at) = ? ", @date.month)
+                            .where(is_individual: true)
+                            .where("contacts.created_at >= ? AND contacts.created_at <= ? ", @from_date.beginning_of_day, @to_date.end_of_day)
         
         @contacts.each do |c|
           transform = 0
           
-          if !c.first_revision.nil? && c.first_revision.contact_types.include?(ContactType.inquiry)
+          if c.course_types.include?(ct) && !c.first_revision.nil? && c.first_revision.contact_types.include?(ContactType.inquiry)
             inquiry += 1
             inquiry_total += 1
             
             # find transform revision
             transform_revision_count = c.revisions.includes(:contact_types)
                                                   .where(contact_types: {id: ContactType.student.id})
-                                                  .where("EXTRACT(YEAR FROM contacts.created_at) = ? ", @date.year)
-                                                  .where("EXTRACT(MONTH FROM contacts.created_at) = ? ", @date.month)
+                                                  .where("contacts.created_at >= ? AND contacts.created_at <= ? ", @from_date.beginning_of_day, @to_date.end_of_day)
                                                   .count
             if transform_revision_count > 0
               transform = 1
             end
           end            
-          if !c.first_revision.nil? && c.first_revision.contact_types.include?(ContactType.student)          
+          if c.cache_course_type_ids.include?("[#{ct.id}]") && !c.first_revision.nil? && c.first_revision.contact_types.include?(ContactType.student)          
             student += 1
             student_total += 1
           end
@@ -240,19 +261,19 @@ class UsersController < ApplicationController
         @papers = ContactsCourse.includes(:course_register, :contact, :course => :course_type)
                             .where(contacts: {account_manager_id: u.id})
                             .where(course_types: {id: ct.id})
-                            .where("EXTRACT(YEAR FROM course_registers.created_date) = ? ", @date.year)
-                            .where("EXTRACT(MONTH FROM course_registers.created_date) = ? ", @date.month)
+                            .where("course_registers.created_date >= ? AND course_registers.created_date <= ? ", @from_date.beginning_of_day, @to_date.end_of_day)
+
         paper = @papers.count
         paper_total += @papers.count
         
         
         
-        row[:statistics] << {user: u, course_type: ct, paper: paper, inquiry: inquiry, student: student, total: total} if total > 0.0 || paper > 0 || inquiry > 0 || student > 0
+        row[:statistics] << {user: u, course_type: ct, paper: paper, inquiry: inquiry, student: student, total: total, receivable: receivable} if total > 0.0 || receivable > 0.0 || paper > 0 || inquiry > 0 || student > 0
 
       end
       
-      note_count = u.activities.where("EXTRACT(YEAR FROM activities.created_at) = ? ", @date.year)
-                    .where("EXTRACT(MONTH FROM activities.created_at) = ? ", @date.month)
+      note_count = u.activities
+                    .where("activities.created_at >= ? AND activities.created_at <= ? ", @from_date.beginning_of_day, @to_date.end_of_day)
                     .count
       
       
@@ -263,6 +284,7 @@ class UsersController < ApplicationController
       row[:student] = student_total
       row[:course_type] = nil
       row[:total] = group_total
+      row[:receivable] = receivable_total
       
       
       @result << row

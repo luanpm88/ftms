@@ -3,7 +3,7 @@ class BankAccountsController < ApplicationController
   
   load_and_authorize_resource
   
-  before_action :set_bank_account, only: [:show, :edit, :update, :destroy]
+  before_action :set_bank_account, only: [:delete, :show, :edit, :update, :destroy]
 
   # GET /bank_accounts
   # GET /bank_accounts.json
@@ -40,6 +40,9 @@ class BankAccountsController < ApplicationController
 
     respond_to do |format|
       if @bank_account.save
+        @bank_account.update_status("create", current_user)        
+        @bank_account.save_draft(current_user)
+        
         format.html { redirect_to params[:tab_page].present? ? "/home/close_tab" : @bank_account, notice: 'Bank account was successfully created.' }
         format.json { render action: 'show', status: :created, location: @bank_account }
       else
@@ -54,6 +57,9 @@ class BankAccountsController < ApplicationController
   def update
     respond_to do |format|
       if @bank_account.update(bank_account_params)
+        @bank_account.update_status("update", current_user)        
+        @bank_account.save_draft(current_user)
+        
         format.html { redirect_to params[:tab_page].present? ? "/home/close_tab" : @bank_account, notice: 'Bank account was successfully updated.' }
         format.json { head :no_content }
       else
@@ -83,6 +89,68 @@ class BankAccountsController < ApplicationController
     
     render json: result[:result]
   end
+  
+  ########## BEGIN REVISION ###############
+  
+  def approve_new
+    authorize! :approve_new, @bank_account
+    
+    @bank_account.approve_new(current_user)
+    
+    respond_to do |format|
+      format.html { redirect_to params[:tab_page].present? ? "/bank_accounts/approved" : @bank_account }
+      format.json { render action: 'show', status: :created, location: @bank_account }
+    end
+  end
+  
+  def approve_update
+    authorize! :approve_update, @bank_account
+    
+    @bank_account.approve_update(current_user)
+    
+    respond_to do |format|
+      format.html { redirect_to params[:tab_page].present? ? "/bank_accounts/approved" : @bank_account }
+      format.json { render action: 'show', status: :created, location: @bank_account }
+    end
+  end
+  
+  def approve_delete
+    authorize! :approve_delete, @bank_account
+    
+    @bank_account.approve_delete(current_user)
+    
+    respond_to do |format|
+      format.html { redirect_to params[:tab_page].present? ? "/bank_accounts/approved" : @bank_account }
+      format.json { render action: 'show', status: :created, location: @bank_account }
+    end
+  end
+  
+  def approved
+    render layout: "content"
+  end
+  
+  def field_history
+    @drafts = @bank_account.field_history(params[:type])
+    
+    render layout: nil
+  end
+
+  def delete
+    
+    respond_to do |format|
+      if @bank_account.delete
+        @bank_account.save_draft(current_user)
+        
+        format.html { redirect_to "/home/close_tab" }
+        format.json { head :no_content }
+      else
+        format.html { render action: 'edit', tab_page: params[:tab_page] }
+        format.json { render json: @bank_account.errors, status: :unprocessable_entity }
+      end
+    end
+  end
+  
+  ########## BEGIN REVISION ###############
 
   private
     # Use callbacks to share common setup or constraints between actions.

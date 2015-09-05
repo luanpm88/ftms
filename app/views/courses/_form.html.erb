@@ -51,6 +51,7 @@
 										<div class="form-group">
 											 <label class="form-label"><label>For Exam</label></label>
 											 <span class="help">(required)</span>
+											 <%= render "field_history", drafts: @course.field_history("for_exam"), type: "for_exam" %>
 											 <div class="date_select_filter date_mbe">
 												 <%= select_tag 'course[for_exam_year]', options_for_select(((Time.now.year-10)..(Time.now.year+10)).each { |u| [u, u] }, @course.for_exam_year), class: "modern_select" %>
 												 <%= select_tag 'course[for_exam_month]', options_for_select((Course.months_with_CBE.each { |u| [u, u] }), @course.for_exam_month), class: "modern_select_none required" %>
@@ -96,6 +97,7 @@
 										<div class="form-group">
                                          <label class="form-label"><%= f.label :course_price %></label>
                                          <span class="help">(required)</span>
+										 <%= render "field_history", drafts: @course.field_history("course_price"), type: "course_price" %>
                                          <div class="input-with-iconz date-group right">                                       
 											 <i class=""></i>
 											 <% num = 0 %>
@@ -127,7 +129,7 @@
 							  <div class="form-group">
 								   <label class="form-label"><%= f.label :phrase %></label>
 								   <span class="help"></span>
-								   
+								   <%= render "field_history", drafts: @course.field_history("phrases"), type: "phrases" %>
 								   <% num = 0 %>
 								   <% @course.courses_phrases.joins(:phrase).order("phrases.name, courses_phrases.start_at").each do |courses_phrase| %>
 										<div class="row phrase_box phrase_box_<%= num %>">
@@ -187,7 +189,9 @@
 						 <% if !@course.draft? %>
 							  <div class="form-actions">  
 								   <div class="pull-right">
-								   <button type="submit" class="btn btn-success btn-cons"><i class="icon-ok"></i> Save</button>
+								   <% if !@course.statuses.include?("deleted") %>
+										<button type="submit" class="btn btn-success btn-cons"><i class="icon-ok"></i> Save</button>
+								   <% end %>
 									<%= link_to 'Cancel', users_path, :class => "btn btn-white btn-cons cancel-but" %>
 								 </div>
 							  </div>

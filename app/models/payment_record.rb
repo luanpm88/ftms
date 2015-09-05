@@ -19,9 +19,9 @@ class PaymentRecord < ActiveRecord::Base
                       }
                   }
   
-  after_save :update_statuses
+  after_save :course_register_update_statuses
   
-  def update_statuses
+  def course_register_update_statuses
     course_register.update_statuses
   end
   
@@ -58,9 +58,6 @@ class PaymentRecord < ActiveRecord::Base
   end
   
   def self.datatable(params, user)
-    ActionView::Base.send(:include, Rails.application.routes.url_helpers)
-    link_helper = ActionController::Base.helpers    
-    
     @records = self.filter(params, user)
     
     @records = @records.search(params["search"]["value"]) if !params["search"]["value"].empty?

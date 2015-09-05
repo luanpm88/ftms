@@ -158,9 +158,7 @@ class Contact < ActiveRecord::Base
     end
   end
   
-  def draft?
-    !draft_for.nil?
-  end
+  
   
   def exist_contacts
     exist = []    
@@ -240,10 +238,13 @@ class Contact < ActiveRecord::Base
     if params[:status].present?
       if params[:status] == "pending"
         @records = @records.where("contacts.status LIKE ?","%_pending]%")
+      elsif params[:status] == "approved"
+        @records = @records.where("contacts.annoucing_user_ids LIKE ?", "%[#{user.id}%]")
       else
         @records = @records.where("contacts.status LIKE ?","%[#{params[:status]}]%")
       end
-    end    
+    end
+    
     #if !params[:status].present? || params[:status] != "deleted"
     #  @records = @records.where("contacts.status NOT LIKE ?","%[deleted]%")
     #end
@@ -296,6 +297,13 @@ class Contact < ActiveRecord::Base
     
     actions_col = 10
     @records.each do |item|
+      ############### BEGIN REVISION #########################
+      # update approved status
+      if params[:status].present? && params[:status] == "approved"
+        item.remove_annoucing_users([user])
+      end
+      ############### END REVISION #########################
+      
       item = [
               "<div class=\"checkbox check-default\"><input name=\"ids[]\" id=\"checkbox#{item.id}\" type=\"checkbox\" value=\"#{item.id}\"><label for=\"checkbox#{item.id}\"></label></div>",
               item.picture_link,
@@ -550,9 +558,7 @@ class Contact < ActiveRecord::Base
     contact_types.include?(ContactType.agent)
   end
   
-  def self.main_contacts
-    self.where(draft_for: nil)
-  end
+  
   
   def self.import(file)
     require 'roo'
@@ -720,7 +726,7 @@ class Contact < ActiveRecord::Base
                 }
   
   def self.full_text_search(params)
-    records = self.main_contacts
+    records = self.active_contacts
     if params[:is_individual].present?
       records = records.where(is_individual: params[:is_individual])
     end
@@ -954,9 +960,24 @@ class Contact < ActiveRecord::Base
     books_contacts.where(book_id: book.id).first
   end
   
+  
+  ############### BEGIN REVISION #########################
+  
+  def self.main_contacts
+    self.where(draft_for: nil)
+  end
+  
+  def self.active_contacts
+    self.main_contacts.where("status IS NOT NULL AND status LIKE ?", "%[active]%")
+  end
+  
+  
+  
+  def draft?
+    !draft_for.nil?
+  end
+  
   def update_status(action, user, older = nil)
-    statuses = []
-    
     # when create new contact
     if action == "create"      
       # check if the contact is student
@@ -1002,11 +1023,12 @@ class Contact < ActiveRecord::Base
   
   
   def approve_new(user)
-    
-    
     if statuses.include?("new_pending")          
       self.delete_status("new_pending")      
       self.check_statuses
+      
+      # Annoucing users
+      add_annoucing_users([self.current.user])
       
       self.save_draft(user)
     end
@@ -1017,6 +1039,9 @@ class Contact < ActiveRecord::Base
       self.delete_status("education_consultant_pending")      
       self.check_statuses
       
+      # Annoucing users
+      add_annoucing_users([self.current.user])
+      
       self.save_draft(user)
     end
   end
@@ -1026,6 +1051,9 @@ class Contact < ActiveRecord::Base
       self.delete_status("update_pending")
       self.check_statuses
       
+      # Annoucing users
+      add_annoucing_users([self.current.user])
+      
       self.save_draft(user) 
     end
   end
@@ -1034,6 +1062,9 @@ class Contact < ActiveRecord::Base
     if statuses.include?("delete_pending")
       self.set_statuses(["deleted"])
       self.check_statuses
+      
+      # Annoucing users
+      add_annoucing_users([self.current.user])
       
       self.save_draft(user)
     end
@@ -1124,10 +1155,17 @@ class Contact < ActiveRecord::Base
     drafts = self.drafts
     
     drafts = drafts.where("created_at < ?", self.current.created_at) if self.current.present?    
-    drafts = drafts.where("created_at > ?", self.active_older.created_at) if !self.active_older.nil?    
+    drafts = drafts.where("created_at >= ?", self.active_older.created_at) if !self.active_older.nil?    
     drafts = drafts.order("created_at DESC")
     
-    if false
+    if type == "inquiry_course_type"
+      drafts = drafts.select{|c| c.course_types.order("short_name").map(&:short_name).join("") != self.course_types.order("short_name").map(&:short_name).join("")}
+    elsif type == "lecturer_course_type"
+      drafts = drafts.select{|c| c.lecturer_course_types.order("short_name").map(&:short_name).join("") != self.lecturer_course_types.order("short_name").map(&:short_name).join("")}
+    elsif type == "lecturer_course_type"
+      drafts = drafts.select{|c| c.lecturer_course_types.order("short_name").map(&:short_name).join("") != self.lecturer_course_types.order("short_name").map(&:short_name).join("")}
+    elsif type == "contact_type"
+      drafts = drafts.select{|c| c.contact_types.order("name").map(&:name).join("") != self.contact_types.order("name").map(&:name).join("")}
     else
       value = value.nil? ? self[type] : value
       drafts = drafts.where("#{type} IS NOT NUll AND #{type} != ?", value)
@@ -1135,6 +1173,64 @@ class Contact < ActiveRecord::Base
     
     return drafts
   end
+  
+  def self.status_options
+    [
+      ["All",""],
+      ["Pending...","pending"],
+      ["New Approved...","approved"],
+      ["Active","active"],
+      ["New Pending","new_pending"],
+      ["Education Consultant Pending","education_consultant_pending"],
+      ["Update Pending","update_pending"],
+      ["Delete Pending","delete_pending"],
+      ["Deleted","deleted"]
+    ]
+  end
+  
+  def delete    
+    self.set_statuses(["delete_pending"])
+    return true
+  end
+  
+  def rollback(user)
+    older = self.active_older
+    
+    self.update_attributes(older.attributes.select {|k,v| !["draft_for","id", "created_at", "updated_at"].include?(k) })
+    
+    self.contact_types = older.contact_types
+    self.course_types = older.course_types
+    self.lecturer_course_types = older.lecturer_course_types
+    
+    self.save
+    
+    self.save_draft(user)
+  end
+  
+  def add_annoucing_users(users)
+    us = self.annoucing_users
+    users.each do |user|
+      us << user.id if !us.include?(user.id)
+    end    
+    self.update_attribute(:annoucing_user_ids, "["+us.join("][")+"]")
+  end
+  
+  def remove_annoucing_users(users)
+    us = self.annoucing_users
+    users.each do |user|
+      us.delete(user.id) if us.include?(user.id)
+    end    
+    self.update_attribute(:annoucing_user_ids, "["+us.join("][")+"]")
+  end
+  
+  def annoucing_users
+    return [] if annoucing_user_ids.nil?
+    ids = self.annoucing_user_ids.split("][").map {|s| s.gsub("[","").gsub("]","") }
+    return User.where(id: ids)
+  end
+  
+  ############### END REVISION #########################
+  
   
   def preferred_mailing_address
     case preferred_mailing
@@ -1175,42 +1271,11 @@ class Contact < ActiveRecord::Base
     transferred_records
   end
   
-  def self.status_options
-    [
-      ["All",""],
-      ["Pending...","pending"],
-      ["Active","active"],
-      ["New Pending","new_pending"],
-      ["Education Consultant Pending","education_consultant_pending"],
-      ["Update Pending","update_pending"],
-      ["Delete Pending","delete_pending"],
-      ["Deleted","deleted"]
-    ]
-  end
+  
   
   def self.base_status_options
     [["In Progress","in_progress"],["Completed","completed"]]
   end
-  
-  def delete    
-    self.set_statuses(["delete_pending"])
-    return true
-  end
-  
-  def rollback(user)
-    older = self.active_older
-    
-    self.update_attributes(older.attributes.select {|k,v| !["draft_for","id", "created_at", "updated_at"].include?(k) })
-    
-    self.contact_types = older.contact_types
-    self.course_types = older.course_types
-    self.lecturer_course_types = older.lecturer_course_types
-    
-    self.save
-    
-    self.save_draft(user)
-  end
-  
   
   
 end

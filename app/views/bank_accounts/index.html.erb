@@ -19,6 +19,18 @@
                                 <h4>Listing  <span class="semi-bold">Bank account</span></h4>
                                 
                             </div>
+							
+							<div class="grid simple ">
+								<div class="grid-body no-border filters bank-account-filter">
+								<div class="row order-filters">						
+									  <div class="col-md-3">
+										  <h4>Status</h4>							
+										  <%= select_tag 'status', options_for_select(BankAccount.status_options, params[:status]), class: "modern_select width100" %>
+									  </div>
+								</div>
+								</div>		    
+							</div>
+							
                             <div class="grid-body no-border">
                                  
                                     <table class="table table-striped no-more-tables datatable-bank-accounts no-filter">
@@ -30,6 +42,7 @@
                                                 <th>Account Number</th>
                                                 <th class="text-center">Created At</th>
 												<th class="text-center" width="1%">Creator</th>
+												<th class="text-center" width="1%">Status</th>
 												<th class="text-right" width="1%">Actions</th>
                                             </tr>
                                         </thead>                                        

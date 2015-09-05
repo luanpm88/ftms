@@ -6,10 +6,21 @@
 			<%= link_to 'Tag', contact_tags_url %>
                     </li>
       </ul>
-      <div class="page-title"> <i class="icon-edit"></i>
-        <h3>Edit Tag - <span class="semi-bold"><%= @contact_tag.name %></span></h3>
-      </div>
-      
+		
+		<div class="page-title <%= "draft" if @contact_tag.draft? %>""> <i class="icon-briefcase"></i>
+		  <h3 class=""><span class="semi-bold"><%= @contact_tag.name %></span>
+		  <br /><%= "Changed at: #{@contact_tag.created_at.strftime("%d-%b-%Y %I:%M %p")} / By: #{@contact_tag.user.name}" if @contact_tag.draft? %>
+		  </h3>
+		</div>
+	  
+		<div class="top-buts">
+				<%= render_contact_tag_actions(@contact_tag, "big") if !@contact_tag.draft? %>
+				<%= render_contact_tag_history_actions(@contact_tag) %>
+		</div>
+		<div>
+				<%= @contact_tag.display_statuses if !@contact_tag.draft? %>
+		</div>
+		<br style="clear:both" />
 
 	  
 <%= render 'form' %>

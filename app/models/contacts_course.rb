@@ -35,19 +35,30 @@ class ContactsCourse < ActiveRecord::Base
     return discount_program.type_name == "percent" ? (discount_program.rate/100)*price : discount_program.rate
   end
   
-  def paid
+  def paid(from_date=nil, to_date=nil)
     records = course_register.all_payment_records
     
     total = 0.00
     records.each do |p|
-      total += p.payment_record_details.where(contacts_course_id: self.id).sum(:amount)
+      prds = p.payment_record_details.where(contacts_course_id: self.id)
+      if from_date.present? && to_date.present?
+        prds = prds.includes(:payment_record)
+                    .where("payment_records.payment_date >= ? AND payment_records.payment_date >= ? ", @from_date.beginning_of_day, @to_date.end_of_day)
+      end
+      
+      total += prds.sum(:amount)
     end
     return total
   end
   
-  def remain
-    total - paid
+  def remain(from_date=nil, to_date=nil)
+    total - paid(from_date=nil, to_date=nil)
   end
   
+  def report_toggle
+    class_name = self.report ? "success" : "none"
+    text = self.report ? "report: yes" : "report: no"
+    '<a rel="'+self.id.to_s+'" class="badge badge-'+class_name+' report_toggle report_toggle_'+self.id.to_s+'" href="#rt">'+text+'</a>'
+  end
   
 end

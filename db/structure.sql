@@ -202,7 +202,10 @@ CREATE TABLE bank_accounts (
     account_number character varying,
     user_id integer,
     created_at timestamp without time zone NOT NULL,
-    updated_at timestamp without time zone NOT NULL
+    updated_at timestamp without time zone NOT NULL,
+    status text,
+    parent_id integer,
+    annoucing_user_ids text
 );
 
 
@@ -274,7 +277,9 @@ CREATE TABLE books (
     price numeric,
     parent_id integer,
     course_type_ids text,
-    subject_ids text
+    subject_ids text,
+    annoucing_user_ids text,
+    status text
 );
 
 
@@ -408,7 +413,11 @@ CREATE TABLE contact_tags (
     name character varying,
     description text,
     created_at timestamp without time zone NOT NULL,
-    updated_at timestamp without time zone NOT NULL
+    updated_at timestamp without time zone NOT NULL,
+    annoucing_user_ids text,
+    parent_id integer,
+    status text,
+    user_id integer
 );
 
 
@@ -580,7 +589,8 @@ CREATE TABLE contacts (
     bases text,
     status text,
     draft_for integer,
-    "tmp_StudentID" text
+    "tmp_StudentID" text,
+    annoucing_user_ids text
 );
 
 
@@ -631,7 +641,8 @@ CREATE TABLE contacts_courses (
     upfront boolean,
     price numeric,
     discount_program_id integer,
-    discount numeric
+    discount numeric,
+    report boolean DEFAULT true
 );
 
 
@@ -861,7 +872,10 @@ CREATE TABLE course_types (
     user_id integer,
     created_at timestamp without time zone NOT NULL,
     updated_at timestamp without time zone NOT NULL,
-    "tmp_CourseTypeID" text
+    "tmp_CourseTypeID" text,
+    status text,
+    annoucing_user_ids text,
+    parent_id integer
 );
 
 
@@ -933,7 +947,8 @@ CREATE TABLE courses (
     status text,
     parent_id integer,
     for_exam_year integer,
-    for_exam_month character varying
+    for_exam_month character varying,
+    annoucing_user_ids text
 );
 
 
@@ -1071,7 +1086,10 @@ CREATE TABLE discount_programs (
     rate numeric,
     created_at timestamp without time zone NOT NULL,
     updated_at timestamp without time zone NOT NULL,
-    type_name character varying
+    type_name character varying,
+    status text,
+    annoucing_user_ids text,
+    parent_id integer
 );
 
 
@@ -1389,7 +1407,10 @@ CREATE TABLE seminars (
     user_id integer,
     created_at timestamp without time zone NOT NULL,
     updated_at timestamp without time zone NOT NULL,
-    course_type_id integer
+    course_type_id integer,
+    status text,
+    parent_id integer,
+    annoucing_user_ids text
 );
 
 
@@ -2651,4 +2672,46 @@ INSERT INTO schema_migrations (version) VALUES ('20150831092449');
 INSERT INTO schema_migrations (version) VALUES ('20150831093658');
 
 INSERT INTO schema_migrations (version) VALUES ('20150901010656');
+
+INSERT INTO schema_migrations (version) VALUES ('20150903014954');
+
+INSERT INTO schema_migrations (version) VALUES ('20150904014852');
+
+INSERT INTO schema_migrations (version) VALUES ('20150904022843');
+
+INSERT INTO schema_migrations (version) VALUES ('20150904065003');
+
+INSERT INTO schema_migrations (version) VALUES ('20150904065145');
+
+INSERT INTO schema_migrations (version) VALUES ('20150904065449');
+
+INSERT INTO schema_migrations (version) VALUES ('20150905003459');
+
+INSERT INTO schema_migrations (version) VALUES ('20150905003514');
+
+INSERT INTO schema_migrations (version) VALUES ('20150905013913');
+
+INSERT INTO schema_migrations (version) VALUES ('20150905013949');
+
+INSERT INTO schema_migrations (version) VALUES ('20150905014010');
+
+INSERT INTO schema_migrations (version) VALUES ('20150905022506');
+
+INSERT INTO schema_migrations (version) VALUES ('20150905022524');
+
+INSERT INTO schema_migrations (version) VALUES ('20150905022541');
+
+INSERT INTO schema_migrations (version) VALUES ('20150905030020');
+
+INSERT INTO schema_migrations (version) VALUES ('20150905030034');
+
+INSERT INTO schema_migrations (version) VALUES ('20150905030048');
+
+INSERT INTO schema_migrations (version) VALUES ('20150905031617');
+
+INSERT INTO schema_migrations (version) VALUES ('20150905033130');
+
+INSERT INTO schema_migrations (version) VALUES ('20150905033259');
+
+INSERT INTO schema_migrations (version) VALUES ('20150905033312');
 

@@ -6,9 +6,21 @@
 			<%= link_to 'Course Types', course_types_url %>
                     </li>
       </ul>
-      <div class="page-title"> <i class="icon-edit"></i>
-        <h3>Edit Program - <span class="semi-bold"><%= @course_type.name %></span></h3>
-      </div>
+
+		<div class="page-title <%= "draft" if @course_type.draft? %>""> <i class="icon-briefcase"></i>
+		  <h3 class=""><span class="semi-bold"><%= @course_type.short_name %></span>
+		  <br /><%= "Changed at: #{@course_type.created_at.strftime("%d-%b-%Y %I:%M %p")} / By: #{@course_type.user.name}" if @course_type.draft? %>
+		  </h3>
+		</div>
+	  
+		<div class="top-buts">
+				<%= render_course_type_actions(@course_type, "big") if !@course_type.draft? %>
+				<%= render_course_type_history_actions(@course_type) %>
+		</div>
+		<div>
+				<%= @course_type.display_statuses if !@course_type.draft? %>
+		</div>
+		<br style="clear:both" />
       
 
 	  

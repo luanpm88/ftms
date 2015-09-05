@@ -6,9 +6,21 @@
 			<%= link_to 'Bank Account', bank_accounts_url %>
                     </li>
       </ul>
-      <div class="page-title"> <i class="icon-edit"></i>
-        <h3>Edit Bank Account - <span class="semi-bold"><%= @bank_account.name %></span></h3>
-      </div>
+      
+		<div class="page-title <%= "draft" if @bank_account.draft? %>""> <i class="icon-briefcase"></i>
+		  <h3 class=""><span class="semi-bold"><%= @bank_account.name %></span>
+		  <br /><%= "Changed at: #{@bank_account.created_at.strftime("%d-%b-%Y %I:%M %p")} / By: #{@bank_account.user.name}" if @bank_account.draft? %>
+		  </h3>
+		</div>
+	  
+		<div class="top-buts">
+				<%= render_bank_account_actions(@bank_account, "big") if !@bank_account.draft? %>
+				<%= render_bank_account_history_actions(@bank_account) %>
+		</div>
+		<div>
+				<%= @bank_account.display_statuses if !@bank_account.draft? %>
+		</div>
+		<br style="clear:both" />
       
 
 	  

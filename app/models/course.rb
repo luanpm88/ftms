@@ -20,10 +20,11 @@ class Course < ActiveRecord::Base
   
   has_many :course_prices, :dependent => :destroy
   
+  ########## BEGIN REVISION ###############
   has_many :drafts, :class_name => "Course", :foreign_key => "parent_id"
-  belongs_to :parent, :class_name => "Course", :foreign_key => "parent_id"
-  
+  belongs_to :parent, :class_name => "Course", :foreign_key => "parent_id"  
   has_one :current, -> { order created_at: :desc }, class_name: 'Course', foreign_key: "parent_id"
+  ########## END REVISION ###############
   
   pg_search_scope :search,
                   against: [:description],
@@ -40,15 +41,11 @@ class Course < ActiveRecord::Base
                   }
   
   def self.all_courses
-    self.main_courses.where("status IS NOT NULL AND status LIKE ?", "%[active]%").order("created_at DESC")
-  end
-
-  def self.main_courses
-    self.where(parent_id: nil)
+    self.active_courses.order("created_at DESC")
   end
   
   def self.full_text_search(q)
-    self.main_courses.order("courses.intake DESC").search(q).limit(50).map {|model| {:id => model.id, :text => model.display_name} }
+    self.active_courses.order("courses.intake DESC").search(q).limit(50).map {|model| {:id => model.id, :text => model.display_name} }
   end
   
   def course_exist
@@ -82,16 +79,21 @@ class Course < ActiveRecord::Base
       @records = @records.where("courses.lecturer_id IN (#{params["lecturers"]})") if params["lecturers"].present?
     end
     
+    
+    ########## BEGIN REVISION-FEATURE #########################
+    
     if params[:status].present?
       if params[:status] == "pending"
         @records = @records.where("courses.status LIKE ?","%_pending]%")
+      elsif params[:status] == "approved" # for approved
+        @records = @records.where("courses.annoucing_user_ids LIKE ?", "%[#{user.id}%]")
       else
         @records = @records.where("courses.status LIKE ?","%[#{params[:status]}]%")
       end
     end    
-    #if !params[:status].present? || params[:status] != "deleted"
-    #  @records = @records.where("courses.status NOT LIKE ?","%[deleted]%")
-    #end
+
+    ########## END REVISION-FEATURE #########################
+    
     
     return @records
   end
@@ -126,6 +128,13 @@ class Course < ActiveRecord::Base
     
     actions_col = 9
     @records.each do |item|
+      ############### BEGIN REVISION #########################
+      # update approved status
+      if params[:status].present? && params[:status] == "approved"
+        item.remove_annoucing_users([user])
+      end
+      ############### END REVISION #########################
+      
       item = [
               '<div class="text-left nowrap">'+item.display_intake+"</div>",
               '<div class="text-left nowrap">'+item.program_paper_name+"</div>",
@@ -370,6 +379,17 @@ class Course < ActiveRecord::Base
     end
   end
   
+  
+  
+  ############### BEGIN REVISION #########################
+  
+  def self.main_courses
+    self.where(parent_id: nil)
+  end
+  def self.active_courses
+    self.main_courses.where("status IS NOT NULL AND status LIKE ?", "%[active]%")
+  end
+  
   def draft?
     !parent.nil?
   end
@@ -408,6 +428,9 @@ class Course < ActiveRecord::Base
       self.delete_status("new_pending")      
       self.check_statuses
       
+      # Annoucing users
+      add_annoucing_users([self.current.user])
+      
       self.save_draft(user)
     end
   end
@@ -416,6 +439,9 @@ class Course < ActiveRecord::Base
     if statuses.include?("update_pending")
       self.delete_status("update_pending")
       self.check_statuses
+      
+      # Annoucing users
+      add_annoucing_users([self.current.user])
       
       self.save_draft(user) 
     end
@@ -426,12 +452,15 @@ class Course < ActiveRecord::Base
       self.set_statuses(["deleted"])
       self.check_statuses
       
+      # Annoucing users
+      add_annoucing_users([self.current.user])
+      
       self.save_draft(user)
     end
   end
   
   def check_statuses
-    if !statuses.include?("deleted") && !statuses.include?("delete_pending") && !statuses.include?("update_pending") && !statuses.include?("new_pending") && !statuses.include?("education_consultant_pending") && !statuses.include?("no_education_consultant")
+    if !statuses.include?("deleted") && !statuses.include?("delete_pending") && !statuses.include?("update_pending") && !statuses.include?("new_pending")
       add_status("active")
     else
       delete_status("active")
@@ -461,6 +490,38 @@ class Course < ActiveRecord::Base
     self.statuses.include?(st)
   end
   
+  def save_draft(user)
+    draft = self.dup
+    draft.parent_id = self.id
+    draft.user_id = user.id
+    
+    cps = []
+    self.courses_phrases.each do |cp|
+      draft.courses_phrases << cp.dup
+    end
+    
+    cps = []
+    self.course_prices.each do |cp|
+      draft.course_prices << cp.dup
+    end
+    
+    draft.save
+    
+    return draft
+  end
+  
+  def current
+    return drafts.order("created_at DESC").first
+  end
+  
+  def revisions
+    drafts.where("status LIKE ?", "%[active]%")
+  end
+  
+  def first_revision
+    revisions.order("created_at").first
+  end
+  
   def older
     if !draft?
       return drafts.order("created_at DESC").second
@@ -484,17 +545,21 @@ class Course < ActiveRecord::Base
     drafts = self.drafts
     
     drafts = drafts.where("created_at < ?", self.current.created_at) if self.current.present?    
-    drafts = drafts.where("created_at > ?", self.active_older.created_at) if !self.active_older.nil?    
+    drafts = drafts.where("created_at >= ?", self.active_older.created_at) if !self.active_older.nil?    
     drafts = drafts.order("created_at DESC")
     
     if type == "program_paper"
       drafts = drafts.select {|u| u.course_type_id != self.course_type_id || u.subject_id != self.subject_id}
+    elsif type == "for_exam"
+      drafts = drafts.select{|c| c.for_exam_year != self.for_exam_year || c.for_exam_month != self.for_exam_month}
+    elsif type == "course_price"
+      drafts = drafts.select{|c| self.course_price.prices != c.course_price.prices}
+    elsif type == "phrases"
+      
     else
       value = value.nil? ? self[type] : value
       drafts = drafts.where("#{type} IS NOT NUll AND #{type} != ?", value)
-    end    
-    
-    
+    end
     
     return drafts
   end
@@ -503,6 +568,7 @@ class Course < ActiveRecord::Base
     [
       ["All",""],
       ["Pending...","pending"],
+      ["New Approved...","approved"],
       ["Active","active"],
       ["New Pending","new_pending"],
       ["Update Pending","update_pending"],
@@ -516,25 +582,44 @@ class Course < ActiveRecord::Base
     return true
   end
   
-  def save_draft(user)
-    draft = self.dup
-    draft.parent_id = self.id
-    draft.user_id = user.id
-    
-    cps = []
-    self.courses_phrases.each do |cp|
-      draft.courses_phrases << cp.dup
-    end
-    
-    cps = []
-    self.course_prices.each do |cp|
-      draft.course_prices << cp.dup
-    end
-    
-    draft.save
-    
-    return draft
+  def rollback(user)
+    #older = self.active_older
+    #
+    #self.update_attributes(older.attributes.select {|k,v| !["draft_for","id", "created_at", "updated_at"].include?(k) })
+    #
+    #self.contact_types = older.contact_types
+    #self.course_types = older.course_types
+    #self.lecturer_course_types = older.lecturer_course_types
+    #
+    #self.save
+    #
+    #self.save_draft(user)
   end
+  
+  def add_annoucing_users(users)
+    us = self.annoucing_users
+    users.each do |user|
+      us << user.id if !us.include?(user.id)
+    end    
+    self.update_attribute(:annoucing_user_ids, "["+us.join("][")+"]")
+  end
+  
+  def remove_annoucing_users(users)
+    us = self.annoucing_users
+    users.each do |user|
+      us.delete(user.id) if us.include?(user.id)
+    end    
+    self.update_attribute(:annoucing_user_ids, "["+us.join("][")+"]")
+  end
+  
+  def annoucing_users
+    return [] if annoucing_user_ids.nil?
+    ids = self.annoucing_user_ids.split("][").map {|s| s.gsub("[","").gsub("]","") }
+    return User.where(id: ids)
+  end
+  
+  ############### END REVISION #########################
+  
   
   def self.months_with_CBE
     months = [""]

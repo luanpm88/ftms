@@ -8,6 +8,20 @@
                         <i class="icon-briefcase"></i>
                     	<h3>Program - <span class="semi-bold"> Management</span></h3>	
                 </div>
+				
+				
+				<div class="grid simple ">
+                  <div class="grid-body no-border filters course-type-filter">
+                  <div class="row order-filters">						
+						<div class="col-md-3">
+							<h4>Status</h4>							
+							<%= select_tag 'status', options_for_select(CourseType.status_options, params[:status]), class: "modern_select width100" %>
+						</div>
+                  </div>
+                  </div>		    
+				</div>
+				
+				
                 <div class="row">
                     <div class="col-md-12">
                         <%= link_to 'New Program', new_course_type_path(tab_page: 1), psrc: course_types_path(tab_page:1), title: "New Program", :class => 'btn btn-primary btn-cons tab_page' %>
@@ -25,6 +39,7 @@
 												<th>Name</th>
                                                 <th class="text-center">Created At</th>
 												<th class="text-center" width="1%">Creator</th>
+												<th class="text-center" width="1%">Status</th>
 												<th class="text-right" width="1%">Actions</th>
                                             </tr>
                                         </thead>                                        

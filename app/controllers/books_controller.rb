@@ -1,7 +1,7 @@
 class BooksController < ApplicationController
   include BooksHelper
   
-  before_action :set_book, only: [:cover, :show, :edit, :update, :destroy]
+  before_action :set_book, only: [:delete, :cover, :show, :edit, :update, :destroy]
   
   load_and_authorize_resource :except => [:cover]
 
@@ -48,6 +48,9 @@ class BooksController < ApplicationController
         new_price = @book.book_prices.new(prices: params[:book_prices], user_id: current_user.id)
         @book.update_price(new_price)
         
+        @book.update_status("create", current_user)        
+        @book.save_draft(current_user)
+        
         format.html { redirect_to params[:tab_page].present? ? "/home/close_tab" : @book, notice: 'Book was successfully created.' }
         format.json { render action: 'show', status: :created, location: @book }
       else
@@ -64,6 +67,9 @@ class BooksController < ApplicationController
       if @book.update(book_params)
         new_price = @book.book_prices.new(prices: params[:book_prices], user_id: current_user.id)
         @book.update_price(new_price)
+        
+        @book.update_status("update", current_user)        
+        @book.save_draft(current_user)
         
         format.html { redirect_to params[:tab_page].present? ? "/home/close_tab" : @book, notice: 'Book was successfully updated.' }
         format.json { head :no_content }
@@ -136,6 +142,68 @@ class BooksController < ApplicationController
       render layout: nil
     end
   end
+  
+  ########## BEGIN REVISION ###############
+  
+  def approve_new
+    authorize! :approve_new, @book
+    
+    @book.approve_new(current_user)
+    
+    respond_to do |format|
+      format.html { redirect_to params[:tab_page].present? ? "/books/approved" : @book }
+      format.json { render action: 'show', status: :created, location: @book }
+    end
+  end
+  
+  def approve_update
+    authorize! :approve_update, @book
+    
+    @book.approve_update(current_user)
+    
+    respond_to do |format|
+      format.html { redirect_to params[:tab_page].present? ? "/books/approved" : @book }
+      format.json { render action: 'show', status: :created, location: @book }
+    end
+  end
+  
+  def approve_delete
+    authorize! :approve_delete, @book
+    
+    @book.approve_delete(current_user)
+    
+    respond_to do |format|
+      format.html { redirect_to params[:tab_page].present? ? "/books/approved" : @book }
+      format.json { render action: 'show', status: :created, location: @book }
+    end
+  end
+  
+  def approved
+    render layout: "content"
+  end
+  
+  def field_history
+    @drafts = @book.field_history(params[:type])
+    
+    render layout: nil
+  end
+
+  def delete
+    
+    respond_to do |format|
+      if @book.delete
+        @book.save_draft(current_user)
+        
+        format.html { redirect_to "/home/close_tab" }
+        format.json { head :no_content }
+      else
+        format.html { render action: 'edit', tab_page: params[:tab_page] }
+        format.json { render json: @book.errors, status: :unprocessable_entity }
+      end
+    end
+  end
+  
+  ########## BEGIN REVISION ###############
 
   private
     # Use callbacks to share common setup or constraints between actions.

@@ -3,7 +3,7 @@ class DiscountProgramsController < ApplicationController
   
   load_and_authorize_resource
   
-  before_action :set_discount_program, only: [:show, :edit, :update, :destroy]
+  before_action :set_discount_program, only: [:delete, :show, :edit, :update, :destroy]
 
   # GET /discount_programs
   # GET /discount_programs.json
@@ -40,6 +40,9 @@ class DiscountProgramsController < ApplicationController
 
     respond_to do |format|
       if @discount_program.save
+        @discount_program.update_status("create", current_user)        
+        @discount_program.save_draft(current_user)
+        
         format.html { redirect_to params[:tab_page].present? ? "/home/close_tab" : @discount_program, notice: 'Discount program was successfully created.' }
         format.json { render action: 'show', status: :created, location: @discount_program }
       else
@@ -56,6 +59,9 @@ class DiscountProgramsController < ApplicationController
     
     respond_to do |format|
       if @discount_program.update(discount_program_params)
+        @discount_program.update_status("update", current_user)        
+        @discount_program.save_draft(current_user)
+        
         format.html { redirect_to params[:tab_page].present? ? "/home/close_tab" : @discount_program, notice: 'Discount program was successfully updated.' }
         format.json { head :no_content }
       else
@@ -85,6 +91,68 @@ class DiscountProgramsController < ApplicationController
     
     render json: result[:result]
   end
+  
+  ########## BEGIN REVISION ###############
+  
+  def approve_new
+    authorize! :approve_new, @discount_program
+    
+    @discount_program.approve_new(current_user)
+    
+    respond_to do |format|
+      format.html { redirect_to params[:tab_page].present? ? "/discount_programs/approved" : @discount_program }
+      format.json { render action: 'show', status: :created, location: @discount_program }
+    end
+  end
+  
+  def approve_update
+    authorize! :approve_update, @discount_program
+    
+    @discount_program.approve_update(current_user)
+    
+    respond_to do |format|
+      format.html { redirect_to params[:tab_page].present? ? "/discount_programs/approved" : @discount_program }
+      format.json { render action: 'show', status: :created, location: @discount_program }
+    end
+  end
+  
+  def approve_delete
+    authorize! :approve_delete, @discount_program
+    
+    @discount_program.approve_delete(current_user)
+    
+    respond_to do |format|
+      format.html { redirect_to params[:tab_page].present? ? "/discount_programs/approved" : @discount_program }
+      format.json { render action: 'show', status: :created, location: @discount_program }
+    end
+  end
+  
+  def approved
+    render layout: "content"
+  end
+  
+  def field_history
+    @drafts = @discount_program.field_history(params[:type])
+    
+    render layout: nil
+  end
+
+  def delete
+    
+    respond_to do |format|
+      if @discount_program.delete
+        @discount_program.save_draft(current_user)
+        
+        format.html { redirect_to "/home/close_tab" }
+        format.json { head :no_content }
+      else
+        format.html { render action: 'edit', tab_page: params[:tab_page] }
+        format.json { render json: @discount_program.errors, status: :unprocessable_entity }
+      end
+    end
+  end
+  
+  ########## BEGIN REVISION ###############
 
   private
     # Use callbacks to share common setup or constraints between actions.

@@ -1,0 +1,26 @@
+<% if !drafts.empty? %>
+  <i class="icon icon-time contact-field-history" rel="history-<%= type %>" onclick="$('.history-<%= type %>').toggle()"></i>
+  <ul class="history-list history-<%= type %>" style="display: none">
+    <% value = "-1" %>
+    <% drafts.each do |c| %>
+      
+      <% if value != c[type] && ["name","publisher"].include?(type) %>
+        <li><%= c[type].empty? ? "[empty]" : c[type] %> <span class="nowrap time-span"><%= c.created_at.strftime("%d-%b-%Y, %I:%M %p") %></span></li>
+      <% end %>
+      
+      <% if value != c[type] && ["course_type"].include?(type) %>
+        <li><%= c.course_types.empty? ? "[empty]" : c.course_types.map(&:name).join(", ") %> <span class="nowrap time-span"><%= c.created_at.strftime("%d-%b-%Y, %I:%M %p") %></span></li>
+      <% end %>
+      
+      <% if value != c[type] && ["subject"].include?(type) %>
+        <li><%= c.subjects.empty? ? "[empty]" : c.subjects.map(&:name).join(", ") %> <span class="nowrap time-span"><%= c.created_at.strftime("%d-%b-%Y, %I:%M %p") %></span></li>
+      <% end %>
+      
+      <% if value != c[type] && ["book_price"].include?(type) %>
+        <li><%= (c.prices.map{|p| format_price(p)}).join(" / ") %> <span class="nowrap time-span"><%= c.created_at.strftime("%d-%b-%Y, %I:%M %p") %></span></li>
+      <% end %>
+      
+      <% value = c[type] %>
+    <% end %>
+  </ul>
+<% end %>

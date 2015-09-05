@@ -40,6 +40,7 @@
                             <div class="form-group">
                                   <label class="form-label"><%= f.label :title %></label>
                                   <span class="help">(required)</span>
+								  <%= render "field_history", drafts: @seminar.field_history("name"), type: "name" %>
                                   <div class="input-with-icon  right">                                       
                                     <i class=""></i>
                                     <%= f.text_field :name, :class => "form-control required" %>
@@ -47,11 +48,17 @@
                             </div>
                             
                             
-                            <div class="row">
+                         <div class="row">
+							  <div class="col-md-12">
+								   <%= render "field_history", drafts: @seminar.field_history("start_at"), type: "start_at" %>
+							  </div>
+						 </div>
+						 <div class="row">
                                <div class="col-md-6">
                                     <div class="form-group">
                                         <label class="form-label"><%= f.label :start_date %></label>
                                         <span class="help"></span>
+										
                                         <div class="input-with-icon  right">                                       
                                               <i class=""></i>
                                               <div class="input-append success date col-md-10 no-padding">
@@ -69,6 +76,7 @@
                                   <div class="form-group">
                                         <label class="form-label"><%= f.label :start_time %></label>
                                         <span class="help"></span>
+										
                                         <div class="controls">
                                           <div class="input-append bootstrap-timepicker-component">
                                             <%= text_field_tag :start_time, @start_time, :class => "timepicker-default span12" %>
@@ -87,11 +95,12 @@
 							  <div class="form-group">
 								   <label class="form-label"><label>Program</label></label>
 								   <span class="help">(required)</span>
+								   <%= render "field_history", drafts: @seminar.field_history("course_type_id"), type: "course_type_id" %>
 								   <div class="input-with-icon date-group right">                                       
 										  <i class=""></i>
 										  <div class="input-with_add_but">
 												 <%= link_to '<i class="icon-plus"></i>'.html_safe, new_course_type_path(tab_page: 1), title: "New Program", :class => 'btn btn-sm btn-small btn-white add-agent-button tab_page' %>
-												 <input style="width:100%;margin-bottom: 5px;" name="seminar[course_type_id]" data="<%= course_types_path(format: "json") %>" class="select2-ajax-course-types required" value="<%= @seminar.course_type_id %>" text="<%= @seminar.name if !@seminar.course_type.nil? %>" /> 
+												 <input style="width:100%;margin-bottom: 5px;" name="seminar[course_type_id]" data="<%= course_types_path(format: "json") %>" class="select2-ajax-course-types required" value="<%= @seminar.course_type_id %>" text="<%= @seminar.course_type.short_name if !@seminar.course_type.nil? %>" /> 
 										  </div>																					
 									
 								   </div>
@@ -100,6 +109,7 @@
                             <div class="form-group">
                                   <label class="form-label"><%= f.label :description %></label>
                                   <span class="help"></span>
+								  <%= render "field_history", drafts: @seminar.field_history("description"), type: "description" %>
                                   <div class="input-with-icon  right">                                       
                                     <i class=""></i>
                                     <%= f.text_area :description, :class => "form-control" %>

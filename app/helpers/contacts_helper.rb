@@ -44,9 +44,9 @@ module ContactsHelper
       
       actions += '<li class="divider"></li>' if group_2 > 0
       
-      if can? :read, Activity
-        actions += '<li>'+ActionController::Base.helpers.link_to('Activity Log', {controller: "contacts", action: "edit", id: item.id, tab_page: 1, tab: "activity"}, title: "#{item.display_name}: Activity Log", class: "tab_page")+'</li>'        
-      end
+      #if can? :read, Activity
+      #  actions += '<li>'+ActionController::Base.helpers.link_to('Activity Log', {controller: "contacts", action: "edit", id: item.id, tab_page: 1, tab: "activity"}, title: "#{item.display_name}: Activity Log", class: "tab_page")+'</li>'        
+      #end
       
       if can? :delete, item
         actions += '<li>'+ActionController::Base.helpers.link_to('Delete', {controller: "contacts", action: "delete", id: item.id, tab_page: 1, tab: "activity"}, title: "#{item.display_name}: Delete", class: "tab_page")+'</li>'        
@@ -62,7 +62,7 @@ module ContactsHelper
                     <button class="btn btn-mini btn-white btn-demo-space dropdown-toggle tag_button '+item.contact_tag.name.downcase.gsub(" ","_")+'" data-toggle="dropdown" title="'+item.contact_tag.description+'">'+item.contact_tag.name+' <span class="caret"></span></button>'
       actions += '<ul class="dropdown-menu">'      
       
-      ContactTag.all.each do |tag|
+      ContactTag.active_contact_tags.each do |tag|
         actions += '<li rel="'+item.id.to_s+'" tag_id="'+tag.id.to_s+'" class="contact_tag_item '+tag.name.downcase.gsub(" ","_")+'">'+ActionController::Base.helpers.link_to(tag.name, "#", title: tag.description)+'</li>'        
       end
       

@@ -35,6 +35,48 @@ class User < ActiveRecord::Base
     roles.any? { |r| r.name == role_sym }
   end
   
+  def higher?(role)
+    User.role_name_to_level(role) < self.level
+  end
+  
+  def lower?(role)
+    User.role_name_to_level(role) > self.level
+  end
+    
+  def level
+    roles.each do |r|
+      if self.has_role?("admin")
+        return User.role_name_to_level("admin")
+      elsif self.has_role?("manager")
+        return User.role_name_to_level("manager")
+      elsif self.has_role?("education_consultant")
+        return User.role_name_to_level("education_consultant")
+      elsif self.has_role?("sales_admin")
+        return User.role_name_to_level("sales_admin")
+      elsif self.has_role?("user")
+        return User.role_name_to_level("user")
+      else
+        return User.role_name_to_level("none")
+      end      
+    end
+  end
+  
+  def self.role_name_to_level(role)
+    if role == "admin"
+      return 5
+    elsif role == "manager"
+      return 4
+    elsif role == "education_consultant"
+      return 3
+    elsif role == "sales_admin"
+      return 2
+    elsif role == "user"
+      return 1
+    else
+      return 0
+    end
+  end
+  
   #def name
   #  if !first_name.nil?
   #    first_name + " " + last_name
@@ -114,7 +156,7 @@ class User < ActiveRecord::Base
   end
   
   pg_search_scope :search,
-                against: [:first_name, :last_name],                
+                against: [:name, :first_name, :last_name],                
                 using: {
                     tsearch: {
                       dictionary: 'english',
@@ -170,15 +212,15 @@ class User < ActiveRecord::Base
     if !params["order"].nil?
       case params["order"]["0"]["column"]
       when "1"
-        order = "users.first_name #{params["order"]["0"]["dir"]}, users.last_name #{params["order"]["0"]["dir"]}"
+        order = "users.name"
       when "3"
         order = "users.created_at"
       else
         order = "users.first_name, users.last_name"
       end
-      order += " "+params["order"]["0"]["dir"] if params["order"]["0"]["column"] == 3
+      order += " "+params["order"]["0"]["dir"]
     else
-      order = "users.first_name, users.last_name"
+      order = "users.name"
     end
     
     @records = @records.order(order) if !order.nil?
@@ -191,7 +233,7 @@ class User < ActiveRecord::Base
     @records.each do |item|
       item = [
               link_helper.link_to("<img class=\"avatar-big\" width='60' src='#{item.avatar(:square)}' />".html_safe, {controller: "users", action: "show", id: item.id}, class: "fancybox.ajax fancybox_link main-title"),
-              link_helper.link_to(item.name, {controller: "users", action: "show", id: item.id}, class: "fancybox.ajax fancybox_link main-title")+item.quick_info,
+              link_helper.link_to(item.name, {controller: "users", action: "edit", id: item.id, tab_page: 1}, title: "#{item.name}", class: "main-title tab_page")+item.quick_info,
               '<div class="text-center">'+item.roles_name+"</div>",
               '<div class="text-center">'+item.created_at.strftime("%Y-%m-%d")+"</div>", 
               '',
@@ -232,8 +274,8 @@ class User < ActiveRecord::Base
     
     history = []
     
-    import_icon = '<i class="icon-download-alt"></i> '.html_safe
-    export_icon = '<i class="icon-external-link"></i> '.html_safe
+    # Note Log
+    
     
     return history.sort {|a,b| b[:date] <=> a[:date]}
   end
@@ -332,67 +374,70 @@ class User < ActiveRecord::Base
     #  result[:contacts] << contact
     #end
     #
-    #### COURSE TYPE ### SAVED ### 
-    #CourseType.destroy_all
-    #database[:CourseType].each do |row|
-    #  item = CourseType.new
-    #  item.tmp_CourseTypeID = row[:CourseTypeID]
-    #  item.name = row[:CourseTypeName]
-    #  item.short_name = row[:CourseTypeShortName].nil? ? row[:CourseTypeName] : row[:CourseTypeShortName]
-    #  item.save
-    #
-    #  result[:course_types] << item
-    #end
-    #
-    ## SUBJECT ### SAVED ### 
-    #Subject.destroy_all
-    #database[:Subject].each do |row|
-    #  item = Subject.new
-    #  item.tmp_SubjectID = row[:SubjectID]
-    #  
-    #  if !row[:SubjectID].split(row[:CourseID])[1].nil?
-    #    subject_name = User.remove_head_draft(row[:SubjectID].split(row[:CourseID])[1])
-    #    item.name = subject_name
-    #    
-    #    # find course type
-    #    ct = CourseType.where(short_name: row[:SubjectID].split(row[:CourseID])[0]).first
-    #    if !ct.nil?
-    #      # find exist subject
-    #      s = Subject.where("LOWER(name) = ?",subject_name.downcase).first
-    #      
-    #      if !s.nil?
-    #        s.course_types << ct if !s.course_types.include?(ct)
-    #        s.save
-    #      else
-    #        item.course_types << ct
-    #        item.save
-    #      end
-    #      
-    #    end
-    #  end
-    #  
-    #  
-    #  result[:subjects] << item
-    #  result[:subjects_tmp] << row
-    #end
-    
-    ### USER
-    User.where.not(tmp_ConsultantID: nil).destroy_all
-    database[:COUNSULTANT].each_with_index do |row,index|
-      item = User.new(:email => "unknown#{index}@ftmsglobal.edu.vn", :password => "aA456321@", :password_confirmation => "aA456321@")
-      item.tmp_ConsultantID = row[:ConsultantID]
-      #item.first_name = row[:ConsultantName].split(" ").last
-      #item.last_name = row[:ConsultantName].split(" ")
-      item.name = row[:ConsultantName].strip
-
-      item.roles << Role.where(name: "user").first
-      # item.roles << Role.where(name: "education_consultant").first
-      
+    ### COURSE TYPE ### SAVED ### 
+    CourseType.destroy_all
+    database[:CourseType].each do |row|
+      item = CourseType.new
+      item.tmp_CourseTypeID = row[:CourseTypeID]
+      item.name = row[:CourseTypeName]
+      item.short_name = row[:CourseTypeShortName].nil? ? row[:CourseTypeName] : row[:CourseTypeShortName]
+      item.user = User.first
       item.save
-      
-
-      result[:users] << item
+      item.add_status("new_pending")
+      item.save_draft(User.first)
+    
+      result[:course_types] << item
     end
+    
+    # SUBJECT ### SAVED ### 
+    Subject.destroy_all
+    database[:Subject].each do |row|
+      item = Subject.new
+      item.tmp_SubjectID = row[:SubjectID]
+      
+      if !row[:SubjectID].split(row[:CourseID])[1].nil?
+        subject_name = User.remove_head_draft(row[:SubjectID].split(row[:CourseID])[1])
+        item.name = subject_name
+        
+        # find course type
+        ct = CourseType.where(short_name: row[:SubjectID].split(row[:CourseID])[0]).first
+        if !ct.nil?
+          # find exist subject
+          s = Subject.where("LOWER(name) = ?",subject_name.downcase).first
+          
+          if !s.nil?
+            s.course_types << ct if !s.course_types.include?(ct)
+            s.save
+          else
+            item.course_types << ct
+            item.save
+          end
+          
+        end
+      end
+      
+      
+      result[:subjects] << item
+      result[:subjects_tmp] << row
+    end
+    
+    #### USER
+    #User.where.not(tmp_ConsultantID: nil).destroy_all
+    #database[:COUNSULTANT].each_with_index do |row,index|
+    #  item = User.new(:email => "unknown#{index}@ftmsglobal.edu.vn", :password => "aA456321@", :password_confirmation => "aA456321@")
+    #  item.tmp_ConsultantID = row[:ConsultantID]
+    #  #item.first_name = row[:ConsultantName].split(" ").last
+    #  #item.last_name = row[:ConsultantName].split(" ")
+    #  item.name = row[:ConsultantName].strip
+    #
+    #  item.roles << Role.where(name: "user").first
+    #  # item.roles << Role.where(name: "education_consultant").first
+    #  
+    #  item.save
+    #  
+    #
+    #  result[:users] << item
+    #end
     
     
     return result
@@ -431,7 +476,7 @@ class User < ActiveRecord::Base
       subjects.each do |subject|
         s_row = {}
         s_row["subject"] = subject
-        s_row["count"] = student.all_contacts_courses.includes(:course).where(courses: {subject_id: subject.id}).count
+        s_row["count"] = student.all_contacts_courses.where(report: true).includes(:course).where(courses: {subject_id: subject.id}).count
         
         row["subjects"] << s_row
       end

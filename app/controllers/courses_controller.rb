@@ -3,7 +3,7 @@ class CoursesController < ApplicationController
   
   load_and_authorize_resource
   
-  before_action :set_course, only: [:show, :edit, :update, :destroy]
+  before_action :set_course, only: [:delete, :show, :edit, :update, :destroy] # [delete] for revision-feature
 
   # GET /courses
   # GET /courses.json
@@ -69,7 +69,7 @@ class CoursesController < ApplicationController
   # PATCH/PUT /courses/1.json
   def update
     @course.assign_attributes(course_params)
-    course_types_subject = @course.update_program_paper(params[:program_paper])    
+    @course.update_program_paper(params[:program_paper])    
     
     respond_to do |format|
       if @course.save        
@@ -140,6 +140,9 @@ class CoursesController < ApplicationController
     end
   end
   
+  
+  ########## BEGIN REVISION ###############
+  
   def approve_new
     authorize! :approve_new, @course
     
@@ -157,8 +160,8 @@ class CoursesController < ApplicationController
     @course.approve_update(current_user)
     
     respond_to do |format|
-      format.html { redirect_to params[:tab_page].present? ? "/courses/approved" : @contact }
-      format.json { render action: 'show', status: :created, location: @subject }
+      format.html { redirect_to params[:tab_page].present? ? "/courses/approved" : @course }
+      format.json { render action: 'show', status: :created, location: @course }
     end
   end
   
@@ -168,8 +171,8 @@ class CoursesController < ApplicationController
     @course.approve_delete(current_user)
     
     respond_to do |format|
-      format.html { redirect_to params[:tab_page].present? ? "/courses/approved" : @contact }
-      format.json { render action: 'show', status: :created, location: @subject }
+      format.html { redirect_to params[:tab_page].present? ? "/courses/approved" : @course }
+      format.json { render action: 'show', status: :created, location: @course }
     end
   end
   
@@ -182,6 +185,23 @@ class CoursesController < ApplicationController
     
     render layout: nil
   end
+
+  def delete
+    
+    respond_to do |format|
+      if @course.delete
+        @course.save_draft(current_user)
+        
+        format.html { redirect_to "/home/close_tab" }
+        format.json { head :no_content }
+      else
+        format.html { render action: 'edit', tab_page: params[:tab_page] }
+        format.json { render json: @course.errors, status: :unprocessable_entity }
+      end
+    end
+  end
+  
+  ########## BEGIN REVISION ###############
 
   private
     # Use callbacks to share common setup or constraints between actions.

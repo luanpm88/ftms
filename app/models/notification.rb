@@ -65,36 +65,258 @@ class Notification < ActiveRecord::Base
     end
   end
   
+  
+  
+  #### CONTACT MENU- PENDING
   def self.contact_pending_count(user)
     if !user.has_role?("education_consultant") && !user.has_role?("admin") && !user.has_role?("manager")
       return ""
     end       
     
-    if user.has_role?("education_consultant") && !user.has_role?("admin") && !user.has_role?("manager")
-      records = Contact.main_contacts.where("contacts.status LIKE ? OR contacts.status LIKE ? OR contacts.status LIKE ?","%[new_pending]%","%[update_pending]%","%[delete_pending]%")
-      records = records.where(account_manager: user.id)
-    end
-    
-    if user.has_role?("admin") || user.has_role?("manager")
+    if !user.has_role?("admin") && !user.has_role?("manager")
+      if user.has_role?("education_consultant")
+        records = Contact.main_contacts
+                        .where("contacts.status LIKE ? OR contacts.status LIKE ? OR contacts.status LIKE ?","%[new_pending]%","%[update_pending]%","%[delete_pending]%")
+        records = records.where(account_manager: user.id)
+        records = records.select{|item| item.current.user.lower?("education_consultant")}
+      end      
+    else
       records = Contact.main_contacts.where("contacts.status LIKE ?","%_pending]%")
     end
     
     return records.count == 0 ? "" : records.count
   end
   
+  
+  
+  def self.contact_tag_pending_count(user)
+    if !user.has_role?("admin") && !user.has_role?("manager")
+      return ""
+    end
+    
+    records = ContactTag.main_contact_tags.where("status LIKE ?","%pending]%")
+    
+    return records.count == 0 ? "" : records.count
+  end
+  
+  
+  
+  def self.contact_menu_count(user)
+    total = self.contact_pending_count(user).to_i + self.contact_tag_pending_count(user).to_i
+    
+    return total > 0 ? total : ""
+  end
+  ###################################################
+  
+  
+  
+  
+  #### CONTACT MENU- APPROVED   
+  def self.contact_approved_count(user)
+    records = Contact.main_contacts
+                    .where("annoucing_user_ids LIKE ?", "%[#{user.id}]%")
+    
+    return records.count == 0 ? "" : records.count
+  end
+  
+  def self.contact_tag_approved_count(user)
+    records = ContactTag.main_contact_tags
+                    .where("annoucing_user_ids LIKE ?", "%[#{user.id}]%")
+    
+    return records.count == 0 ? "" : records.count
+  end
+  
+  def self.contact_menu_approved_count(user)
+    total = self.contact_approved_count(user).to_i + self.contact_tag_approved_count(user).to_i
+    
+    return total > 0 ? total : ""
+  end
+  #########################################################
+  
+  
+  
+  #### COURSE ADMIN - PENDING
+  
   def self.course_pending_count(user)
     if !user.has_role?("admin") && !user.has_role?("manager")
       return ""
     end
     
-    records = Course.main_courses.where("courses.status LIKE ?","%pending]%")
+    records = Course.main_courses.where("status LIKE ?","%pending]%")
+    
+    return records.count == 0 ? "" : records.count
+  end
+  
+  def self.course_type_pending_count(user)
+    if !user.has_role?("admin") && !user.has_role?("manager")
+      return ""
+    end
+    
+    records = CourseType.main_course_types.where("status LIKE ?","%pending]%")
     
     return records.count == 0 ? "" : records.count
   end
   
   def self.course_admin_count(user)
-    self.course_pending_count(user)
+    total = self.course_pending_count(user).to_i + self.course_type_pending_count(user).to_i
+    
+    return total > 0 ? total : ""
   end
+  
+  #### COURSE ADMIN - APPROVED
+  
+  def self.course_approved_count(user)
+    records = Course.main_courses
+                    .where("annoucing_user_ids LIKE ?", "%[#{user.id}]%")
+    
+    return records.count == 0 ? "" : records.count
+  end
+  
+  def self.course_type_approved_count(user)
+    records = CourseType.main_course_types
+                    .where("annoucing_user_ids LIKE ?", "%[#{user.id}]%")
+    
+    return records.count == 0 ? "" : records.count
+  end
+  
+  def self.course_admin_approved_count(user)
+    total = self.course_approved_count(user).to_i + self.course_type_approved_count(user).to_i
+    
+    return total > 0 ? total : ""
+  end
+  
+  #### BOOK - PENDING - APPROVED
+  
+  def self.book_pending_count(user)
+    if !user.has_role?("admin") && !user.has_role?("manager") # && !user.has_role?("education_consultant")
+      return ""
+    end
+    
+    records = Book.main_books.where("status LIKE ?","%pending]%")
+    
+    #if user.has_role?("education_consultant")
+    #  records = records.select{|item| item.current.user.lower?("education_consultant")}
+    #end
+    
+    return records.count == 0 ? "" : records.count
+  end
+  
+  def self.book_approved_count(user)
+    records = Book.main_books
+                    .where("annoucing_user_ids LIKE ?", "%[#{user.id}]%")
+    
+    return records.count == 0 ? "" : records.count
+  end
+  
+  
+  
+  
+  #### DISCOUNT PROGRAM - PENDING - APPROVED
+  
+  def self.discount_program_pending_count(user)
+    if !user.has_role?("admin") && !user.has_role?("manager") # && !user.has_role?("education_consultant")
+      return ""
+    end
+    
+    records = DiscountProgram.main_discount_programs.where("status LIKE ?","%pending]%")
+    
+    #if user.has_role?("education_consultant")
+    #  records = records.select{|item| item.current.user.lower?("education_consultant")}
+    #end
+    
+    return records.count == 0 ? "" : records.count
+  end
+  
+  def self.discount_program_approved_count(user)
+    records = DiscountProgram.main_discount_programs
+                    .where("annoucing_user_ids LIKE ?", "%[#{user.id}]%")
+    
+    return records.count == 0 ? "" : records.count
+  end
+  
+  
+  
+  
+  
+  #### ACCOUNTING - PENDING
+  def self.bank_account_pending_count(user)
+    if !user.has_role?("admin") && !user.has_role?("manager")
+      return ""
+    end
+    
+    records = BankAccount.main_bank_accounts.where("status LIKE ?","%pending]%")
+    
+    return records.count == 0 ? "" : records.count
+  end
+  
+  
+  # total
+  def self.accounting_count(user)
+    total = self.bank_account_pending_count(user).to_i
+    
+    return total > 0 ? total : ""
+  end
+  #####################################
+  
+  
+  
+  
+  #### ACCOUNTING - APPROVED
+  def self.bank_account_approved_count(user)
+    records = BankAccount.main_bank_accounts
+                    .where("annoucing_user_ids LIKE ?", "%[#{user.id}]%")
+    
+    return records.count == 0 ? "" : records.count
+  end
+  
+    
+  def self.accounting_approved_count(user)
+    total = self.bank_account_approved_count(user).to_i
+    
+    return total > 0 ? total : ""
+  end
+  #######################################
+  
+  
+  #### ACCOUNTING - PENDING
+  def self.seminar_pending_count(user)
+    if !user.has_role?("admin") && !user.has_role?("manager")
+      return ""
+    end
+    
+    records = Seminar.main_seminars.where("status LIKE ?","%pending]%")
+    
+    return records.count == 0 ? "" : records.count
+  end
+  
+  
+  # total
+  def self.marketing_pending_count(user)
+    total = self.seminar_pending_count(user).to_i
+    
+    return total > 0 ? total : ""
+  end
+  #####################################
+  
+  
+  
+  
+  #### ACCOUNTING - APPROVED
+  def self.seminar_approved_count(user)
+    records = Seminar.main_seminars
+                    .where("annoucing_user_ids LIKE ?", "%[#{user.id}]%")
+    
+    return records.count == 0 ? "" : records.count
+  end
+  
+    
+  def self.marketing_approved_count(user)
+    total = self.seminar_approved_count(user).to_i
+    
+    return total > 0 ? total : ""
+  end
+  #######################################
+  
   
   
 end

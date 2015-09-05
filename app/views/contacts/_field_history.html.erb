@@ -44,6 +44,17 @@
         <li><%= c[type] ? "Individual" : "Company/Organization" %> <span class="nowrap time-span"><%= c.created_at.strftime("%d-%b-%Y, %I:%M %p") %></span></li>
       <% end %>
       
+      <% if value != c[type] && ["inquiry_course_type"].include?(type) %>
+        <li><%= c.course_types.order("short_name").map(&:short_name).join(", ") %> <span class="nowrap time-span"><%= c.created_at.strftime("%d-%b-%Y, %I:%M %p") %></span></li>
+      <% end %>
+      
+      <% if value != c[type] && ["lecturer_course_type"].include?(type) %>
+        <li><%= c.lecturer_course_types.empty? ? "[empty]" : c.lecturer_course_types.order("short_name").map(&:short_name).join(", ") %> <span class="nowrap time-span"><%= c.created_at.strftime("%d-%b-%Y, %I:%M %p") %></span></li>
+      <% end %>
+      
+      <% if value != c[type] && ["contact_type"].include?(type) %>
+        <li><%= c.contact_types.empty? ? "[empty]" : c.contact_types.order("name").map(&:name).join(", ") %> <span class="nowrap time-span"><%= c.created_at.strftime("%d-%b-%Y, %I:%M %p") %></span></li>
+      <% end %>
       
       <% value = c[type] %>
     <% end %>
