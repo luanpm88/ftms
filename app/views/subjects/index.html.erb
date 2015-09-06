@@ -10,7 +10,7 @@
                 </div>
 				
 				<div class="grid simple ">
-                  <div class="grid-body no-border filters course-filter">
+                  <div class="grid-body no-border filters subject-filter">
                   <div class="row order-filters">
                       
                       <div class="col-md-4">
@@ -18,6 +18,10 @@
 						<%= select_tag 'filter[course_types[]]', options_for_select(CourseType.all.collect{ |u| [u.short_name, u.id] }), class: "modern_select width100", multiple: "multiple" %>
                       </div>
                       
+						<div class="col-md-3">
+							<h4>Status</h4>							
+							<%= select_tag 'status', options_for_select(Subject.status_options, params[:status]), class: "modern_select width100" %>
+						</div>
                       
                   </div>
                   </div>		    
@@ -40,6 +44,7 @@
 												<th class="text-center">Program(s)</th>
                                                 <th class="text-center">Created At</th>
 												<th class="text-center" width="1%">Creator</th>
+												<th class="text-center" width="1%">Status</th>
 												<th class="text-right" width="1%">Actions</th>
                                             </tr>
                                         </thead>                                        

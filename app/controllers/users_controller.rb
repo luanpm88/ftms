@@ -185,13 +185,14 @@ class UsersController < ApplicationController
       receivable_total = 0.00
       
       
-      @course_types = CourseType.order("short_name")
+      @course_types = CourseType.main_course_types.order("short_name")
       @course_types.each do |ct|
         #@statistics << {user: u, course_type: ct}
         
         # sales
         total = 0.0
         @records = PaymentRecord.includes(:course_register => :contact)
+                              .where(course_registers: {parent_id: nil}).where("course_registers.status IS NOT NULL AND course_registers.status LIKE ?", "%[active]%")
                               .where(status: 1)
                               .where(contacts: {account_manager_id: u.id}) #.where(course_types: {id: ct.id}) #.sum(:price)                              
                               .where("payment_records.payment_date >= ? AND payment_records.payment_date <= ? ", @from_date.beginning_of_day, @to_date.end_of_day)
@@ -209,6 +210,7 @@ class UsersController < ApplicationController
         # receivable
         receivable = 0
         contacts_courses = ContactsCourse.includes(:course => :course_type, :course_register => :contact)
+                                          .where(course_registers: {parent_id: nil}).where("course_registers.status IS NOT NULL AND course_registers.status LIKE ?", "%[active]%")
                                           .where(course_types: {id: ct.id})
                                           .where(contacts: {account_manager_id: u.id})
                                           .where("course_registers.created_date >= ? AND course_registers.created_date <= ? ", @from_date.beginning_of_day, @to_date.end_of_day)
@@ -231,7 +233,7 @@ class UsersController < ApplicationController
         @contacts.each do |c|
           transform = 0
           
-          if c.course_types.include?(ct) && !c.first_revision.nil? && c.first_revision.contact_types.include?(ContactType.inquiry)
+          if c.course_types.include?(ct) && c.contact_types.include?(ContactType.inquiry)
             inquiry += 1
             inquiry_total += 1
             
@@ -244,7 +246,7 @@ class UsersController < ApplicationController
               transform = 1
             end
           end            
-          if c.cache_course_type_ids.include?("[#{ct.id}]") && !c.first_revision.nil? && c.first_revision.contact_types.include?(ContactType.student)          
+          if c.cache_course_type_ids.present? && c.cache_course_type_ids.include?("[#{ct.id}]") && c.contact_types.include?(ContactType.student)          
             student += 1
             student_total += 1
           end
@@ -255,10 +257,13 @@ class UsersController < ApplicationController
           student_total += transform
           
         end
+
+        
         
         # Paper
         paper = 0
         @papers = ContactsCourse.includes(:course_register, :contact, :course => :course_type)
+                            .where(course_registers: {parent_id: nil}).where("course_registers.status IS NOT NULL AND course_registers.status LIKE ?", "%[active]%")
                             .where(contacts: {account_manager_id: u.id})
                             .where(course_types: {id: ct.id})
                             .where("course_registers.created_date >= ? AND course_registers.created_date <= ? ", @from_date.beginning_of_day, @to_date.end_of_day)

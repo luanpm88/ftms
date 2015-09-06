@@ -282,7 +282,7 @@ class Course < ActiveRecord::Base
   end
   
   def course_registers_by_student(student)
-    CourseRegister.where(id: (contacts_courses_by_student(student).map {|cc| cc.course_register_id}))
+    CourseRegister.main_course_registers.where(id: (contacts_courses_by_student(student).map {|cc| cc.course_register_id}))
   end
   
   def list_course_registers_by_student(student)

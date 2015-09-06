@@ -3,7 +3,7 @@ class PhrasesController < ApplicationController
   
   load_and_authorize_resource
   
-  before_action :set_phrase, only: [:show, :edit, :update, :destroy]
+  before_action :set_phrase, only: [:delete, :show, :edit, :update, :destroy]
 
   # GET /phrases
   # GET /phrases.json
@@ -43,6 +43,9 @@ class PhrasesController < ApplicationController
 
     respond_to do |format|
       if @phrase.save
+        @phrase.update_status("create", current_user)        
+        @phrase.save_draft(current_user)
+        
         format.html { redirect_to params[:tab_page].present? ? "/home/close_tab" : @phrase, notice: 'Phrase was successfully created.' }
         format.json { render action: 'show', status: :created, location: @phrase }
       else
@@ -59,6 +62,9 @@ class PhrasesController < ApplicationController
     s_params[:subject_ids] = phrase_params[:subject_ids][0].split(",") if phrase_params[:subject_ids].present?
     respond_to do |format|
       if @phrase.update(s_params)
+        @phrase.update_status("update", current_user)        
+        @phrase.save_draft(current_user)
+        
         format.html { redirect_to params[:tab_page].present? ? "/home/close_tab" : @phrase, notice: 'Phrase was successfully updated.' }
         format.json { head :no_content }
       else
@@ -88,6 +94,68 @@ class PhrasesController < ApplicationController
     
     render json: result[:result]
   end
+  
+  ########## BEGIN REVISION ###############
+  
+  def approve_new
+    authorize! :approve_new, @phrase
+    
+    @phrase.approve_new(current_user)
+    
+    respond_to do |format|
+      format.html { redirect_to params[:tab_page].present? ? "/phrases/approved" : @phrase }
+      format.json { render action: 'show', status: :created, location: @phrase }
+    end
+  end
+  
+  def approve_update
+    authorize! :approve_update, @phrase
+    
+    @phrase.approve_update(current_user)
+    
+    respond_to do |format|
+      format.html { redirect_to params[:tab_page].present? ? "/phrases/approved" : @phrase }
+      format.json { render action: 'show', status: :created, location: @phrase }
+    end
+  end
+  
+  def approve_delete
+    authorize! :approve_delete, @phrase
+    
+    @phrase.approve_delete(current_user)
+    
+    respond_to do |format|
+      format.html { redirect_to params[:tab_page].present? ? "/phrases/approved" : @phrase }
+      format.json { render action: 'show', status: :created, location: @phrase }
+    end
+  end
+  
+  def approved
+    render layout: "content"
+  end
+  
+  def field_history
+    @drafts = @phrase.field_history(params[:type])
+    
+    render layout: nil
+  end
+
+  def delete
+    
+    respond_to do |format|
+      if @phrase.delete
+        @phrase.save_draft(current_user)
+        
+        format.html { redirect_to "/home/close_tab" }
+        format.json { head :no_content }
+      else
+        format.html { render action: 'edit', tab_page: params[:tab_page] }
+        format.json { render json: @phrase.errors, status: :unprocessable_entity }
+      end
+    end
+  end
+  
+  ########## BEGIN REVISION ###############
 
   private
     # Use callbacks to share common setup or constraints between actions.

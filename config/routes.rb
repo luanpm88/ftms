@@ -4,6 +4,17 @@ Hkerp::Application.routes.draw do
   resources :transfers do
     collection do
       get :datatable
+      
+      ### revision ###
+      get :delete
+      get :approve_new
+      get :approve_update
+      get :approve_delete
+      
+      get :approved
+      get :field_history
+      
+      ####################
     end
   end
   resources :activities do
@@ -73,6 +84,17 @@ Hkerp::Application.routes.draw do
   resources :phrases do
     collection do
       get :datatable
+      
+      ### revision ###
+      get :delete
+      get :approve_new
+      get :approve_update
+      get :approve_delete
+      
+      get :approved
+      get :field_history
+      
+      ####################
     end
   end
   resources :contacts_course_types
@@ -110,6 +132,17 @@ Hkerp::Application.routes.draw do
     collection do
       get :datatable
       get :student_course_registers
+      
+      ### revision ###
+      get :delete
+      get :approve_new
+      get :approve_update
+      get :approve_delete
+      
+      get :approved
+      get :field_history
+      
+      ####################
     end
   end
   resources :course_types_subjects
@@ -173,6 +206,17 @@ Hkerp::Application.routes.draw do
     collection do
       get :datatable
       get :ajax_select_box
+      
+      ### revision ###
+      get :delete
+      get :approve_new
+      get :approve_update
+      get :approve_delete
+      
+      get :approved
+      get :field_history
+      
+      ####################
     end
   end
   

@@ -3,7 +3,7 @@ class TransfersController < ApplicationController
   
   load_and_authorize_resource
   
-  before_action :set_transfer, only: [:show, :edit, :update, :destroy]
+  before_action :set_transfer, only: [:delete, :show, :edit, :update, :destroy]
 
   # GET /transfers
   # GET /transfers.json
@@ -37,6 +37,9 @@ class TransfersController < ApplicationController
 
     respond_to do |format|
       if @transfer.save
+        @transfer.update_status("create", current_user)        
+        @transfer.save_draft(current_user)
+        
         format.html { redirect_to params[:tab_page].present? ? "/home/close_tab" : @transfer, notice: 'Transfer was successfully created.' }
         format.json { render action: 'show', status: :created, location: @transfer }
       else
@@ -51,6 +54,9 @@ class TransfersController < ApplicationController
   def update
     respond_to do |format|
       if @transfer.update(transfer_params)
+        @transfer.update_status("update", current_user)        
+        @transfer.save_draft(current_user)
+        
         format.html { redirect_to params[:tab_page].present? ? "/home/close_tab" : @transfer, notice: 'Transfer was successfully updated.' }
         format.json { head :no_content }
       else
@@ -80,6 +86,67 @@ class TransfersController < ApplicationController
     
     render json: result[:result]
   end
+  
+  ########## BEGIN REVISION ###############
+  
+  def approve_new
+    authorize! :approve_new, @transfer
+    
+    @transfer.approve_new(current_user)
+    
+    respond_to do |format|
+      format.html { redirect_to params[:tab_page].present? ? "/transfers/approved" : @transfer }
+      format.json { render action: 'show', status: :created, location: @transfer }
+    end
+  end
+  
+  def approve_update
+    authorize! :approve_update, @transfer
+    
+    @transfer.approve_update(current_user)
+    
+    respond_to do |format|
+      format.html { redirect_to params[:tab_page].present? ? "/transfers/approved" : @transfer }
+      format.json { render action: 'show', status: :created, location: @transfer }
+    end
+  end
+  
+  def approve_delete
+    authorize! :approve_delete, @transfer
+    
+    @transfer.approve_delete(current_user)
+    
+    respond_to do |format|
+      format.html { redirect_to params[:tab_page].present? ? "/transfers/approved" : @transfer }
+      format.json { render action: 'show', status: :created, location: @transfer }
+    end
+  end
+  
+  def approved
+    render layout: "content"
+  end
+  
+  def field_history
+    @drafts = @transfer.field_history(params[:type])
+    
+    render layout: nil
+  end
+
+  def delete    
+    respond_to do |format|
+      if @transfer.delete
+        @transfer.save_draft(current_user)
+        
+        format.html { redirect_to "/home/close_tab" }
+        format.json { head :no_content }
+      else
+        format.html { render action: 'edit', tab_page: params[:tab_page] }
+        format.json { render json: @transfer.errors, status: :unprocessable_entity }
+      end
+    end
+  end
+  
+  ########## BEGIN REVISION ###############
 
   private
     # Use callbacks to share common setup or constraints between actions.

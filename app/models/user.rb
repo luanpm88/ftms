@@ -414,6 +414,9 @@ class User < ActiveRecord::Base
           end
           
         end
+        
+        item.add_status("active")
+        item.save_draft(User.first)
       end
       
       

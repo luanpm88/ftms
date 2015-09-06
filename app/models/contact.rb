@@ -75,12 +75,18 @@ class Contact < ActiveRecord::Base
   after_validation :update_cache
   before_validation :check_type
   
-  def all_contacts_courses
-    contacts_courses
+  def active_courses
+    courses.includes(:contacts_courses).joins("LEFT JOIN course_registers ON course_registers.id = contacts_courses.course_register_id")
+          .where(course_registers: {parent_id: nil}).where("course_registers.status IS NOT NULL AND course_registers.status LIKE ?", "%[active]%")
   end
   
-  def all_course_registers
-    course_registers
+  def active_contacts_courses
+    contacts_courses.joins("LEFT JOIN course_registers ON course_registers.id = contacts_courses.course_register_id")
+                    .where(course_registers: {parent_id: nil}).where("course_registers.status IS NOT NULL AND course_registers.status LIKE ?", "%[active]%")
+  end
+  
+  def active_course_registers
+    course_registers.where("course_registers.parent_id IS NULL AND course_registers.status IS NOT NULL AND course_registers.status LIKE ?", "%[active]%")
   end
   
   def self.format_mobile(string)
@@ -464,11 +470,11 @@ class Contact < ActiveRecord::Base
   end
   
   def joined_course_types
-    contacts_courses.map {|cc| cc.course.course_type}.uniq
+    active_contacts_courses.map {|cc| cc.course.course_type}.uniq
   end
   
   def intakes
-    contacts_courses.map {|cc| {year: cc.course.intake.year, month: cc.course.intake.month}}.uniq    
+    active_contacts_courses.map {|cc| {year: cc.course.intake.year, month: cc.course.intake.month}}.uniq    
   end
   
   def update_cache_intakes
@@ -809,20 +815,20 @@ class Contact < ActiveRecord::Base
   end
   
   def course_register_count
-    all_course_registers.count
+    active_course_registers.count
   end
   
-  def all_transfers
-    Transfer.where("contact_id = ? OR transfer_for = ?", self.id, self.id)
+  def active_transfers
+    Transfer.where("transfers.parent_id IS NULL AND transfers.status IS NOT NULL AND transfers.status LIKE ?", "%[active]%").where("contact_id = ? OR transfer_for = ?", self.id, self.id)
   end
   
   def transfer_count
-    all_transfers.count
+    active_transfers.count
   end
   
   def payment_count
     count = 0
-    all_course_registers.each do |cr|
+    active_course_registers.each do |cr|
       count += cr.all_payment_records.count
     end
     
@@ -865,7 +871,7 @@ class Contact < ActiveRecord::Base
   end
   
   def course_count_link
-    courses.count == 0 ? "" : self.course_list_link("["+courses.count.to_s+"]")
+    active_courses.count == 0 ? "" : self.course_list_link("["+active_courses.count.to_s+"]")
   end
   
   def json_encode_course_type_ids_names
@@ -897,7 +903,7 @@ class Contact < ActiveRecord::Base
   end
   
   def course_count
-    courses.uniq.count
+    active_courses.uniq.count
   end
   
   def book_count
@@ -1073,6 +1079,8 @@ class Contact < ActiveRecord::Base
   def check_statuses
     if !statuses.include?("deleted") && !statuses.include?("delete_pending") && !statuses.include?("update_pending") && !statuses.include?("new_pending") && !statuses.include?("education_consultant_pending") && !statuses.include?("no_education_consultant")
       add_status("active")
+      
+      Contact.find(self.id).update_info
     else
       delete_status("active")
     end    
@@ -1161,9 +1169,7 @@ class Contact < ActiveRecord::Base
     if type == "inquiry_course_type"
       drafts = drafts.select{|c| c.course_types.order("short_name").map(&:short_name).join("") != self.course_types.order("short_name").map(&:short_name).join("")}
     elsif type == "lecturer_course_type"
-      drafts = drafts.select{|c| c.lecturer_course_types.order("short_name").map(&:short_name).join("") != self.lecturer_course_types.order("short_name").map(&:short_name).join("")}
-    elsif type == "lecturer_course_type"
-      drafts = drafts.select{|c| c.lecturer_course_types.order("short_name").map(&:short_name).join("") != self.lecturer_course_types.order("short_name").map(&:short_name).join("")}
+      drafts = drafts.select{|c| c.lecturer_course_types.order("short_name").map(&:short_name).join("") != self.lecturer_course_types.order("short_name").map(&:short_name).join("")}    
     elsif type == "contact_type"
       drafts = drafts.select{|c| c.contact_types.order("name").map(&:name).join("") != self.contact_types.order("name").map(&:name).join("")}
     else
@@ -1260,15 +1266,15 @@ class Contact < ActiveRecord::Base
   end
   
   def budget_hour
-    all_transferred_records.sum(:hour) - all_course_registers.sum(:transfer_hour)
+    active_transferred_records.sum(:hour) - active_course_registers.sum(:transfer_hour)
   end
   
   def budget_money
-    all_transferred_records.sum(:money) - all_transferred_records.sum(:admin_fee) - all_course_registers.sum(:transfer)
+    active_transferred_records.sum(:money) - active_transferred_records.sum(:admin_fee) - active_course_registers.sum(:transfer)
   end
   
-  def all_transferred_records
-    transferred_records
+  def active_transferred_records
+    transferred_records.where("transfers.parent_id IS NULL AND transfers.status IS NOT NULL AND transfers.status LIKE ?", "%[active]%")
   end
   
   

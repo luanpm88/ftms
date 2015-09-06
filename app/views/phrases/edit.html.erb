@@ -6,9 +6,21 @@
 			<%= link_to 'Phrase Management', phrases_url %>
                     </li>
       </ul>
-      <div class="page-title"> <i class="icon-edit"></i>
-        <h3>Edit Phrase - <span class="semi-bold"><%= @phrase.name %></span></h3>
-      </div>
+
+		<div class="page-title <%= "draft" if @phrase.draft? %>""> <i class="icon-briefcase"></i>
+		  <h3 class=""><span class="semi-bold"><%= @phrase.name %></span>
+		  <br /><%= "Changed at: #{@phrase.created_at.strftime("%d-%b-%Y %I:%M %p")} / By: #{@phrase.user.name}" if @phrase.draft? %>
+		  </h3>
+		</div>
+	  
+		<div class="top-buts">
+				<%= render_phrase_actions(@phrase, "big") if !@phrase.draft? %>
+				<%= render_phrase_history_actions(@phrase) %>
+		</div>
+		<div>
+				<%= @phrase.display_statuses if !@phrase.draft? %>
+		</div>
+		<br style="clear:both" />
       
 
 	  

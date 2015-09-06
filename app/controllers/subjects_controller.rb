@@ -3,7 +3,7 @@ class SubjectsController < ApplicationController
   
   load_and_authorize_resource
   
-  before_action :set_subject, only: [:show, :edit, :update, :destroy]
+  before_action :set_subject, only: [:delete, :show, :edit, :update, :destroy]
 
   # GET /subjects
   # GET /subjects.json
@@ -43,6 +43,9 @@ class SubjectsController < ApplicationController
 
     respond_to do |format|
       if @subject.save
+        @subject.update_status("create", current_user)        
+        @subject.save_draft(current_user)
+        
         format.html { redirect_to params[:tab_page].present? ? "/home/close_tab" : @subject, notice: 'Subject was successfully created.' }
         format.json { render action: 'show', status: :created, location: @subject }
       else
@@ -59,6 +62,9 @@ class SubjectsController < ApplicationController
     s_params[:course_type_ids] = subject_params[:course_type_ids][0].split(",") if subject_params[:course_type_ids].present?
     respond_to do |format|
       if @subject.update(s_params)
+        @subject.update_status("update", current_user)        
+        @subject.save_draft(current_user)
+        
         format.html { redirect_to params[:tab_page].present? ? "/home/close_tab" : @subject, notice: 'Subject was successfully updated.' }
         format.json { head :no_content }
       else
@@ -92,6 +98,68 @@ class SubjectsController < ApplicationController
   def ajax_select_box
     render layout: nil
   end
+  
+  ########## BEGIN REVISION ###############
+  
+  def approve_new
+    authorize! :approve_new, @subject
+    
+    @subject.approve_new(current_user)
+    
+    respond_to do |format|
+      format.html { redirect_to params[:tab_page].present? ? "/subjects/approved" : @subject }
+      format.json { render action: 'show', status: :created, location: @subject }
+    end
+  end
+  
+  def approve_update
+    authorize! :approve_update, @subject
+    
+    @subject.approve_update(current_user)
+    
+    respond_to do |format|
+      format.html { redirect_to params[:tab_page].present? ? "/subjects/approved" : @subject }
+      format.json { render action: 'show', status: :created, location: @subject }
+    end
+  end
+  
+  def approve_delete
+    authorize! :approve_delete, @subject
+    
+    @subject.approve_delete(current_user)
+    
+    respond_to do |format|
+      format.html { redirect_to params[:tab_page].present? ? "/subjects/approved" : @subject }
+      format.json { render action: 'show', status: :created, location: @subject }
+    end
+  end
+  
+  def approved
+    render layout: "content"
+  end
+  
+  def field_history
+    @drafts = @subject.field_history(params[:type])
+    
+    render layout: nil
+  end
+
+  def delete
+    
+    respond_to do |format|
+      if @subject.delete
+        @subject.save_draft(current_user)
+        
+        format.html { redirect_to "/home/close_tab" }
+        format.json { head :no_content }
+      else
+        format.html { render action: 'edit', tab_page: params[:tab_page] }
+        format.json { render json: @subject.errors, status: :unprocessable_entity }
+      end
+    end
+  end
+  
+  ########## BEGIN REVISION ###############
 
   private
     # Use callbacks to share common setup or constraints between actions.

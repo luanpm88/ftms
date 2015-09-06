@@ -837,7 +837,10 @@ CREATE TABLE course_registers (
     cache_payment_status character varying,
     transfer numeric,
     discount numeric,
-    transfer_hour numeric
+    transfer_hour numeric,
+    annoucing_user_ids text,
+    parent_id integer,
+    status text
 );
 
 
@@ -1300,7 +1303,10 @@ CREATE TABLE phrases (
     description text,
     user_id integer,
     created_at timestamp without time zone NOT NULL,
-    updated_at timestamp without time zone NOT NULL
+    updated_at timestamp without time zone NOT NULL,
+    status text,
+    parent_id integer,
+    annoucing_user_ids text
 );
 
 
@@ -1544,7 +1550,10 @@ CREATE TABLE subjects (
     user_id integer,
     created_at timestamp without time zone NOT NULL,
     updated_at timestamp without time zone NOT NULL,
-    "tmp_SubjectID" text
+    "tmp_SubjectID" text,
+    annoucing_user_ids text,
+    parent_id integer,
+    status text
 );
 
 
@@ -1614,7 +1623,10 @@ CREATE TABLE transfers (
     admin_fee numeric,
     transfer_for integer,
     created_at timestamp without time zone NOT NULL,
-    updated_at timestamp without time zone NOT NULL
+    updated_at timestamp without time zone NOT NULL,
+    status text,
+    parent_id integer,
+    annoucing_user_ids text
 );
 
 
@@ -2714,4 +2726,28 @@ INSERT INTO schema_migrations (version) VALUES ('20150905033130');
 INSERT INTO schema_migrations (version) VALUES ('20150905033259');
 
 INSERT INTO schema_migrations (version) VALUES ('20150905033312');
+
+INSERT INTO schema_migrations (version) VALUES ('20150906012325');
+
+INSERT INTO schema_migrations (version) VALUES ('20150906012339');
+
+INSERT INTO schema_migrations (version) VALUES ('20150906012354');
+
+INSERT INTO schema_migrations (version) VALUES ('20150906021405');
+
+INSERT INTO schema_migrations (version) VALUES ('20150906021424');
+
+INSERT INTO schema_migrations (version) VALUES ('20150906021438');
+
+INSERT INTO schema_migrations (version) VALUES ('20150906023914');
+
+INSERT INTO schema_migrations (version) VALUES ('20150906023947');
+
+INSERT INTO schema_migrations (version) VALUES ('20150906024011');
+
+INSERT INTO schema_migrations (version) VALUES ('20150906042736');
+
+INSERT INTO schema_migrations (version) VALUES ('20150906042756');
+
+INSERT INTO schema_migrations (version) VALUES ('20150906042814');
 

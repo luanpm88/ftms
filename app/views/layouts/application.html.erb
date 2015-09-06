@@ -393,8 +393,24 @@
 						<span class="badge badge-success pull-right alert-level1"><%= Notification.course_admin_approved_count(current_user) %></span>
 					<% end %>
 					<ul class="sub-menu">
-						<li<% if params[:controller] == "course_registers" && params[:action] == "index" %> class="active"<% end %>><%= link_to 'Registration Management', course_registers_path(tab_page:1), class: "tab_page" %></li>
-						<li<% if params[:controller] == "transfers" %> class="active"<% end %>><%= link_to 'Defer/Transfer Management', transfers_path(tab_page:1), class: "tab_page" %></li>
+						<li<% if params[:controller] == "course_registers" && params[:action] == "index" %> class="active"<% end %>>
+							<a title="Registration Management (pending)" href="<%= url_for(course_registers_path(tab_page:1, status: "pending")) %>" class="tab_page noti">
+								<span class="badge badge-important pull-right alert-level2"><%= Notification.course_register_pending_count(current_user) %></span>
+							</a>
+							<a title="Registration Management (approved)" href="<%= url_for(course_registers_path(tab_page:1, status: "approved")) %>" class="tab_page noti approved">
+								<span class="badge badge-important pull-right alert-level2"><%= Notification.course_register_approved_count(current_user) %></span>
+							</a>
+							<%= link_to 'Registration Management', course_registers_path(tab_page:1), class: "tab_page" %>
+						</li>
+						<li<% if params[:controller] == "transfers" %> class="active"<% end %>>
+							<a title="Defer/Transfer Management (pending)" href="<%= url_for(transfers_path(tab_page:1, status: "pending")) %>" class="tab_page noti">
+								<span class="badge badge-important pull-right alert-level2"><%= Notification.transfer_pending_count(current_user) %></span>
+							</a>
+							<a title="Defer/Transfer Management (approved)" href="<%= url_for(transfers_path(tab_page:1, status: "approved")) %>" class="tab_page noti approved">
+								<span class="badge badge-important pull-right alert-level2"><%= Notification.transfer_approved_count(current_user) %></span>
+							</a>
+							<%= link_to 'Defer/Transfer Management', transfers_path(tab_page:1), class: "tab_page" %>
+						</li>
 						<li<% if params[:controller] == "course_types" && params[:action] == "index" %> class="active"<% end %>>
 							<a title="Program Management (pending)" href="<%= url_for(course_types_url(tab_page:1, status: "pending")) %>" class="tab_page noti">
 								<span class="badge badge-important pull-right alert-level2"><%= Notification.course_type_pending_count(current_user) %></span>
@@ -404,7 +420,15 @@
 							</a>
 							<%= link_to 'Program Management', course_types_path(tab_page:1), class: "tab_page" %>
 						</li>
-						<li<% if params[:controller] == "subjects" && params[:action] == "index" %> class="active"<% end %>><%= link_to 'Paper Management', subjects_path(tab_page:1), class: "tab_page" %></li>						
+						<li<% if params[:controller] == "subjects" && params[:action] == "index" %> class="active"<% end %>>
+							<a title="Paper Management (pending)" href="<%= url_for(subjects_path(tab_page:1, status: "pending")) %>" class="tab_page noti">
+								<span class="badge badge-important pull-right alert-level2"><%= Notification.subject_pending_count(current_user) %></span>
+							</a>
+							<a title="Paper Management (approved)" href="<%= url_for(subjects_path(tab_page:1, status: "approved")) %>" class="tab_page noti approved">
+								<span class="badge badge-important pull-right alert-level2"><%= Notification.subject_approved_count(current_user) %></span>
+							</a>
+							<%= link_to 'Paper Management', subjects_path(tab_page:1), class: "tab_page" %>
+						</li>						
 						<li<% if params[:controller] == "courses" && params[:action] == "index" %> class="active"<% end %>>
 							<a title="Course Management (pending)" href="<%= url_for(courses_url(tab_page:1, status: "pending")) %>" class="tab_page noti">
 								<span class="badge badge-important pull-right alert-level2"><%= Notification.course_pending_count(current_user) %></span>
@@ -414,7 +438,15 @@
 							</a>
 							<%= link_to 'Course Management', courses_path(tab_page:1), class: "tab_page" %>
 						</li>
-						<li<% if params[:controller] == "phrases" && params[:action] == "index" %> class="active"<% end %>><%= link_to 'Phrase Management', phrases_path(tab_page:1), class: "tab_page" %></li>											
+						<li<% if params[:controller] == "phrases" && params[:action] == "index" %> class="active"<% end %>>
+							<a title="Phrase Management (pending)" href="<%= url_for(phrases_path(tab_page:1, status: "pending")) %>" class="tab_page noti">
+								<span class="badge badge-important pull-right alert-level2"><%= Notification.phrase_pending_count(current_user) %></span>
+							</a>
+							<a title="Phrase Management (approved)" href="<%= url_for(phrases_path(tab_page:1, status: "approved")) %>" class="tab_page noti approved">
+								<span class="badge badge-important pull-right alert-level2"><%= Notification.phrase_approved_count(current_user) %></span>
+							</a>
+							<%= link_to 'Phrase Management', phrases_path(tab_page:1), class: "tab_page" %>
+						</li>											
 					</ul>
 			</li>
 		<% end %>

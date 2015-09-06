@@ -157,8 +157,52 @@ class Notification < ActiveRecord::Base
     return records.count == 0 ? "" : records.count
   end
   
+  # subject
+  def self.subject_pending_count(user)
+    if !user.has_role?("admin") && !user.has_role?("manager")
+      return ""
+    end
+    
+    records = Subject.main_subjects.where("status LIKE ?","%pending]%")
+    
+    return records.count == 0 ? "" : records.count
+  end
+  
+  # phrase
+  def self.phrase_pending_count(user)
+    if !user.has_role?("admin") && !user.has_role?("manager")
+      return ""
+    end
+    
+    records = Phrase.main_phrases.where("status LIKE ?","%pending]%")
+    
+    return records.count == 0 ? "" : records.count
+  end
+  
+  # course register
+  def self.course_register_pending_count(user)
+    if !user.has_role?("admin") && !user.has_role?("manager")
+      return ""
+    end
+    
+    records = CourseRegister.main_course_registers.where("status LIKE ?","%pending]%")
+    
+    return records.count == 0 ? "" : records.count
+  end
+  
+  # course register
+  def self.transfer_pending_count(user)
+    if !user.has_role?("admin") && !user.has_role?("manager")
+      return ""
+    end
+    
+    records = Transfer.main_transfers.where("status LIKE ?","%pending]%")
+    
+    return records.count == 0 ? "" : records.count
+  end
+  
   def self.course_admin_count(user)
-    total = self.course_pending_count(user).to_i + self.course_type_pending_count(user).to_i
+    total = self.course_pending_count(user).to_i + self.course_type_pending_count(user).to_i + self.subject_pending_count(user).to_i + self.phrase_pending_count(user).to_i + self.course_register_pending_count(user).to_i + self.transfer_pending_count(user).to_i
     
     return total > 0 ? total : ""
   end
@@ -172,6 +216,7 @@ class Notification < ActiveRecord::Base
     return records.count == 0 ? "" : records.count
   end
   
+  # course type
   def self.course_type_approved_count(user)
     records = CourseType.main_course_types
                     .where("annoucing_user_ids LIKE ?", "%[#{user.id}]%")
@@ -179,8 +224,40 @@ class Notification < ActiveRecord::Base
     return records.count == 0 ? "" : records.count
   end
   
+  # subject
+  def self.subject_approved_count(user)
+    records = Subject.main_subjects
+                    .where("annoucing_user_ids LIKE ?", "%[#{user.id}]%")
+    
+    return records.count == 0 ? "" : records.count
+  end
+  
+  # phrase
+  def self.phrase_approved_count(user)
+    records = Phrase.main_phrases
+                    .where("annoucing_user_ids LIKE ?", "%[#{user.id}]%")
+    
+    return records.count == 0 ? "" : records.count
+  end
+  
+  # course regiser
+  def self.course_register_approved_count(user)
+    records = CourseRegister.main_course_registers
+                    .where("annoucing_user_ids LIKE ?", "%[#{user.id}]%")
+    
+    return records.count == 0 ? "" : records.count
+  end
+  
+  # transfer
+  def self.transfer_approved_count(user)
+    records = Transfer.main_transfers
+                    .where("annoucing_user_ids LIKE ?", "%[#{user.id}]%")
+    
+    return records.count == 0 ? "" : records.count
+  end
+  
   def self.course_admin_approved_count(user)
-    total = self.course_approved_count(user).to_i + self.course_type_approved_count(user).to_i
+    total = self.course_approved_count(user).to_i + self.course_type_approved_count(user).to_i + self.subject_approved_count(user).to_i + self.phrase_approved_count(user).to_i + self.course_register_approved_count(user).to_i + self.transfer_approved_count(user).to_i
     
     return total > 0 ? total : ""
   end

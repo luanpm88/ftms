@@ -40,6 +40,7 @@
 							  <div class="form-group">
 								<label class="form-label"><%= f.label :name %></label>
 								<span class="help">(required)</span>
+								<%= render "field_history", drafts: @phrase.field_history("name"), type: "name" %>
 								<div class="input-with-icon  right">                                       
 									<i class=""></i>
 									  <%= f.text_field :name, :class => "form-control required" %>
@@ -49,6 +50,7 @@
 							  <div class="form-group">
                                     <label class="form-label"><%= f.label :paper %></label>
                                     <span class="help"></span>
+									<%= render "field_history", drafts: @phrase.field_history("subject"), type: "subject" %>
                                     <div class="input-with-icon  right">                                       
                                            <i class=""></i>
                                            <div class="input-with_add_but">
@@ -65,6 +67,7 @@
 							  <div class="form-group">
 								<label class="form-label"><%= f.label :description %></label>
 								<span class="help"></span>
+								<%= render "field_history", drafts: @phrase.field_history("description"), type: "description" %>
 								<div class="input-with-icon  right">                                       
 									<i class=""></i>
 									  <%= f.text_area :description, :class => "form-control" %>

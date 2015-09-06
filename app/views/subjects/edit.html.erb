@@ -6,10 +6,21 @@
 			<%= link_to 'Subjects', subjects_url %>
                     </li>
       </ul>
-      <div class="page-title"> <i class="icon-edit"></i>
-        <h3>Edit Paper - <span class="semi-bold"><%= @subject.name %></span></h3>
-      </div>
-      
+
+		<div class="page-title <%= "draft" if @subject.draft? %>""> <i class="icon-briefcase"></i>
+		  <h3 class=""><span class="semi-bold"><%= @subject.name %></span>
+		  <br /><%= "Changed at: #{@subject.created_at.strftime("%d-%b-%Y %I:%M %p")} / By: #{@subject.user.name}" if @subject.draft? %>
+		  </h3>
+		</div>
+	  
+		<div class="top-buts">
+				<%= render_subject_actions(@subject, "big") if !@subject.draft? %>
+				<%= render_subject_history_actions(@subject) %>
+		</div>
+		<div>
+				<%= @subject.display_statuses if !@subject.draft? %>
+		</div>
+		<br style="clear:both" />
 
 	  
 <%= render 'form' %>

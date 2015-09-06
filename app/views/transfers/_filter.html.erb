@@ -47,6 +47,10 @@
 											<input style="width:100%;margin-bottom: 5px;" name="contact" data="<%= contacts_path(is_individual: true) %>" class="select2-ajax-contacts" value="<%= @contact.id if !@contact.nil? %>" text="<%= @contact.display_name if !@contact.nil? %>" />
 										</div>
 									</div>
+									<div class="col-md-2">
+										<h4>Status</h4>							
+										<%= select_tag 'status', options_for_select(CourseType.status_options, params[:status]), class: "modern_select width100" %>
+									</div>
 							
 							
 						</div>
