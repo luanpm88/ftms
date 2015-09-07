@@ -407,16 +407,15 @@ class User < ActiveRecord::Base
           
           if !s.nil?
             s.course_types << ct if !s.course_types.include?(ct)
-            s.save
+            #s.save
           else
             item.course_types << ct
             item.save
+            item.add_status("active")
+            item.save_draft(User.first)
           end
           
         end
-        
-        item.add_status("active")
-        item.save_draft(User.first)
       end
       
       
