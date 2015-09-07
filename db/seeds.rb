@@ -12,6 +12,8 @@ ContactType.create(name: "Lecturer", display_order: 3)
 
 User.create(name: "Super Admin", :email => "admin@ftmsglobal.edu.vn", :password => "aA456321@", :password_confirmation => "aA456321@",:first_name => "Super",:last_name => "Admin")
 User.create(name: "Manager", :email => "manager@ftmsglobal.edu.vn", :password => "aA456321@", :password_confirmation => "aA456321@",:first_name => "System",:last_name => "Manager")
+User.create(name: "Education Consultant", :email => "education_consultant@ftmsglobal.edu.vn", :password => "aA456321@", :password_confirmation => "aA456321@",:first_name => "",:last_name => "")
+User.create(name: "Sales Admin", :email => "sales_admin@ftmsglobal.edu.vn", :password => "aA456321@", :password_confirmation => "aA456321@",:first_name => "",:last_name => "")
 
 Role.create(name: "admin")
 Role.create(name: "user")
@@ -32,9 +34,15 @@ user.add_role Role.where(name: "admin").first
 user = User.where(:email => "manager@ftmsglobal.edu.vn").first
 user.add_role Role.where(name: "manager").first
 
-ContactTag.create(name: "No Tag", description: "No Tag")
-ContactTag.create(name: "Follow Up", description: "Likely to study")
-ContactTag.create(name: "Potential", description: "Not sure whether to study")
-ContactTag.create(name: "No More Follow Up", description: "Not want to study any more")
+user = User.where(:email => "education_consultant@ftmsglobal.edu.vn").first
+user.add_role Role.where(name: "education_consultant").first
+
+user = User.where(:email => "sales_admin@ftmsglobal.edu.vn").first
+user.add_role Role.where(name: "sales_admin").first
+
+ContactTag.create(name: "No Tag", description: "No Tag", status: "[active]")
+ContactTag.create(name: "Follow Up", description: "Likely to study", status: "[active]")
+ContactTag.create(name: "Potential", description: "Not sure whether to study", status: "[active]")
+ContactTag.create(name: "No More Follow Up", description: "Not want to study any more", status: "[active]")
 
 Setting.create(name: "currency_code", value: "VNĐ")
