@@ -402,15 +402,7 @@
 							</a>
 							<%= link_to 'Registration Management', course_registers_path(tab_page:1), class: "tab_page" %>
 						</li>
-						<li<% if params[:controller] == "transfers" %> class="active"<% end %>>
-							<a title="Defer/Transfer Management (pending)" href="<%= url_for(transfers_path(tab_page:1, status: "pending")) %>" class="tab_page noti">
-								<span class="badge badge-important pull-right alert-level2"><%= Notification.transfer_pending_count(current_user) %></span>
-							</a>
-							<a title="Defer/Transfer Management (approved)" href="<%= url_for(transfers_path(tab_page:1, status: "approved")) %>" class="tab_page noti approved">
-								<span class="badge badge-important pull-right alert-level2"><%= Notification.transfer_approved_count(current_user) %></span>
-							</a>
-							<%= link_to 'Defer/Transfer Management', transfers_path(tab_page:1), class: "tab_page" %>
-						</li>
+						
 						<li<% if params[:controller] == "course_types" && params[:action] == "index" %> class="active"<% end %>>
 							<a title="Program Management (pending)" href="<%= url_for(course_types_url(tab_page:1, status: "pending")) %>" class="tab_page noti">
 								<span class="badge badge-important pull-right alert-level2"><%= Notification.course_type_pending_count(current_user) %></span>
@@ -446,7 +438,16 @@
 								<span class="badge badge-important pull-right alert-level2"><%= Notification.phrase_approved_count(current_user) %></span>
 							</a>
 							<%= link_to 'Phrase Management', phrases_path(tab_page:1), class: "tab_page" %>
-						</li>											
+						</li>
+						<li<% if params[:controller] == "transfers" %> class="active"<% end %>>
+							<a title="Defer/Transfer Management (pending)" href="<%= url_for(transfers_path(tab_page:1, status: "pending")) %>" class="tab_page noti">
+								<span class="badge badge-important pull-right alert-level2"><%= Notification.transfer_pending_count(current_user) %></span>
+							</a>
+							<a title="Defer/Transfer Management (approved)" href="<%= url_for(transfers_path(tab_page:1, status: "approved")) %>" class="tab_page noti approved">
+								<span class="badge badge-important pull-right alert-level2"><%= Notification.transfer_approved_count(current_user) %></span>
+							</a>
+							<%= link_to 'Defer/Transfer Management', transfers_path(tab_page:1), class: "tab_page" %>
+						</li>
 					</ul>
 			</li>
 		<% end %>

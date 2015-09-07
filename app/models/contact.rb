@@ -1080,7 +1080,7 @@ class Contact < ActiveRecord::Base
     if !statuses.include?("deleted") && !statuses.include?("delete_pending") && !statuses.include?("update_pending") && !statuses.include?("new_pending") && !statuses.include?("education_consultant_pending") && !statuses.include?("no_education_consultant")
       add_status("active")
       
-      Contact.find(self.id).update_info
+      
     else
       delete_status("active")
     end    

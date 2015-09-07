@@ -602,7 +602,9 @@ class CourseRegister < ActiveRecord::Base
   
   def check_statuses
     if !statuses.include?("deleted") && !statuses.include?("delete_pending") && !statuses.include?("update_pending") && !statuses.include?("new_pending")
-      add_status("active")     
+      add_status("active")
+      
+      self.contact.update_info
     else
       delete_status("active")
     end    
