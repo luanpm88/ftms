@@ -1214,7 +1214,7 @@ class Contact < ActiveRecord::Base
   end
   
   def add_annoucing_users(users)
-    us = self.annoucing_users
+    us = self.annoucing_users.map(&:id)
     users.each do |user|
       us << user.id if !us.include?(user.id)
     end    
