@@ -192,7 +192,7 @@ class Contact < ActiveRecord::Base
     @records = @records.where("contacts.referrer_id IN (#{params[:companies]})") if params[:companies].present?
     
     if params[:courses].present?
-       @records = @records.joins(:courses)
+       @records = @records.includes(:courses)
       @records = @records.where("courses.id IN (#{params[:courses]})")
     end
     
