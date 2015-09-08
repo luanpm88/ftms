@@ -47,7 +47,7 @@
 							
 							<div class="col-md-2 personal-box">
 								<h4>Paper</h4>							
-								<%= select_tag 'subjects[]', options_for_select(Subject.all.collect{ |u| [u.name, u.id] }), class: "modern_select width100", multiple: "multiple" %>
+								<%= select_tag 'subjects[]', options_for_select(Subject.active_subjects.collect{ |u| [u.name, u.id] }), class: "modern_select width100", multiple: "multiple" %>
 							</div>
 							
 							
