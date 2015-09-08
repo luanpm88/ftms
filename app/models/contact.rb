@@ -1046,7 +1046,7 @@ class Contact < ActiveRecord::Base
       self.check_statuses
       
       # Annoucing users
-      add_annoucing_users([self.current.user])
+      add_annoucing_users([self.current.user, self.account_manager])
       
       self.save_draft(user)
     end
