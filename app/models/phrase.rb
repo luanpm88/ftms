@@ -299,11 +299,16 @@ class Phrase < ActiveRecord::Base
   def field_history(type,value=nil)
     return [] if !self.current.nil? && self.current.statuses.include?("active")
     
-    drafts = self.drafts
-    
-    drafts = drafts.where("created_at < ?", self.current.created_at) if self.current.present?    
-    drafts = drafts.where("created_at >= ?", self.active_older.created_at) if !self.active_older.nil?    
-    drafts = drafts.order("created_at DESC")
+    if self.draft?
+      drafts = self.parent.drafts #.where("contacts.status LIKE ?","%[active]%")
+      drafts = drafts.where("created_at > ?", self.created_at)
+    else
+      drafts = self.drafts
+      
+      drafts = drafts.where("created_at < ?", self.current.created_at) if self.current.present?    
+      drafts = drafts.where("created_at >= ?", self.active_older.created_at) if !self.active_older.nil?    
+      drafts = drafts.order("created_at DESC")
+    end
     
     if type == "subject"
       drafts = drafts.select{|c| c.subjects.order("name").map(&:name).join("") != self.subjects.order("name").map(&:name).join("")}

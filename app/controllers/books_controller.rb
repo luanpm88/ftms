@@ -120,8 +120,8 @@ class BooksController < ApplicationController
   end
   
   def stock_select
-    @books = Book.filter(params, current_user)    
-    
+    @books = Book.filter(params, current_user)
+
     render layout: nil
   end
   

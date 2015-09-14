@@ -9,6 +9,13 @@
 							  </div>
 						  </div>
 						</div>
+						<div class="col-md-3">
+							<h4>For exam</h4>							
+							<div class="date_select_filter date_mbe">
+								<%= select_tag 'for_exam_year', options_for_select(((Time.now.year-10)..(Time.now.year+10)).each { |u| [u, u] }), {:include_blank => '', class: "modern_select"} %>
+								<%= select_tag 'for_exam_month', options_for_select((Course.months_with_CBE.each { |u| [u, u] })), class: "modern_select_none" %>
+							</div>
+						</div>
 						<div class="col-md-2">
 						  <h4>Program</h4>
 						  <%= select_tag 'filter[course_types[]]', options_for_select(CourseType.active_course_types.collect{ |u| [u.short_name, u.id] }), class: "modern_select width100", multiple: "multiple" %>
@@ -25,7 +32,7 @@
 								<input style="width:100%;margin-bottom: 5px;" name="filter[lecturers[]]" data="<%= contacts_path(is_individual: true, contact_type_id: ContactType.lecturer.id,format: "json") %>" class="select2-ajax-lecturers multiple" value="<%= @lecturer.id if !@lecturer.nil? %>" text="<%= @lecturer.display_name if !@lecturer.nil? %>" />
 							</div>
 						</div>
-						<div class="col-md-3 student-course-filter">
+						<div class="col-md-3 student-course-filter hidden">
 							<h4>Student</h4>
 							<div class="students-filter-box">
 								<input style="width:100%;margin-bottom: 5px;" name="filter[students[]]" data="<%= contacts_path(is_individual: true, contact_type_id: ContactType.student.id,format: "json") %>" class="select2-ajax-students multiple" value="<%= @student.id if !@student.nil? %>" text="<%= @student.display_name if !@student.nil? %>" />

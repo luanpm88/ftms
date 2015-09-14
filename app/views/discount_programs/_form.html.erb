@@ -34,7 +34,7 @@
 					
 					<%= hidden_field_tag("tab_page", 1) if params[:tab_page] %>
 					
-					<div class="row column-seperation">
+					<div class="row column-seperation <%= "draft_form" if @discount_program.draft? %>">
 						 <div class="col-md-6">
 							  
 							  <div class="form-group">

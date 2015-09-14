@@ -915,6 +915,26 @@
 					if($(".contact-filter select[name='status']").val()) {
 						d.status =  $(".contact-filter select[name='status']").val()
 					}
+					
+					if($(".contact-filter input[name='created_from']").val()) {
+						d.created_from =  $(".contact-filter input[name='created_from']").val()
+					}
+					
+					if($(".contact-filter input[name='created_to']").val()) {
+						d.created_to =  $(".contact-filter input[name='created_to']").val()
+					}
+					
+					if($(".contact-filter select[name='payment_type']").val()) {
+						d.payment_type =  $(".contact-filter select[name='payment_type']").val()
+					}
+					
+					if($(".contact-filter input[name='company']").val()) {
+						d.company =  $(".contact-filter input[name='company']").val()
+					}
+					
+					if($(".contact-filter select[name='user']").val()) {
+						d.user =  $(".contact-filter select[name='user']").val()
+					}
 				}
 			},
 			"columnDefs": [ { "targets": [0,1,3,4,5,6,7,8,10], "orderable": false } ],
@@ -974,6 +994,21 @@
 					
 					if($(".contact-filter select[name='status']").val()) {
 						d.status =  $(".contact-filter select[name='status']").val()
+					}
+					
+					if($(".contact-filter input[name='created_from']").val()) {
+						d.created_from =  $(".contact-filter input[name='created_from']").val()
+					}
+					
+					if($(".contact-filter input[name='created_to']").val()) {
+						d.created_to =  $(".contact-filter input[name='created_to']").val()
+					}
+					
+					if($(".contact-filter select[name='payment_type']").val()) {
+						d.created_to =  $(".contact-filter select[name='payment_type']").val()
+					}
+					if($(".contact-filter input[name='company']").val()) {
+						d.company =  $(".contact-filter input[name='company']").val()
 					}
 				}				
 			},
@@ -1038,6 +1073,22 @@
 					if($(".contact-filter select[name='status']").val()) {
 						d.status =  $(".contact-filter select[name='status']").val()
 					}
+					
+					if($(".contact-filter input[name='created_from']").val()) {
+						d.created_from =  $(".contact-filter input[name='created_from']").val()
+					}
+					
+					if($(".contact-filter input[name='created_to']").val()) {
+						d.created_to =  $(".contact-filter input[name='created_to']").val()
+					}
+					
+					if($(".contact-filter select[name='payment_type']").val()) {
+						d.created_to =  $(".contact-filter select[name='payment_type']").val()
+					}
+					
+					if($(".contact-filter input[name='company']").val()) {
+						d.company =  $(".contact-filter input[name='company']").val()
+					}
 				}
 			},
 			"columnDefs": [ { "targets": [0,1,3,4,5,6,7,8], "orderable": false } ],
@@ -1101,9 +1152,16 @@
 					if($(".course-filter select[name='status']").val()) {
 						d.status =  $(".course-filter select[name='status']").val()
 					}
+					
+					if($(".course-filter select[name='for_exam_month']").val()) {
+						d.for_exam_month =  $(".course-filter select[name='for_exam_month']").val()
+					}
+					if($(".course-filter select[name='for_exam_year']").val()) {
+						d.for_exam_year =  $(".course-filter select[name='for_exam_year']").val()
+					}
 				}
 			},
-			"columnDefs": [ { "targets": [2,3,4,5,7,8,9], "orderable": false } ],
+			"columnDefs": [ { "targets": [2,4,5,6,8,9,10], "orderable": false } ],
 			"order": [],
 			"aLengthMenu": [[10, 25, 50, 75, 100], [10, 25, 50, 75, 100]],
 			"iDisplayLength": 25
@@ -1126,9 +1184,16 @@
 					if($(".course-filter select[name='status']").val()) {
 						d.status =  $(".course-filter select[name='status']").val()
 					}
+					
+					if($(".course-filter select[name='for_exam_month']").val()) {
+						d.for_exam_month =  $(".course-filter select[name='for_exam_month']").val()
+					}
+					if($(".course-filter select[name='for_exam_year']").val()) {
+						d.for_exam_year =  $(".course-filter select[name='for_exam_year']").val()
+					}
 				}
 			},
-			"columnDefs": [ { "targets": [2,3,5], "orderable": false } ],
+			"columnDefs": [ { "targets": [2,4,6], "orderable": false } ],
 			"order": [],
 			"aLengthMenu": [[10, 25, 50, 75, 100], [10, 25, 50, 75, 100]],
 			"iDisplayLength": 25
@@ -1391,9 +1456,12 @@
 				"url": "<%= datatable_activities_path %>",
 				"data": function ( d ) {
 					d.contact_id = $(".activity-filter input[name='activity[contact_id]']").val()
+					if($(".activity-filter select[name='status']").val()) {
+						d.status =  $(".activity-filter select[name='status']").val()
+					}
 				}
 			},
-			"columnDefs": [ { "targets": [0,1,2,3], "orderable": false } ],
+			"columnDefs": [ { "targets": [0,1,2,3,4], "orderable": false } ],
 			"order": [],
 			"aLengthMenu": [[10, 25, 50, 75, 100], [10, 25, 50, 75, 100]],
 			"iDisplayLength": 25
@@ -1917,7 +1985,7 @@
 		
 		$('.date-group select').select2();
 		
-		$('.phrase-filter select, .phrase-filter input,.subject-filter select, .subject-filter input,.seminar-filter select, .seminar-filter input,.contact-tag-filter select, .contact-tag-filter input,.bank-account-filter select, .bank-account-filter input,.discount-program-filter select, .discount-program-filter input,.course-type-filter select, .course-type-filter input,.transfer-filter select, .transfer-filter input,.payment-record-filter select, .payment-record-filter input, .course-filter select, .course-filter input, .book-filter input, .book-filter select, .course-register-filter input, .course-register-filter select').change(function() {
+		$('.activity-filter select, .activity-filter input,.phrase-filter select, .phrase-filter input,.subject-filter select, .subject-filter input,.seminar-filter select, .seminar-filter input,.contact-tag-filter select, .contact-tag-filter input,.bank-account-filter select, .bank-account-filter input,.discount-program-filter select, .discount-program-filter input,.course-type-filter select, .course-type-filter input,.transfer-filter select, .transfer-filter input,.payment-record-filter select, .payment-record-filter input, .course-filter select, .course-filter input, .book-filter input, .book-filter select, .course-register-filter input, .course-register-filter select').change(function() {
 			$('.datatable-courses').dataTable().fnFilter();
 			$('.datatable-student-courses').dataTable().fnFilter();
 			$('.datatable-subjects').dataTable().fnFilter();
@@ -1933,6 +2001,7 @@
 			$('.datatable-discount-programs').dataTable().fnFilter();
 			$('.datatable-bank-accounts').dataTable().fnFilter();
 			$('.datatable-contact-tags').dataTable().fnFilter();
+			$('.datatable-activities').dataTable().fnFilter();
 		});
 		
 		checkContactType()
@@ -2006,6 +2075,9 @@
 		})
 		
 		
+		$(".related_info_input").each(function(){
+			checkRelatedInfo($(this))
+		});		
 		$(document).on("keyup",".related_info_input",function() {			
 			checkRelatedInfo($(this))
 		})

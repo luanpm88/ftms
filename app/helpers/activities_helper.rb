@@ -4,12 +4,8 @@ module ActivitiesHelper
                     <button class="btn btn-mini btn-white btn-demo-space dropdown-toggle" data-toggle="dropdown">Actions <span class="caret"></span></button>'
       actions += '<ul class="dropdown-menu">'      
       
-      #if can? :update, item
-      #  actions += '<li>'+ActionController::Base.helpers.link_to('Edit', {controller: "subjects", action: "edit", id: item.id, tab_page: 1}, psrc: subjects_path(tab_page: 1), title: "Edit: #{item.name}", class: "tab_page")+'</li>'        
-      #end
-      #
       if can? :destroy, item
-        actions += '<li>'+ActionController::Base.helpers.link_to('Destroy', {controller: "activities", action: "destroy", id: item.id}, class: "activity_destroy")+'</li>'        
+        actions += '<li>'+ActionController::Base.helpers.link_to('Delete', {controller: "activities", action: "destroy", id: item.id}, class: "activity_destroy")+'</li>'        
       end 
       
       actions += '</ul></div></div>'

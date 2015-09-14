@@ -8440,10 +8440,10 @@ td .logo {
 .transferred {
     color: #aa6708;
 }
-.date_mbe #s2id_course_for_exam_year, .date_mbe #s2id_year {
+.date_mbe #s2id_course_for_exam_year, .date_mbe #s2id_for_exam_year, .date_mbe #s2id_year {
     width: 90px;
 }
-.date_mbe #s2id_course_for_exam_month, .date_mbe #s2id_month {
+.date_mbe #s2id_course_for_exam_month, .date_mbe #s2id_for_exam_month, .date_mbe #s2id_month {
     width: 120px;
 }
 .alert-level1 {
@@ -8451,4 +8451,10 @@ td .logo {
 }
 .page-sidebar > ul > li > a {
     padding-right: 5px !important;
+}
+form .icon-time {
+    color: #ce4844;
+}
+.draft_form .icon-time {
+    color: #3c763d;
 }

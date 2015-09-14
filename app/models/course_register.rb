@@ -76,7 +76,7 @@ class CourseRegister < ActiveRecord::Base
         cc = self.contacts_courses.new
         cc.course_id = row[1]["course_id"]
         cc.contact_id = contact.id
-        cc.courses_phrase_ids = "["+row[1]["courses_phrase_ids"].join("][")+"]"
+        cc.courses_phrase_ids = "["+row[1]["courses_phrase_ids"].join("][")+"]" if !row[1]["courses_phrase_ids"].nil?
         cc.upfront = row[1]["upfront"]
         cc.price = row[1]["price"]
         cc.discount_program_id = row[1]["discount_program_id"]
@@ -683,11 +683,15 @@ class CourseRegister < ActiveRecord::Base
   def field_history(type,value=nil)
     return [] if !self.current.nil? && self.current.statuses.include?("active")
     
-    drafts = self.drafts
-    
-    drafts = drafts.where("created_at < ?", self.current.created_at) if self.current.present?    
-    drafts = drafts.where("created_at >= ?", self.active_older.created_at) if !self.active_older.nil?    
-    drafts = drafts.order("created_at DESC")
+    if self.draft?
+      drafts = self.parent.drafts #.where("contacts.status LIKE ?","%[active]%")
+      drafts = drafts.where("created_at > ?", self.created_at)
+    else
+      drafts = self.drafts      
+      drafts = drafts.where("created_at < ?", self.current.created_at) if self.current.present?    
+      drafts = drafts.where("created_at >= ?", self.active_older.created_at) if !self.active_older.nil?    
+      drafts = drafts.order("created_at DESC")
+    end
     
     if false
     else

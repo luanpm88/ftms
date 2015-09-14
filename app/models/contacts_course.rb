@@ -10,6 +10,7 @@ class ContactsCourse < ActiveRecord::Base
   end
   
   def courses_phrases
+    return [] if self.courses_phrase_ids.nil?
     cp_ids = self.courses_phrase_ids.split("][").map {|s| s.gsub("[","").gsub("]","") }
     return CoursesPhrase.where(id: cp_ids)
   end

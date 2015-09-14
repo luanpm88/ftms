@@ -39,7 +39,8 @@ CREATE TABLE activities (
     contact_id integer,
     note text,
     created_at timestamp without time zone NOT NULL,
-    updated_at timestamp without time zone NOT NULL
+    updated_at timestamp without time zone NOT NULL,
+    deleted integer DEFAULT 0
 );
 
 
@@ -2750,4 +2751,6 @@ INSERT INTO schema_migrations (version) VALUES ('20150906042736');
 INSERT INTO schema_migrations (version) VALUES ('20150906042756');
 
 INSERT INTO schema_migrations (version) VALUES ('20150906042814');
+
+INSERT INTO schema_migrations (version) VALUES ('20150914020213');
 

@@ -94,6 +94,14 @@ class Course < ActiveRecord::Base
 
     ########## END REVISION-FEATURE #########################
     
+    if params["for_exam_year"].present?
+      @records = @records.where(for_exam_year: params["for_exam_year"])
+    end
+    
+    if params["for_exam_month"].present?
+      @records = @records.where(for_exam_month: params["for_exam_month"])
+    end
+    
     
     return @records
   end
@@ -110,12 +118,14 @@ class Course < ActiveRecord::Base
         order = "courses.intake #{params["order"]["0"]["dir"]}, course_types.short_name, subjects.name"
       when "1"
         order = "course_types.short_name #{params["order"]["0"]["dir"]}, subjects.name"
-      when "4"
+      when "3"
+        order = "courses.for_exam_year #{params["order"]["0"]["dir"]}, courses.for_exam_month #{params["order"]["0"]["dir"]}"
+      when "7"
         order = "courses.created_at"
       else
         order = "courses.created_at"
       end
-      order += " "+params["order"]["0"]["dir"] if !["0","1"].include?(params["order"]["0"]["column"])
+      order += " "+params["order"]["0"]["dir"] if !["0","1","3"].include?(params["order"]["0"]["column"])
     else
       order = "courses.intake DESC"
     end
@@ -126,7 +136,7 @@ class Course < ActiveRecord::Base
     @records = @records.limit(params[:length]).offset(params["start"])
     data = []
     
-    actions_col = 9
+    actions_col = 10
     @records.each do |item|
       ############### BEGIN REVISION #########################
       # update approved status
@@ -139,6 +149,7 @@ class Course < ActiveRecord::Base
               '<div class="text-left nowrap">'+item.display_intake+"</div>",
               '<div class="text-left nowrap">'+item.program_paper_name+"</div>",
               '<div class="text-left">'+item.courses_phrase_list+"</div>",
+              '<div class="text-center nowrap">'+item.display_for_exam+"</div>",
               '<div class="text-center nowrap">'+item.display_lecturer+"</div>",
               '<div class="text-right">'+item.display_prices+"</div>",
               '<div class="text-center">'+item.student_count_link+"</div>",              
@@ -162,11 +173,13 @@ class Course < ActiveRecord::Base
     
   end
   
-  
+  def display_for_exam    
+    mn = for_exam_month.to_i == 0 ? for_exam_month.to_s : Date::MONTHNAMES[for_exam_month.to_i]    
+    mn+"-"+for_exam_year.to_s
+  end
   
   def self.student_courses(params, user)
     ActionView::Base.send(:include, Rails.application.routes.url_helpers)
-    link_helper = ActionController::Base.helpers    
     
     @student = Contact.find(params[:students])
     
@@ -183,12 +196,14 @@ class Course < ActiveRecord::Base
         order = "courses.intake #{params["order"]["0"]["dir"]}, course_types.short_name, subjects.name"
       when "1"
         order = "course_types.short_name #{params["order"]["0"]["dir"]}, subjects.name"
-      when "4"
+      when "3"
+        order = "courses.for_exam_year #{params["order"]["0"]["dir"]}, courses.for_exam_month #{params["order"]["0"]["dir"]}"
+      when "5"
         order = "course_registers.created_date"
       else
         order = "course_registers.created_date"
       end
-      order += " "+params["order"]["0"]["dir"] if !["0","1"].include?(params["order"]["0"]["column"])
+      order += " "+params["order"]["0"]["dir"] if !["0","1","3"].include?(params["order"]["0"]["column"])
     else
       order = "course_registers.created_date DESC"
     end
@@ -202,13 +217,14 @@ class Course < ActiveRecord::Base
     data = []
     
 
-    actions_col = 5
+    actions_col = 6
 
     @records.each do |item|
       itemz = [
               '<div class="text-left nowrap">'+item.display_intake+"</div>",
               '<div class="text-left nowrap">'+item.program_paper_name+"</div>",
               '<div class="text-left">'+item.courses_phrase_list_by_sudent(@student)+"</div>",
+              '<div class="text-center">'+item.display_for_exam+"</div>",
               '<div class="text-center nowrap">'+item.display_lecturer+"</div>",             
               '<div class="text-center">'+item.list_course_registers_by_student(@student)+"</div>",              
               "", 
@@ -542,11 +558,16 @@ class Course < ActiveRecord::Base
   def field_history(type,value=nil)
     return [] if !self.current.nil? && self.current.statuses.include?("active")
     
-    drafts = self.drafts
     
-    drafts = drafts.where("created_at < ?", self.current.created_at) if self.current.present?    
-    drafts = drafts.where("created_at >= ?", self.active_older.created_at) if !self.active_older.nil?    
-    drafts = drafts.order("created_at DESC")
+    if self.draft?
+      drafts = self.parent.drafts #.where("contacts.status LIKE ?","%[active]%")
+      drafts = drafts.where("created_at > ?", self.created_at)
+    else
+      drafts = self.drafts
+      drafts = drafts.where("created_at < ?", self.current.created_at) if self.current.present?    
+      drafts = drafts.where("created_at >= ?", self.active_older.created_at) if !self.active_older.nil?    
+      drafts = drafts.order("created_at DESC")
+    end
     
     if type == "program_paper"
       drafts = drafts.select {|u| u.course_type_id != self.course_type_id || u.subject_id != self.subject_id}

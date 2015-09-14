@@ -19,7 +19,7 @@
                       </div>
                       
                       <div class="col-md-4">
-                        <h4>Subject</h4>
+                        <h4>Paper</h4>
 						<%= select_tag 'filter[subjects[]]', options_for_select(Subject.all.collect{ |u| [u.name, u.id] }), class: "modern_select width100", multiple: "multiple" %>
                       </div>
                       

@@ -551,7 +551,7 @@
 					<% end %>
 					<ul class="sub-menu">
 						
-						<li<% if params[:controller] == "users" && params[:action] == "index" %> class="active"<% end %>><%= link_to 'Users', users_path(tab_page:1), class: "tab_page" %></li>
+						
 						<li<% if ["backup"].include?(params[:action]) %> class="active"<% end %>><%= link_to 'Backup', "/admin/users/backup?tab_page=1", class: "tab_page" %></li>
 						<li<% if ["restore"].include?(params[:action]) %> class="active"<% end %>><%= link_to 'Restore', "/admin/users/restore?tab_page=1", class: "tab_page" %></li>
 						<li<% if ["import_from_old_system"].include?(params[:action]) %> class="active"<% end %>><%= link_to 'Restore From Old System', "/admin/users/import_from_old_system?tab_page=1", class: "tab_page" %></li>

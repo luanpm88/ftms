@@ -7,7 +7,10 @@
   <Worksheet ss:Name="Sheet1">
     <Table>
       <Row>
+        <Cell><Data ss:Type="String">Gender</Data></Cell>
         <Cell><Data ss:Type="String">Full Name</Data></Cell>
+        <Cell><Data ss:Type="String">Company</Data></Cell>
+        <Cell><Data ss:Type="String">Payment Type</Data></Cell>
         <Cell><Data ss:Type="String">DOB</Data></Cell>
         <Cell><Data ss:Type="String">Adress</Data></Cell>
         <Cell><Data ss:Type="String">Email</Data></Cell>
@@ -16,7 +19,10 @@
       </Row>
     <% @contacts.each do |contact| %>
       <Row>
-        <Cell><Data ss:Type="String"><%= contact.display_name %></Data></Cell>
+        <Cell><Data ss:Type="String"><%= contact.sex == "female" ? "[Ms]" : "[Mr]" %></Data></Cell>
+        <Cell><Data ss:Type="String"><%= contact.name.titleize %></Data></Cell>
+        <Cell><Data ss:Type="String"><%= contact.referrer.name if !contact.referrer.nil? %></Data></Cell>
+        <Cell><Data ss:Type="String"><%= contact.payment_type %></Data></Cell>
         <Cell><Data ss:Type="String"><%= contact.birthday.strftime("%d-%b-%Y") if !contact.birthday.nil? %></Data></Cell>
         <Cell><Data ss:Type="String"><%= contact.address %></Data></Cell>
         <Cell><Data ss:Type="String"><%= contact.email %></Data></Cell>

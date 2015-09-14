@@ -9,7 +9,7 @@
                 
                 
                 
-                <div class="grid-body no-border">
+                <div class="grid-body no-border <%= "draft_form" if @transfer.draft? %>">
                   
                   
                   <% if @transfer.errors.any? %>

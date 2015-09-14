@@ -1,0 +1,6 @@
+<div class="row">
+  <div class="col-md-12">
+    <h4>Email List (<%= @contacts.map(&:email).uniq.count %>)</h4>
+    <%= @contacts.map(&:email).uniq.join(";") %>
+  </div>
+</div>

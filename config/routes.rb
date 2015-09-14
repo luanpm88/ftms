@@ -332,6 +332,9 @@ Hkerp::Application.routes.draw do
       
       get :approved
       get :field_history
+      
+      post :export_mobiles
+      post :export_emails
     end
   end
 

@@ -83,6 +83,8 @@ class Ability
       can :delete, Contact do |c|
         !c.statuses.include?("delete_pending")
       end
+      can :export_mobiles, Contact
+      can :export_emails, Contact
       
       can :datatable, Course
       can :read, Course

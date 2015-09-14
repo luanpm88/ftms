@@ -69,7 +69,7 @@
 										<li class="<%= "active" if ["activity"].include?(params[:tab]) %>">
 												<a href="#activity">
 														Note Log
-														<span class="badge badge-info pull-right alert-level1"><%= @contact.activities.count if @contact.activities.count > 0 %></span>
+														<span class="badge badge-info pull-right alert-level1"><%= @contact.activity_count if @contact.activity_count > 0 %></span>
 												</a>
 										</li>
 								
@@ -110,6 +110,7 @@
 																					<th class="text-left" width="1%">Intake</th>
 																					<th class="text-left nowrap">Course</th>																			
 																					<th class="text-left">Phrase [Date]</th>
+																					<th class="text-center">For exam</th>
 																					<th class="text-center">Lecturer</th>
 																					<th class="text-center">Created On</th>																			
 																					<th class="text-right" width="1%">Actions</th>

@@ -25,6 +25,20 @@
                                             </div>
 										  <% end %>
 										</div>
+									  
+									  <div class="grid simple ">
+										<div class="grid-body no-border filters activity-filter">
+										<div class="row order-filters">                                          
+											
+											
+											<div class="col-md-3 activity-filter">
+												<h4>Status</h4>							
+												<%= select_tag 'status', options_for_select(Activity.status_options, params[:status]), class: "modern_select width100" %>
+											</div>
+											  
+										</div>
+										</div>		    
+									  </div>
                                         
 										
                                         <div class="row">
@@ -42,7 +56,8 @@
                                                                         <tr>                                                
                                                                             <th width="100%">Note</th>
                                                                             <th class="text-center" width="1%">Created At</th>
-                                                                            <th class="text-center" width="1%">Staff</th>                                                                            
+                                                                            <th class="text-center" width="1%">Staff</th>
+																			<th class="text-center" width="1%">Status</th>
                                                                             <th class="text-right" width="1%">Actions</th>
                                                                         </tr>
                                                                     </thead>                                        

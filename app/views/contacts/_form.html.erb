@@ -21,7 +21,7 @@
 										  <%= hidden_field_tag "tab_page", params[:tab_page] %>
 									   <% end %>
 										 
-								  <div class="row column-seperation">
+								  <div class="row column-seperation <%= "draft_form" if @contact.draft? %>">
 										 
 										  <div class="col-md-6">
 											

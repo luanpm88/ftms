@@ -9,7 +9,7 @@
                 
                 
                 
-                <div class="grid-body no-border">
+               <div class="grid-body no-border <%= "draft_form" if @course_register.draft? %>">
                   
                   
                   <% if @course_register.errors.any? %>

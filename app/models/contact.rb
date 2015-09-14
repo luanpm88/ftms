@@ -101,6 +101,10 @@ class Contact < ActiveRecord::Base
     return result
   end
   
+  def display_mobile
+    "+"+mobile
+  end
+  
   def self.update_all_info
     self.all.each do |c|
       c.update_info
@@ -249,6 +253,22 @@ class Contact < ActiveRecord::Base
       else
         @records = @records.where("contacts.status LIKE ?","%[#{params[:status]}]%")
       end
+    end
+    
+    if params["created_from"].present?      
+      @records = @records.where("created_at >= ?", params["created_from"].to_date)
+    end
+    if params["created_to"].present?      
+      @records = @records.where("created_at <= ?", params["created_to"].to_date)
+    end
+    if params["payment_type"].present?      
+      @records = @records.where(payment_type: params["payment_type"])
+    end
+    if params["company"].present?      
+      @records = @records.where(referrer_id: params["company"])
+    end
+    if params["user"].present?      
+      @records = @records.where(account_manager_id: params["user"])
     end
     
     #if !params[:status].present? || params[:status] != "deleted"
@@ -666,7 +686,7 @@ class Contact < ActiveRecord::Base
       birth = !birthday.nil? ? birthday.strftime("%d-%b-%Y") : ""
       line += "<span class=\"box_mini_info nowrap\"><i class=\"icon-calendar\"></i> " + birth + "</span> " if !mobile.nil? && !mobile.empty?
       line += "<span class=\"box_mini_info nowrap\"><i class=\"icon-envelope\"></i> " + email + "</span> " if !email.nil? && !email.empty?
-      line += "<span class=\"box_mini_info nowrap\"><i class=\"icon-phone\"></i> " + mobile + "</span> " if !mobile.nil? && !mobile.empty? 
+      line += "<span class=\"box_mini_info nowrap\"><i class=\"icon-phone\"></i> " + display_mobile + "</span> " if !mobile.nil? && !mobile.empty? 
     else
       line += "<span class=\"box_mini_info nowrap\"><i class=\"icon-phone\"></i> " + phone + "</span> " if !phone.nil? && !phone.empty?
       line += "<span class=\"box_mini_info nowrap\"><i class=\"icon-envelope\"></i> " + email + "</span> " if !email.nil? && !email.empty?
@@ -717,7 +737,7 @@ class Contact < ActiveRecord::Base
   end
   
   pg_search_scope :search,
-                against: [:name, :address, :website, :phone, :mobile, :fax, :email, :tax_code, :note, :account_number, :bank],
+                against: [:name, :address, :website, :phone, :mobile, :fax, :email, :tax_code, :note, :account_number, :bank, :bases],
                 associated_against: {
                   city: [:name],
                   state: [:name],
@@ -1159,11 +1179,17 @@ class Contact < ActiveRecord::Base
   
   def field_history(type,value=nil)
     return [] if !self.current.nil? && self.current.statuses.include?("active")
+        
     
-    drafts = self.drafts
+    if self.draft?
+      drafts = self.draft_for_contact.drafts #.where("contacts.status LIKE ?","%[active]%")
+      drafts = drafts.where("created_at > ?", self.created_at)
+    else
+      drafts = self.drafts
+      drafts = drafts.where("created_at < ?", self.current.created_at) if self.current.present?    
+      drafts = drafts.where("created_at >= ?", self.active_older.created_at) if !self.active_older.nil?
+    end
     
-    drafts = drafts.where("created_at < ?", self.current.created_at) if self.current.present?    
-    drafts = drafts.where("created_at >= ?", self.active_older.created_at) if !self.active_older.nil?    
     drafts = drafts.order("created_at DESC")
     
     if type == "inquiry_course_type"
@@ -1282,6 +1308,11 @@ class Contact < ActiveRecord::Base
   def self.base_status_options
     [["In Progress","in_progress"],["Completed","completed"]]
   end
+  
+  def activity_count
+    activities.where(deleted: 0).count
+  end
+  
   
   
 end
