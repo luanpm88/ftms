@@ -306,11 +306,20 @@ class UsersController < ApplicationController
   
   def online_report
     if params[:export]
-      @report = User.get_online_report(params[:type], params[:year], params[:month], params[:course_types])
-      
-      respond_to do |format|
-        format.html
-        format.xls {render "users/online_report_ucrs"}
+      if params[:type] == "cima"
+        @report = User.get_cima_report(params[:year], params[:month], params[:course_types])
+        
+        respond_to do |format|
+          format.html
+          format.xls {render "users/online_report_cima"}
+        end
+      else
+        @report = User.get_acca_report(params[:year], params[:month], params[:course_types])
+        
+        respond_to do |format|
+          format.html
+          format.xls {render "users/online_report_acca"}
+        end
       end
     end    
   end

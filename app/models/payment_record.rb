@@ -53,6 +53,13 @@ class PaymentRecord < ActiveRecord::Base
       @records = @records.joins(:course_register => :contacts_courses)
       @records = @records.where("contacts_courses.course_id = ?", params["courses"])
     end
+    
+    # role
+    if !user.has_role?("manager") && !user.has_role?("admin") && !user.has_role?("accountant")
+      @records = @records.joins(:course_register => :contact)
+                          .where("contacts.account_manager_id = ?", user.id)
+    end
+    
      
      return @records
   end

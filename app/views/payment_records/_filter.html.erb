@@ -27,12 +27,14 @@
 						  </div>
 					  </div>
 						
-						<div class="col-md-2 student-course-filter">
-							<h4>Consultant</h4>
-							<div class="">
-								<input style="width:100%;margin-bottom: 5px;" name="account_manager" data="<%= users_path %>" class="select2-ajax-users multiple" />
-							</div>
-						</div>
+						<% if current_user.has_role?("manager") || current_user.has_role?("admin") || current_user.has_role?("accountant") %>
+						  <div class="col-md-2 student-course-filter">
+							  <h4>Consultant</h4>
+							  <div class="">
+								  <input style="width:100%;margin-bottom: 5px;" name="account_manager" data="<%= users_path %>" class="select2-ajax-users multiple" />
+							  </div>
+						  </div>
+						<% end %>
 						
 						<div class="col-md-2">
 						  <h4>Bank Account</h4>

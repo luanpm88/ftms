@@ -643,7 +643,9 @@ CREATE TABLE contacts_courses (
     price numeric,
     discount_program_id integer,
     discount numeric,
-    report boolean DEFAULT true
+    report boolean DEFAULT true,
+    discount_programs text,
+    other_discounts text
 );
 
 
@@ -791,7 +793,9 @@ CREATE TABLE course_prices (
     prices text,
     user_id integer,
     created_at timestamp without time zone NOT NULL,
-    updated_at timestamp without time zone NOT NULL
+    updated_at timestamp without time zone NOT NULL,
+    amount numeric,
+    deadline timestamp without time zone
 );
 
 
@@ -881,6 +885,38 @@ CREATE TABLE course_types (
     annoucing_user_ids text,
     parent_id integer
 );
+
+
+--
+-- Name: course_types_discount_programs; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE TABLE course_types_discount_programs (
+    id integer NOT NULL,
+    course_type_id integer,
+    discount_program_id integer,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL
+);
+
+
+--
+-- Name: course_types_discount_programs_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE course_types_discount_programs_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: course_types_discount_programs_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE course_types_discount_programs_id_seq OWNED BY course_types_discount_programs.id;
 
 
 --
@@ -985,7 +1021,8 @@ CREATE TABLE courses_phrases (
     phrase_id integer,
     start_at timestamp without time zone,
     created_at timestamp without time zone NOT NULL,
-    updated_at timestamp without time zone NOT NULL
+    updated_at timestamp without time zone NOT NULL,
+    hour integer
 );
 
 
@@ -1869,6 +1906,13 @@ ALTER TABLE ONLY course_types ALTER COLUMN id SET DEFAULT nextval('course_types_
 -- Name: id; Type: DEFAULT; Schema: public; Owner: -
 --
 
+ALTER TABLE ONLY course_types_discount_programs ALTER COLUMN id SET DEFAULT nextval('course_types_discount_programs_id_seq'::regclass);
+
+
+--
+-- Name: id; Type: DEFAULT; Schema: public; Owner: -
+--
+
 ALTER TABLE ONLY course_types_subjects ALTER COLUMN id SET DEFAULT nextval('course_types_subjects_id_seq'::regclass);
 
 
@@ -2201,6 +2245,14 @@ ALTER TABLE ONLY course_prices
 
 ALTER TABLE ONLY course_registers
     ADD CONSTRAINT course_registers_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: course_types_discount_programs_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+--
+
+ALTER TABLE ONLY course_types_discount_programs
+    ADD CONSTRAINT course_types_discount_programs_pkey PRIMARY KEY (id);
 
 
 --
@@ -2753,4 +2805,16 @@ INSERT INTO schema_migrations (version) VALUES ('20150906042756');
 INSERT INTO schema_migrations (version) VALUES ('20150906042814');
 
 INSERT INTO schema_migrations (version) VALUES ('20150914020213');
+
+INSERT INTO schema_migrations (version) VALUES ('20150914061927');
+
+INSERT INTO schema_migrations (version) VALUES ('20150914062159');
+
+INSERT INTO schema_migrations (version) VALUES ('20150914082405');
+
+INSERT INTO schema_migrations (version) VALUES ('20150915002736');
+
+INSERT INTO schema_migrations (version) VALUES ('20150915022953');
+
+INSERT INTO schema_migrations (version) VALUES ('20150915063100');
 

@@ -146,7 +146,7 @@ class Subject < ActiveRecord::Base
     self.where(parent_id: nil)
   end
   def self.active_subjects
-    self.main_subjects.where("status IS NOT NULL AND status LIKE ?", "%[active]%")
+    self.main_subjects.where("subjects.status IS NOT NULL AND subjects.status LIKE ?", "%[active]%")
   end
   
   def draft?

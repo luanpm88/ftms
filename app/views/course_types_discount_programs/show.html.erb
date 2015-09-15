@@ -1,0 +1,14 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <strong>Course type:</strong>
+  <%= @course_types_discount_program.course_type_id %>
+</p>
+
+<p>
+  <strong>Discount program:</strong>
+  <%= @course_types_discount_program.discount_program_id %>
+</p>
+
+<%= link_to 'Edit', edit_course_types_discount_program_path(@course_types_discount_program) %> |
+<%= link_to 'Back', course_types_discount_programs_path %>

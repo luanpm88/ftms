@@ -9,24 +9,7 @@
                     	<h3>Seminar - <span class="semi-bold"> Management</span></h3>	
                 </div>
 				
-				<div class="grid simple ">
-                  <div class="grid-body no-border filters seminar-filter">
-                  <div class="row order-filters">
-                      
-                      <div class="col-md-4">
-                        <h4>Program</h4>
-						<%= select_tag 'filter[course_types[]]', options_for_select(CourseType.all.collect{ |u| [u.short_name, u.id] }), class: "modern_select width100 multiple", multiple: "multiple" %>
-                      </div>
-					  
-					  <div class="col-md-3">
-							<h4>Status</h4>							
-							<%= select_tag 'status', options_for_select(Seminar.status_options, params[:status]), class: "modern_select width100" %>
-						</div>
-                      
-                      
-                  </div>
-                  </div>		    
-				</div>
+				<%= render "filter" %>
                 
                 <div class="row">
                     <div class="col-md-12">

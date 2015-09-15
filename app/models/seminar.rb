@@ -34,9 +34,13 @@ class Seminar < ActiveRecord::Base
   
   def self.datatable(params, user)
     ActionView::Base.send(:include, Rails.application.routes.url_helpers)
-    link_helper = ActionController::Base.helpers    
     
     @records = self.main_seminars
+    
+    if params["contact_id"].present?
+      sids = (Contact.find(params["contact_id"]).seminars.map(&:id) << "0").join(",")
+      @records = @records.where("seminars.id IN (#{sids})")
+    end
     
     ########## BEGIN REVISION-FEATURE #########################
     

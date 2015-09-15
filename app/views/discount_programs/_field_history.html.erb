@@ -20,6 +20,10 @@
         <li><%= format_price(c[type]) %> <span class="nowrap time-span"><%= c.created_at.strftime("%d-%b-%Y, %I:%M %p") %></span></li>
       <% end %>
       
+      <% if value != c[type] && ["course_type"].include?(type) %>
+        <li><%= c.course_types.order("short_name").map(&:short_name).join(", ") %> <span class="nowrap time-span"><%= c.created_at.strftime("%d-%b-%Y, %I:%M %p") %></span></li>
+      <% end %>
+      
       <% value = c[type] %>
     <% end %>
   </ul>

@@ -1,4 +1,5 @@
 Hkerp::Application.routes.draw do
+  resources :course_types_discount_programs
   resources :transfer_details
   resources :payment_record_details
   resources :transfers do
@@ -199,6 +200,8 @@ Hkerp::Application.routes.draw do
       
       get :approved
       get :field_history
+      
+      get :course_phrases_form
     end
   end
   

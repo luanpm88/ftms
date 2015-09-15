@@ -66,6 +66,13 @@
 												<a href="#transfer">Defer/Transfer <span class="badge badge-info pull-right alert-level1"><%= @contact.transfer_count if @contact.transfer_count > 0 %></span></a>
 										</li>
 										
+										<li class="<%= "active" if ["seminar"].include?(params[:tab]) %>">
+												<a href="#seminar">
+														Seminar
+														<span class="badge badge-info pull-right alert-level1"><%= @contact.seminar_count if @contact.seminar_count > 0 %></span>
+												</a>
+										</li>
+										
 										<li class="<%= "active" if ["activity"].include?(params[:tab]) %>">
 												<a href="#activity">
 														Note Log
@@ -225,6 +232,10 @@
 								<div class="tab-pane <%= "active" if ["transfer"].include?(params[:tab]) %>" id="transfer">
 												<%= render "transfer" %>
 										</div>
+								
+								<div class="tab-pane <%= "active" if ["seminar"].include?(params[:tab]) %>" id="seminar">
+										<%= render "seminar" %>
+								</div>
 		
 								<div class="tab-pane <%= "active" if ["activity"].include?(params[:tab]) %>" id="activity">
 										<%= render "activity" %>

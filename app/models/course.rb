@@ -250,14 +250,14 @@ class Course < ActiveRecord::Base
     group_name = ""
     list.each do |p|
         if group_name != p.phrase.name
-          arr << "<div><strong class=\"width100\">#{p.phrase.name}</strong></div>"
+          arr << "<div><strong class=\"width100 phrase_title\" rel=\"phrase_date_#{p.course_id}_#{p.phrase.id}\">#{p.phrase.name} <span class=\"phrase_date_#{p.course_id}_#{p.phrase.id}\">[<i class=\"icon-ellipsis-horizontal\"></i>]</span></strong></div>"
           group_name = p.phrase.name
         end
         
         if contacts_course.present?
           transferred = !p.transferred?(contacts_course) ? "" : "transferred"
         end
-        arr << "<span class=\"#{transferred}\" title=\"#{transferred}\">[#{p.start_at.strftime("%d-%b-%Y") if p.start_at.present?}]</span> "
+        arr << "<span style=\"display:none\" class=\"#{transferred} phrase_date_#{p.course_id}_#{p.phrase.id}\" title=\"#{transferred}\">[#{p.start_at.strftime("%d-%b-%Y") if p.start_at.present?}]</span> "
     end
     return "<div>"+arr.join("").html_safe+"</div>"
   end
@@ -362,8 +362,9 @@ class Course < ActiveRecord::Base
     params.each do |row|
       if row[1]["phrase_id"].present?
         courses_phrases.create(phrase_id: row[1]["phrase_id"],
-                        start_at: row[1]["start_at"]
-                      )
+                        start_at: row[1]["start_at"],
+                        hour: row[1]["hour"]
+                    )
       end
     end
   end
@@ -373,15 +374,11 @@ class Course < ActiveRecord::Base
   end
   
   def prices
-    if course_price.nil?
-      return []
-    else
-      return JSON.parse(course_price.prices)
-    end   
+    course_prices.where("course_prices.deadline IS NULL OR course_prices.deadline >= ?", Time.now.beginning_of_day)
   end
   
   def display_prices
-    a = prices.map {|p| ApplicationController.helpers.format_price(p)}
+    a = prices.map {|p| ApplicationController.helpers.format_price(p.amount)+("<br />(#{p.deadline.strftime("%d-%b-%Y")})".html_safe if p.deadline.present?)}
     return a.join("<br />")
   end
   
@@ -392,6 +389,18 @@ class Course < ActiveRecord::Base
       if course_price.prices != new_price.prices
         new_price.save
       end      
+    end
+  end
+  
+  def update_course_prices(params)
+    course_prices.destroy_all
+    params.each do |row|
+      if row[1]["amount"].present?
+        course_prices.create(
+                        amount: row[1]["amount"],
+                        deadline: row[1]["deadline"]
+                      )
+      end
     end
   end
   
@@ -648,6 +657,10 @@ class Course < ActiveRecord::Base
       months << m
     end
     months += ["CBE_1H","CBE_2H"]
+  end
+  
+  def total_hour
+    courses_phrases.sum(:hour)
   end
   
 end

@@ -78,9 +78,23 @@ class CourseRegister < ActiveRecord::Base
         cc.contact_id = contact.id
         cc.courses_phrase_ids = "["+row[1]["courses_phrase_ids"].join("][")+"]" if !row[1]["courses_phrase_ids"].nil?
         cc.upfront = row[1]["upfront"]
-        cc.price = row[1]["price"]
-        cc.discount_program_id = row[1]["discount_program_id"]
+        cc.price = row[1]["price"]        
         cc.discount = row[1]["discount"]
+        
+        # Discount programs
+        dps = []
+        row[1]["discount_programs"].each do |r|
+          dps << {id: r[1]["id"], list_price: r[1]["list_price"]} if r[1]["id"].present?
+        end
+        cc.discount_programs = dps.to_json
+        
+        # Other Discounts
+        dps = []
+        row[1]["other_discounts"].each do |r|
+          dps << {amount: r[1]["amount"].to_s.gsub(/\,/, ''), description: r[1]["description"]} if r[1]["amount"].present?
+        end
+        cc.other_discounts = dps.to_json
+        
       end
     end
 
@@ -173,15 +187,15 @@ class CourseRegister < ActiveRecord::Base
     if !params["order"].nil?
       case params["order"]["0"]["column"]
       when "0"
-        order = "course_registers.created_date"
+        order = "course_registers.created_at"
       when "2"
-        order = "course_registers.created_date"
+        order = "course_registers.created_at"
       else
-        order = "course_registers.created_date"
+        order = "course_registers.created_at"
       end
       order += " "+params["order"]["0"]["dir"]
     else
-      order = "course_registers.created_date DESC, course_registers.created_at DESC"
+      order = "course_registers.created_at DESC, course_registers.created_at DESC"
     end
     @records = @records.order(order) if !order.nil?
     
@@ -205,7 +219,7 @@ class CourseRegister < ActiveRecord::Base
               '<div class="text-center">'+item.display_delivery_status+"</div>",
               '<div class="text-right"><label class="col_label top0">Total:</label>'+ApplicationController.helpers.format_price(item.total)+"<label class=\"col_label top0\">Paid:</label>"+ApplicationController.helpers.format_price(item.paid_amount)+"<label class=\"col_label top0\">Receivable:</label>"+ApplicationController.helpers.format_price(item.remain_amount)+"</div>",
               '<div class="text-center">'+item.display_payment_status+item.payment+"</div>",
-              '<div class="text-center">'+item.created_date.strftime("%d-%b-%Y")+"</div>",
+              '<div class="text-center">'+item.created_at.strftime("%d-%b-%Y")+"</div>",
               '<div class="text-center">'+item.contact.account_manager.staff_col+"</div>",
               '<div class="text-center">'+item.display_statuses+"</div>",
               ""
@@ -238,15 +252,15 @@ class CourseRegister < ActiveRecord::Base
     if !params["order"].nil?
       case params["order"]["0"]["column"]
       when "0"
-        order = "course_registers.created_date"
+        order = "course_registers.created_at"
       when "2"
-        order = "course_registers.created_date"
+        order = "course_registers.created_at"
       else
-        order = "course_registers.created_date"
+        order = "course_registers.created_at"
       end
       order += " "+params["order"]["0"]["dir"]
     else
-      order = "course_registers.created_date DESC, course_registers.created_at DESC"
+      order = "course_registers.created_at DESC, course_registers.created_at DESC"
     end
     @records = @records.order(order) if !order.nil?
     
@@ -264,7 +278,7 @@ class CourseRegister < ActiveRecord::Base
               '<div class="text-center">'+item.display_delivery_status+"</div>",
               '<div class="text-right"><label class="col_label top0">Total:</label>'+ApplicationController.helpers.format_price(item.total)+"<label class=\"col_label top0\">Paid:</label>"+ApplicationController.helpers.format_price(item.paid_amount)+"<label class=\"col_label top0\">Remain:</label>"+ApplicationController.helpers.format_price(item.remain_amount)+"</div>",
               '<div class="text-center">'+item.display_payment_status+item.payment+"</div>",
-              '<div class="text-center">'+item.created_date.strftime("%d-%b-%Y")+"</div>",
+              '<div class="text-center">'+item.created_at.strftime("%d-%b-%Y")+"</div>",
               '<div class="text-center">'+item.contact.account_manager.staff_col+"</div>",
               ""
             ]
@@ -353,10 +367,10 @@ class CourseRegister < ActiveRecord::Base
   end
   
   def total
-    price - discount.to_f - discount_program_amount - discount.to_f - transfer.to_f
+    price - transfer.to_f
   end
   
-  def discount_program_amount
+  def discount_program_amount_old
     return 0.00 if discount_program.nil?
     
     return discount_program.type_name == "percent" ? (discount_program.rate/100)*price : discount_program.rate
@@ -364,13 +378,13 @@ class CourseRegister < ActiveRecord::Base
   
   def payment
     str = ""
-    if payment_type = "self-financed"
+    if payment_type == "self-financed"
       str += "self-financed"
     else
-      str + "company-sponsored"
+      str += "company-sponsored"
     end
     
-    str + "<div>#{bank_account.name}</div>"
+    # str += "<div>#{bank_account.name}</div>"
     
     return str
   end
@@ -486,7 +500,7 @@ class CourseRegister < ActiveRecord::Base
   end
   
   def course_register_link
-    ActionController::Base.helpers.link_to("<i class=\"icon icon-list-alt\"></i> Course Register [#{created_date.strftime("%d-%b-%Y")}]".html_safe, {controller: "course_registers", action: "show", id: self.id, tab_page: 1}, title: "Course Register Detail: #{self.contact.display_name} [#{created_date.strftime("%d-%b-%Y")}]", class: "tab_page")
+    ActionController::Base.helpers.link_to("<i class=\"icon icon-list-alt\"></i> Course Register [#{created_at.strftime("%d-%b-%Y")}]".html_safe, {controller: "course_registers", action: "show", id: self.id, tab_page: 1}, title: "Course Register Detail: #{self.contact.display_name} [#{created_at.strftime("%d-%b-%Y")}]", class: "tab_page")
   end
   
   def self.update_all_statuses

@@ -1,0 +1,34 @@
+<?xml version="1.0"?>
+<Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet"
+  xmlns:o="urn:schemas-microsoft-com:office:office"
+  xmlns:x="urn:schemas-microsoft-com:office:excel"
+  xmlns:ss="urn:schemas-microsoft-com:office:spreadsheet"
+  xmlns:html="http://www.w3.org/TR/REC-html40">
+  <Worksheet ss:Name="Sheet1">
+    <Table>
+      <Row>
+        <Cell><Data ss:Type="String">Reg Number *</Data></Cell>
+        <Cell><Data ss:Type="String">Student Name</Data></Cell>
+        <Cell><Data ss:Type="String">Date of Birth</Data></Cell>
+        
+        <% @report[:subjects].each_with_index do |s,index| %>
+          <Cell><Data ss:Type="String"><%= s.name %></Data></Cell>        
+          <Cell><Data ss:Type="String">Course Type</Data></Cell>
+        <% end %>
+      </Row>
+      
+      <% @report[:data].each do |row| %>
+        <Row>
+          <Cell><Data ss:Type="String"><%= row["student"].base_ids_by_program_id(params[:course_types]) %></Data></Cell>
+          <Cell><Data ss:Type="String"><%= row["student"].name %></Data></Cell>
+          <Cell><Data ss:Type="String"><%= row["student"].birthday.strftime("%d/%m/%Y") %></Data></Cell>
+          <% row["subjects"].each do |s| %>
+            <Cell><Data ss:Type="String"><%= s["count"] %></Data></Cell>        
+            <Cell><Data ss:Type="String">PT</Data></Cell>
+          <% end %>
+        </Row>
+      <% end %>
+      
+    </Table>
+  </Worksheet>
+</Workbook>

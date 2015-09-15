@@ -11,17 +11,32 @@
         <Cell><Data ss:Type="String">Student Name</Data></Cell>
         <Cell><Data ss:Type="String">Date of Birth</Data></Cell>
         
-        <% @report[:subjects].each_with_index do |s,index| %>
-          <Cell><Data ss:Type="String"><%= s.name %></Data></Cell>        
+        
+          <Cell><Data ss:Type="String">Paper 1</Data></Cell>        
           <Cell><Data ss:Type="String">Course Type</Data></Cell>
-        <% end %>
+          
+          <Cell><Data ss:Type="String">Paper 2</Data></Cell>        
+          <Cell><Data ss:Type="String">Course Type</Data></Cell>
+          
+          <Cell><Data ss:Type="String">Paper 3</Data></Cell>        
+          <Cell><Data ss:Type="String">Course Type</Data></Cell>
+          
+          <Cell><Data ss:Type="String">Paper 4</Data></Cell>        
+          <Cell><Data ss:Type="String">Course Type</Data></Cell>
+          
+          <Cell><Data ss:Type="String">Paper 5</Data></Cell>        
+          <Cell><Data ss:Type="String">Course Type</Data></Cell>
+          
+          <Cell><Data ss:Type="String">Paper 6</Data></Cell>        
+          <Cell><Data ss:Type="String">Course Type</Data></Cell>
+        
       </Row>
       
       <% @report[:data].each do |row| %>
         <Row>
-          <Cell><Data ss:Type="String">Reg Number *</Data></Cell>
+          <Cell><Data ss:Type="String"><%= row["student"].base_ids_by_program_id(params[:course_types]) %></Data></Cell>
           <Cell><Data ss:Type="String"><%= row["student"].name %></Data></Cell>
-          <Cell><Data ss:Type="String"><%= row["student"].birthday.strftime("%d-%b-%Y") %></Data></Cell>
+          <Cell><Data ss:Type="String"><%= row["student"].birthday.strftime("%d/%m/%Y") %></Data></Cell>
           <% row["subjects"].each do |s| %>
             <Cell><Data ss:Type="String"><%= s["count"] %></Data></Cell>        
             <Cell><Data ss:Type="String">PT</Data></Cell>

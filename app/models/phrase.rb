@@ -154,7 +154,7 @@ class Phrase < ActiveRecord::Base
     self.where(parent_id: nil)
   end
   def self.active_phrases
-    self.main_phrases.where("status IS NOT NULL AND status LIKE ?", "%[active]%")
+    self.main_phrases.where("phrases.status IS NOT NULL AND phrases.status LIKE ?", "%[active]%")
   end
   
   def draft?

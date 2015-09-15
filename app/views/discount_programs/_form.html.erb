@@ -48,6 +48,19 @@
 							  </div>
 							  
 							  <div class="form-group">
+                                    <label class="form-label"><%= f.label :programs %></label>
+                                    <span class="help"></span>
+									<%= render "field_history", drafts: @discount_program.field_history("course_type"), type: "course_type" %>
+                                    <div class="input-with-icon  right">                                       
+                                           <i class=""></i>
+                                           <div class="input-with_add_but">
+                                                  <%= link_to '<i class="icon-plus"></i>'.html_safe, new_course_type_path(tab_page: 1), title: "New Course Type", :class => 'btn btn-sm btn-small btn-white add-agent-button tab_page' %>
+                                                  <input style="width:100%;margin-bottom: 5px;" name="discount_program[course_type_ids][]" data="<%= course_types_path(format: "json") %>" class="select2-ajax-course-types multiple" values="<%= @discount_program.json_encode_course_type_ids_names %>" /> 
+                                           </div>
+                                    </div>
+                               </div>
+							  
+							  <div class="form-group">
 								<label class="form-label"><%= f.label :description %></label>
 								<span class="help"></span>
 								<%= render "field_history", drafts: @discount_program.field_history("description"), type: "description" %>
@@ -103,7 +116,7 @@
                                               <div class="input-with-icon  right">                                       
                                                    <i class=""></i>
                                                    <div class="input-append success date col-md-10 no-padding">
-                                                     <%= f.text_field :start_at, :class => "form-control required" %>
+                                                     <%= f.text_field :start_at, :class => "form-control required", value: (@discount_program.start_at.nil? ? "" : @discount_program.start_at.strftime("%d-%b-%Y")) %>
                                                      <span class="add-on"><span class="arrow"></span><i class="icon-th"></i></span>
                                                    </div>
                                                    <br style="clear: both" />
@@ -119,7 +132,7 @@
                                               <div class="input-with-icon  right">                                       
                                                    <i class=""></i>
                                                    <div class="input-append success date col-md-10 no-padding">
-                                                     <%= f.text_field :end_at, :class => "form-control required" %>
+                                                     <%= f.text_field :end_at, :class => "form-control required", value: (@discount_program.end_at.nil? ? "" : @discount_program.end_at.strftime("%d-%b-%Y")) %>
                                                      <span class="add-on"><span class="arrow"></span><i class="icon-th"></i></span>
                                                    </div>
                                                    <br style="clear: both" />
@@ -147,3 +160,10 @@
             </div>
 			
      </div>
+
+<script>
+	 $(document).ready(function() {
+		  vs = JSON.parse($('.select2-ajax-course-types').attr('values'))
+		  $('.select2-ajax-course-types').select2('data', vs)
+	 });
+</script>

@@ -29,6 +29,8 @@ class Contact < ActiveRecord::Base
   belongs_to :user
   
   belongs_to :referrer, :class_name => "Contact", :foreign_key => "referrer_id"
+  has_many :contacts, :class_name => "Contact", :foreign_key => "referrer_id"
+  
   belongs_to :invoice_info, :class_name => "Contact", :foreign_key => "invoice_info_id"
 
   belongs_to :city
@@ -303,9 +305,11 @@ class Contact < ActiveRecord::Base
     
     if !params["order"].nil?
       case params["order"]["0"]["column"]
-      when "2"
+      when "1"
         order = "contacts.name"
-      when "9"
+      when "6"
+        order = "contacts.created_at"
+      when "8"
         @records = @records.includes(:current_revision)
         order = "current_revisions_contacts.created_at"
       else
@@ -321,7 +325,7 @@ class Contact < ActiveRecord::Base
     @records = @records.limit(params[:length]).offset(params["start"])
     data = []
     
-    actions_col = 10
+    actions_col = 9
     @records.each do |item|
       ############### BEGIN REVISION #########################
       # update approved status
@@ -332,13 +336,13 @@ class Contact < ActiveRecord::Base
       
       item = [
               "<div class=\"checkbox check-default\"><input name=\"ids[]\" id=\"checkbox#{item.id}\" type=\"checkbox\" value=\"#{item.id}\"><label for=\"checkbox#{item.id}\"></label></div>",
-              item.picture_link,
-              '<div class="text-left">'+item.contact_link+"</div>",
-              '<div class="text-left">'+item.html_info_line.html_safe+item.referrer_link+"</div>",              
+              
+              '<div class="text-left"><strong>'+item.contact_link+"</strong></div>"+'<div class="text-left">'+item.html_info_line.html_safe+item.referrer_link+"</div>"+item.picture_link,              
               '<div class="text-right">'+item.contact_type_name+"</div>",
               '<div class="text-left">'+item.course_types_name_col+"</div>",
               '<div class="text-center">'+item.course_count_link+"</div>",
               '<div class="text-center contact_tag_box" rel="'+item.id.to_s+'">'+ContactsController.helpers.render_contact_tags_selecter(item)+"</div>",
+              '<div class="text-center">'+item.created_at.strftime("%d-%b-%Y")+"</div>",
               '<div class="text-center">'+item.account_manager_col+"</div>",
               '<div class="text-center">'+item.display_statuses+"</div>",
               '',
@@ -358,7 +362,17 @@ class Contact < ActiveRecord::Base
   end
   
   def account_manager_col
-    !account_manager.nil? ? account_manager.staff_col : ""
+    if is_individual
+      result = !account_manager.nil? ? account_manager.staff_col : ""
+    else
+      arr = []
+      contacts.each do |c|
+        arr << c.account_manager if !c.account_manager.nil? && !arr.include?(c.account_manager)
+      end
+      
+      result = (arr.map {|u| u.staff_col}).join("<br /><br />")
+    end
+    return result    
   end
   
   def self.course_students(params, user)
@@ -397,7 +411,7 @@ class Contact < ActiveRecord::Base
               '<div class="text-center">'+item.course_count_link+"</div>",
               #'<div class="text-left">'+item.referrer_link+"</div>",
               '<div class="text-center contact_tag_box" rel="'+item.id.to_s+'">'+ContactsController.helpers.render_contact_tags_selecter(item)+"</div>",
-              '<div class="text-center">'+item.course_register(@course).created_date.strftime("%d-%b-%Y")+"</div>",
+              '<div class="text-center">'+item.course_register(@course).created_at.strftime("%d-%b-%Y")+"</div>",
               '',
             ]
       data << item
@@ -891,7 +905,15 @@ class Contact < ActiveRecord::Base
   end
   
   def course_count_link
-    active_courses.count == 0 ? "" : self.course_list_link("["+active_courses.count.to_s+"]")
+    if is_individual
+      result = active_courses.count == 0 ? "" : self.course_list_link("["+active_courses.count.to_s+"]")
+    else
+      result = contacts_link
+    end
+  end
+  
+  def contacts_link
+    ActionController::Base.helpers.link_to("["+contacts.count.to_s+"]", {controller: "contacts", action: "index", company_id: self.id, tab_page: 1}, title: "#{display_name}: Contact List", class: "tab_page")
   end
   
   def json_encode_course_type_ids_names
@@ -1313,6 +1335,24 @@ class Contact < ActiveRecord::Base
     activities.where(deleted: 0).count
   end
   
+  def seminar_count
+    seminars.count
+  end
   
+  def base_id_by_program_id(course_type_id)
+    b_arr = JSON.parse(bases)
+    b_arr.each do |item|
+      return CourseType.find(course_type_id).short_name+"-"+item["name"] if item["course_type_id"].to_i == course_type_id.to_i
+    end
+    return ""
+  end
+  
+  def base_ids_by_program_id(ids)
+    arr = []
+    ids.each do |bid|
+      arr << base_id_by_program_id(bid)
+    end
+    return arr.join("\n")
+  end
   
 end

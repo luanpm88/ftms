@@ -8458,3 +8458,6 @@ form .icon-time {
 .draft_form .icon-time {
     color: #3c763d;
 }
+.phrase_title {
+    cursor: pointer;
+}

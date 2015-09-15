@@ -105,7 +105,7 @@
 							
 
 						</div>
-						<div class="row order-filters">
+						<div class="row order-filters personal-box">
 							<div class="col-md-2">
 								<h4>Created From</h4>							
 								<div class="input-with-icon  right">                                       
@@ -144,7 +144,7 @@
 								<div class="">
 									<div class="input-with-icon  right">                                       
 									<i class=""></i>
-									<input style="width:100%;margin-bottom: 5px;" name="company" data="<%= contacts_path(is_individual: false, format: "json") %>" class="select2-ajax-contacts" value="" text="" data-placeholder="All"/>
+									<input style="width:100%;margin-bottom: 5px;" name="company" data="<%= contacts_path(is_individual: false, format: "json") %>" class="select2-ajax-contacts" value="<%= @company.id if !@company.nil? %>" text="<%= @company.name if !@company.nil? %>" data-placeholder="All"/>
 									</div>
 								</div>
 							</div>

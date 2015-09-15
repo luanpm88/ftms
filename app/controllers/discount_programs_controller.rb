@@ -13,7 +13,7 @@ class DiscountProgramsController < ApplicationController
     respond_to do |format|
       format.html { render layout: "content" if params[:tab_page].present? }
       format.json {
-        render json: DiscountProgram.full_text_search(params[:q])
+        render json: DiscountProgram.full_text_search(params[:q], params[:course_type_id])
       }
     end
   end
@@ -35,7 +35,10 @@ class DiscountProgramsController < ApplicationController
   # POST /discount_programs
   # POST /discount_programs.json
   def create
-    @discount_program = DiscountProgram.new(discount_program_params)
+    s_params = discount_program_params
+    s_params[:course_type_ids] = discount_program_params[:course_type_ids][0].split(",") if discount_program_params[:course_type_ids].present?
+    
+    @discount_program = DiscountProgram.new(s_params)
     @discount_program.user = current_user
 
     respond_to do |format|
@@ -55,10 +58,11 @@ class DiscountProgramsController < ApplicationController
   # PATCH/PUT /discount_programs/1
   # PATCH/PUT /discount_programs/1.json
   def update
-    @discount_program.user = current_user
+    s_params = discount_program_params
+    s_params[:course_type_ids] = discount_program_params[:course_type_ids][0].split(",") if discount_program_params[:course_type_ids].present?
     
     respond_to do |format|
-      if @discount_program.update(discount_program_params)
+      if @discount_program.update(s_params)
         @discount_program.update_status("update", current_user)        
         @discount_program.save_draft(current_user)
         
@@ -162,6 +166,6 @@ class DiscountProgramsController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def discount_program_params
-      params.require(:discount_program).permit(:type_name, :name, :description, :user_id, :start_at, :end_at, :rate)
+      params.require(:discount_program).permit(:type_name, :name, :description, :user_id, :start_at, :end_at, :rate, :course_type_ids => [])
     end
 end

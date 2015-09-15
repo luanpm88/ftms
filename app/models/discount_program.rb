@@ -8,6 +8,7 @@ class DiscountProgram < ActiveRecord::Base
   has_many :course_registers
   has_many :contacts_courses
   has_many :books_contacts
+  has_and_belongs_to_many :course_types
   
   ########## BEGIN REVISION ###############
   validate :check_exist
@@ -27,8 +28,14 @@ class DiscountProgram < ActiveRecord::Base
                       }
                   }
   
-  def self.full_text_search(q)
-    self.active_discount_programs.order("name").search(q).limit(50).map {|model| {:id => model.id, :text => model.display_name} }
+  def self.full_text_search(q, course_type_id=nil)
+    result = self.active_discount_programs
+    
+    #if course_type_id.present?
+    #  result = result.includes(:course_types).where(course_types: {id: course_type_id})
+    #end    
+    
+    result = result.order("discount_programs.name").search(q).limit(50).map {|model| {:id => model.id, :text => model.display_name} }
   end
   
   def display_name
@@ -55,17 +62,22 @@ class DiscountProgram < ActiveRecord::Base
    
     ########## END REVISION-FEATURE #########################
     
+    if params["course_types"].present?
+      @records = @records.joins(:course_types)
+      @records = @records.where("course_types.id IN (#{params["course_types"].join(",")})")
+    end
+    
     @records = @records.search(params["search"]["value"]) if !params["search"]["value"].empty?
     
     if !params["order"].nil?
       case params["order"]["0"]["column"]
       when "0"
         order = "discount_programs.name"
-      when "2"
-        order = "discount_programs.rate"
       when "3"
-        order = "discount_programs.start_at"
+        order = "discount_programs.rate"
       when "4"
+        order = "discount_programs.start_at"
+      when "5"
         order = "discount_programs.end_at"
       else
         order = "discount_programs.start_at"
@@ -82,7 +94,7 @@ class DiscountProgram < ActiveRecord::Base
     
     data = []
     
-    actions_col = 7
+    actions_col = 8
     @records.each do |item|
       ############### BEGIN REVISION #########################
       # update approved status
@@ -94,6 +106,7 @@ class DiscountProgram < ActiveRecord::Base
       item = [
               item.name,
               item.description,
+              '<div class="text-center">'+item.programs_name+"</div>",
               '<div class="text-center">'+item.display_rate+"</div>",
               '<div class="text-center">'+item.start_at.strftime("%d-%b-%Y")+"</div>",
               '<div class="text-center">'+item.end_at.strftime("%d-%b-%Y")+"</div>",              
@@ -114,6 +127,10 @@ class DiscountProgram < ActiveRecord::Base
     
     return {result: result, items: @records, actions_col: actions_col}
     
+  end
+  
+  def programs_name
+    course_types.map(&:short_name).join(", ")
   end
   
   def display_rate
@@ -153,8 +170,13 @@ class DiscountProgram < ActiveRecord::Base
   def self.main_discount_programs
     self.where(parent_id: nil)
   end
-  def self.active_discount_programs
-    self.main_discount_programs.where("status IS NOT NULL AND status LIKE ?", "%[active]%")
+  def self.active_discount_programs(course_type_id=nil)
+    result = self.main_discount_programs.where("discount_programs.status IS NOT NULL AND discount_programs.status LIKE ?", "%[active]%")
+        .where("start_at <= ? AND end_at >= ?", Time.now.end_of_day, Time.now.beginning_of_day)
+    if course_type_id.present?
+      result = result.includes(:course_types).where(course_types: {id: course_type_id})
+    end
+    return result
   end
   
   def draft?
@@ -260,6 +282,8 @@ class DiscountProgram < ActiveRecord::Base
     draft.parent_id = self.id
     draft.user_id = user.id
     
+    draft.course_types = self.course_types
+    
     draft.save
     
     return draft
@@ -308,7 +332,8 @@ class DiscountProgram < ActiveRecord::Base
       drafts = drafts.order("created_at DESC")
     end
     
-    if false
+    if type == "course_type"
+      drafts = drafts.select{|c| c.course_types.order("short_name").map(&:short_name).join("") != self.course_types.order("short_name").map(&:short_name).join("")}
     else
       value = value.nil? ? self[type] : value
       drafts = drafts.where("#{type} IS NOT NUll AND #{type} != ?", value)
@@ -372,5 +397,10 @@ class DiscountProgram < ActiveRecord::Base
   end
   
   ############### END REVISION #########################
+  
+  def json_encode_course_type_ids_names
+    json = course_types.map {|t| {id: t.id.to_s, text: t.short_name}}
+    json.to_json
+  end
   
 end

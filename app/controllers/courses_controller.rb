@@ -50,8 +50,7 @@ class CoursesController < ApplicationController
     respond_to do |format|
       if @course.save
         @course.update_courses_phrases(params[:courses_phrases])
-        new_price = @course.course_prices.new(prices: params[:course_prices], user_id: current_user.id)
-        @course.update_price(new_price)
+        @course.update_course_prices(params[:course_prices])
         
         @course.update_status("create", current_user)        
         @course.save_draft(current_user)
@@ -74,8 +73,7 @@ class CoursesController < ApplicationController
     respond_to do |format|
       if @course.save        
         @course.update_courses_phrases(params[:courses_phrases])
-        new_price = @course.course_prices.new(prices: params[:course_prices], user_id: current_user.id)
-        @course.update_price(new_price)
+        @course.update_course_prices(params[:course_prices])
         
         @course.update_status("update", current_user)        
         @course.save_draft(current_user)
@@ -202,7 +200,13 @@ class CoursesController < ApplicationController
   end
   
   ########## BEGIN REVISION ###############
-
+  
+  def course_phrases_form
+    @course = params[:course_id].present? ? Course.find(params[:course_id]) : Course.new
+    @phrases = Phrase.active_phrases.includes(:subjects).where(subjects: {id: params[:value].split("_")[1]})
+    render layout: nil
+  end
+  
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_course

@@ -461,13 +461,13 @@ class User < ActiveRecord::Base
     return r.strip
   end
   
-  def self.get_online_report(type, year, month, course_types)
+  def self.get_cima_report(year, month, course_types)
     courses = Course.all_courses
                       .where(course_type_id: course_types)
                       .where(for_exam_year: year)
                       .where(for_exam_month: month)
                       
-    subjects = Subject.all_subjects.includes(:course_types).where(course_types: {id: course_types})
+    subjects = Subject.active_subjects.includes(:course_types).where(course_types: {id: course_types})
         
     students = Contact.main_contacts.includes(:contacts_courses)
                                     .where(contacts_courses: {course_id: courses.select{|c| c.id}})
@@ -480,9 +480,42 @@ class User < ActiveRecord::Base
       subjects.each do |subject|
         s_row = {}
         s_row["subject"] = subject
-        s_row["count"] = student.all_contacts_courses.where(report: true).includes(:course).where(courses: {subject_id: subject.id}).count
+        
+        ccs = student.active_contacts_courses.where(report: true).includes(:course).where(courses: {subject_id: subject.id})
+        s_row["count"] = (ccs.collect {|xx| xx.course.name}).uniq.join("\n") if !ccs.empty?
         
         row["subjects"] << s_row
+      end
+      report << row
+    end
+                      
+    return {data: report, subjects: subjects}
+  end
+  
+  def self.get_acca_report(year, month, course_types)
+    courses = Course.all_courses
+                      .where(course_type_id: course_types)
+                      .where(for_exam_year: year)
+                      .where(for_exam_month: month)
+                      
+    subjects = Subject.active_subjects.includes(:course_types).where(course_types: {id: course_types})
+        
+    students = Contact.main_contacts.includes(:contacts_courses)
+                                    .where(contacts_courses: {course_id: courses.select{|c| c.id}})
+                                    
+    report = []
+    students.each do |student|
+      row = {}
+      row["student"] = student
+      row["subjects"] = []
+      subjects.each do |subject|
+        s_row = {}
+        s_row["subject"] = subject
+        
+        ccs = student.active_contacts_courses.where(report: true).includes(:course).where(courses: {subject_id: subject.id})
+        s_row["count"] = (ccs.collect {|xx| xx.course.name}).uniq.join("\n") if !ccs.empty?
+        
+        row["subjects"] << s_row if s_row["count"].present?
       end
       report << row
     end

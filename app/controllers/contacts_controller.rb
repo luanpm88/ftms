@@ -20,6 +20,10 @@ class ContactsController < ApplicationController
       @seminar = Seminar.find(params[:seminar_id])
     end
     
+    if params[:company_id]
+      @company = Contact.find(params[:company_id])
+    end
+    
     
     respond_to do |format|
       format.html

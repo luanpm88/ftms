@@ -27,13 +27,43 @@ class ContactsCourse < ActiveRecord::Base
   end
   
   def total
-    price - discount.to_f - discount_program_amount
+    price - other_discount_amount.to_f - discount_program_amount
   end
   
-  def discount_program_amount
+  def discount_program_amount_old
     return 0.00 if discount_program.nil?
     
     return discount_program.type_name == "percent" ? (discount_program.rate/100)*price : discount_program.rate
+  end
+  
+  def discount_program_amount
+    result = 0.00    
+    all_discount_programs.each do |row|
+      if row["id"].present?
+        dp = DiscountProgram.find(row["id"])
+        result += dp.type_name == "percent" ? (dp.rate/100)*price : dp.rate
+      end
+    end
+    
+    return result
+  end
+  
+  def all_discount_programs
+    JSON.parse(discount_programs)
+  end
+  
+  def all_other_discounts
+    JSON.parse(other_discounts)
+  end
+  
+  def other_discount_amount
+    result = 0.00
+    all_other_discounts.each do |row|
+      if row["amount"].present?
+        result += row["amount"].to_f
+      end
+    end    
+    return result
   end
   
   def paid(from_date=nil, to_date=nil)
@@ -58,7 +88,7 @@ class ContactsCourse < ActiveRecord::Base
   
   def report_toggle
     class_name = self.report ? "success" : "none"
-    text = self.report ? "report: yes" : "report: no"
+    text = self.report ? "UCRS: yes" : "UCRS: no"
     '<a rel="'+self.id.to_s+'" class="badge badge-'+class_name+' report_toggle report_toggle_'+self.id.to_s+'" href="#rt">'+text+'</a>'
   end
   

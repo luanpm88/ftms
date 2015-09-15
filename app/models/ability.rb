@@ -46,6 +46,7 @@ class Ability
     
     if user.has_role? "user"
       can :book_features, User
+      can :report_features, User
       
       can :read_notification, Notification
       
@@ -99,6 +100,9 @@ class Ability
         !c.statuses.include?("delete_pending") && !c.statuses.include?("deleted")
       end
       can :field_history, Course
+      can :course_phrases_form, Course
+      
+      
       
       can :datatable, CourseType
       can :read, CourseType
@@ -110,6 +114,7 @@ class Ability
         !ct.statuses.include?("delete_pending") && !ct.statuses.include?("deleted")
       end
       can :field_history, CourseType
+      
       
       
       # Subject
@@ -163,9 +168,7 @@ class Ability
       can :check_contact, Seminar      
       can :seminar_features, Seminar
       can :import_list, Seminar
-      can :update, Seminar do |c|
-        c.contacts.empty?
-      end
+      can :update, Seminar
       can :delete, Seminar do |c|
         !c.statuses.include?("delete_pending") && !c.statuses.include?("deleted")
       end
@@ -199,14 +202,7 @@ class Ability
       
       
       can :datatable, BankAccount
-      can :read, BankAccount
-      can :create, BankAccount
-      can :update, BankAccount do |c|
-        c.course_registers.empty? && c.payment_records.empty?
-      end
-      can :delete, BankAccount do |c|
-        !c.statuses.include?("delete_pending") && !c.statuses.include?("deleted")
-      end
+      can :read, BankAccount      
       can :field_history, BankAccount
       
       can :courses_phrases_select, CoursesPhrase
@@ -302,6 +298,16 @@ class Ability
       #end
     end
     
+    if user.has_role? "accountant"
+      can :create, BankAccount
+      can :update, BankAccount do |c|
+        c.course_registers.empty? && c.payment_records.empty?
+      end
+      can :delete, BankAccount do |c|
+        !c.statuses.include?("delete_pending") && !c.statuses.include?("deleted")
+      end
+    end
+    
     if user.has_role? "manager"
       can :statistic, User
       can :online_report, User
@@ -329,9 +335,7 @@ class Ability
       can :datatable, Course
       can :read, Course
       can :create, Course
-      can :update, Course do |c|
-        c.contacts_courses.empty?
-      end
+      can :update, Course
       can :student_courses, Course
       can :courses_phrases_checkboxs, Course
       can :course_price_select, Course
