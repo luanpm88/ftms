@@ -499,7 +499,22 @@
 					</ul>
 			</li>
 		<% end %>
-	
+		
+		<% if can? :report_features, User %>
+			<li <% if params[:controller] == "users" %> class="active open"<% end %>>
+					<%= link_to contacts_url do %>
+					  <i class="icon-calendar-empty"></i>
+					  <span class="title">Reports</span>
+					  <span class="arrow<% if params[:controller] == "users" %> open<% end %>"></span>
+					<% end %>
+					<ul class="sub-menu">
+						
+						
+						<li<% if params[:controller] == "users" && params[:action] == "statistic" %> class="active"<% end %>><%= link_to 'Sales Statistic', statistic_users_path(tab_page:1), class: "tab_page" %></li>
+						<li<% if params[:controller] == "users" %> class="active"<% end %>><%= link_to 'Online Report', online_report_users_path(tab_page:1), class: "tab_page" %></li>				
+					</ul>
+			</li>
+		<% end %>
 		
 		<% if can? :book_features, User %>
 			<li <% if params[:controller] == "books" %> class="active open"<% end %>>
@@ -548,21 +563,7 @@
 			</li>
 		<% end %>
 		
-		<% if can? :report_features, User %>
-			<li <% if params[:controller] == "users" %> class="active open"<% end %>>
-					<%= link_to contacts_url do %>
-					  <i class="icon-calendar-empty"></i>
-					  <span class="title">Reports</span>
-					  <span class="arrow<% if params[:controller] == "users" %> open<% end %>"></span>
-					<% end %>
-					<ul class="sub-menu">
-						
-						
-						<li<% if params[:controller] == "users" && params[:action] == "statistic" %> class="active"<% end %>><%= link_to 'Sales Statistic', statistic_users_path(tab_page:1), class: "tab_page" %></li>
-						<li<% if params[:controller] == "users" %> class="active"<% end %>><%= link_to 'Online Report', online_report_users_path(tab_page:1), class: "tab_page" %></li>				
-					</ul>
-			</li>
-		<% end %>
+		
 	
 		<% if current_user.has_role? "admin" %>
 			<li <% if params[:controller] == "users" %> class="active open"<% end %>>
