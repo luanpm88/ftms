@@ -42,17 +42,15 @@
 					 
 					<div class="phrase_box_list">
 						 <% (0..9).each do |number| %>
-							  <div class="row column-seperation phrase_box phrase_box_<%= number.to_s %> <%= 'hidden'.html_safe if number > 0 %>" rel="<%= number %>">
+							  <div class="row column-seperation phrase_box phrase_box_<%= number.to_s %> <%= 'hidden'.html_safe if number >= 0 %>" rel="<%= number %>">
 								   <div class="phrase_box_label">Course #<%= number+1 %></div>
-								   <% if number != 0 %>
-										<div class="phrase_box_close" rel="<%= number.to_s %>"><i class="icon icon-remove"></i></div>
-								   <% end %>
+								   <div class="phrase_box_close" rel="<%= number.to_s %>"><i class="icon icon-remove"></i></div>
 								   <div class="col-md-12">
 										<hr />
 								   </div>
 								   <div class="col-md-6">
 										<div class="row">
-											 <div class="col-md-5">													   
+											 <!--<div class="col-md-5">													   
 												  <div class="form-group">
 													   <label class="form-label">Upfront?</label>
 													   <span class="help"></span>
@@ -65,8 +63,8 @@
 															</div>
 													   </div>
 												  </div>									
-											 </div>
-											 <div class="col-md-7">
+											 </div>-->
+											 <div class="col-md-12">
 												  <div class="form-group">
 														<label class="form-label"><%= f.label :course %></label>
 														<span class="help">(required)</span>
@@ -79,6 +77,18 @@
 														</div>
 												  </div>
 											 </div>
+											 <!--<div class="col-md-6">
+												  <div class="form-group">
+													   <label class="form-label"><label>Payment type</label></label>
+													   <span class="help">(required)</span>
+													   <div class="input-with-icon right">                                       
+															<select name="contacts_courses[<%= number %>][payment_type]" class="modern_select width100 required">
+																 <option value="self-financed">Self-financed</option>
+																 <option value="company-sponsored">Company-sponsored</option>
+															</select>
+													   </div>
+												  </div>
+											 </div>-->
 										</div>
 										
 										<div class="registration_course_price_box_<%= number %>"></div>
@@ -106,7 +116,51 @@
 					
 					<h3>Stock Registration</h3>
 					
+					<div class="row stock_form_filter">
+						 <div class="col-md-3">
+							  <div class="form-group">
+								   <label class="form-label"><label>Program</label></label>
+								   <span class="help"></span>
+								   <div class="input-with-icon date-group right">                                       
+										<i class=""></i>
+										<div class="input-with_add_but">
+											   <%= link_to '<i class="icon-plus"></i>'.html_safe, new_course_type_path(tab_page: 1), title: "New Program", :class => 'btn btn-sm btn-small btn-white add-agent-button tab_page' %>
+											   <input style="width:100%;margin-bottom: 5px;" name="program_id" data="<%= course_types_path(format: "json") %>" class="select2-ajax-course-types" value="" text="" /> 
+										</div>
+								   </div>
+							  </div>
+						 </div>
+						 <div class="col-md-3">
+							  <div class="form-group">
+								   <label class="form-label"><label>Subject</label></label>
+								   <span class="help"></span>
+								   <div class="input-with-icon date-group right">                                       
+										<i class=""></i>
+										<div class="input-with_add_but">
+											   <%= link_to '<i class="icon-plus"></i>'.html_safe, new_subject_path(tab_page: 1), title: "New Paper", :class => 'btn btn-sm btn-small btn-white add-agent-button tab_page' %>
+											   <input style="width:100%;margin-bottom: 5px;" name="subject_id" data="<%= subjects_path(format: "json") %>" class="select2-ajax-subjects" value="" text="" /> 
+										</div>
+								   </div>
+							  </div>	
+						 </div>
+						 <div class="col-md-6">
+							  <div class="form-group">
+										 <label class="form-label"><label>Delivery Address</label></label>
+										 <span class="help">(required)</span>
+										 <div class="input-with-iconz right">                                       
+											  <%= f.text_field :mailing_address, :class => "form-control required" %>
+										 </div>
+							   </div>
+						 </div>
+					</div>
+					
 					<div class="stock_box_list">
+						 
+					</div>
+					
+					
+					
+					<!--<div class="stock_box_list">
 						 <% (0..9).each do |number| %>
 							  <div class="row column-seperation stock_box stock_box_<%= number.to_s %> <%= 'hidden'.html_safe if number >= 0 %>" rel="<%= number %>">
 								   <div class="stock_box_label">Stock #<%= number+1 %></div>
@@ -115,33 +169,7 @@
 								   <% end %>
 								   <div class="col-md-12">
 										<hr />
-								   </div>
-								   <div class="col-md-3">
-										<div class="form-group">
-											 <label class="form-label"><label>Program</label></label>
-											 <span class="help"></span>
-											 <div class="input-with-icon date-group right">                                       
-												  <i class=""></i>
-												  <div class="input-with_add_but">
-														 <%= link_to '<i class="icon-plus"></i>'.html_safe, new_course_type_path(tab_page: 1), title: "New Program", :class => 'btn btn-sm btn-small btn-white add-agent-button tab_page' %>
-														 <input style="width:100%;margin-bottom: 5px;" name="program_id" data="<%= course_types_path(format: "json") %>" class="select2-ajax-course-types" value="" text="" box_number="<%= number %>" /> 
-												  </div>
-											 </div>
-										</div>
-								   </div>
-								   <div class="col-md-3">
-										<div class="form-group">
-											 <label class="form-label"><label>Subject</label></label>
-											 <span class="help"></span>
-											 <div class="input-with-icon date-group right">                                       
-												  <i class=""></i>
-												  <div class="input-with_add_but">
-														 <%= link_to '<i class="icon-plus"></i>'.html_safe, new_subject_path(tab_page: 1), title: "New Paper", :class => 'btn btn-sm btn-small btn-white add-agent-button tab_page' %>
-														 <input style="width:100%;margin-bottom: 5px;" name="subject_id" data="<%= subjects_path(format: "json") %>" class="select2-ajax-subjects" value="" text="" box_number="<%= number %>" /> 
-												  </div>
-											 </div>
-										</div>	
-								   </div>
+								   </div>								   
 								   <div class="col-md-6">
 										<div class="row">
 											 <div class="col-md-8">
@@ -179,7 +207,7 @@
 												  <%= f.text_field :mailing_address, :class => "form-control required" %>
 											 </div>
 								   </div>
-					</div>
+					</div>-->
 					
 					<br />
 					
@@ -261,11 +289,11 @@
 					
 					<br />
 					
-					<h3>Payment Information</h3> 
+					<h3>Summary</h3> 
 					
 					
 					<div class="row column-seperation">
-						 <div class="col-md-4">
+						 <div class="col-md-3">
 							  <div class="row">								   
 								   <!--<div class="col-md-6">										
 										<div class="form-group">
@@ -280,18 +308,33 @@
 											   <br style="clear: both" />
 										  </div>
 										</div>										
-								   </div>-->							   
-								   <div class="col-md-6">										
+								   </div>-->					   
+								   <div class="col-md-12">										
 										<div class="form-group">
 											 <label class="form-label"><label>Payment type</label></label>
 											 <span class="help">(required)</span>
 											 <div class="input-with-icon right">                                       
 												  <select name="course_register[payment_type]" class="modern_select width100 required">
-													   <option value="self-financed">Self-financed</option>
-													   <option value="company-sponsored">Company-sponsored</option>
+													   <option value="self-financed" <%= 'selected="selected"' if @contact.payment_type == 'self-financed' %>>Self-financed</option>
+													   <option value="company-sponsored" <%= 'selected="selected"' if @contact.payment_type == 'company-sponsored' %>>Company-sponsored</option>
 												  </select>
 											 </div>
 										</div>										
+								   </div>
+							  </div>
+							  <div class="row company_sponsored_group">
+								   <div class="col-md-12">													   
+										<div class="form-group">
+											 <label class="form-label"><%= f.label :company %></label>											 
+											 <span class="help"></span>
+											 <div class="input-with-icon  right">                                       
+												  <i class="">(required)</i>
+												  <div class="input-with_add_but">
+													   <%= link_to '<i class="icon-plus"></i>'.html_safe, new_contact_path(:is_individual => false, tab_page: 1), title: "New Company", :class => 'btn btn-sm btn-small btn-white add-agent-button tab_page' %>
+													   <input style="width:100%;margin-bottom: 5px;" name="course_register[sponsored_company_id]" data="<%= contacts_path(is_individual: false, format: "json") %>" class="select2-ajax-contacts required" value="<%= @contact.referrer_id %>" text="<%= @contact.referrer.name if !@contact.referrer.nil? %>" />
+												  </div>
+											 </div>
+										</div>
 								   </div>
 							  </div>
 							  <!--<div class="row">
@@ -351,7 +394,7 @@
 										</div>
 								   </div>
 							  </div>-->
-							  <div class="row">
+							  <!-- <div class="row">
 								   <div class="col-md-12">
 										<div class="form-group">
 											 <label class="form-label"><label>Deferred/Transferred Amount</label></label>
@@ -364,7 +407,7 @@
 											 </div>
 										</div>
 								   </div>
-								   <!-- <div class="col-md-6">
+								   <div class="col-md-6">
 										<div class="form-group">
 											 <label class="form-label"><%= f.label :invoice_required %></label>
 											 <span class="help">(required)</span>
@@ -375,9 +418,9 @@
 												  <label for="invoice_no">No</label>
 											 </div>
 										</div>	
-								   </div> -->
+								   </div>
 								   
-							  </div>
+							  </div> -->
 							  <!--<div class="row invoice-info-box">
 								   <div class="col-md-6">
 										<div class="form-group">
@@ -408,7 +451,7 @@
 								   </div>
 							  </div>-->
 						 </div>
-						 <div class="col-md-8">
+						 <div class="col-md-9">
 	 						  <div class="form-group">
 								   <label class="form-label"><label>Total Price</label></label>
 								   <span class="help"></span>
@@ -427,17 +470,17 @@
 												  <th class="text-center">
 													   <strong class="total_course_count"></strong>
 												  </th>
-												  <td width="50%" class="text-right">
+												  <td class="text-right">
 													   <strong class="total_course_list_price"></strong>
 												  </td>
-												  <td width="50%" class="text-right">
+												  <td class="text-right">
 													   <strong class="total_course_discount_program_price"></strong>
 												  </td>
-												  <td width="50%" class="text-right">
+												  <td class="text-right">
 													   <strong class="total_course_other_discount_price"></strong>
 												  </td>
 
-												  <td width="50%" class="text-right">
+												  <td class="text-right">
 													   <strong class="total_course_price"></strong>
 												  </td>
 												  
@@ -447,13 +490,13 @@
 												  <th class="text-center">
 													   <strong class="total_stock_count"></strong>
 												  </th>
-												  <td width="50%" class="text-right">
+												  <td class="text-right">
 													   <strong class="total_stock_list_price"></strong>
 												  </td>
-												  <td width="50%" class="text-right">
+												  <td class="text-right">
 													   <strong class="total_stock_discount_program_price"></strong>
 												  </td>
-												  <td width="50%" class="text-right">
+												  <td class="text-right">
 													   <strong class="total_stock_other_discount_price"></strong>
 												  </td>
 
@@ -483,7 +526,7 @@
 												  <td class="text-right" colspan="5">Total</td>
 												  <td class="text-right">
 													   <strong class="total_registration_price"></strong>
-													   <input type="text" name="total_valid" style="height: 1px;border: none;background: none;padding: 0;margin-top: -20px;" />
+													   <br /><input type="text" name="total_valid" style="height: 1px;border: none;background: none;padding: 0;margin-top: -20px;" />
 												  </td>
 											 </tr>
 										</table>

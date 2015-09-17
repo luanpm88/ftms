@@ -46,11 +46,12 @@ class CoursesController < ApplicationController
     @course = Course.new(course_params)
     @course.user = current_user    
     @course.update_program_paper(params[:program_paper])
+    @course.intake = "1990-01-01".to_date if @course.upfront
     
     respond_to do |format|
       if @course.save
-        @course.update_courses_phrases(params[:courses_phrases])
-        @course.update_course_prices(params[:course_prices])
+        @course.update_courses_phrases(params[:courses_phrases]) if !params[:courses_phrases].nil?
+        @course.update_course_prices(params[:course_prices]) if !params[:course_prices].nil?
         
         @course.update_status("create", current_user)        
         @course.save_draft(current_user)
@@ -68,12 +69,13 @@ class CoursesController < ApplicationController
   # PATCH/PUT /courses/1.json
   def update
     @course.assign_attributes(course_params)
-    @course.update_program_paper(params[:program_paper])    
+    @course.update_program_paper(params[:program_paper])
+    @course.intake = "1990-01-01".to_date if @course.upfront
     
     respond_to do |format|
       if @course.save        
-        @course.update_courses_phrases(params[:courses_phrases])
-        @course.update_course_prices(params[:course_prices])
+        @course.update_courses_phrases(params[:courses_phrases]) if !params[:courses_phrases].nil?
+        @course.update_course_prices(params[:course_prices]) if !params[:course_prices].nil?
         
         @course.update_status("update", current_user)        
         @course.save_draft(current_user)
@@ -215,6 +217,6 @@ class CoursesController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def course_params
-      params.require(:course).permit(:for_exam_year, :for_exam_month, :lecturer_id, :description, :user_id, :intake, :course_type_id, :course_type_ids => [])
+      params.require(:course).permit(:upfront, :for_exam_year, :for_exam_month, :lecturer_id, :description, :user_id, :intake, :course_type_id, :course_type_ids => [])
     end
 end

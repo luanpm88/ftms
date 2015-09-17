@@ -280,7 +280,9 @@ CREATE TABLE books (
     course_type_ids text,
     subject_ids text,
     annoucing_user_ids text,
-    status text
+    status text,
+    course_type_id integer,
+    subject_id integer
 );
 
 
@@ -299,7 +301,8 @@ CREATE TABLE books_contacts (
     volumn_ids text,
     created_at timestamp without time zone NOT NULL,
     updated_at timestamp without time zone NOT NULL,
-    quantity integer
+    quantity integer,
+    cache_delivery_status text
 );
 
 
@@ -645,7 +648,8 @@ CREATE TABLE contacts_courses (
     discount numeric,
     report boolean DEFAULT true,
     discount_programs text,
-    other_discounts text
+    other_discounts text,
+    cache_payment_status text
 );
 
 
@@ -845,7 +849,8 @@ CREATE TABLE course_registers (
     transfer_hour numeric,
     annoucing_user_ids text,
     parent_id integer,
-    status text
+    status text,
+    sponsored_company_id integer
 );
 
 
@@ -988,7 +993,8 @@ CREATE TABLE courses (
     parent_id integer,
     for_exam_year integer,
     for_exam_month character varying,
-    annoucing_user_ids text
+    annoucing_user_ids text,
+    upfront boolean
 );
 
 
@@ -1554,7 +1560,8 @@ CREATE TABLE stock_updates (
     user_id integer,
     note text,
     created_at timestamp without time zone NOT NULL,
-    updated_at timestamp without time zone NOT NULL
+    updated_at timestamp without time zone NOT NULL,
+    destination text
 );
 
 
@@ -2817,4 +2824,18 @@ INSERT INTO schema_migrations (version) VALUES ('20150915002736');
 INSERT INTO schema_migrations (version) VALUES ('20150915022953');
 
 INSERT INTO schema_migrations (version) VALUES ('20150915063100');
+
+INSERT INTO schema_migrations (version) VALUES ('20150916063216');
+
+INSERT INTO schema_migrations (version) VALUES ('20150916080604');
+
+INSERT INTO schema_migrations (version) VALUES ('20150917032403');
+
+INSERT INTO schema_migrations (version) VALUES ('20150917032423');
+
+INSERT INTO schema_migrations (version) VALUES ('20150917034058');
+
+INSERT INTO schema_migrations (version) VALUES ('20150917065826');
+
+INSERT INTO schema_migrations (version) VALUES ('20150917084811');
 

@@ -5,6 +5,8 @@ class Book < ActiveRecord::Base
   validates :user_id, presence: true
   
   belongs_to :user
+  belongs_to :course_type
+  belongs_to :subject
   
   has_many :book_prices
   has_many :books_contacts
@@ -85,7 +87,7 @@ class Book < ActiveRecord::Base
     
     if !params["order"].nil?
       case params["order"]["0"]["column"]
-      when "1"
+      when "3"
         order = "books.name"
       when "4"
         order = "books.publisher"
@@ -118,10 +120,10 @@ class Book < ActiveRecord::Base
       ############### END REVISION #########################
       
       itemx = [
-              item.cover_link,
+              item.cover_link,              
+              '<div class="text-center">'+item.course_type_short_name+"</div>",
+              '<div class="text-center">'+item.subject_name+"</div>",
               item.book_link,
-              '<div class="text-center">'+item.course_types.map(&:short_name).join(", ")+"</div>",
-              '<div class="text-center">'+item.subjects.map(&:name).join(", ")+"</div>",
               '<div class="text-left">'+item.publisher.to_s+"</div>",
               '<div class="text-center">'+item.display_prices+"</div>",
               '<div class="text-center">'+item.stock.to_s+"</div>",
@@ -147,6 +149,13 @@ class Book < ActiveRecord::Base
     
   end
   
+  def course_type_short_name
+    course_type.nil? ? "" : course_type.short_name
+  end
+  def subject_name
+    subject.nil? ? "" : subject.name
+  end
+  
   def self.student_books(params, user)
     ActionView::Base.send(:include, Rails.application.routes.url_helpers)
     link_helper = ActionController::Base.helpers    
@@ -161,7 +170,7 @@ class Book < ActiveRecord::Base
     
     if !params["order"].nil?
       case params["order"]["0"]["column"]
-      when "1"
+      when "3"
         order = "books.name"
       when "4"
         order = "books.publisher"
@@ -186,13 +195,13 @@ class Book < ActiveRecord::Base
     actions_col = 9
     @records.each do |item|
       item = [
-              item.cover_link,
+              item.cover_link,              
+              '<div class="text-center">'+item.course_type_short_name+"</div>",
+              '<div class="text-center">'+item.subject_name+"</div>",
               item.book_link,
-              '<div class="text-center">'+item.course_types.map(&:short_name).join(", ")+"</div>",
-              '<div class="text-center">'+item.subjects.map(&:name).join(", ")+"</div>",
               '<div class="text-left">'+item.publisher.to_s+"</div>",
               '<div class="text-right">'+ApplicationController.helpers.format_price(@student.books_contact(item).total)+"</div>",
-              '<div class="text-center">'+ @student.books_contact(item).course_register.created_date.strftime("%d-%b-%Y")+"</div>",
+              '<div class="text-center">'+ @student.books_contact(item).course_register.created_at.strftime("%d-%b-%Y")+"</div>",
               '<div class="text-center">'+ @student.books_contact(item).course_register.display_delivery_status+"</div>", 
               '<div class="text-center">'+item.user.staff_col+"</div>",
               ""
@@ -301,6 +310,7 @@ class Book < ActiveRecord::Base
     
     return Subject.where(id: arr).order("name")
   end
+
   
   def type_name
     course_types.map(&:short_name).join(", ")
@@ -564,5 +574,21 @@ class Book < ActiveRecord::Base
   end
   
   ############### END REVISION #########################
+  
+  def display_name
+    str = []
+    str << course_type.short_name if !course_type.nil?
+    str << subject.name if !subject.nil?
+    str = str.join("-") + "<br />" + name
+    
+    return str.html_safe
+  end
+  
+  def registered?(contact)
+    BooksContact.joins(:course_register)
+                .where.not("course_registers.status LIKE ?", "%[deleted]%")
+                .where(book_id: self.id)
+                .where(contact_id: contact.id).count > 0
+  end
   
 end

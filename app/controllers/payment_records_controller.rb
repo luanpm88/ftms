@@ -10,6 +10,10 @@ class PaymentRecordsController < ApplicationController
   def index
     @payment_records = PaymentRecord.all
   end
+  
+  def payment_list
+    #code
+  end
 
   # GET /payment_records/1
   # GET /payment_records/1.json
@@ -74,6 +78,17 @@ class PaymentRecordsController < ApplicationController
     
     result[:items].each_with_index do |item, index|
       actions = render_payment_record_actions(item)      
+      result[:result]["data"][index][result[:actions_col]] = actions
+    end
+    
+    render json: result[:result]
+  end
+  
+  def datatable_payment_list
+    result = PaymentRecord.datatable_payment_list(params, current_user)
+    
+    result[:items].each_with_index do |item, index|
+      actions = render_contacts_course_actions(item)      
       result[:result]["data"][index][result[:actions_col]] = actions
     end
     

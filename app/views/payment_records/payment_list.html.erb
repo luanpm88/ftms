@@ -1,0 +1,133 @@
+                <ul class="breadcrumb">
+                    <li>
+                        <p>YOU ARE HERE</p>
+                    </li> 
+                    <li><%= link_to 'Users', course_types_url, :class => "active" %></li>
+                </ul>
+                <div class="page-title">
+                        <i class="icon-briefcase"></i>
+                    	<h3>Payment - <span class="semi-bold"> Management</span></h3>	
+                </div>
+				
+				<div class="grid simple ">
+                  <div class="grid-body no-border filters payment-list-filter">
+						<div class="row order-filters">						
+								  <div class="col-md-3">
+										<div class="form-group" style="margin-bottom: 5px;">
+											 <label class="form-label">Upfront?</label>
+											 <span class="help"></span>
+											 <div class="input-with-icon right">                                       
+												  <div class="radio radio-success" style="padding: 5px">
+														<input class="required" id="upfront_all" type="radio" name="course[upfront]" value="" checked="checked">
+													   <label for="upfront_all">None</label>
+													   <input class="required" id="upfront_true" type="radio" name="course[upfront]" value="true">
+													   <label for="upfront_true">Yes</label>
+													   <input class="required" id="upfront_false" type="radio" name="course[upfront]" value="false">
+													   <label for="upfront_false">No</label>
+												  </div>
+											 </div>
+										</div>
+										<div class="intake_group">
+											<h4>Intake</h4>
+											<div class="date_select_filter">
+												<div class="input-with-icon date-group-my right">                                       
+												<%= date_select(:filter, :intake, {include_blank: true, use_short_month: true}) %>
+												</div>
+											</div>
+										</div>
+								  </div>								  
+								  <div class="col-md-2">
+									  <h4>Program</h4>							
+									  <%= select_tag 'course_types[]', options_for_select(CourseType.active_course_types.collect{ |u| [u.short_name, u.id] }), class: "modern_select width100", multiple: "multiple" %>
+								  </div>							
+								  <div class="col-md-2">
+									  <h4>Paper</h4>							
+									  <%= select_tag 'subjects[]', options_for_select(Subject.active_subjects.collect{ |u| [u.name, u.id] }), class: "modern_select width100", multiple: "multiple" %>
+								  </div>									  
+								  <div class="col-md-3 student-course-register-filter">
+									  <h4>Student</h4>                        
+									  <div class="lecturers-filter-box">
+										  <input style="width:100%;margin-bottom: 5px;" name="student" data="<%= contacts_path(is_individual: true, contact_type_id: ContactType.student.id,format: "json") %>" class="select2-ajax-contacts" value="<%= @contact.id if !@contact.nil? %>" text="<%= @contact.display_name if !@contact.nil? %>" />
+									  </div>
+								  </div>
+									<div class="col-md-2">
+									  <h4>Payment Status</h4>
+										<div class="input-with-icon  right">                                       
+											<i class=""></i>
+											<select name="payment_statuses" class="modern_select width100">
+												<option value="">All</option>
+												<option value="chase_for_payment">Chase for payment</option>
+												<option value="receivable">Receivable</option>
+												<option value="fully_paid">Fully paid</option>
+											</select>
+										</div>
+								  </div>
+									<div class="col-md-3">
+										<h4>Company</h4>
+										<div class="">
+											<div class="input-with-icon  right">                                       
+											<i class=""></i>
+											<input style="width:100%;margin-bottom: 5px;" name="company" data="<%= contacts_path(is_individual: false, format: "json") %>" class="select2-ajax-companies"/>
+											</div>
+										</div>
+									</div>
+						</div>
+						
+                  </div>		    
+				</div>
+                
+				
+				<%= form_tag("", {class: "listing_form", method: "post", target: "_blank"}) do |f| %>
+				
+					<div class="row">
+						<div class="col-md-12">
+							
+							<div class="listing_box_actions">
+								<div class="btn-group listing_actions"> <a href="#" data-toggle="dropdown" class="btn btn-white dropdown-toggle btn-demo-space"> List Actions (<span class="listing_checked_count">0</span>)<span class="caret"></span> </a>
+									<ul class="dropdown-menu">
+										<li><a href="#" rel="<%= export_list_contacts_path(format: "xls") %>">Pay</a></li>
+										<li><a href="#" rel="<%= export_list_contacts_path(format: "xls") %>">Print Payment List</a></li>
+									</ul>
+								</div>
+								<div class="checkbox check-default check_all_page_but" style="display: inline-block">
+									<input name="check_all_page" id="checkbox_all_page" type="checkbox" value="all_page" class="check_all_page">
+									<label for="checkbox_all_page">Select All Pages</label>
+								</div>
+								
+							</div>
+							
+							<div class="grid simple ">
+								<div class="grid-title no-border">
+									<h4>Listing  <span class="semi-bold">Delveries</span></h4>                                
+								</div>
+								<div class="grid-body no-border">
+									 
+										<table class="table table-striped no-more-tables datatable-payment-list no-filter">
+											<thead>
+												<tr>
+													<th width="1%">
+														<div class="checkbox check-default">
+															<input id="checkbox_all" type="checkbox" value="all" class="checkall">
+															<label for="checkbox_all"></label>
+														</div>
+													</th>
+													<th>Contact</th>
+													<th>Description</th>
+													<th class="text-right">Total</th>
+													<th class="text-center">Payment Status</th>
+                                                    <th class="text-center">Registration</th>
+													<th class="text-right" width="1%">Actions</th>
+												</tr>
+											</thead>                                        
+										</table>
+								</div>
+							</div>
+				
+						</div>
+				
+					</div>
+				
+				<% end %>
+
+
+

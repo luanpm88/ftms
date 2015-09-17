@@ -105,6 +105,18 @@ class SeminarsController < ApplicationController
     render json: result[:result]
   end
   
+  def student_seminars
+    result = Seminar.student_seminars(params, current_user)
+    
+    result[:items].each_with_index do |item, index|
+      actions = render_seminar_actions(item)
+      
+      result[:result]["data"][index][result[:actions_col]] = actions
+    end
+    
+    render json: result[:result]
+  end
+  
   def add_contacts
     @seminar.add_contacts(params[:contact_ids].split(","))
     

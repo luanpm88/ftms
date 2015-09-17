@@ -19,10 +19,13 @@ class PaymentRecord < ActiveRecord::Base
                       }
                   }
   
-  after_save :course_register_update_statuses
+  after_save :update_statuses
   
-  def course_register_update_statuses
+  def update_statuses
     course_register.update_statuses
+    course_register.contacts_courses.each do |cc|
+      cc.update_statuses
+    end
   end
   
   def self.filter(params, user)
@@ -111,6 +114,94 @@ class PaymentRecord < ActiveRecord::Base
               #
               #
               #'<div class="text-center">'+item.course_register.user.staff_col+"</div>",  
+            ]
+      data << item
+      
+    end
+    
+    result = {
+              "drawn" => params[:drawn],
+              "recordsTotal" => total,
+              "recordsFiltered" => total
+    }
+    result["data"] = data
+    
+    return {result: result, items: @records, actions_col: actions_col}
+    
+  end
+  
+  
+  def self.datatable_payment_list(params, user)
+    @records = ContactsCourse.joins(:course_register, :contact).where("course_registers.parent_id IS NULL").where("course_registers.status LIKE ?", "%[active]%")
+    
+    course_ids = nil
+    if params["intake_year"].present? && params["intake_month"].present?
+      @records = Course.where("EXTRACT(YEAR FROM courses.intake) = ? AND EXTRACT(MONTH FROM courses.intake) = ? ", params["intake_year"], params["intake_month"]).map(&:id)
+    elsif params["intake_year"].present?
+      course_ids = Course.where("EXTRACT(YEAR FROM courses.intake) = ? ", params["intake_year"]).map(&:id)      
+    elsif params["intake_month"].present?
+      course_ids = Course.where("EXTRACT(MONTH FROM courses.intake) = ? ", params["intake_month"]).map(&:id)
+    end    
+    @records = @records.where(course_id: course_ids) if !course_ids.nil?
+    
+    if params["upfront"].present?
+      @records = @records.includes(:course).where(courses: {upfront: params["upfront"]})
+    end
+    
+    if params["course_types"].present?
+      @records = @records.joins(:course)
+                          .where(courses: {course_type_id: params["course_types"].split(",")})
+    end
+    
+    if params["subjects"].present?
+      @records = @records.joins(:course)
+                          .where(courses: {subject_id: params["subjects"]})
+    end
+    
+    if params["student"].present?
+      @records = @records.where(:contact_id => params["student"])
+    end
+    
+    if params["payment_statuses"].present?
+      @records = @records.where("contacts_courses.cache_payment_status LIKE ?", "%"+params["payment_statuses"]+"%")
+    end
+    
+    if params["company"].present?
+      @records = @records.includes(:course_register).where(course_registers: {payment_type: "company-sponsored", sponsored_company_id: params["company"]})
+    end
+    
+    
+    
+    @records = @records.search(params["search"]["value"]) if !params["search"]["value"].empty?
+    
+    if !params["order"].nil?
+      case params["order"]["0"]["column"]
+      when "1"
+        order = "contacts.name"
+      else
+        order = "contacts_courses.created_at"
+      end
+      order += " "+params["order"]["0"]["dir"]
+    else
+      order = "contacts_courses.created_at DESC"
+    end
+    @records = @records.order(order) if !order.nil?    
+    
+    total = @records.count
+    @records = @records.limit(params[:length]).offset(params["start"])
+    
+    data = []
+    
+    actions_col = 6
+    @records.each do |item|
+      item = [
+              "<div class=\"checkbox check-default\"><input name=\"ids[]\" id=\"checkbox#{item.id}\" type=\"checkbox\" value=\"#{item.id}\"><label for=\"checkbox#{item.id}\"></label></div>",
+              item.contact.contact_link,
+              '<div class="text-left">'+item.course.display_name+"</div>",
+              '<div class="text-right"><label class="col_label top0">Total:</label>'+ApplicationController.helpers.format_price(item.total)+"<label class=\"col_label top0\">Paid:</label>"+ApplicationController.helpers.format_price(item.paid)+"<label class=\"col_label top0\">Receivable:</label>"+ApplicationController.helpers.format_price(item.remain)+"</div>",
+              '<div class="text-center">'+item.display_payment_status+item.course_register.display_payment+"</div>",
+              '<div class="text-center">'+ item.course_register.course_register_link+"</div>", 
+              ""
             ]
       data << item
       

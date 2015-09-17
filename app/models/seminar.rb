@@ -32,9 +32,7 @@ class Seminar < ActiveRecord::Base
     self.active_seminars.search(params[:q]).limit(50).map {|model| {:id => model.id, :text => model.name} }
   end
   
-  def self.datatable(params, user)
-    ActionView::Base.send(:include, Rails.application.routes.url_helpers)
-    
+  def self.filter(params, user)
     @records = self.main_seminars
     
     if params["contact_id"].present?
@@ -56,7 +54,20 @@ class Seminar < ActiveRecord::Base
    
     ########## END REVISION-FEATURE #########################
     
-    @records = @records.search(params["search"]["value"]) if !params["search"]["value"].empty?
+     @records = @records.search(params["search"]["value"]) if !params["search"]["value"].empty?
+     
+     
+    
+    @records = @records.where("course_type_id IN (#{params["course_types"].join(",")})") if params["course_types"].present?
+    
+    return @records
+  end
+  
+  def self.datatable(params, user)
+    ActionView::Base.send(:include, Rails.application.routes.url_helpers)
+    
+    @records = self.filter(params, user)
+      
     
     if !params["order"].nil?
       case params["order"]["0"]["column"]
@@ -69,10 +80,8 @@ class Seminar < ActiveRecord::Base
     else
       order = "seminars.created_at"
     end
-    
     @records = @records.order(order) if !order.nil?
     
-    @records = @records.where("course_type_id IN (#{params["course_types"].join(",")})") if params["course_types"].present?
 
     
     total = @records.count
@@ -96,6 +105,66 @@ class Seminar < ActiveRecord::Base
               '<div class="text-center">'+item.display_start_at+"</div>",
               '<div class="text-center">'+item.user.staff_col+"</div>",
               '<div class="text-center">'+item.display_statuses+"</div>",              
+              ''
+            ]
+      data << item
+      
+    end
+    
+    result = {
+              "drawn" => params[:drawn],
+              "recordsTotal" => total,
+              "recordsFiltered" => total
+    }
+    result["data"] = data
+    
+    return {result: result, items: @records, actions_col: actions_col}
+    
+  end
+  
+  def self.student_seminars(params, user)
+    ActionView::Base.send(:include, Rails.application.routes.url_helpers)
+    
+    @records = self.filter(params, user)
+    
+    student = Contact.find(params["contact_id"])
+    
+    if !params["order"].nil?
+      case params["order"]["0"]["column"]
+      when "1"
+        order = "seminars.name"
+      else
+        order = "seminars.name"
+      end
+      order += " "+params["order"]["0"]["dir"]
+    else
+      order = "seminars.created_at"
+    end
+    @records = @records.order(order) if !order.nil?
+    
+
+    
+    total = @records.count
+    @records = @records.limit(params[:length]).offset(params["start"])
+    data = []
+    
+    actions_col = 7
+    @records.each do |item|
+      ############### BEGIN REVISION #########################
+      # update approved status
+      if params[:status].present? && params[:status] == "approved"
+        item.remove_annoucing_users([user])
+      end
+      ############### END REVISION #########################
+      
+      item = [
+              item.seminar_link,
+              item.description,
+              '<div class="text-center">'+item.course_type_name+"</div>",
+              '<div class="text-center">'+item.contact_count_link+"</div>",
+              '<div class="text-center">'+item.display_start_at+"</div>",
+              '<div class="text-center">'+item.user.staff_col+"</div>",
+              '<div class="text-center">'+student.display_present_with_seminar(item, false)+"</div>",              
               ''
             ]
       data << item

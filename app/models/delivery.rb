@@ -7,6 +7,9 @@ class Delivery < ActiveRecord::Base
   
   def update_statuses
     course_register.update_statuses
+    course_register.books_contacts.each do |bc|
+      bc.update_statuses
+    end
   end
   
   def update_deliveries(params)

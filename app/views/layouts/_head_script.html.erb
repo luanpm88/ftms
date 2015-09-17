@@ -1,5 +1,74 @@
 <script>
 	
+	function updateImportExportList(program_id, subject_id) {
+		$.ajax({
+			url : '<%= import_export_form_list_stock_updates_path %>?program_id='+program_id+'&subject_id='+subject_id,
+			success:function(data, textStatus, jqXHR)
+			{
+				$(".import-export-stock-list").html(data)
+				$('.import-export-stock-list').find(".modern_select").select2({allowClear: true})
+				$('.import-export-stock-list').find('input.number_input').number(true, 0);
+			}
+		});
+	}
+	
+	function updateStockFormList(program_id, subject_id) {
+		var contact_id = $("input[name='course_register[contact_id]']").val()
+		$.ajax({
+			url : '<%= stock_form_list_books_path %>?contact_id='+contact_id+'&program_id='+program_id+'&subject_id='+subject_id,
+			success:function(data, textStatus, jqXHR)
+			{
+				$(".stock_box_list").html(data)
+				$('.stock_box_list').find(".modern_select").select2({allowClear: true})
+				
+				calculateStockPriceForm()
+				
+				//ajax select2 for contacts		
+				$('.stock_box_list').find('.select2-ajax-discount-programs').select2({
+					placeholder: "Search for a discount program",
+					minimumInputLength: 1,
+					allowClear: true,
+					multiple: $('.select2-ajax-discount-programs').hasClass("multiple"),
+					ajax: {
+					  url: $('.select2-ajax-discount-programs').attr("data"),
+					  dataType: 'json',
+					  data: function (term, page) { // page is the one-based page number tracked by Select2
+						return {
+						  q: term, //search term
+						};
+					  },
+					  results: function (data, page) {
+						return {results: data};
+					  }
+					},
+					initSelection: function (element, callback) {				      
+					  callback({ id: element.val(), text: element.attr('text') });
+					}
+				});
+				
+				format_price($('.stock_box_list').find('input.price_input'));
+			}
+		});
+	}
+	
+	function checkCourseRegisterSponsoredCompany() {
+		var val = $("select[name='course_register[payment_type]']").val()
+		if (val == "company-sponsored") {
+			$(".company_sponsored_group").show()
+		} else {
+			$(".company_sponsored_group").hide()
+		}
+	}
+	
+	function checkCourseUpfront() {
+		var val = $("input[name='course[upfront]']:checked").val()
+		if (val == "true") {
+			$(".intake_group").hide()
+		} else {
+			$(".intake_group").show()
+		}
+	}
+	
 	function calculatePhraseHour() {
 		var count = 0
 		$(".phrase_hour").each(function () {
@@ -194,7 +263,14 @@
 		$('.stock_box_list .stock_box').each(function() {	
 			var number = $(this).attr("rel")
 			var box = $(this)
-			if (!$(this).hasClass("hidden") && box.find('input[name="contacts_courses['+number+'][course_id]"]').val() != "") {
+			
+			if (box.find("input.stock_check").length && !box.find("input.stock_check:checked").length) {
+				box.addClass("not_selected")
+			} else {
+				box.removeClass("not_selected")
+			}
+			
+			if (box.find("input.stock_check:checked").length && !$(this).hasClass("hidden") && box.find('input[name="contacts_courses['+number+'][course_id]"]').val() != "") {
 				
 				var line_total = 0
 				var quantity = 0
@@ -206,7 +282,7 @@
 				  quantity = parseFloat(box.find('input[name="books_contacts['+number+'][quantity]"]').val())
 				}				
 				if(box.find('select[name="books_contacts['+number+'][price]"]').length) {
-				  price = parseFloat(box.find('select[name="books_contacts['+number+'][price]"]').val())*quantity
+				  price = parseFloat(box.find('select[name="books_contacts['+number+'][price]"]').select2("val"))*quantity
 				}
 				if(box.find('input[name="books_contacts['+number+'][discount]"]').length && box.find('input[name="books_contacts['+number+'][discount]"]').val() != "") {
 				  price_discount = parseFloat(box.find('input[name="books_contacts['+number+'][discount]"]').val().replace(/,/g,""))
@@ -1262,7 +1338,7 @@
 					}
 				}
 			},
-			"columnDefs": [ { "targets": [0,2,3,5,6,8,9,10], "orderable": false } ],
+			"columnDefs": [ { "targets": [0,1,2,5,6,8,9,10], "orderable": false } ],
 			"order": [],
 			"aLengthMenu": [[10, 25, 50, 75, 100], [10, 25, 50, 75, 100]],
 			"iDisplayLength": 25
@@ -1283,7 +1359,7 @@
 					}
 				}
 			},
-			"columnDefs": [ { "targets": [0,1,2,3,4,5,6,7,8,9], "orderable": false } ],
+			"columnDefs": [ { "targets": [0,1,2,4,5,6,7,8,9], "orderable": false } ],
 			"order": [],
 			"aLengthMenu": [[10, 25, 50, 75, 100], [10, 25, 50, 75, 100]],
 			"iDisplayLength": 25
@@ -1313,6 +1389,28 @@
 			"serverSide": true,
 			"ajax": {
 				"url": "<%= datatable_seminars_path %>",
+				"data": function ( d ) {
+					d.course_types = $("select[name='filter[course_types[]]']").val()
+					if($(".seminar-filter select[name='status']").val()) {
+						d.status =  $(".seminar-filter select[name='status']").val()						
+					}
+					if($(".seminar-filter input[name='contact_id']").val()) {
+						d.contact_id = $(".seminar-filter input[name='contact_id']").val()
+					}
+				}
+			},
+			"columnDefs": [ { "targets": [1,2,3,5,6], "orderable": false } ],
+			"order": [],
+			"aLengthMenu": [[10, 25, 50, 75, 100], [10, 25, 50, 75, 100]],
+			"iDisplayLength": 25
+	    });
+		
+		//Datatable seminars
+	    $('.datatable-student-seminars').dataTable( {
+			"processing": true,
+			"serverSide": true,
+			"ajax": {
+				"url": "<%= student_seminars_seminars_path %>",
 				"data": function ( d ) {
 					d.course_types = $("select[name='filter[course_types[]]']").val()
 					if($(".seminar-filter select[name='status']").val()) {
@@ -1410,7 +1508,7 @@
 					}
 				}
 			},
-			"columnDefs": [ { "targets": [0,1,2,3,4,5,6,7,8,9], "orderable": false } ],
+			"columnDefs": [ { "targets": [0,1,2,3,4,5,6,8,9,10], "orderable": false } ],
 			"order": [],
 			"aLengthMenu": [[10, 25, 50, 75, 100], [10, 25, 50, 75, 100]],
 			"iDisplayLength": 25
@@ -1547,6 +1645,122 @@
 			"iDisplayLength": 25
 	    });
 		
+		//Datatable subjects
+	    $('.datatable-delivery').dataTable( {
+			"processing": true,
+			"serverSide": true,
+			"ajax": {
+				"url": "<%= datatable_books_contacts_path %>",
+				"data": function ( d ) {
+					if($(".delivery-filter select[name='books[]']").val()) {
+						d.books = $(".delivery-filter select[name='books[]']").val()
+					}
+					
+					if($(".delivery-filter select[name='course_types[]']").val()) {
+						d.course_types = $(".delivery-filter select[name='course_types[]']").val()
+					}
+					
+					if($(".delivery-filter select[name='subjects[]']").val()) {
+						d.subjects = $(".delivery-filter select[name='subjects[]']").val()
+					}
+					
+					if($(".delivery-filter select[name='filter[intake(2i)]']").val()) {
+						d.intake_month =  $(".delivery-filter select[name='filter[intake(2i)]']").val()
+					}
+					
+					if($(".delivery-filter select[name='filter[intake(1i)]']").val()) {
+						d.intake_year =  $(".delivery-filter select[name='filter[intake(1i)]']").val()
+					}
+					
+					if($(".delivery-filter input[name='courses']").val()) {
+						d.courses =  $(".delivery-filter input[name='courses']").val()
+					}
+					
+					if($(".delivery-filter input[name='courses_phrases']").val()) {
+						d.courses_phrases =  $(".delivery-filter input[name='courses_phrases']").val()
+					}
+					
+					if($(".delivery-filter input[name='student']").val()) {
+						d.student =  $(".delivery-filter input[name='student']").val()
+					}
+					
+					d.delivery_statuses = $(".delivery-filter select[name='delivery_statuses']").val()
+					
+				}
+			},
+			"columnDefs": [ { "targets": [0,2,3,4,5,6], "orderable": false } ],
+			"order": [],
+			"aLengthMenu": [[10, 25, 50, 75, 100], [10, 25, 50, 75, 100]],
+			"iDisplayLength": 25
+	    });
+		
+		//Datatable course types
+	    $('.datatable-stock-updates').dataTable( {
+			"processing": true,
+			"serverSide": true,
+			"ajax": {
+				"url": "<%= datatable_stock_updates_path %>",
+				"data": function ( d ) {
+					if($(".stock-update-filter input[name='created_from']").val()) {
+						d.created_from =  $(".stock-update-filter input[name='created_from']").val()
+					}
+					
+					if($(".stock-update-filter input[name='created_to']").val()) {
+						d.created_to =  $(".stock-update-filter input[name='created_to']").val()
+					}
+					
+					if($(".stock-update-filter select[name='type_name']").val()) {
+						d.type_name =  $(".stock-update-filter select[name='type_name']").val()
+					}
+				}
+			},
+			"columnDefs": [ { "targets": [0,1,2,3,4,5], "orderable": false } ],
+			"order": [],
+			"aLengthMenu": [[10, 25, 50, 75, 100], [10, 25, 50, 75, 100]],
+			"iDisplayLength": 25
+	    });
+		
+		//Datatable course types
+	    $('.datatable-payment-list').dataTable( {
+			"processing": true,
+			"serverSide": true,
+			"ajax": {
+				"url": "<%= datatable_payment_list_payment_records_path %>",
+				"data": function ( d ) {
+					if($(".payment-list-filter select[name='course_types[]']").val()) {
+						d.course_types = $(".payment-list-filter select[name='course_types[]']").val()
+					}
+					
+					if($(".payment-list-filter select[name='subjects[]']").val()) {
+						d.subjects = $(".payment-list-filter select[name='subjects[]']").val()
+					}
+					
+					if($(".payment-list-filter select[name='filter[intake(2i)]']").val()) {
+						d.intake_month =  $(".payment-list-filter select[name='filter[intake(2i)]']").val()
+					}
+					
+					if($(".payment-list-filter select[name='filter[intake(1i)]']").val()) {
+						d.intake_year =  $(".payment-list-filter select[name='filter[intake(1i)]']").val()
+					}
+					
+					if($(".payment-list-filter input[name='student']").val()) {
+						d.student =  $(".payment-list-filter input[name='student']").val()
+					}
+					
+					if($(".payment-list-filter input[name='company']").val()) {
+						d.company =  $(".payment-list-filter input[name='company']").val()
+					}
+					
+					d.payment_statuses = $(".payment-list-filter select[name='payment_statuses']").val()
+					d.upfront = $(".payment-list-filter input[name='course[upfront]']:checked").val()
+				}
+			},
+			"columnDefs": [ { "targets": [0,1,2,3,4,5,6], "orderable": false } ],
+			"order": [],
+			"aLengthMenu": [[10, 25, 50, 75, 100], [10, 25, 50, 75, 100]],
+			"iDisplayLength": 25
+	    });
+		
 	    $('select[name="DataTables_Table_0_length"]').select2({allowClear: true});
 		
 		//ajax select2 for contacts
@@ -1557,6 +1771,29 @@
 			multiple: $('.select2-ajax-contacts').hasClass("multiple"),
 			ajax: {
 			  url: $('.select2-ajax-contacts').attr("data"),
+			  dataType: 'json',
+			  data: function (term, page) { // page is the one-based page number tracked by Select2
+				return {
+				  q: term, //search term				  
+				};
+			  },
+			  results: function (data, page) {
+				return {results: data};
+			  }
+			},
+			initSelection: function (element, callback) {				      
+			  callback({ id: element.val(), text: element.attr('text') });
+			}
+	    });
+		
+		//ajax select2 for contacts
+	    $('.select2-ajax-companies').select2({
+			placeholder: "Search for a company",
+			minimumInputLength: 1,
+			allowClear: true,
+			multiple: $('.select2-ajax-companies').hasClass("multiple"),
+			ajax: {
+			  url: $('.select2-ajax-companies').attr("data"),
 			  dataType: 'json',
 			  data: function (term, page) { // page is the one-based page number tracked by Select2
 				return {
@@ -2032,11 +2269,12 @@
 		
 		$('.date-group select').select2();
 		
-		$('.activity-filter select, .activity-filter input,.phrase-filter select, .phrase-filter input,.subject-filter select, .subject-filter input,.seminar-filter select, .seminar-filter input,.contact-tag-filter select, .contact-tag-filter input,.bank-account-filter select, .bank-account-filter input,.discount-program-filter select, .discount-program-filter input,.course-type-filter select, .course-type-filter input,.transfer-filter select, .transfer-filter input,.payment-record-filter select, .payment-record-filter input, .course-filter select, .course-filter input, .book-filter input, .book-filter select, .course-register-filter input, .course-register-filter select').change(function() {
+		$('.payment-list-filter select, .payment-list-filter input,.stock-update-filter select, .stock-update-filter input,.delivery-filter select, .delivery-filter input,.activity-filter select, .activity-filter input,.phrase-filter select, .phrase-filter input,.subject-filter select, .subject-filter input,.seminar-filter select, .seminar-filter input,.contact-tag-filter select, .contact-tag-filter input,.bank-account-filter select, .bank-account-filter input,.discount-program-filter select, .discount-program-filter input,.course-type-filter select, .course-type-filter input,.transfer-filter select, .transfer-filter input,.payment-record-filter select, .payment-record-filter input, .course-filter select, .course-filter input, .book-filter input, .book-filter select, .course-register-filter input, .course-register-filter select').change(function() {
 			$('.datatable-courses').dataTable().fnFilter();
 			$('.datatable-student-courses').dataTable().fnFilter();
 			$('.datatable-subjects').dataTable().fnFilter();
 			$('.datatable-seminars').dataTable().fnFilter();
+			$('.datatable-student-seminars').dataTable().fnFilter();
 			$('.datatable-phrases').dataTable().fnFilter();
 			$('.datatable-books').dataTable().fnFilter();
 			$('.datatable-student-books').dataTable().fnFilter();
@@ -2049,6 +2287,9 @@
 			$('.datatable-bank-accounts').dataTable().fnFilter();
 			$('.datatable-contact-tags').dataTable().fnFilter();
 			$('.datatable-activities').dataTable().fnFilter();
+			$('.datatable-delivery').dataTable().fnFilter();
+			$('.datatable-stock-updates').dataTable().fnFilter();
+			$('.datatable-payment-list').dataTable().fnFilter();
 		});
 		
 		checkContactType()
@@ -2230,6 +2471,10 @@
 		$(document).on("click", ".ajax-check-radio", function(e) {
 			e.preventDefault();
 			
+			if ($(this).attr("href") == "#none") {
+				return
+			}
+			
 			var box = $(this).parent()
 			var url = $(this).attr("href")
 			
@@ -2293,13 +2538,13 @@
 			$('.stock_box_'+val).addClass("hidden")
 		});
 		
-		updateBookForm(false, false, 0)		
-		$('input[name="program_id"]').change(function() {
-			updateBookForm($(this),false, $(this).attr("box_number"))
-		})
-		$('input[name="subject_id"]').change(function() {
-			updateBookForm(false, $(this),$(this).attr("box_number"))
-		})
+		//updateBookForm(false, false, 0)		
+		//$('input[name="program_id"]').change(function() {
+		//	updateBookForm($(this),false, $(this).attr("box_number"))
+		//})
+		//$('input[name="subject_id"]').change(function() {
+		//	updateBookForm(false, $(this),$(this).attr("box_number"))
+		//})
 		
 		$(document).on("change", 'select.stock_select', function() {			
 			//updateVolumnForm($(this))
@@ -2436,6 +2681,24 @@
 		$(document).on("click", ".phrase_title", function() {
 			$("."+$(this).attr("rel")).toggle()
 		});
+		
+		checkCourseUpfront()
+		$("input[name='course[upfront]']").change(function() {
+			checkCourseUpfront()
+		})
+		
+		checkCourseRegisterSponsoredCompany()
+		$("select[name='course_register[payment_type]']").change(function() {
+			checkCourseRegisterSponsoredCompany()
+		})
+		
+		$(".stock_form_filter input").change(function() {
+			updateStockFormList($(".stock_form_filter input[name='program_id']").val(),$(".stock_form_filter input[name='subject_id']").val())
+		})
+		
+		$(".import_export_form_filter input").change(function() {
+			updateImportExportList($(".import_export_form_filter input[name='program_id']").val(),$(".import_export_form_filter input[name='subject_id']").val())
+		})
 	})
 	
 

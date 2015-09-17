@@ -1,0 +1,51 @@
+                <% if !@books.empty? %>
+                    
+                    <h4>Stock List</h4>
+                    
+                    <div class="row">
+                          <div class="col-md-1">
+                            <label class="form-label">Cover</label>
+                          </div>
+                          <div class="col-md-4">
+                            <label class="form-label">Stock Name</label>
+                          </div>
+                          <div class="col-md-1">
+                            <label class="form-label">Quantity</label>
+                          </div>
+                          
+                          
+                    </div>
+                    
+                    <% @books.each do |book| %>
+                        
+                        <div class="row">
+                          <div class="col-md-1">
+                            <%= book.cover_link %>
+                          </div>
+                          <div class="col-md-4">
+                            <%= book.book_link(book.display_name) %>
+                            <%= hidden_field_tag "stock_updates["+book.id.to_s+"][book_id]", book.id %>
+                          </div>
+                          <div class="col-md-3">
+                            <%= text_field_tag "stock_updates["+book.id.to_s+"][quantity]", "", class: "form-control number_input" %>
+                          </div>
+                          
+                          
+                        </div>
+                        
+                        
+                    <% end %>
+                    
+                    
+                     <br />
+                        <br />
+                        <br />
+                        <br />
+                        
+                        <div class="form-actions">  
+                           <div class="pull-right">
+                            <button type="Update All" class="btn btn-success btn-cons"><i class="icon-ok"></i> Save</button>
+                            <%= link_to 'Cancel', users_path, :class => "btn btn-white btn-cons cancel-but" %>
+                         </div>
+                  
+                <% end %>

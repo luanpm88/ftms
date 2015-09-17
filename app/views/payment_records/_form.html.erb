@@ -200,7 +200,7 @@
 														<label class="form-label">Phrase</label>
 														<span class="help"></span>
 														<div class="input-with-iconz  right">                                       
-															 <%= cc.courses_phrase_list.html_safe %>
+															 <%= cc.courses_phrase_list.html_safe if !cc.course.upfront %>
 														</div>
 												  </div>
 											 </div>                                             

@@ -1,4 +1,6 @@
 class BooksContactsController < ApplicationController
+  include BooksContactsHelper
+  
   before_action :set_books_contact, only: [:show, :edit, :update, :destroy]
 
   # GET /books_contacts
@@ -59,6 +61,18 @@ class BooksContactsController < ApplicationController
       format.html { redirect_to books_contacts_url }
       format.json { head :no_content }
     end
+  end
+  
+  def datatable
+    result = BooksContact.datatable(params, current_user)
+    
+    result[:items].each_with_index do |item, index|
+      actions = render_books_contact_actions(item)
+      
+      result[:result]["data"][index][result[:actions_col]] = actions
+    end
+    
+    render json: result[:result]
   end
 
   private

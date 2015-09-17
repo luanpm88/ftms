@@ -35,19 +35,32 @@
 						 <div class="col-md-7">
                           
                             <div class="row">
-                                  <div class="col-md-4">
-                                       <div class="form-group">
-                                         <label class="form-label"><%= f.label :intake %></label>
-                                         <span class="help">(required)</span>
-										 <%= render "field_history", drafts: @course.field_history("intake"), type: "intake" %>
-                                         <div class="input-with-icon date-group right">                                       
-                                              <i class=""></i>
-                                              <%= f.date_select :intake, use_short_month: true %>
-                                         </div>
-                                       </div>
+                                  <div class="col-md-2">
+										<div class="form-group" style="margin-bottom: 5px;">
+											 <label class="form-label">Upfront?</label>
+											 <span class="help"></span>
+											 <div class="input-with-icon right">                                       
+												  <div class="radio radio-success" style="padding: 5px">
+													   <input class="required" id="upfront_true" type="radio" name="course[upfront]" value="true" <%= 'checked="checked"' if @course.upfront %>>
+													   <label for="upfront_true">Yes</label>
+													   <input class="required" id="upfront_false" type="radio" name="course[upfront]" value="false" <%= 'checked="checked"' if !@course.upfront %>>
+													   <label for="upfront_false">No</label>
+												  </div>
+											 </div>
+										</div>	
+                                       
                                   </div>
 								  
-								  <div class="col-md-4">
+								  <div class="col-md-5 intake_group">
+										<div class="form-group">
+											  <label class="form-label"><%= f.label :intake %></label>
+											  <span class="help">(required)</span>
+											  <%= render "field_history", drafts: @course.field_history("intake"), type: "intake" %>
+											  <div class="input-with-icon date-group right">                                       
+												   <i class=""></i>
+												   <%= f.date_select :intake, use_short_month: true %>
+											  </div>
+                                       </div>
 										<div class="form-group">
 											 <label class="form-label"><label>For Exam</label></label>
 											 <span class="help">(required)</span>
@@ -59,7 +72,7 @@
 										</div>
 								   </div>
 								  
-								  <div class="col-md-4">
+								  <div class="col-md-5">
 										<div class="form-group">
 											 <label class="form-label"><label>Paper</label></label>
 											 <span class="help">(required)</span>

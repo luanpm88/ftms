@@ -8461,3 +8461,6 @@ form .icon-time {
 .phrase_title {
     cursor: pointer;
 }
+.not_selected {
+    opacity: 0.3;
+}

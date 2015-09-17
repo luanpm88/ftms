@@ -204,7 +204,34 @@ class BooksController < ApplicationController
   end
   
   ########## BEGIN REVISION ###############
-
+  
+  def stock_form_list
+    records = []
+    
+    if params[:program_id].present? || params[:subject_id].present?
+      records = Book.active_books.order("name")      
+      records = records.where(course_type_id: params[:program_id]) if params[:program_id].present?
+      records = records.where(course_type_id: params[:subject_id]) if params[:subject_id].present?
+    end
+    
+    contact = Contact.find(params[:contact_id])
+    
+    @books = []
+    records.each do |r|
+      @books << r if !r.registered?(contact)
+    end
+    
+    render layout: nil
+  end
+  
+  def delivery    
+    render layout: "content"
+  end
+  
+  def import_export
+    render layout: "content"
+  end
+  
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_book
@@ -213,6 +240,6 @@ class BooksController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def book_params
-      params.require(:book).permit(:subject_ids, :course_type_ids, :name, :description, :user_id, :image, :pirce, :publisher, :parent_id)
+      params.require(:book).permit(:subject_id, :course_type_id, :subject_ids, :course_type_ids, :name, :description, :user_id, :image, :pirce, :publisher, :parent_id)
     end
 end

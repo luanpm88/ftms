@@ -6,7 +6,8 @@ class CourseRegister < ActiveRecord::Base
   
   belongs_to :contact
   belongs_to :discount_program
-  belongs_to :bank_account  
+  belongs_to :bank_account
+  belongs_to :sponsored_company, class_name: "Contact"
   
   has_many :deliveries, :dependent => :destroy
   
@@ -40,11 +41,11 @@ class CourseRegister < ActiveRecord::Base
   after_create :update_statuses
   
   def all_deliveries
-    deliveries.where(status: 1).order("delivery_date DESC, created_at DESC")
+    deliveries.where(status: 1).order("deliveries.delivery_date DESC, deliveries.created_at DESC")
   end
   
   def all_payment_records
-    payment_records.where(status: 1).order("payment_date DESC, created_at DESC")
+    payment_records.where(status: 1).order("payment_date DESC, payment_records.created_at DESC")
   end
   
   def save_contacts_courses(cids)
@@ -80,6 +81,7 @@ class CourseRegister < ActiveRecord::Base
         cc.upfront = row[1]["upfront"]
         cc.price = row[1]["price"]        
         cc.discount = row[1]["discount"]
+        #cc.sponsored_company_id = row[1]["sponsored_company_id"]
         
         # Discount programs
         dps = []
@@ -103,7 +105,7 @@ class CourseRegister < ActiveRecord::Base
   def update_books_contacts(cids)
     contact = self.contact    
     cids.each do |row|
-      if row[1]["book_id"].present?
+      if row[1]["book_id"].present? && row[1]["selected"].present?
         cc = self.books_contacts.new
         cc.book_id = row[1]["book_id"]
         cc.quantity = row[1]["quantity"]
@@ -158,7 +160,7 @@ class CourseRegister < ActiveRecord::Base
     
     @records = @records.joins(:contacts_courses => :course).where(courses: {id: course_ids}) if !course_ids.nil?
     
-    @records = @records.search(params["search"]["value"]) if !params["search"]["value"].empty?
+    
     
     
     ########## BEGIN REVISION-FEATURE #########################
@@ -180,15 +182,13 @@ class CourseRegister < ActiveRecord::Base
   
   def self.datatable(params, user)
     ActionView::Base.send(:include, Rails.application.routes.url_helpers)
-    link_helper = ActionController::Base.helpers    
     
     @records = self.filter(params, user)
+    @records = @records.search(params["search"]["value"]) if !params["search"]["value"].empty?
     
     if !params["order"].nil?
       case params["order"]["0"]["column"]
-      when "0"
-        order = "course_registers.created_at"
-      when "2"
+      when "7"
         order = "course_registers.created_at"
       else
         order = "course_registers.created_at"
@@ -204,7 +204,7 @@ class CourseRegister < ActiveRecord::Base
     
     data = []
     
-    actions_col = 9
+    actions_col = 10
     @records.each do |item|
       ############### BEGIN REVISION #########################
       # update approved status
@@ -213,12 +213,13 @@ class CourseRegister < ActiveRecord::Base
       end
       ############### END REVISION #########################
       item = [
+              "<div class=\"checkbox check-default\"><input name=\"ids[]\" id=\"checkbox#{item.id}\" type=\"checkbox\" value=\"#{item.id}\"><label for=\"checkbox#{item.id}\"></label></div>",
               item.contact.contact_link,
               item.course_list,
               item.book_list,
               '<div class="text-center">'+item.display_delivery_status+"</div>",
               '<div class="text-right"><label class="col_label top0">Total:</label>'+ApplicationController.helpers.format_price(item.total)+"<label class=\"col_label top0\">Paid:</label>"+ApplicationController.helpers.format_price(item.paid_amount)+"<label class=\"col_label top0\">Receivable:</label>"+ApplicationController.helpers.format_price(item.remain_amount)+"</div>",
-              '<div class="text-center">'+item.display_payment_status+item.payment+"</div>",
+              '<div class="text-center">'+item.display_payment_status+item.display_payment+"</div>",
               '<div class="text-center">'+item.created_at.strftime("%d-%b-%Y")+"</div>",
               '<div class="text-center">'+item.contact.account_manager.staff_col+"</div>",
               '<div class="text-center">'+item.display_statuses+"</div>",
@@ -246,6 +247,8 @@ class CourseRegister < ActiveRecord::Base
     @student = Contact.find(params[:student])
     
     @records =  self.filter(params, user)
+    @records = @records.search(params["search"]["value"]) if !params["search"]["value"].empty?
+    
     
     @records = @records.where(contact_id: @student.id)
     
@@ -771,5 +774,14 @@ class CourseRegister < ActiveRecord::Base
   end
   
   ############### END REVISION #########################
+  
+  def display_payment
+    if payment == "company-sponsored"
+      "company-sponsored<br /><i class=\"icon-building\"></i> #{sponsored_company.contact_link}".html_safe
+    else
+      payment
+    end
+    
+  end
   
 end

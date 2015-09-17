@@ -1,0 +1,108 @@
+                            <% @books.each_with_index do |book,number| %>
+							  <div class="row column-seperation stock_box stock_box_<%= number %>" rel="<%= number %>">
+                                    <div class="stock_box_label">Stock #<%= number+1 %></div>
+									<!--<div class="stock_box_close" rel="<%= number.to_s %>"><i class="icon icon-remove"></i></div>-->
+								   <div class="col-md-12">
+										<hr />
+								   </div>								   
+								   <div class="col-md-12">
+										<div class="row">
+                                              <div class="col-md-1">
+                                                  <div class="text-center">
+                                                    <%= book.cover_link %>                                                    
+                                                  </div>
+                                              </div>
+                                              <div class="col-md-3">
+                                                  <div class="">
+                                                    <strong><%= book.display_name %></strong>
+                                                    <%= hidden_field_tag "books_contacts["+number.to_s+"][book_id]", book.id %>
+                                                  </div>
+                                              </div>
+                                              <div class="col-md-1">
+                                                   <div class="form-group">
+                                                        <label class="form-label"><label>Quantity</label></label>
+                                                        <span class="help"></span>
+                                                        <div class="input-with-iconz date-group right">                                       
+                                                             <i class=""></i>
+                                                             <div class="input-with_add_but">
+                                                                  <%= text_field_tag "books_contacts["+number.to_s+"][quantity]", 1, class: "form-control number_input_0 required text-center" %>
+                                                             </div>
+                                                        </div>
+                                                   </div>
+                                              </div>
+
+                                              <div class="col-md-2">
+                                                    <div class="form-group">
+                                                      <label class="form-label"><label>Price</label></label>
+                                                      <span class="help"></span>
+                                                      <div class="input-with-icon  right">                                       
+                                                           <i class=""></i>
+                                                           <div class="input-with-iconz right">
+                                                                <select name="books_contacts[<%= number.to_s %>][price]" class="text-right modern_select width100 required price_acourse">
+                                                                  <% book.prices.each do |price| %>
+                                                                      <option value="<%= price %>" class="text-right"><%= format_price(price) %></option>
+                                                                  <% end %>
+                                                                </select>
+                                                           </div>
+                                                      </div>
+                                                    </div>	                                                                                                                          
+                                               </div>
+                                               <!--<div class="col-md-2">
+                                                    <div class="form-group">
+                                                          <label class="form-label"><label>Discount Program</label></label>
+                                                          <span class="help"></span>
+                                                          <div class="input-with-icon right">                                       
+                                                               <i class=""></i>
+                                                                <div class="input-with_add_but">
+                                                                  <%= link_to '<i class="icon-plus"></i>'.html_safe, new_discount_program_path(tab_page: 1), title: "New Discount Program", :class => 'btn btn-sm btn-small btn-white tab_page' %>
+                                                                  <input style="width:100%;margin-bottom: 5px;" name="books_contacts[<%= number.to_s %>][discount_program_id]" data="<%= discount_programs_path(format: "json") %>" class="select2-ajax-discount-programs price_discount_program" /> 
+                                                                </div>
+                                                          </div>
+                                                    </div>
+                                               </div>-->
+                                               <div class="col-md-2">
+                                                    <div class="form-group">
+                                                          <label class="form-label"><label>Other discount/credit</label></label>
+                                                          <span class="help"></span>
+                                                          <div class="input-with-iconz right">                                       
+                                                              <%= text_field_tag "books_contacts["+number.to_s+"][discount]", "", class: "form-control price_input price_discount" %>
+                                                          </div>
+                                                    </div>
+                                               </div>
+                                               <div class="col-md-2">
+                                                    <div class="form-group">
+                                                          <label class="form-label"><label>Total</label></label>
+                                                          <span class="help"></span>
+                                                          <div class="input-with-iconz right">                                       
+                                                              <h4 class="text-right" style="margin: 0">
+                                                                   <strong class="total_stock total_stock_<%= number %>"></strong>
+                                                              </h4>
+                                                          </div>
+                                                    </div>
+                                               </div>
+                                               <div class="col-md-1">
+                                                    <div class="form-group">
+                                                          <label class="form-label"><label></label></label>
+                                                          <span class="help"></span>
+                                                          <div class="input-with-iconz t">                                       
+                                                              <div class="checkbox check-success" style="margin-top: 15px">
+                                                                  <%= check_box_tag "books_contacts["+number.to_s+"][selected]", true, true, {id: "stock_check_"+number.to_s, class: "stock_check" } %>
+                                                                  <label for="stock_check_<%= number %>"></label>
+                                                              </div>
+                                                          </div>
+                                                    </div>
+                                               </div>
+                                        </div>
+								   </div>
+								   <div class="col-md-5">
+										<div class="form_volumn_list_<%= number %>"></div>
+								   </div>
+							  </div>
+							  
+						 <% end %>
+						 
+                          <!--<hr />
+                          <a href="#add" class="btn btn-white add-more-stock-form"><i class="icon icon-plus"></i> Add Stock</a>
+                          <hr />-->
+                         
+                          

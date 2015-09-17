@@ -28,9 +28,17 @@ Hkerp::Application.routes.draw do
       get :print
       get :datatable
       get :trash
+      get :payment_list
+      get :datatable_payment_list
     end
   end
-  resources :stock_updates
+  resources :stock_updates do
+    collection do
+      get :datatable
+      get :import_export_form_list
+      post :import_export
+    end
+  end
   resources :delivery_details
   resources :deliveries do
     collection do
@@ -39,7 +47,11 @@ Hkerp::Application.routes.draw do
       get :trash
     end
   end
-  resources :books_contacts
+  resources :books_contacts do
+    collection do
+      get :datatable
+    end
+  end
   resources :book_prices
   resources :bank_accounts do
     collection do
@@ -104,6 +116,7 @@ Hkerp::Application.routes.draw do
   resources :seminars do
     collection do
       get :datatable
+      get :student_seminars
       get :add_contacts
       get :remove_contacts
       
@@ -133,6 +146,7 @@ Hkerp::Application.routes.draw do
     collection do
       get :datatable
       get :student_course_registers
+      post :export_student_course
       
       ### revision ###
       get :delete
@@ -183,6 +197,11 @@ Hkerp::Application.routes.draw do
       get :field_history
       
       ####################
+      
+      get :stock_form_list
+      get :delivery
+      get :import_export
+      
     end
   end
   

@@ -9,39 +9,61 @@
                     	<h3>Registration - <span class="semi-bold"> Management</span></h3>	
                 </div>
 				
-				<%= render "filter" %>
+				<%= form_tag("", {class: "listing_form", method: "post", target: "_blank"}) do |f| %>
 				
-                <div class="row">
-                    <div class="col-md-12">
-                        <!--<%= link_to 'New Registration', new_course_register_path(tab_page: 1), psrc: course_registers_path(tab_page:1), title: "New Registration", :class => 'btn btn-primary btn-cons tab_page' %>-->
-						<%= link_to '<i class="icon icon-print"></i> Print To-Be-Delivered List'.html_safe, delivery_list_deliveries_path(format: "xls"), target: "_blank", :class => 'btn btn-white btn-cons' %>
-                        <div class="grid simple ">
-                            <div class="grid-title no-border">
-                                <h4>Listing  <span class="semi-bold">Registration</span></h4>
-                                
-                            </div>
-                            <div class="grid-body no-border">
-                                 
-                                    <table class="table table-striped no-more-tables datatable-course-registers no-filter">
-                                        <thead>
-                                            <tr>                                                
-												<th>Student Name</th>
-												<th class="text-left">Course</th>
-                                                <th class="text-left">Stock</th>
-												<th class="text-center">Delivery Status</th>
-												<th class="text-right">Total</th>
-												<th class="text-center">Payment Status</th>
-                                                <th class="text-center">Created On</th>
-												<th class="text-center" width="1%">Consultant</th>
-												<th class="text-center" width="1%">Status</th>
-												<th class="text-right" width="1%">Actions</th>
-                                            </tr>
-                                        </thead>                                        
-                                    </table>
-                            </div>
-                        </div>
-			
-                    </div>
-		    
-                </div>
-
+					<%= render "filter" %>
+					
+					<div class="row">
+						<div class="col-md-12">
+							<!--<%= link_to 'New Registration', new_course_register_path(tab_page: 1), psrc: course_registers_path(tab_page:1), title: "New Registration", :class => 'btn btn-primary btn-cons tab_page' %>-->
+							<%= link_to '<i class="icon icon-print"></i> Print To-Be-Delivered List'.html_safe, delivery_list_deliveries_path(format: "xls"), target: "_blank", :class => 'btn btn-white btn-cons' %>
+							
+							<div class="listing_box_actions">
+								<div class="btn-group listing_actions"> <a href="#" data-toggle="dropdown" class="btn btn-white dropdown-toggle btn-demo-space"> List Actions (<span class="listing_checked_count">0</span>)<span class="caret"></span> </a>
+									<ul class="dropdown-menu">
+										<li><a href="#" rel="<%= export_student_course_course_registers_path %>">Export Student-Course List</a></li>									
+									</ul>
+								</div>
+								<div class="checkbox check-default check_all_page_but" style="display: inline-block">
+									<input name="check_all_page" id="checkbox_all_page" type="checkbox" value="all_page" class="check_all_page">
+									<label for="checkbox_all_page">Select All Pages</label>
+								</div>							
+							</div>
+							
+							<div class="grid simple ">
+								<div class="grid-title no-border">
+									<h4>Listing  <span class="semi-bold">Registration</span></h4>
+									
+								</div>
+								<div class="grid-body no-border">
+									 
+										<table class="table table-striped no-more-tables datatable-course-registers no-filter">
+											<thead>
+												<tr>
+													<th width="1%" class="text-center">
+														<div class="checkbox check-default">
+															<input id="checkbox_all" type="checkbox" value="all" class="checkall">
+															<label for="checkbox_all"></label>
+														</div>
+													</th>
+													<th>Student Name</th>
+													<th class="text-left">Course</th>
+													<th class="text-left">Stock</th>
+													<th class="text-center">Delivery Status</th>
+													<th class="text-right">Total</th>
+													<th class="text-center">Payment Status</th>
+													<th class="text-center">Created On</th>
+													<th class="text-center" width="1%">Consultant</th>
+													<th class="text-center" width="1%">Status</th>
+													<th class="text-right" width="1%">Actions</th>
+												</tr>
+											</thead>                                        
+										</table>
+								</div>
+							</div>
+				
+						</div>
+				
+					</div>
+				
+				<% end %>

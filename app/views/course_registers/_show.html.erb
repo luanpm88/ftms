@@ -12,7 +12,7 @@
 								   </div>
 								   <div class="col-md-12">
 										<div class="row column-seperation">
-											 <div class="col-md-1">													   
+											 <!--<div class="col-md-1">													   
 												  <div class="form-group">
 													   <label class="form-label">Upfront?</label>
 													   <span class="help"></span>
@@ -20,7 +20,7 @@
 															<strong><%= cc.upfront ? "Yes" : "No" %></strong>
 													   </div>
 												  </div>									
-											 </div>
+											 </div>-->
 											 <div class="col-md-2">
 												  <div class="form-group">
 														<label class="form-label">Course</label>
@@ -30,7 +30,7 @@
 														</div>
 												  </div>
 											 </div>
-                                             <div class="col-md-3">
+                                             <div class="col-md-4">
 												  <div class="form-group">
 														<label class="form-label">Phrase</label>
 														<span class="help"></span>
@@ -124,7 +124,7 @@
 																	<label class="form-label">Book</label>
 																	<span class="help"></span>
 																	<div class="input-with-iconz  right">                                       
-																		 <strong><%= bc.book.name %></strong>
+																		 <strong><%= bc.book.display_name %></strong>
 																	</div>
 															  </div>
 														 </div>
@@ -148,14 +148,13 @@
 															  </div>
 														 </div>
 														 <div class="col-md-2">
-																	<div class="form-group">
+																	<!--<div class="form-group">
 																		  <label class="form-label">Discount Program</label>
 																		  <span class="help"></span>
 																		  <div class="input-with-iconz  text-right">                                       
-																					<div><strong><%= format_price(bc.discount_program_amount) %></strong></div>
-																			   
+																			  <div><strong><%= format_price(bc.discount_program_amount) %></strong></div>																			   
 																		  </div>
-																	</div>
+																	</div>-->
 																	<% if bc.discount.to_f > 0 %>
 																			<div class="form-group">
 																					<label class="form-label">Other discount/credit</label>
@@ -270,7 +269,7 @@
 												</div>
 										<% end %>										
 										<% if @course_register.transfer.to_f > 0 %>
-												<div class="form-group">
+												<!--<div class="form-group">
 													 <label class="form-label">Deferred/Tranferred</label>
 													 <span class="help"></span>
 													 <div class="input-with-icon right">
@@ -279,7 +278,7 @@
 														  </div>
 														 
 													 </div>
-												</div>
+												</div>-->
 										<% end %>
 										<div class="form-group">
 											 <label class="form-label">Total Price</label>

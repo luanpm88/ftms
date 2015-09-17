@@ -145,7 +145,11 @@ class Ability
         !c.statuses.include?("delete_pending") && !c.statuses.include?("deleted")
       end
       can :field_history, Book
+      can :stock_form_list, Book
+      can :delivery, Book
+      can :import_export, Book
       
+      can :datatable, BooksContact
       
       can :view, ContactTag
       can :datatable, ContactTag
@@ -161,6 +165,7 @@ class Ability
       
       
       can :datatable, Seminar
+      can :student_seminars, Seminar
       can :read, Seminar
       can :create, Seminar
       can :add_contacts, Seminar
@@ -217,14 +222,19 @@ class Ability
       can :read, DeliveryDetail
       can :create, DeliveryDetail
       
+      can :datatable, StockUpdate
       can :read, StockUpdate
       can :create, StockUpdate
+      can :import_export_form_list, StockUpdate
+      can :import_export, StockUpdate
       
       can :datatable, PaymentRecord
       can :read, PaymentRecord
       can :create, PaymentRecord
       can :print, PaymentRecord
       can :trash, PaymentRecord
+      can :payment_list, PaymentRecord
+      can :datatable_payment_list, PaymentRecord
       
       can :datatable, Activity
       can :read, Activity
@@ -264,12 +274,13 @@ class Ability
         contact.statuses.include?("active") && contact.contact_types.include?(ContactType.student)
       end
       can :update, CourseRegister do |c|
-        c.deliveries.empty? && c.payment_records.empty?
+        c.all_deliveries.empty? && c.all_payment_records.empty?
       end
       can :delete, CourseRegister do |c|
-        !c.statuses.include?("delete_pending") && !c.statuses.include?("deleted")
+        c.all_deliveries.empty? && c.all_payment_records.empty? && !c.statuses.include?("delete_pending") && !c.statuses.include?("deleted")
       end
       can :field_history, CourseRegister
+      can :export_student_course, CourseRegister
     end
     
     if user.has_role? "education_consultant"

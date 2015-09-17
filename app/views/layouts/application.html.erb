@@ -333,6 +333,7 @@
 			
 			  <% end %>
 			  <ul class="sub-menu">
+				<li><%= link_to 'Payment Management', payment_list_payment_records_path(tab_page:1), class: "tab_page" %></li>
 				<li<% if params[:controller] == "payment_records" %> class="active"<% end %>><%= link_to 'Payment Record', payment_records_path(tab_page:1), class: "tab_page" %></li>
 				<li<% if params[:controller] == "bank_accounts" %> class="active"<% end %>>
 					<a title="Bank Account (pending)" href="<%= url_for(bank_accounts_path(tab_page:1, status: "pending")) %>" class="tab_page noti">
@@ -520,7 +521,12 @@
 							</a>
 							<%= link_to 'Stock Management', books_path(tab_page:1), class: "tab_page" %>
 						</li>
-						
+						<li>
+							<%= link_to 'Delivery Management', delivery_books_path(tab_page:1), class: "tab_page" %>
+						</li>
+						<li>
+							<%= link_to 'Stock Log', stock_updates_path(tab_page:1), class: "tab_page" %>
+						</li>
 					</ul>
 			</li>
 		<% end %>

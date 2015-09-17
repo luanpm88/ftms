@@ -38,7 +38,7 @@ class CourseRegistersController < ApplicationController
     @course_register = CourseRegister.new(course_register_params)
     @course_register.user = current_user    
     @course_register.update_contacts_courses(params[:contacts_courses])
-    @course_register.update_books_contacts(params[:books_contacts])
+    @course_register.update_books_contacts(params[:books_contacts]) if !params[:books_contacts].nil?
     
     authorize! :add_course, @course_register.contact
     
@@ -170,6 +170,21 @@ class CourseRegistersController < ApplicationController
   
   ########## BEGIN REVISION ###############
 
+  def export_student_course
+    if params[:ids].present?
+      if !params[:check_all_page].nil?
+        params[:intake_year] = params["filter"]["intake(1i)"] if params["filter"].present?
+        params[:intake_month] = params["filter"]["intake(2i)"] if params["filter"].present?
+        
+        @course_registers = CourseRegister.filter(params, current_user)
+      else
+        @course_registers = CourseRegister.where(id: params[:ids])
+      end
+    end      
+    render layout: "content"
+  end
+
+
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_course_register
@@ -178,6 +193,6 @@ class CourseRegistersController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def course_register_params
-      params.require(:course_register).permit(:transfer, :transfer_hour, :debt_date, :invoice_required, :vat_name, :vat_code, :vat_address, :discount, :contact_id, :mailing_address, :payment_type, :bank_account_id, :discount_program_id, :created_date, :user_id)
+      params.require(:course_register).permit(:sponsored_company_id, :transfer, :transfer_hour, :debt_date, :invoice_required, :vat_name, :vat_code, :vat_address, :discount, :contact_id, :mailing_address, :payment_type, :bank_account_id, :discount_program_id, :created_date, :user_id)
     end
 end

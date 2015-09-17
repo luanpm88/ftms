@@ -45,14 +45,14 @@ class Course < ActiveRecord::Base
   end
   
   def self.full_text_search(q)
-    self.active_courses.order("courses.intake DESC").search(q).limit(50).map {|model| {:id => model.id, :text => model.display_name} }
+    self.active_courses.order("upfront DESC, courses.intake DESC").search(q).limit(50).map {|model| {:id => model.id, :text => model.display_name} }
   end
   
   def course_exist
     return false if draft?
     
-    exist = Course.main_courses.where("course_type_id = ? AND subject_id = ? AND EXTRACT(YEAR FROM courses.intake) = ? AND EXTRACT(MONTH FROM courses.intake) = ?",
-                          self.course_type_id, self.subject_id, self.intake.year, self.intake.month
+    exist = Course.main_courses.where("upfront = ? AND course_type_id = ? AND subject_id = ? AND EXTRACT(YEAR FROM courses.intake) = ? AND EXTRACT(MONTH FROM courses.intake) = ?",
+                          self.upfront, self.course_type_id, self.subject_id, self.intake.year, self.intake.month
                         )
     
     if self.id.nil? && exist.length > 0
@@ -173,7 +173,8 @@ class Course < ActiveRecord::Base
     
   end
   
-  def display_for_exam    
+  def display_for_exam
+    return "" if upfront
     mn = for_exam_month.to_i == 0 ? for_exam_month.to_s : Date::MONTHNAMES[for_exam_month.to_i]    
     mn+"-"+for_exam_year.to_s
   end
@@ -315,11 +316,11 @@ class Course < ActiveRecord::Base
   end
   
   def name
-    intake.strftime("%b")+"-"+intake.year.to_s+"-"+course_type.short_name+"-"+subject.name
+    display_intake+"-"+course_type.short_name+"-"+subject.name
   end
   
   def display_intake
-    intake.strftime("%b")+"-"+intake.year.to_s
+    upfront ? "Upfront" : intake.strftime("%b")+"-"+intake.year.to_s
   end
   
   def update_program_paper(sid)

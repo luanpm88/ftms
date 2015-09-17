@@ -18,6 +18,7 @@
                 <div class="row">
                     <div class="col-md-12">
                         <%= link_to 'New Stock', new_book_path(tab_page: 1), psrc: books_path(tab_page:1), title: "New Book", :class => 'btn btn-primary btn-cons tab_page' %>
+						<%= link_to 'Import/Export Stock', import_export_books_path(tab_page: 1), psrc: books_path(tab_page:1), title: "Import/Export Stock", :class => 'btn btn-primary btn-cons tab_page' %>
                         <div class="grid simple ">
                             <div class="grid-title no-border">
                                 <h4>Listing  <span class="semi-bold">Books</span></h4>
@@ -28,10 +29,10 @@
                                     <table class="table no-more-tables datatable-books no-filter">
                                         <thead>
                                             <tr>                                                
-												<th width="1%">Cover</th>
-                                                <th>Title</th>
+												<th width="1%">Cover</th>                                                
 												<th class="text-center">Program</th>
 												<th class="text-center">Paper</th>
+												<th>Title</th>
                                                 <th>Publisher</th>
 												<th class="text-center">List Price</th>
 												<th class="text-center">In.Stock</th>

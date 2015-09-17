@@ -5,6 +5,8 @@ class ContactsCourse < ActiveRecord::Base
   belongs_to :course_register
   belongs_to :discount_program
   
+  after_create :update_statuses
+  
   def self.all_contacts_courses
     ContactsCourse.all
   end
@@ -49,11 +51,11 @@ class ContactsCourse < ActiveRecord::Base
   end
   
   def all_discount_programs
-    JSON.parse(discount_programs)
+    discount_programs.nil? ? [] : JSON.parse(discount_programs)
   end
   
   def all_other_discounts
-    JSON.parse(other_discounts)
+    other_discounts.nil? ? [] : JSON.parse(other_discounts)
   end
   
   def other_discount_amount
@@ -90,6 +92,52 @@ class ContactsCourse < ActiveRecord::Base
     class_name = self.report ? "success" : "none"
     text = self.report ? "UCRS: yes" : "UCRS: no"
     '<a rel="'+self.id.to_s+'" class="badge badge-'+class_name+' report_toggle report_toggle_'+self.id.to_s+'" href="#rt">'+text+'</a>'
+  end
+  
+  def paid?
+    paid == total
+  end
+  
+  def out_of_date?
+    return false if paid?
+    
+    return course_register.real_debt_date.nil? ? false : course_register.real_debt_date < Time.now
+  end
+  
+  def payment_status
+    str = []
+    if paid?
+      str << "fully_paid"
+    else
+      str << "receivable"
+    end
+    if out_of_date?    
+      str << "chase_for_payment"
+    end
+    
+    return str
+  end
+  
+  def display_payment_status
+    line = []
+    payment_status.each do |s|
+      line << "<div class=\"#{s} text-center\">#{s}</div>".html_safe
+    end
+    
+    return line.join("")
+  end
+  
+  def all_payment_records
+    course_register.all_payment_records.includes(:payment_record_details).where(payment_record_details: {contacts_course_id: self.id})
+  end
+  
+  def delivery_status
+    delivered? ? "delivered" : "not_delivered"
+  end
+  
+  def update_statuses
+    # payment
+    self.update_attribute(:cache_payment_status, self.payment_status.join(","))
   end
   
 end

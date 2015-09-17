@@ -92,7 +92,7 @@
 													   <i class=""></i>
 													   <div class="input-with_add_but">
 															  <%= link_to '<i class="icon-plus"></i>'.html_safe, new_course_type_path(tab_page: 1), title: "New Program", :class => 'btn btn-sm btn-small btn-white add-agent-button tab_page' %>
-															  <input style="width:100%;margin-bottom: 5px;" name="book[course_type_ids]" data="<%= course_types_path(format: "json") %>" class="select2-ajax-course-types multiple" values="<%= @book.course_type_ids_json %>" /> 
+															  <input style="width:100%;margin-bottom: 5px;" name="book[course_type_ids]" data="<%= course_types_path(format: "json") %>" class="select2-ajax-course-types" value="<%= @book.course_type.id if !@book.course_type.nil? %>" text="<%= @book.course_type.short_name if !@book.course_type.nil? %>" /> 
 													   </div>
 												  </div>
 											 </div>
@@ -104,7 +104,7 @@
 													   <i class=""></i>
 													   <div class="input-with_add_but">
 															  <%= link_to '<i class="icon-plus"></i>'.html_safe, new_subject_path(tab_page: 1), title: "New Subject", :class => 'btn btn-sm btn-small btn-white add-agent-button tab_page' %>
-															  <input style="width:100%;margin-bottom: 5px;" name="book[subject_ids]" data="<%= subjects_path(format: "json") %>" class="select2-ajax-subjects multiple" values="<%= @book.subject_ids_json %>" /> 
+															  <input style="width:100%;margin-bottom: 5px;" name="book[subject_ids]" data="<%= subjects_path(format: "json") %>" class="select2-ajax-subjects" value="<%= @book.subject.id if !@book.subject.nil? %>" text="<%= @book.subject.name if !@book.subject.nil? %>" /> 
 													   </div>
 												  </div>
 											 </div>

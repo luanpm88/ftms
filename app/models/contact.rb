@@ -481,11 +481,11 @@ class Contact < ActiveRecord::Base
     return {result: result, items: @records, actions_col: actions_col}
   end
   
-  def display_present_with_seminar(seminar)
+  def display_present_with_seminar(seminar, link=true)
     ActionView::Base.send(:include, Rails.application.routes.url_helpers)
     link_helper = ActionController::Base.helpers
     
-    url = link_helper.url_for({controller: "seminars", action: "check_contact", value: !present_with_seminar?(seminar), id: seminar.id, contact_id: self.id})
+    url = link ? link_helper.url_for({controller: "seminars", action: "check_contact", value: !present_with_seminar?(seminar), id: seminar.id, contact_id: self.id}) : "#none"
     
     ApplicationController.helpers.check_ajax_button(present_with_seminar?(seminar), url)    
   end

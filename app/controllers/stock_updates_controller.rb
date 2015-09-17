@@ -40,6 +40,27 @@ class StockUpdatesController < ApplicationController
       end
     end
   end
+  
+  def import_export_form_list
+    @books = []
+    
+    if params[:program_id].present? || params[:subject_id].present?
+      @books = Book.active_books.order("name")      
+      @books = @books.where(course_type_id: params[:program_id]) if params[:program_id].present?
+      @books = @books.where(course_type_id: params[:subject_id]) if params[:subject_id].present?
+    end 
+    
+    render layout: nil
+  end
+  
+  def import_export
+    StockUpdate.update_stocks(params, current_user)
+    
+    respond_to do |format|
+        format.html { redirect_to import_export_books_path, notice: 'Stock was successfully updated.' }
+        format.json { render action: 'show', status: :created, location: @stock_update }
+    end
+  end
 
   # PATCH/PUT /stock_updates/1
   # PATCH/PUT /stock_updates/1.json
@@ -63,6 +84,17 @@ class StockUpdatesController < ApplicationController
       format.html { redirect_to stock_updates_url }
       format.json { head :no_content }
     end
+  end
+  
+  def datatable
+    result = StockUpdate.datatable(params, current_user)
+    
+    #result[:items].each_with_index do |item, index|
+    #  actions = render_course_type_actions(item)      
+    #  result[:result]["data"][index][result[:actions_col]] = actions
+    #end
+    
+    render json: result[:result]
   end
 
   private
