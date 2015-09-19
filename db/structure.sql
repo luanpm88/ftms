@@ -282,7 +282,8 @@ CREATE TABLE books (
     annoucing_user_ids text,
     status text,
     course_type_id integer,
-    subject_id integer
+    subject_id integer,
+    stock_type_id integer
 );
 
 
@@ -1548,6 +1549,42 @@ ALTER SEQUENCE states_id_seq OWNED BY states.id;
 
 
 --
+-- Name: stock_types; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE TABLE stock_types (
+    id integer NOT NULL,
+    name character varying,
+    description text,
+    user_id integer,
+    annoucing_user_ids text,
+    parent_id integer,
+    status character varying,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL
+);
+
+
+--
+-- Name: stock_types_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE stock_types_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: stock_types_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE stock_types_id_seq OWNED BY stock_types.id;
+
+
+--
 -- Name: stock_updates; Type: TABLE; Schema: public; Owner: -; Tablespace: 
 --
 
@@ -2039,6 +2076,13 @@ ALTER TABLE ONLY states ALTER COLUMN id SET DEFAULT nextval('states_id_seq'::reg
 -- Name: id; Type: DEFAULT; Schema: public; Owner: -
 --
 
+ALTER TABLE ONLY stock_types ALTER COLUMN id SET DEFAULT nextval('stock_types_id_seq'::regclass);
+
+
+--
+-- Name: id; Type: DEFAULT; Schema: public; Owner: -
+--
+
 ALTER TABLE ONLY stock_updates ALTER COLUMN id SET DEFAULT nextval('stock_updates_id_seq'::regclass);
 
 
@@ -2404,6 +2448,14 @@ ALTER TABLE ONLY settings
 
 ALTER TABLE ONLY states
     ADD CONSTRAINT states_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: stock_types_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+--
+
+ALTER TABLE ONLY stock_types
+    ADD CONSTRAINT stock_types_pkey PRIMARY KEY (id);
 
 
 --
@@ -2838,4 +2890,8 @@ INSERT INTO schema_migrations (version) VALUES ('20150917034058');
 INSERT INTO schema_migrations (version) VALUES ('20150917065826');
 
 INSERT INTO schema_migrations (version) VALUES ('20150917084811');
+
+INSERT INTO schema_migrations (version) VALUES ('20150919012300');
+
+INSERT INTO schema_migrations (version) VALUES ('20150919020639');
 

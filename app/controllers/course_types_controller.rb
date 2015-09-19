@@ -132,7 +132,7 @@ class CourseTypesController < ApplicationController
   end
   
   def field_history
-    @drafts = @course_types.field_history(params[:type])
+    @drafts = @course_type.field_history(params[:type])
     
     render layout: nil
   end

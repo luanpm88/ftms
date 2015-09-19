@@ -7,6 +7,7 @@ class Book < ActiveRecord::Base
   belongs_to :user
   belongs_to :course_type
   belongs_to :subject
+  belongs_to :stock_type
   
   has_many :book_prices
   has_many :books_contacts

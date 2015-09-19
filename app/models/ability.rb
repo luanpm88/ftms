@@ -116,6 +116,19 @@ class Ability
       can :field_history, CourseType
       
       
+      ## STOCK TYPE
+      can :datatable, StockType
+      can :read, StockType
+      can :create, StockType
+      can :update, StockType do |c|
+        c.books.empty?
+      end
+      can :delete, StockType do |ct|
+        !ct.statuses.include?("delete_pending") && !ct.statuses.include?("deleted")
+      end
+      can :field_history, StockType
+      
+      
       
       # Subject
       can :datatable, Subject
@@ -320,14 +333,28 @@ class Ability
     end
     
     if user.has_role? "manager"
+      can :create, BankAccount
+      can :update, BankAccount do |c|
+        c.course_registers.empty? && c.payment_records.empty?
+      end
+      can :delete, BankAccount do |c|
+        !c.statuses.include?("delete_pending") && !c.statuses.include?("deleted")
+      end
+      
       can :statistic, User
       can :online_report, User
       
-      can :datatable, CourseType
-      can :read, CourseType
-      can :create, CourseType
-      can :update, CourseType
-      can :approved, CourseType
+      ## STOCK TYPE
+      can :approved, StockType
+      can :approve_new, StockType do |c|
+        c.statuses.include?("new_pending")
+      end
+      can :approve_update, StockType do |c|
+        c.statuses.include?("update_pending")
+      end
+      can :approve_delete, StockType do |c|
+        c.statuses.include?("delete_pending")
+      end   
       
       
       ## COURSE TYPE

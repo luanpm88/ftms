@@ -522,8 +522,8 @@
 					  <i class="icon-book"></i>
 					  <span class="title">Stock</span>
 					  <span class="arrow<% if params[:controller] == "books" %> open<% end %>"></span>
-						<span class="badge badge-important pull-right alert-level1"><%= Notification.book_pending_count(current_user) %></span>
-						<span class="badge badge-success pull-right alert-level1"><%= Notification.book_approved_count(current_user) %></span>
+						<span class="badge badge-important pull-right alert-level1"><%= Notification.stock_pending_count(current_user) %></span>
+						<span class="badge badge-success pull-right alert-level1"><%= Notification.stock_approved_count(current_user) %></span>
 					<% end %>
 					<ul class="sub-menu">
 						
@@ -535,6 +535,15 @@
 								<span class="badge badge-important pull-right alert-level2"><%= Notification.book_approved_count(current_user) %></span>
 							</a>
 							<%= link_to 'Stock Management', books_path(tab_page:1), class: "tab_page" %>
+						</li>
+						<li<% if params[:controller] == "books" && params[:action] == "index" %> class="active"<% end %>>
+							<a title="Stock Type Management (pending)" href="<%= url_for(stock_types_path(tab_page:1, status: "pending")) %>" class="tab_page noti">
+								<span class="badge badge-important pull-right alert-level2"><%= Notification.stock_type_pending_count(current_user) %></span>
+							</a>
+							<a title="Stock Type Management (approved)" href="<%= url_for(stock_types_path(tab_page:1, status: "approved")) %>" class="tab_page noti approved">
+								<span class="badge badge-important pull-right alert-level2"><%= Notification.stock_type_approved_count(current_user) %></span>
+							</a>
+							<%= link_to 'Stock Type Management', stock_types_path(tab_page:1), class: "tab_page" %>
 						</li>
 						<li>
 							<%= link_to 'Delivery Management', delivery_books_path(tab_page:1), class: "tab_page" %>

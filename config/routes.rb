@@ -1,4 +1,20 @@
 Hkerp::Application.routes.draw do
+  resources :stock_types do
+    collection do
+      get :datatable
+      
+      ### revision ###
+      get :delete
+      get :approve_new
+      get :approve_update
+      get :approve_delete
+      
+      get :approved
+      get :field_history
+      
+      ####################
+    end
+  end
   resources :course_types_discount_programs
   resources :transfer_details
   resources :payment_record_details

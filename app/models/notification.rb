@@ -262,27 +262,56 @@ class Notification < ActiveRecord::Base
     return total > 0 ? total : ""
   end
   
-  #### BOOK - PENDING - APPROVED
   
-  def self.book_pending_count(user)
-    if !user.has_role?("admin") && !user.has_role?("manager") # && !user.has_role?("education_consultant")
-      return ""
-    end
-    
-    records = Book.main_books.where("status LIKE ?","%pending]%")
-    
-    #if user.has_role?("education_consultant")
-    #  records = records.select{|item| item.current.user.lower?("education_consultant")}
-    #end
-    
-    return records.count == 0 ? "" : records.count
+  ######## STOCK MENU
+      #### BOOK - PENDING - APPROVED
+      
+      def self.book_pending_count(user)
+        if !user.has_role?("admin") && !user.has_role?("manager") # && !user.has_role?("education_consultant")
+          return ""
+        end
+        
+        records = Book.main_books.where("status LIKE ?","%pending]%")
+        
+        #if user.has_role?("education_consultant")
+        #  records = records.select{|item| item.current.user.lower?("education_consultant")}
+        #end
+        
+        return records.count == 0 ? "" : records.count
+      end
+      
+      def self.book_approved_count(user)
+        records = Book.main_books
+                        .where("annoucing_user_ids LIKE ?", "%[#{user.id}]%")
+        
+        return records.count == 0 ? "" : records.count
+      end
+      
+      
+      #### STOCK TYPE - PENDING - APPROVED
+      def self.stock_type_pending_count(user)
+        if !user.has_role?("admin") && !user.has_role?("manager") # && !user.has_role?("education_consultant")
+          return ""
+        end
+        
+        records = StockType.main_stock_types.where("status LIKE ?","%pending]%")
+        
+        return records.count == 0 ? "" : records.count
+      end
+      
+      def self.stock_type_approved_count(user)
+        records = StockType.main_stock_types
+                        .where("annoucing_user_ids LIKE ?", "%[#{user.id}]%")
+        
+        return records.count == 0 ? "" : records.count
+      end
+  
+  def self.stock_pending_count(user)
+    self.book_pending_count(user).to_i + self.stock_type_pending_count(user).to_i
   end
-  
-  def self.book_approved_count(user)
-    records = Book.main_books
-                    .where("annoucing_user_ids LIKE ?", "%[#{user.id}]%")
-    
-    return records.count == 0 ? "" : records.count
+
+  def self.stock_approved_count(user)
+    self.stock_type_approved_count(user).to_i + self.book_approved_count(user).to_i
   end
   
   

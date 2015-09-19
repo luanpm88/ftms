@@ -1,0 +1,34 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <strong>Name:</strong>
+  <%= @stock_type.name %>
+</p>
+
+<p>
+  <strong>Description:</strong>
+  <%= @stock_type.description %>
+</p>
+
+<p>
+  <strong>User:</strong>
+  <%= @stock_type.user_id %>
+</p>
+
+<p>
+  <strong>Annoucing user ids:</strong>
+  <%= @stock_type.annoucing_user_ids %>
+</p>
+
+<p>
+  <strong>Parent:</strong>
+  <%= @stock_type.parent_id %>
+</p>
+
+<p>
+  <strong>Status:</strong>
+  <%= @stock_type.status %>
+</p>
+
+<%= link_to 'Edit', edit_stock_type_path(@stock_type) %> |
+<%= link_to 'Back', stock_types_path %>

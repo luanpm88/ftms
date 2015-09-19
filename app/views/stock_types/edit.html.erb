@@ -1,0 +1,28 @@
+<ul class="breadcrumb">
+        <li>
+          <p>YOU ARE HERE</p>
+        </li>
+                    <li>
+			<%= link_to 'Stock Types', course_types_url %>
+                    </li>
+      </ul>
+
+		<div class="page-title <%= "draft" if @stock_type.draft? %>""> <i class="icon-briefcase"></i>
+		  <h3 class=""><span class="semi-bold"><%= @stock_type.name %></span>
+		  <br /><%= "Changed at: #{@stock_type.created_at.strftime("%d-%b-%Y %I:%M %p")} / By: #{@stock_type.user.name}" if @stock_type.draft? %>
+		  </h3>
+		</div>
+	  
+		<div class="top-buts">
+				<%= render_stock_type_actions(@stock_type, "big") if !@stock_type.draft? %>
+				<%= render_stock_type_history_actions(@stock_type) %>
+		</div>
+		<div>
+				<%= @stock_type.display_statuses if !@stock_type.draft? %>
+		</div>
+		<br style="clear:both" />
+      
+
+	  
+<%= render 'form' %>
+
