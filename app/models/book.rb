@@ -58,7 +58,7 @@ class Book < ActiveRecord::Base
   end
   
   def self.filter(params, user)
-    @records = self.main_books
+    @records = self.main_books.includes(:stock_type)
     @records = @records.where("books.course_type_ids LIKE ? OR books.course_type_ids LIKE ? OR books.course_type_ids LIKE ? OR books.course_type_ids LIKE ? ", "%[#{params["program_id"]},%", "%,#{params["program_id"]},%", "%,#{params["program_id"]}]%", "%[#{params["program_id"]}]%") if params["program_id"].present?
     @records = @records.where("books.subject_ids LIKE ? OR books.subject_ids LIKE ? OR books.subject_ids LIKE ? OR books.subject_ids LIKE ? ", "%[#{params["subject_id"]},%", "%,#{params["subject_id"]},%", "%,#{params["subject_id"]}]%", "%[#{params["subject_id"]}]%") if params["subject_id"].present?
     
@@ -76,6 +76,10 @@ class Book < ActiveRecord::Base
 
     ########## END REVISION-FEATURE #########################
     
+    if params[:stock_types].present?
+      @records = @records.where(stock_type_id: params[:stock_types])
+    end
+    
     return @records
   end
   
@@ -91,8 +95,10 @@ class Book < ActiveRecord::Base
       when "3"
         order = "books.name"
       when "4"
+        order = "stock_types.name"
+      when "5"
         order = "books.publisher"
-      when "7"
+      when "8"
         order = "books.created_at"
       else
         order = "books.name"
@@ -110,7 +116,7 @@ class Book < ActiveRecord::Base
     @records = @records.limit(params[:length]).offset(params["start"])
     data = []
     
-    actions_col = 10
+    actions_col = 11
     itemsx = []
     @records.each do |item|
       ############### BEGIN REVISION #########################
@@ -125,6 +131,7 @@ class Book < ActiveRecord::Base
               '<div class="text-center">'+item.course_type_short_name+"</div>",
               '<div class="text-center">'+item.subject_name+"</div>",
               item.book_link,
+              '<div class="text-center">'+item.stock_type.name+"</div>",
               '<div class="text-left">'+item.publisher.to_s+"</div>",
               '<div class="text-center">'+item.display_prices+"</div>",
               '<div class="text-center">'+item.stock.to_s+"</div>",

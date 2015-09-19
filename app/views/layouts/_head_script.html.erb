@@ -1333,12 +1333,16 @@
 						d.student =  $(".book-filter input[name='student']").val()
 					}
 					
+					if($(".book-filter select[name='stock_types[]']").val()) {
+						d.stock_types =  $(".book-filter select[name='stock_types[]']").val()
+					}
+					
 					if($(".book-filter select[name='status']").val()) {
 						d.status =  $(".book-filter select[name='status']").val()
 					}
 				}
 			},
-			"columnDefs": [ { "targets": [0,1,2,5,6,8,9,10], "orderable": false } ],
+			"columnDefs": [ { "targets": [0,1,2,6,7,9,10,11], "orderable": false } ],
 			"order": [],
 			"aLengthMenu": [[10, 25, 50, 75, 100], [10, 25, 50, 75, 100]],
 			"iDisplayLength": 25
@@ -1356,6 +1360,10 @@
 					
 					if($(".book-filter input[name='student']").val()) {
 						d.student =  $(".book-filter input[name='student']").val()
+					}
+					
+					if($(".book-filter select[name='stock_types[]']").val()) {
+						d.stock_types =  $(".book-filter select[name='stock_types[]']").val()
 					}
 				}
 			},
@@ -1654,6 +1662,10 @@
 				"data": function ( d ) {
 					if($(".delivery-filter select[name='books[]']").val()) {
 						d.books = $(".delivery-filter select[name='books[]']").val()
+					}
+					
+					if($(".delivery-filter select[name='stock_types[]']").val()) {
+						d.stock_types =  $(".delivery-filter select[name='stock_types[]']").val()
 					}
 					
 					if($(".delivery-filter select[name='course_types[]']").val()) {
@@ -2198,6 +2210,28 @@
 			//multiple: $('.select2-ajax-seminars').hasClass("multiple"),
 			ajax: {
 			  url: $('.select2-ajax-seminars').attr("data"),
+			  dataType: 'json',
+			  data: function (term, page) { // page is the one-based page number tracked by Select2
+				return {
+				  q: term, //search term
+				};
+			  },
+			  results: function (data, page) {
+				return {results: data};
+			  }
+			},
+			initSelection: function (element, callback) {				      
+				callback({ id: element.val, text: element.attr('text') });
+			}
+	    });
+		
+		$('.select2-ajax-stock-types').select2({
+			placeholder: "Search for a stock type",
+			allowClear: true,
+			minimumInputLength: 1,
+			multiple: $('.select2-ajax-stock-types').hasClass("multiple"),
+			ajax: {
+			  url: $('.select2-ajax-stock-types').attr("data"),
 			  dataType: 'json',
 			  data: function (term, page) { // page is the one-based page number tracked by Select2
 				return {

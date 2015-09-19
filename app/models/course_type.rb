@@ -3,7 +3,7 @@ class CourseType < ActiveRecord::Base
   
   #validates :tmp_CourseTypeID, :uniqueness => true
   
-  validates :name, :presence => true
+  # validates :name, :presence => true
   validates :short_name, :presence => true
   
   
@@ -125,8 +125,8 @@ class CourseType < ActiveRecord::Base
   def check_exist
     return false if draft?
     
-    exist = CourseType.main_course_types.where("short_name = ? OR name = ?",
-                          self.short_name, self.name
+    exist = CourseType.main_course_types.where("short_name = ?",
+                          self.short_name
                         )
     
     if self.id.nil? && exist.length > 0

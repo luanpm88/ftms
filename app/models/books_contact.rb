@@ -67,7 +67,7 @@ class BooksContact < ActiveRecord::Base
   end
   
   def self.datatable(params, user)
-    @records = self.joins(:course_register, :contact).where("course_registers.parent_id IS NULL").where("course_registers.status LIKE ?", "%[active]%")
+    @records = self.joins(:book, :course_register, :contact).where("course_registers.parent_id IS NULL").where("course_registers.status LIKE ?", "%[active]%")
     
     if params["course_types"].present?
       @records = @records.includes(:book)
@@ -89,6 +89,10 @@ class BooksContact < ActiveRecord::Base
     
     if params["books"].present?
       @records = @records.where(book_id: params["books"].split(","))
+    end
+    
+    if params[:stock_types].present?
+      @records = @records.where(books: {stock_type_id: params[:stock_types]})
     end
 
     
