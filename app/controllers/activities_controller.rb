@@ -6,7 +6,13 @@ class ActivitiesController < ApplicationController
   # GET /activities
   # GET /activities.json
   def index
-    @activities = Activity.all
+    if params[:from_date].present? && params[:to_date].present?
+      @from_date = params[:from_date].to_date
+      @to_date =  params[:to_date].to_date.end_of_day
+    else
+      @from_date = nil
+      @to_date =  DateTime.now
+    end
   end
 
   # GET /activities/1

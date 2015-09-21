@@ -1357,7 +1357,7 @@
 					}
 				}
 			},
-			"columnDefs": [ { "targets": [0,1,2,6,7,9,10,11], "orderable": false } ],
+			"columnDefs": [ { "targets": [0,2,3,4,5,6,7,8,9,10], "orderable": false } ],
 			"order": [],
 			"aLengthMenu": [[10, 25, 50, 75, 100], [10, 25, 50, 75, 100]],
 			"iDisplayLength": 25
@@ -1383,6 +1383,27 @@
 				}
 			},
 			"columnDefs": [ { "targets": [0,1,2,4,5,6,7,8,9], "orderable": false } ],
+			"order": [],
+			"aLengthMenu": [[10, 25, 50, 75, 100], [10, 25, 50, 75, 100]],
+			"iDisplayLength": 25
+	    });
+		
+		//Datatable books
+	    $('.datatable-stock-statistics').dataTable( {
+			"processing": true,
+			"serverSide": true,
+			"ajax": {
+				"url": "<%= statistics_books_path %>",
+				"data": function ( d ) {
+					if($(".stock-statistics-filter input[name='from_date']").val()) {
+						d.from_date =  $(".stock-statistics-filter input[name='from_date']").val()
+					}
+					if($(".stock-statistics-filter input[name='to_date']").val()) {
+						d.to_date =  $(".stock-statistics-filter input[name='to_date']").val()
+					}
+				}
+			},
+			"columnDefs": [ { "targets": [0,2,3,4,5,6], "orderable": false } ],
 			"order": [],
 			"aLengthMenu": [[10, 25, 50, 75, 100], [10, 25, 50, 75, 100]],
 			"iDisplayLength": 25
@@ -1624,12 +1645,29 @@
 				"url": "<%= datatable_activities_path %>",
 				"data": function ( d ) {
 					d.contact_id = $(".activity-filter input[name='activity[contact_id]']").val()
+					
+					if($(".activity-filter input[name='from_date']").val()) {
+						d.from_date =  $(".activity-filter input[name='from_date']").val()
+					}
+					
+					if($(".activity-filter input[name='to_date']").val()) {
+						d.to_date =  $(".activity-filter input[name='to_date']").val()
+					}
+					
+					if($(".activity-filter input[name='contact']").val()) {
+						d.contact =  $(".activity-filter input[name='contact']").val()
+					}
+					
+					if($(".activity-filter select[name='user']").val()) {
+						d.user =  $(".activity-filter select[name='user']").val()
+					}
+					
 					if($(".activity-filter select[name='status']").val()) {
 						d.status =  $(".activity-filter select[name='status']").val()
 					}
 				}
 			},
-			"columnDefs": [ { "targets": [0,1,2,3,4], "orderable": false } ],
+			"columnDefs": [ { "targets": [0,2,3,4,5], "orderable": false } ],
 			"order": [],
 			"aLengthMenu": [[10, 25, 50, 75, 100], [10, 25, 50, 75, 100]],
 			"iDisplayLength": 25

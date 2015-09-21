@@ -379,7 +379,10 @@
 						</a>
 						<%= link_to 'Tag Management', contact_tags_path(tab_page:1), class: "tab_page" %>
 					</li>
-				<% end %>				
+				<% end %>
+				<li>
+					<%= link_to 'Note Log', activities_url(tab_page:1), class: "tab_page" %>
+				</li>
 			  </ul>
 			</li>
 		<% end %>
@@ -550,6 +553,9 @@
 						</li>
 						<li>
 							<%= link_to 'Stock Log', stock_updates_path(tab_page:1), class: "tab_page" %>
+						</li>
+						<li>
+							<%= link_to 'Stock Statistic', stock_statistics_books_path(tab_page:1), class: "tab_page" %>
 						</li>
 					</ul>
 			</li>

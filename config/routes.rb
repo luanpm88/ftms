@@ -202,6 +202,7 @@ Hkerp::Application.routes.draw do
       get :volumn_checkboxs
       get :stock_price_form
       get :student_books
+      get :statistics
       
       ### revision ###
       get :delete
@@ -220,6 +221,7 @@ Hkerp::Application.routes.draw do
       post :delivery_note
       post :deliver_all
       post :delivery_counting
+      get :stock_statistics
     end
   end
   

@@ -164,6 +164,8 @@ class Ability
       can :delivery_note, Book
       can :deliver_all, Book
       can :delivery_counting, Book
+      can :stock_statistics, Book
+      can :statistics, Book
       
       can :datatable, BooksContact
       

@@ -119,6 +119,18 @@ class BooksController < ApplicationController
     render json: result[:result]
   end
   
+  def statistics
+    result = Book.statistics(params, current_user)
+    
+    #result[:items].each_with_index do |item, index|
+    #  actions = render_book_actions(item)
+    #  
+    #  result[:result]["data"][index][result[:actions_col]] = actions
+    #end
+    #
+    render json: result[:result]
+  end
+  
   def stock_select
     @books = Book.filter(params, current_user)
 
@@ -372,6 +384,16 @@ class BooksController < ApplicationController
     end
     
     render layout: nil
+  end
+  
+  def stock_statistics
+    if params[:from_date].present? && params[:to_date].present?
+      @from_date = params[:from_date].to_date
+      @to_date =  params[:to_date].to_date.end_of_day
+    else
+      @from_date = DateTime.now.beginning_of_month
+      @to_date =  DateTime.now
+    end
   end
   
   private

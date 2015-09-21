@@ -71,6 +71,14 @@ class ContactsController < ApplicationController
   def edit
     @student = @contact
     @activity = Activity.new(contact_id: @contact.id)
+    
+    if params[:from_date].present? && params[:to_date].present?
+      @from_date = params[:from_date].to_date
+      @to_date =  params[:to_date].to_date.end_of_day
+    else
+      @from_date = nil
+      @to_date =  DateTime.now
+    end
   end
 
   # POST /contacts

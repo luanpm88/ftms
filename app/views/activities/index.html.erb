@@ -1,31 +1,90 @@
-<p id="notice"><%= notice %></p>
+                <div class="page-title">
+                        <i class="icon-briefcase"></i>
+                    	<h3>Note Log - <span class="semi-bold"> Management</span></h3>	
+                </div>
+				
+				
+				<div class="grid simple ">
+                  <div class="grid-body no-border filters activity-filter">
+                  <div class="row order-filters">
+                            <div class="col-md-2">
+								<h4>From Date</h4>
+								<div class="date_select_filter">
+								<div class="input-with-icon  right">
+									<div class="input-append success date col-md-10 no-padding">
+										<%= text_field_tag :from_date, @from_date.nil? ? "" : @from_date.strftime("%d-%b-%Y"), :class => "datetime form-control" %>
+										<span class="add-on"><span class="arrow"></span><i class="icon-th"></i></span>
+									</div>
+									<br style="clear: both" />
+									
+								</div>
+								</div>
+							</div>
+							<div class="col-md-2">
+								<h4>To Date</h4>
+								<div class="date_select_filter">
+								<div class="input-with-icon  right">
+									<div class="input-append success date col-md-10 no-padding">
+										<%= text_field_tag :to_date, @to_date.strftime("%d-%b-%Y"), :class => "datetime form-control" %>
+										<span class="add-on"><span class="arrow"></span><i class="icon-th"></i></span>
+									</div>
+									<br style="clear: both" />
+								</div>
+								</div>
+						</div>		
+                        <div class="col-md-3">
+                            <h4>Contact</h4>
+                            <div class="">
+                                <div class="input-with-icon  right">                                       
+                                <i class=""></i>
+                                <input style="width:100%;margin-bottom: 5px;" name="contact" data="<%= contacts_path(format: "json") %>" class="select2-ajax-contacts"/>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <h4>Education Consultant</h4>
+                            <div class="">
+                                <%= select_tag 'user', options_for_select(User.main_users.collect{ |u| [u.name, u.id] }) , {:include_blank => 'All', class: "modern_select width100"} %>
+                            </div>
+                        </div>
+						<div class="col-md-2 activity-filter">
+                            <h4>Status</h4>							
+                            <%= select_tag 'status', options_for_select(Activity.status_options, params[:status]), class: "modern_select width100" %>
+                        </div>
+                  </div>
+                  </div>		    
+				</div>
+				
+				
+                <div class="row">
+                  <div class="col-md-12">
+                      
+                      <div class="grid simple ">
+                          <div class="grid-title no-border">
+                              <h4>Activity  <span class="semi-bold">Log</span></h4>
+                              
+                          </div>
+                          <div class="grid-body no-border">
+                               
+                                  <table class="table table-striped no-more-tables datatable-activities no-filter">
+                                          <thead>
+                                              <tr>                                                
+                                                  <th width="40%">Note</th>
+                                                  <th class="text-center" width="1%">Created At</th>
+                                                  <th class="text-center">Contact</th>
+                                                  <th class="text-center" width="1%">Staff</th>
+                                                  <th class="text-center" width="1%">Status</th>
+                                                  <th class="text-right" width="1%">Actions</th>
+                                              </tr>
+                                          </thead>                                        
+                                      </table>
+                                  
+                          </div>
+                      </div>
+          
+                  </div>
+          
+              </div>
 
-<h1>Listing Activities</h1>
 
-<table>
-  <thead>
-    <tr>
-      <th>User</th>
-      <th>Contact</th>
-      <th>Note</th>
-      <th colspan="3"></th>
-    </tr>
-  </thead>
 
-  <tbody>
-    <% @activities.each do |activity| %>
-      <tr>
-        <td><%= activity.user_id %></td>
-        <td><%= activity.contact_id %></td>
-        <td><%= activity.note %></td>
-        <td><%= link_to 'Show', activity %></td>
-        <td><%= link_to 'Edit', edit_activity_path(activity) %></td>
-        <td><%= link_to 'Destroy', activity, method: :delete, data: { confirm: 'Are you sure?' } %></td>
-      </tr>
-    <% end %>
-  </tbody>
-</table>
-
-<br>
-
-<%= link_to 'New Activity', new_activity_path %>

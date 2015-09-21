@@ -58,7 +58,7 @@ class Book < ActiveRecord::Base
   end
   
   def self.filter(params, user)
-    @records = self.main_books.includes(:stock_type)
+    @records = self.main_books.includes(:stock_type, :course_type, :subject)
     @records = @records.where("books.course_type_ids LIKE ? OR books.course_type_ids LIKE ? OR books.course_type_ids LIKE ? OR books.course_type_ids LIKE ? ", "%[#{params["program_id"]},%", "%,#{params["program_id"]},%", "%,#{params["program_id"]}]%", "%[#{params["program_id"]}]%") if params["program_id"].present?
     @records = @records.where("books.subject_ids LIKE ? OR books.subject_ids LIKE ? OR books.subject_ids LIKE ? OR books.subject_ids LIKE ? ", "%[#{params["subject_id"]},%", "%,#{params["subject_id"]},%", "%,#{params["subject_id"]}]%", "%[#{params["subject_id"]}]%") if params["subject_id"].present?
     
@@ -93,18 +93,16 @@ class Book < ActiveRecord::Base
     
     if !params["order"].nil?
       case params["order"]["0"]["column"]
+      when "1"
+        order = "course_types.short_name #{params["order"]["0"]["dir"]}, subjects.name #{params["order"]["0"]["dir"]}, books.name #{params["order"]["0"]["dir"]}"      
       when "3"
-        order = "books.name"
-      when "4"
-        order = "stock_types.name"
-      when "5"
         order = "books.publisher"
-      when "8"
+      when "9"
         order = "books.created_at"
       else
         order = "books.name"
       end
-      order += " "+params["order"]["0"]["dir"]
+      order += " "+params["order"]["0"]["dir"] if params["order"]["0"]["column"] != "1"
     else
       order = "books.created_at"
     end
@@ -117,7 +115,7 @@ class Book < ActiveRecord::Base
     @records = @records.limit(params[:length]).offset(params["start"])
     data = []
     
-    actions_col = 11
+    actions_col = 10
     itemsx = []
     @records.each do |item|
       ############### BEGIN REVISION #########################
@@ -128,18 +126,78 @@ class Book < ActiveRecord::Base
       ############### END REVISION #########################
       
       itemx = [
-              item.cover_link,              
-              '<div class="text-center">'+item.course_type_short_name+"</div>",
-              '<div class="text-center">'+item.subject_name+"</div>",
+              item.cover_link,                            
               item.book_link,
               '<div class="text-center">'+item.stock_type.name+"</div>",
               '<div class="text-left">'+item.publisher.to_s+"</div>",
-              '<div class="text-center">'+item.display_prices+"</div>",
+              '<div class="text-right">'+item.display_prices+"</div>",
               '<div class="text-center">'+item.stock.to_s+"</div>",
-              '<div class="text-center">'+item.created_at.strftime("%d-%b-%Y")+"</div>", 
+              '<div class="text-center">'+BooksContact.to_be_delivered_count(item.id).to_s+"</div>",
+              '<div class="text-center">'+BooksContact.to_be_ordered_count(item.id).to_s+"</div>",
               '<div class="text-center">'+item.user.staff_col+"</div>",
               '<div class="text-center">'+item.display_statuses+"</div>",
               ''
+            ]
+      data << itemx
+      itemsx << item
+
+      
+    end
+    
+    result = {
+              "drawn" => params[:drawn],
+              "recordsTotal" => total,
+              "recordsFiltered" => total
+    }
+    result["data"] = data
+    
+    return {result: result, items: itemsx, actions_col: actions_col}
+    
+  end
+  
+  def self.statistics(params, user)
+    @records = Book.filter(params, user)  
+    @records = @records.search(params["search"]["value"]) if !params["search"]["value"].empty?
+    
+    # date
+    from_date = params["from_date"].to_datetime.beginning_of_day
+    to_date = params["to_date"].to_datetime.end_of_day
+
+    
+    if !params["order"].nil?
+      case params["order"]["0"]["column"]
+      when "1"
+        order = "course_types.short_name #{params["order"]["0"]["dir"]}, subjects.name #{params["order"]["0"]["dir"]}, books.name #{params["order"]["0"]["dir"]}"      
+      end
+      order += " "+params["order"]["0"]["dir"] if params["order"]["0"]["column"] != "1"
+    else
+      order = "course_types.short_name, subjects.name, books.name"      
+    end
+    
+    @records = @records.order(order) if !order.nil?
+    
+    total = @records.count
+    @records = @records.limit(params[:length]).offset(params["start"])
+    data = []
+    
+    actions_col = 5
+    itemsx = []
+    @records.each do |item|
+      ############### BEGIN REVISION #########################
+      # update approved status
+      if params[:status].present? && params[:status] == "approved"
+        item.remove_annoucing_users([user])
+      end
+      ############### END REVISION #########################
+      
+      itemx = [
+              item.cover_link,                            
+              item.book_link,
+              '<div class="text-center">'+item.stock(nil, from_date).to_s+"</div>",
+              '<div class="text-center">'+item.imported_count(from_date, to_date).to_s+"</div>",
+              '<div class="text-center">'+item.exported_count(from_date, to_date).to_s+"</div>",
+              '<div class="text-center">'+item.delivered_count(from_date, to_date).to_s+"</div>",
+              '<div class="text-center">'+item.stock(nil, to_date).to_s+"</div>",
             ]
       data << itemx
       itemsx << item
@@ -256,7 +314,7 @@ class Book < ActiveRecord::Base
     ActionView::Base.send(:include, Rails.application.routes.url_helpers)
     link_helper = ActionController::Base.helpers    
     
-    title = title.nil? ? name : title
+    title = title.nil? ? display_name : title
     
     link_helper.link_to(title, {controller: "books", action: "edit", id: id, tab_page: 1}, class: "tab_page", title: name)
   end
@@ -325,15 +383,59 @@ class Book < ActiveRecord::Base
     course_types.map(&:short_name).join(", ")
   end
   
-  def stock
+  def stock(from=nil,to=nil)
     total = 0
-    total += stock_updates.where(type_name: "import").sum(:quantity)
-    total -= stock_updates.where(type_name: "export").sum(:quantity)
+    total += imported_count(from,to)
+    total -= exported_count(from,to)
     
     #delivery
-    total -= Delivery.joins(:course_register => :books_contacts).where(status: 1).where(books_contacts: { book_id: self.id }).count
+    total -= delivered_count(from,to)
     
     return total
+  end
+  
+  def delivered_count(from=nil, to=nil)
+    records = self.delivery_details.includes(:delivery => :course_register)
+                    .where(deliveries: {status: 1})
+                    .where("course_registers.parent_id IS NULL").where("course_registers.status LIKE ?", "%[active]%")
+    
+    if from.present?
+      records = records.where("deliveries.delivery_date >= ?", from)
+    end
+    if to.present?
+      records = records.where("deliveries.delivery_date <= ?", to)
+    end
+    
+    return records.sum(:quantity)
+                    
+  end
+  
+  def imported_count(from=nil, to=nil)
+    records = stock_updates.where(type_name: "import")
+    
+    if from.present?
+      records = records.where("created_at >= ?", from)
+    end
+    if to.present?
+      records = records.where("created_at <= ?", to)
+    end
+    
+    return records.sum(:quantity)
+                    
+  end
+  
+  def exported_count(from=nil, to=nil)
+    records = stock_updates.where(type_name: "export")
+    
+    if from.present?
+      records = records.where("created_at >= ?", from)
+    end
+    if to.present?
+      records = records.where("created_at <= ?", to)
+    end
+    
+    return records.sum(:quantity)
+                    
   end
   
   ############### BEGIN REVISION #########################
@@ -599,5 +701,7 @@ class Book < ActiveRecord::Base
                 .where(book_id: self.id)
                 .where(contact_id: contact.id).count > 0
   end
+  
+  
   
 end

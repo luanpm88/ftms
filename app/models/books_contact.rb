@@ -70,8 +70,25 @@ class BooksContact < ActiveRecord::Base
     total - paid_amount
   end
   
+  def self.all_to_be_ordered(book_id=nil)
+    result = self.joins(:book, :course_register, :contact).where("course_registers.parent_id IS NULL").where("course_registers.status LIKE ?", "%[active]%")
+    result = result.where(book_id: book_id) if book_id.present?
+  end
+  
+  def self.to_be_delivered_count(book_id=nil)
+    count = 0
+    self.all_to_be_ordered(book_id).each do |bc|
+      count += bc.remain
+    end
+    return count
+  end
+  
+  def self.to_be_ordered_count(book_id=nil)
+    self.all_to_be_ordered(book_id).sum(:quantity)
+  end
+  
   def self.filter(params, user)
-    @records = self.joins(:book, :course_register, :contact).where("course_registers.parent_id IS NULL").where("course_registers.status LIKE ?", "%[active]%")
+    @records = self.all_to_be_ordered
     
     if params["course_types"].present?
       @records = @records.includes(:book)

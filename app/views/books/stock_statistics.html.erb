@@ -1,0 +1,81 @@
+<ul class="breadcrumb">
+        <li>
+          <p>YOU ARE HERE</p>
+        </li>
+                    <li>
+			<%= link_to 'Users', users_url %>
+                    </li>
+      </ul>
+      <div class="page-title"> <i class="icon-edit"></i>
+        <h3><span class="semi-bold">User Statistic</span></h3>
+      </div>
+      
+      <div class="grid simple ">
+        <form id="user-stock-statistics-filters-form" action="<%= url_for({controller: "books", action: "stock_statistics"})%>">
+		<% if params[:tab_page] %>
+						 <%= hidden_field_tag "tab_page", 1 %>
+				<% end %>
+                  <div class="grid-body no-border filters stock-statistics-filter">
+                  <div class="row order-filters">
+						<div class="col-md-2">
+								<h4>From Date</h4>
+								<div class="date_select_filter">
+								<div class="input-with-icon  right">
+									<div class="input-append success date col-md-10 no-padding">
+										<%= text_field_tag :from_date, @from_date.strftime("%d-%b-%Y"), :class => "datetime form-control" %>
+										<span class="add-on"><span class="arrow"></span><i class="icon-th"></i></span>
+									</div>
+									<br style="clear: both" />
+									
+								</div>
+								</div>
+							</div>
+							<div class="col-md-2">
+								<h4>To Date</h4>
+								<div class="date_select_filter">
+								<div class="input-with-icon  right">
+									<div class="input-append success date col-md-10 no-padding">
+										<%= text_field_tag :to_date, @to_date.strftime("%d-%b-%Y"), :class => "datetime form-control" %>
+										<span class="add-on"><span class="arrow"></span><i class="icon-th"></i></span>
+									</div>
+									<br style="clear: both" />
+								</div>
+								</div>
+						</div>				
+						
+						<div class="col-md-2">
+                                <div class="">
+                                    <h4 style="color:#fff">...</h4>
+                                    <input type="submit" value="Go" class="btn btn-primary" />
+                                </div>
+                        </div>
+                  </div>
+                  </div>
+        </form>
+	  </div>
+      
+      <div class="row">
+          <div class="col-md-12">              
+              <div class="grid simple ">                  
+                  <div class="grid-body no-border">                       
+                          <table class="table no-more-tables datatable-stock-statistics no-filter">
+                              <thead>
+                                  <tr>
+										<th width="1%">Cover</th>	
+                                      <th>Stock Name</th>									  
+                                      <th class="text-center">Begin</th>
+									  <th class="text-center">Imported</th>
+                                      <th class="text-center">Exported</th>
+									  <th class="text-center">Delivered</th>
+									  <th class="text-center">End</th>
+                                  </tr>
+                              </thead>
+								
+                          </table>
+                  </div>
+              </div>
+  
+          </div>
+  
+      </div>
+	  

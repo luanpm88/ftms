@@ -28,6 +28,21 @@ class Activity < ActiveRecord::Base
     @records = self.all
     @records = @records.where(contact_id: params[:contact_id]) if params[:contact_id].present?
     
+    if params["from_date"].present?
+      @records = @records.where("activities.created_at >= ?", params["from_date"].to_datetime.beginning_of_day)
+    end
+    if params["to_date"].present?
+      @records = @records.where("activities.created_at <= ?", params["to_date"].to_datetime.end_of_day)
+    end
+    
+    if params["contact"].present?
+      @records = @records.where(contact_id: params["contact"])
+    end
+    
+    if params["user"].present?
+      @records = @records.where(user_id: params["user"])
+    end
+    
     if params[:status].present?
       @records = @records.where(deleted: params[:status])
     end    
@@ -44,7 +59,7 @@ class Activity < ActiveRecord::Base
     
     if !params["order"].nil?
       case params["order"]["0"]["column"]
-      when "0"
+      when "1"
         order = "activities.created_at"
       else
         order = "activities.created_at"
@@ -62,11 +77,12 @@ class Activity < ActiveRecord::Base
     
     data = []
     
-    actions_col = 4
+    actions_col = 5
     @records.each do |item|
       item = [
               item.note.gsub("\n","<br />").html_safe,
               "<div class=\"text-center nowrap\">#{item.created_at.strftime("%d-%b-%Y, %I:%M %p")}</div>",
+              "<div class=\"text-center\">#{item.contact.contact_link}</div>",
               "<div class=\"text-center\">#{item.user.staff_col}</div>",
               "<div class=\"text-center\">#{item.display_statuses}</div>",  
               ""
