@@ -28,14 +28,18 @@
 										<h4>Stock Type</h4>							
 										<%= select_tag 'stock_types[]', options_for_select(StockType.active_stock_types.collect{ |u| [u.name, u.id] }), class: "modern_select width100", multiple: true %>
 									</div>
-								  <div class="col-md-2">
+								  <div class="col-md-3">
 									  <h4>Program</h4>							
 									  <%= select_tag 'course_types[]', options_for_select(CourseType.active_course_types.collect{ |u| [u.short_name, u.id] }), class: "modern_select width100", multiple: "multiple" %>
 								  </div>							
-								  <div class="col-md-2">
+								  <div class="col-md-3">
 									  <h4>Paper</h4>							
 									  <%= select_tag 'subjects[]', options_for_select(Subject.active_subjects.collect{ |u| [u.name, u.id] }), class: "modern_select width100", multiple: "multiple" %>
-								  </div>									  
+								  </div>
+									<div class="col-md-3">
+										<h4>Course</h4>							
+										<input style="width:100%;margin-bottom: 5px;" name="courses" data="<%= courses_path(format: "json") %>" class="select2-ajax-courses" value="<%= @course.id if !@course.nil? %>" text="<%= @course.display_name if !@course.nil? %>" />
+									</div>
 								  <div class="col-md-3 student-course-register-filter">
 									  <h4>Student</h4>                        
 									  <div class="lecturers-filter-box">
@@ -67,21 +71,25 @@
 							<div class="listing_box_actions">
 								<div class="btn-group listing_actions"> <a href="#" data-toggle="dropdown" class="btn btn-white dropdown-toggle btn-demo-space"> List Actions (<span class="listing_checked_count">0</span>)<span class="caret"></span> </a>
 									<ul class="dropdown-menu">
-										<li><a href="#" rel="<%= export_list_contacts_path(format: "xls") %>">Quick Deliver Stock</a></li>
-										<li><a href="#" rel="<%= export_list_contacts_path(format: "xls") %>">Print To-Be-Delivered Note</a></li>
+										<li><a href="#" rel="<%= deliver_all_books_path %>">Quick Deliver Stock</a></li>
+										<li><a href="#" rel="<%= delivery_note_books_path %>">Print To-Be-Delivered Note</a></li>
 									</ul>
 								</div>
 								<div class="checkbox check-default check_all_page_but" style="display: inline-block">
 									<input name="check_all_page" id="checkbox_all_page" type="checkbox" value="all_page" class="check_all_page">
 									<label for="checkbox_all_page">Select All Pages</label>
 								</div>
-								
+								<div>
+									<div class="delivery_counting"></div>
+								</div>
 							</div>
 							
 							<div class="grid simple ">
+								
 								<div class="grid-title no-border">
 									<h4>Listing  <span class="semi-bold">Delveries</span></h4>                                
 								</div>
+								
 								<div class="grid-body no-border">
 									 
 										<table class="table table-striped no-more-tables datatable-delivery no-filter">

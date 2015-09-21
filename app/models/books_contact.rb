@@ -40,7 +40,11 @@ class BooksContact < ActiveRecord::Base
   end
   
   def max_delivery
-    remain > book.stock ? book.stock : remain
+    if remain > book.stock
+      book.stock > 0 ? book.stock : 0
+    else
+      remain
+    end
   end
   
   def delivered_count
@@ -66,7 +70,7 @@ class BooksContact < ActiveRecord::Base
     total - paid_amount
   end
   
-  def self.datatable(params, user)
+  def self.filter(params, user)
     @records = self.joins(:book, :course_register, :contact).where("course_registers.parent_id IS NULL").where("course_registers.status LIKE ?", "%[active]%")
     
     if params["course_types"].present?
@@ -94,6 +98,10 @@ class BooksContact < ActiveRecord::Base
     if params[:stock_types].present?
       @records = @records.where(books: {stock_type_id: params[:stock_types]})
     end
+    
+    if params[:courses].present?
+      @records = @records.includes(:course_register => :contacts_courses).where(contacts_courses: {course_id: params[:courses].split(",")})
+    end
 
     
     course_ids = nil
@@ -107,7 +115,11 @@ class BooksContact < ActiveRecord::Base
     
     @records = @records.joins(:contacts_courses => :course).where(courses: {id: course_ids}) if !course_ids.nil?
     
-    
+    return @records
+  end
+  
+  def self.datatable(params, user)
+    @records = self.filter(params, user)
     
     @records = @records.search(params["search"]["value"]) if !params["search"]["value"].empty?
     
@@ -124,6 +136,19 @@ class BooksContact < ActiveRecord::Base
     end
     
     @records = @records.order(order) if !order.nil?
+    
+    
+    ## STATISTICS
+    #counting = []
+    #course_types = CourseType.where(id: Book.where(id: @records.map(&:book_id)).map(&:course_type_id)).order(:short_name)
+    #course_types.each do |ct|
+    #  row = {}
+    #  row[:course_type] = ct
+    #  row[:count] = @records.joins(:book => :course_type).where(course_types: {id: ct.id})
+    #  
+    #  counting << row
+    #end
+    
     
     total = @records.count
     @records = @records.limit(params[:length]).offset(params["start"])

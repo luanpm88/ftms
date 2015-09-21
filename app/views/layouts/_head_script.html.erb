@@ -1,5 +1,20 @@
 <script>
 	
+	function getDeliveryCounting() {
+		var count = $('input[name="ids[]"]:checked').length
+		//if (count > 0) {
+			$.ajax({
+				type: "POST",
+				url: "<%= delivery_counting_books_path %>",
+				data: $(".listing_form").serialize(),
+				success: function(data, textStatus, jqXHR)
+					{
+						$(".delivery_counting").html(data)
+					}
+			})
+		//}
+	}
+	
 	function updateImportExportList(program_id, subject_id) {
 		$.ajax({
 			url : '<%= import_export_form_list_stock_updates_path %>?program_id='+program_id+'&subject_id='+subject_id,
@@ -2391,6 +2406,8 @@
 			$('.listing_box_actions .listing_checked_count').html(count)
 			
 			$('.check_all_page').attr("checked",false)
+			
+			getDeliveryCounting()
 		})
 		
 		$(document).on("click",".listing_actions li a",function() {
@@ -2404,8 +2421,9 @@
 			} else {
 				alert("Need to choose contact(s) first!")
 			}
-			
+			getDeliveryCounting()
 		})
+		
 		
 		$(document).on("change",".check_all_page",function() {
 			if($(this).is(":checked")) {
@@ -2413,6 +2431,7 @@
 			} else {
 				clearListCheck()
 			}
+			getDeliveryCounting()
 		})
 		
 		
@@ -2474,6 +2493,12 @@
 		$('.fancybox').fancybox();
 		
 		changeMailingPreferred($('select[name="contact[preferred_mailing]"]'))
+		changeMailingPreferred($('select[name="course_register[preferred_mailing]"]'))
+		$('select[name="contact[preferred_mailing]"],select[name="course_register[preferred_mailing]"]').change(function() {
+			changeMailingPreferred($(this))
+		})
+		
+		
 		$('select[name="contact[preferred_mailing]"]').change(function() {
 			changeMailingPreferred($(this))
 		})

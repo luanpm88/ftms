@@ -16,13 +16,13 @@ module BooksContactsHelper
       
       
        
-      if can? :delivery_print, item.course_register
-        item.all_deliveries.each do |d|
-          if can? :print, d
-            actions += '<li>'+ActionController::Base.helpers.link_to("<i class=\"icon icon-print\"></i> Deliery [#{d.delivery_date.strftime("%d-%b-%Y")}]".html_safe, {controller: "deliveries", action: "show", id: d.id, tab_page: 1}, title: "#{item.contact.display_name}: Deliery [#{d.delivery_date.strftime("%d-%b-%Y")}]", class: "tab_page")+'</li>'
-          end
-        end
-      end
+      #if can? :delivery_print, item.course_register
+      #  item.all_deliveries.each do |d|
+      #    if can? :print, d
+      #      actions += '<li>'+ActionController::Base.helpers.link_to("<i class=\"icon icon-print\"></i> Deliery [#{d.delivery_date.strftime("%d-%b-%Y")}]".html_safe, {controller: "deliveries", action: "show", id: d.id, tab_page: 1}, title: "#{item.contact.display_name}: Deliery [#{d.delivery_date.strftime("%d-%b-%Y")}]", class: "tab_page")+'</li>'
+      #    end
+      #  end
+      #end
       
       #item.all_payment_records.each do |pr|
       #  if can? :print, pr

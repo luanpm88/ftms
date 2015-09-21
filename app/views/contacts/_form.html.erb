@@ -434,21 +434,21 @@
 													  </div>
 														   
 													  <div class="row">
-														   <div class="col-md-6">													   
-																<div class="form-group">
-																	 <label class="form-label"><i class="icon-truck"></i> Preferred mailing</label>
-																	 <span class="help"></span>
-																	 <%= render "field_history", drafts: @contact.field_history("preferred_mailing"), type: "preferred_mailing" %>
-																	 <div class="input-with-icon  right">
-																		  <select name="contact[preferred_mailing]" class="modern_select width100 required">
-																				<option <%= 'selected="selected"' if @contact.preferred_mailing == "ftms" %> value="ftms">FTMS</option>
-																				<option <%= 'selected="selected"' if @contact.preferred_mailing == "home" %> value="home">Home address</option>
-																				<option <%= 'selected="selected"' if @contact.preferred_mailing == "company" %> value="company">Company address</option>
-																				<option <%= 'selected="selected"' if @contact.preferred_mailing == "other" %> value="other">Other</option>
-																		  </select>
-																	 </div>
-																</div>																
-														   </div>
+															<div class="col-md-6">													   
+																  <div class="form-group">
+																	   <label class="form-label"><i class="icon-truck"></i> Preferred mailing</label>
+																	   <span class="help"></span>
+																	   <%= render "field_history", drafts: @contact.field_history("preferred_mailing"), type: "preferred_mailing" %>
+																	   <div class="input-with-icon  right">
+																			<select name="contact[preferred_mailing]" class="modern_select width100 required">
+																				  <option <%= 'selected="selected"' if @contact.preferred_mailing == "ftms" %> value="ftms">FTMS</option>
+																				  <option <%= 'selected="selected"' if @contact.preferred_mailing == "home" %> value="home">Home address</option>
+																				  <option <%= 'selected="selected"' if @contact.preferred_mailing == "company" %> value="company">Company address</option>
+																				  <option <%= 'selected="selected"' if @contact.preferred_mailing == "other" %> value="other">Other</option>
+																			</select>
+																	   </div>
+																  </div>																
+															</div>
 															<div class="col-md-6 mailing_address_box">													   
 																 <div class="form-group">
 																	  <label class="form-label"><i class="icon-truck"></i> Mailing address</label>

@@ -784,4 +784,32 @@ class CourseRegister < ActiveRecord::Base
     
   end
   
+  def display_mailing_address
+    return contact.default_mailing_address if preferred_mailing.nil?
+    
+    if preferred_mailing == "home"
+      return contact.address
+    elsif preferred_mailing == "company"
+      return contact.referrer.address
+    elsif preferred_mailing == "ftms"
+      return "FTMS"
+    else
+      return contact.mailing_address
+    end    
+  end
+  
+  def display_mailing_title
+    return contact.default_mailing_title if preferred_mailing.nil?
+    
+    if preferred_mailing == "home"
+      return "Home Address"
+    elsif preferred_mailing == "company"
+      return "Company Address"
+    elsif preferred_mailing == "ftms"
+      return "FTMS Address"
+    else
+      return "Address"
+    end    
+  end
+  
 end

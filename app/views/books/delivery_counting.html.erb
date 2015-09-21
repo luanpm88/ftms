@@ -1,0 +1,7 @@
+<% if !@counting.empty? %>
+  <div class="counting_list">
+    <% @counting.each do |row| %>
+      <%= row[:course_type].short_name %>: <strong><%= row[:count] %></strong> |
+    <% end %>
+  </div>
+<% end %>

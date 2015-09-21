@@ -1,0 +1,152 @@
+<style>
+  * {
+    font-family: arial;
+    font-size: 14px;
+  }
+  .page {
+    padding: 0;
+  }
+  .logo img {
+    width: 220px;
+    padding: 0;
+    margin: 0;
+  }
+  .heading {
+    text-align: center;
+  }
+  .text-left {
+    text-align: left;
+  }
+  .text-center {
+    text-align: center;
+  }
+  .list {
+    width: 100%;
+    margin-top: 20px;
+    border-left: 1px solid #000000;
+    border-top: 1px solid #000000;
+    border-bottom: none;
+    border-right: none;
+  }
+  .list th {
+      background: none repeat scroll 0 0 #EFEFEF;
+      border-bottom: 1px solid #000000;
+      border-right: 1px solid #000000;
+      border-top: none;
+      border-left: none;
+      padding: 5px;
+  }
+  .list td {
+      border-bottom: 1px solid #000000;
+      border-right: 1px solid #000000;
+      border-top: none;
+      border-left: none;
+      padding: 5px;
+  }
+</style>
+
+<% @list.each_with_index do |row,index| %>
+
+          <div class="page" style="top: <%= 510*index %>px; position: absolute" >
+            <div class="logo">
+              <img src="<%= params[:action] == "delivery_note" ? "file://"+File.join(Rails.root, 'public', 'img', 'FTMSGlobalNew_transparent.png') : url_for("/img/FTMSGlobalNew_transparent.png") %>" class="login-logo" />
+            </div>
+            
+            <div class="heading">
+              <h1>DELIVERY NOTE</h1>
+            </div>
+            
+            
+            <table cellpadding="5">
+              <tr>
+                <td>
+                  <strong>Student:</strong>
+                </td>
+                <td width="50%">
+                  <%= row[:contact].display_name %>
+                </td>
+                <td>
+                  <strong>Date:</strong>
+                </td>
+                <td>
+                  <%= Time.now.strftime("%d-%b-%Y") %>
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  <strong>Company:</strong>
+                </td>
+                <td colspan="2">
+                  <%= row[:contact].referrer.display_name if !row[:contact].referrer.nil? %>
+                </td>
+                
+              </tr>
+              <tr>
+                <td>
+                  <strong><%= row[:address_title] %>:</strong>
+                </td>
+                <td colspan="2">
+                  <%= row[:address] %>
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  <strong>Phone:</strong>
+                </td>
+                <td colspan="2">
+                  <%= row[:contact].mobile %>
+                </td>
+              </tr>
+            </table>
+            <p></p>
+            <table width="100%" cellpadding="10" class="list" cellspacing="0">
+              <tr>
+                <th width="1%">No.</th>
+                <th>Title</th>
+                <th class="text-center">Book Type</th>
+                <th class="text-center">Quantity</th>
+              </tr>
+              <% row[:list].each_with_index do |d, num| %>
+                <% if !d.delivered? %>
+                  <tr>
+                    <td class="text-center">
+                      <div><%= num+1 %></div>
+                      
+                    </td>
+                    <td class="text-left">
+                      <div><strong><%= d.book.display_name %></strong></div>          
+                    </td>
+                    <td class="text-center">
+                      <%= d.book.stock_type.name %>
+                    </td>
+                    <td class="text-center">
+                      <%= d.remain %>
+                    </td>
+                  </tr>
+                <% end %>
+              <% end %>
+            </table>
+            
+            <p></p>
+            
+            
+            <table width="100%" cellpadding="10">
+              <tr>
+                <th width="50%" class="text-center" valign="top">Received by
+                </th>
+                <th class="text-center" valign="top">Delivered by
+                <br />
+                <br />
+                <br />
+                <br />
+                <br />
+                
+                </th>      
+              </tr>
+              
+            </table>
+            
+          </div>
+
+
+<% end %>

@@ -8464,3 +8464,7 @@ form .icon-time {
 .not_selected {
     opacity: 0.3;
 }
+.counting_list {
+    margin: 10px 0 20px 0;
+    font-size: 14px;
+}

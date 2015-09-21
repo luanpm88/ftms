@@ -1,6 +1,7 @@
 class Delivery < ActiveRecord::Base
   belongs_to :course_register
   belongs_to :user
+  belongs_to :contact
   has_many :delivery_details, :dependent => :destroy
   after_save :update_statuses
   

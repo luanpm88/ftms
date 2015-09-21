@@ -944,6 +944,18 @@ class Contact < ActiveRecord::Base
     
   end
   
+  def default_mailing_title
+    if preferred_mailing == "home"
+      return "Home Address"
+    elsif preferred_mailing == "company"
+      return "Company Address"
+    elsif preferred_mailing == "ftms"
+      return "FTMS Address"
+    else
+      return "Address"
+    end    
+  end
+  
   def course_count
     active_courses.uniq.count
   end

@@ -217,7 +217,9 @@ Hkerp::Application.routes.draw do
       get :stock_form_list
       get :delivery
       get :import_export
-      
+      post :delivery_note
+      post :deliver_all
+      post :delivery_counting
     end
   end
   

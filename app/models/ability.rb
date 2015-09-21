@@ -161,6 +161,9 @@ class Ability
       can :stock_form_list, Book
       can :delivery, Book
       can :import_export, Book
+      can :delivery_note, Book
+      can :deliver_all, Book
+      can :delivery_counting, Book
       
       can :datatable, BooksContact
       

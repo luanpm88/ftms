@@ -232,6 +232,148 @@ class BooksController < ApplicationController
     render layout: "content"
   end
   
+  def delivery_note
+    if params[:ids].present?
+      if !params[:check_all_page].nil?
+        params[:intake_year] = params["filter"]["intake(1i)"] if params["filter"].present?
+        params[:intake_month] = params["filter"]["intake(2i)"] if params["filter"].present?
+        
+        if params[:is_individual] == "false"
+          params[:contact_types] = nil
+        end        
+        
+        @books_contacts = BooksContact.filter(params, current_user)
+      else
+        @books_contacts = BooksContact.where(id: params[:ids])
+      end
+    end
+    
+    @books_contacts = @books_contacts.joins(:course_register).order("books_contacts.contact_id, course_registers.preferred_mailing, course_registers.mailing_address")
+    
+    @list = []
+    row = nil
+    @books_contacts.each_with_index do |bc,index|
+      if row.nil? || row[:contact] != bc.contact || row[:address] != bc.course_register.display_mailing_address
+        @list << row if !row.nil?
+        
+        row = {}
+        row[:contact] = bc.contact
+        row[:address] = bc.course_register.display_mailing_address
+        row[:address_title] = bc.course_register.display_mailing_title
+        row[:list] = [bc]
+      else
+        row[:list] << bc
+      end
+      
+      @list << row if @books_contacts.count == index+1
+    end
+    #
+    #@list += @list
+    #@list += @list
+    #@list += @list
+    #@list += @list
+    #@list += @list
+    #@list += @list
+    #@list += @list
+    
+    #respond_to do |format|
+    #    format.html { render 'books/delivery_note.pdf.erb' }
+    #    format.json { head :no_content }
+    #end
+    
+    render  :pdf => "delivery_note_"+Time.now.strftime("%d_%b_%Y"),
+            :template => 'books/delivery_note.pdf.erb',
+            :layout => nil,
+            :footer => {
+               :center => "",
+               :left => "",
+               :right => "",
+               :page_size => "A4",
+               :margin  => {:top    => 0, # default 10 (mm)
+                          :bottom => 0,
+                          :left   => 0,
+                          :right  => 0},
+            }
+  end
+  
+  def deliver_all
+    if params[:ids].present?
+      if !params[:check_all_page].nil?
+        params[:intake_year] = params["filter"]["intake(1i)"] if params["filter"].present?
+        params[:intake_month] = params["filter"]["intake(2i)"] if params["filter"].present?
+        
+        if params[:is_individual] == "false"
+          params[:contact_types] = nil
+        end        
+        
+        @books_contacts = BooksContact.filter(params, current_user)
+      else
+        @books_contacts = BooksContact.where(id: params[:ids])
+      end
+    end
+    
+    @course_registers = CourseRegister.where(id: @books_contacts.map(&:course_register_id))
+    
+    @course_registers.each do |cr|
+      delivery = Delivery.new
+      delivery.course_register = cr
+      delivery.user = current_user
+      delivery.contact = cr.contact
+      delivery.delivery_date = Time.now
+      delivery.status = 1
+      
+      cr.books_contacts.each do |bc|
+        if @books_contacts.include?(bc) && !bc.delivered?
+          delivery.save
+          delivery.delivery_details.create(book_id: bc.book_id, quantity: bc.remain)
+        end        
+      end
+      
+      delivery.save if !delivery.delivery_details.empty?
+    end
+    
+    respond_to do |format|
+        format.html { render "/books/delivered", layout: "content" }
+        format.json { head :no_content }
+    end
+  end
+  
+  def delivery_counting
+    if params[:ids].present?
+      if !params[:check_all_page].nil?
+        params[:intake_year] = params["filter"]["intake(1i)"] if params["filter"].present?
+        params[:intake_month] = params["filter"]["intake(2i)"] if params["filter"].present?
+        
+        if params[:is_individual] == "false"
+          params[:contact_types] = nil
+        end        
+        
+        @books_contacts = BooksContact.filter(params, current_user)
+      else
+        @books_contacts = BooksContact.where(id: params[:ids])
+      end
+    end
+    
+    # STATISTICS
+    @counting = []
+    if @books_contacts.present?        
+      course_types = CourseType.where(id: Book.where(id: @books_contacts.map(&:book_id)).map(&:course_type_id)).order(:short_name)
+      course_types.each do |ct|
+        row = {}
+        row[:course_type] = ct
+        bcs = @books_contacts.includes(:book => :course_type).where(course_types: {id: ct.id})
+        row[:count] = 0
+        bcs.each do |bc|
+          row[:count] += bc.remain
+        end
+        
+        @counting << row if row[:count] > 0
+      end
+    end
+    
+    render layout: nil
+  end
+  
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_book

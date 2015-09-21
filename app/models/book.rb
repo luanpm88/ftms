@@ -80,6 +80,7 @@ class Book < ActiveRecord::Base
       @records = @records.where(stock_type_id: params[:stock_types])
     end
     
+        
     return @records
   end
   
@@ -587,7 +588,7 @@ class Book < ActiveRecord::Base
     str = []
     str << course_type.short_name if !course_type.nil?
     str << subject.name if !subject.nil?
-    str = str.join("-") + "<br />" + name
+    str = str.join("-") + "-" + name
     
     return str.html_safe
   end

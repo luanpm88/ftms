@@ -851,7 +851,8 @@ CREATE TABLE course_registers (
     annoucing_user_ids text,
     parent_id integer,
     status text,
-    sponsored_company_id integer
+    sponsored_company_id integer,
+    preferred_mailing character varying
 );
 
 
@@ -2894,4 +2895,6 @@ INSERT INTO schema_migrations (version) VALUES ('20150917084811');
 INSERT INTO schema_migrations (version) VALUES ('20150919012300');
 
 INSERT INTO schema_migrations (version) VALUES ('20150919020639');
+
+INSERT INTO schema_migrations (version) VALUES ('20150921022253');
 
