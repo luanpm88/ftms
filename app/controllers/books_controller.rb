@@ -345,7 +345,7 @@ class BooksController < ApplicationController
     end
     
     respond_to do |format|
-        format.html { render "/books/delivered", layout: "content" }
+        format.html { render "/books/delivered", layout: nil }
         format.json { head :no_content }
     end
   end

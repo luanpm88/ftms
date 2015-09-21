@@ -2454,8 +2454,24 @@
 			}
 			var count = $('input[name="ids[]"]:checked').length
 			if (count > 0) {
-				$(".listing_form").attr("action", $(this).attr("rel"))
-				$(".listing_form").submit()
+				var form = $(".listing_form")
+				var link = $(this)
+				if (typeof($(this).attr("ajax")) == 'undefined') {
+					$(".listing_form").attr("action", $(this).attr("rel"))
+					$(".listing_form").submit()
+				} else {
+					//alert(link.attr("rel"))
+					$.ajax({
+							type: "POST",
+							url: link.attr("rel"),
+							data: form.serialize(),
+							success: function(data, textStatus, jqXHR)
+							{
+								alert(data)
+								window.parent.$(".tab-pane.active .main-frame")[0].contentWindow.reloadDatatable()
+							}
+					})
+				}
 			} else {
 				alert("Need to choose contact(s) first!")
 			}

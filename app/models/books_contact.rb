@@ -73,6 +73,8 @@ class BooksContact < ActiveRecord::Base
   def self.all_to_be_ordered(book_id=nil)
     result = self.joins(:book, :course_register, :contact).where("course_registers.parent_id IS NULL").where("course_registers.status LIKE ?", "%[active]%")
     result = result.where(book_id: book_id) if book_id.present?
+    
+    return result
   end
   
   def self.to_be_delivered_count(book_id=nil)
@@ -128,8 +130,7 @@ class BooksContact < ActiveRecord::Base
       course_ids = Course.where("EXTRACT(YEAR FROM courses.intake) = ? ", params["intake_year"]).map(&:id)
     elsif params["intake_month"].present?
       course_ids = Course.where("EXTRACT(MONTH FROM courses.intake) = ? ", params["intake_month"]).map(&:id)
-    end
-    
+    end    
     @records = @records.joins(:contacts_courses => :course).where(courses: {id: course_ids}) if !course_ids.nil?
     
     return @records
