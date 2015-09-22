@@ -1,0 +1,33 @@
+<?xml version="1.0"?>
+<Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet"
+  xmlns:o="urn:schemas-microsoft-com:office:office"
+  xmlns:x="urn:schemas-microsoft-com:office:excel"
+  xmlns:ss="urn:schemas-microsoft-com:office:spreadsheet"
+  xmlns:html="http://www.w3.org/TR/REC-html40">
+  <Worksheet ss:Name="Sheet1">
+    <Table>
+      <Row>
+        <Cell><Data ss:Type="String">STUDENT NAME</Data></Cell>
+        <Cell><Data ss:Type="String">COURSE</Data></Cell>
+        <Cell><Data ss:Type="String">PHRASES</Data></Cell>
+        <Cell><Data ss:Type="String">STOCK</Data></Cell>
+        <Cell><Data ss:Type="String">COMPANY</Data></Cell>
+        <% @papers.each do |paper| %>
+          <Cell><Data ss:Type="String" ss:Horizontal="Center"><%= paper.name %></Data></Cell>
+        <% end %>
+      </Row>
+    <% @list.each do |row| %>
+      <Row>
+        <Cell><Data ss:Type="String"><%= row[:contact_name] %></Data></Cell>
+        <Cell><Data ss:Type="String"><%= row[:course] %></Data></Cell>
+        <Cell><Data ss:Type="String"><%= row[:phrases] %></Data></Cell>
+        <Cell><Data ss:Type="String"><%= row[:stock] %></Data></Cell>
+        <Cell><Data ss:Type="String"><%= row[:company] %></Data></Cell>
+        <% @papers.each do |paper| %>
+          <Cell ss:Horizontal="Center"><Data ss:Type="String"><%= row[:papers][paper.id] %></Data></Cell>
+        <% end %>
+      </Row>
+    <% end %>
+    </Table>
+  </Worksheet>
+</Workbook>

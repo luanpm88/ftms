@@ -7,13 +7,19 @@ class BooksContact < ActiveRecord::Base
   belongs_to :discount_program
   
   has_many :books_contacts
+  has_many :payment_record_details
   
   after_create :update_statuses
   
   #def volumns
   #  b_ids = self.volumn_ids.split("][").map {|s| s.gsub("[","").gsub("]","") }
   #  return Book.where(id: b_ids)
-  #end  
+  #end
+  
+  def no_price?
+    price == -1
+  end
+  
   def price=(new)
     self[:price] = new.to_s.gsub(/\,/, '')
   end
@@ -26,7 +32,29 @@ class BooksContact < ActiveRecord::Base
   end
   
   def total
-    price*quantity - discount.to_f - discount_program_amount
+    if price != -1
+      return price*quantity - discount.to_f - discount_program_amount
+    else
+      return no_price_payment_record_detail.nil? ? 0 : no_price_payment_record_detail.total.to_f
+    end
+  end
+  
+  def no_price_payment_record_detail
+    payment_record_details.includes(:payment_record).where(payment_records: {status: 1}).first
+  end
+  
+  def no_price?
+    #price == -1    
+    if price == -1
+      # find total in payment record
+      no_price_payment_record_detail.nil? ? true : false
+    else
+      return false
+    end
+  end
+  
+  def paid?
+    paid_amount == total && !no_price?
   end
   
   def discount_program_amount
@@ -138,6 +166,8 @@ class BooksContact < ActiveRecord::Base
   
   def self.datatable(params, user)
     @records = self.filter(params, user)
+    
+    @records = @records.includes(:course_register).where("course_registers.status IS NOT NULL AND course_registers.status LIKE ?", "%[active]%")
     
     @records = @records.search(params["search"]["value"]) if !params["search"]["value"].empty?
     

@@ -1,5 +1,5 @@
                             <% @books.each_with_index do |book,number| %>
-							  <div class="row column-seperation stock_box stock_box_<%= number %>" rel="<%= number %>">
+							  <div class="row column-seperation item_box stock_box stock_box_<%= number %>" rel="<%= number %>">
                                     <div class="stock_box_label">Stock #<%= number+1 %></div>
 									<!--<div class="stock_box_close" rel="<%= number.to_s %>"><i class="icon icon-remove"></i></div>-->
 								   <div class="col-md-12">
@@ -38,10 +38,11 @@
                                                       <div class="input-with-icon  right">                                       
                                                            <i class=""></i>
                                                            <div class="input-with-iconz right">
-                                                                <select name="books_contacts[<%= number.to_s %>][price]" class="text-right modern_select width100 required price_acourse">
+                                                                <select name="books_contacts[<%= number.to_s %>][price]" class="text-right modern_select width100 required price_stock">
                                                                   <% book.prices.each do |price| %>
                                                                       <option value="<%= price %>" class="text-right"><%= format_price(price) %></option>
                                                                   <% end %>
+																	<option value="no_price" class="text-right">No Price</option>
                                                                 </select>
                                                            </div>
                                                       </div>
@@ -61,7 +62,7 @@
                                                     </div>
                                                </div>-->
                                                <div class="col-md-2">
-                                                    <div class="form-group">
+                                                    <div class="form-group no_price_group">
                                                           <label class="form-label"><label>Other discount/credit</label></label>
                                                           <span class="help"></span>
                                                           <div class="input-with-iconz right">                                       
@@ -70,7 +71,7 @@
                                                     </div>
                                                </div>
                                                <div class="col-md-2">
-                                                    <div class="form-group">
+                                                    <div class="form-group no_price_group">
                                                           <label class="form-label"><label>Total</label></label>
                                                           <span class="help"></span>
                                                           <div class="input-with-iconz right">                                       

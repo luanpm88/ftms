@@ -57,10 +57,10 @@
   <table cellpadding="5">
     <tr>
       <td>
-        <strong>Student:</strong>
+        <strong>Contact:</strong>
       </td>
       <td width="60%">
-        <%= @payment_record.course_register.contact.display_name %>
+        <%= @payment_record.contact.display_name %>
       </td>
       <td>
         <strong>Date:</strong>
@@ -78,21 +78,23 @@
       </td>
       
     </tr>
-    <tr>
-      <td>
-        <strong>Company:</strong>
-      </td>
-      <td colspan="2">
-        <%= @payment_record.course_register.contact.referrer.display_name if !@payment_record.course_register.contact.referrer.nil? %>
-      </td>
-      
-    </tr>
+    <% if @payment_record.company.nil? %>
+      <tr>
+        <td>
+          <strong>Company:</strong>
+        </td>
+        <td colspan="2">
+          <%= @payment_record.contact.referrer.display_name if !@payment_record.contact.referrer.nil? %>
+        </td>
+        
+      </tr>
+    <% end %>
     <tr>
       <td>
         <strong>Address:</strong>
       </td>
       <td colspan="2">
-        <%= @payment_record.course_register.mailing_address %>
+        <%= @payment_record.contact.address %>
       </td>
     </tr>
     <tr>
@@ -100,7 +102,7 @@
         <strong>Phone:</strong>
       </td>
       <td colspan="2">
-        <%= @payment_record.course_register.contact.mobile %>
+        <%= @payment_record.contact.mobile %>
       </td>
     </tr>
   </table>
@@ -117,7 +119,7 @@
       <br />
       <br />
       <br />
-      <span style="font-weight: normal"><%= @payment_record.user.name %></span>
+      <!--<span style="font-weight: normal"><%= @payment_record.user.name %></span>-->
       </th>
       <th class="text-center" valign="top">Paid by
       

@@ -1,5 +1,33 @@
 <script>
 	
+	function calculateCompanyPayment() {
+		var paid = 0
+		var total = 0
+		
+		if($('.company_payment_detail_total').val() != "") {
+			total = parseFloat($('.company_payment_detail_total').val().replace(/,/g,""))
+		}
+		
+		$('.company_payment_detail_paid').each(function() {
+			if($(this).val() != "") {
+				paid += parseFloat($(this).val().replace(/,/g,""))
+			}
+		})
+		
+		var remain = total - paid
+		$(".company_payment_detail_remain").html(ReplaceNumberWithDots(remain.toFixed(0)))
+	}
+	
+	function noPriceCheck(input) {
+		alert(input.select2("val"))
+		var box = input.parents(".item_box")
+		if (input.select2("val") == "no_price") {
+			box.find(".no_price_group").hide()
+		} else {
+			box.find(".no_price_group").show()
+		}
+	}
+	
 	function getDeliveryCounting() {
 		var count = $('input[name="ids[]"]:checked').length
 		//if (count > 0) {
@@ -15,9 +43,9 @@
 		//}
 	}
 	
-	function updateImportExportList(program_id, subject_id) {
+	function updateImportExportList(stock_type_id, program_id, subject_id) {
 		$.ajax({
-			url : '<%= import_export_form_list_stock_updates_path %>?program_id='+program_id+'&subject_id='+subject_id,
+			url : '<%= import_export_form_list_stock_updates_path %>?stock_type_id='+stock_type_id+'&program_id='+program_id+'&subject_id='+subject_id,
 			success:function(data, textStatus, jqXHR)
 			{
 				$(".import-export-stock-list").html(data)
@@ -27,10 +55,10 @@
 		});
 	}
 	
-	function updateStockFormList(program_id, subject_id) {
+	function updateStockFormList(stock_type_id, program_id, subject_id) {
 		var contact_id = $("input[name='course_register[contact_id]']").val()
 		$.ajax({
-			url : '<%= stock_form_list_books_path %>?contact_id='+contact_id+'&program_id='+program_id+'&subject_id='+subject_id,
+			url : '<%= stock_form_list_books_path %>?contact_id='+contact_id+'&stock_type_id='+stock_type_id+'&program_id='+program_id+'&subject_id='+subject_id,
 			success:function(data, textStatus, jqXHR)
 			{
 				$(".stock_box_list").html(data)
@@ -111,30 +139,43 @@
 	}
 	
 	function updatePaymentRecord() {
-		var total = 0
+		var paid_amount = 0
+		var addition_total = 0
 		$(".payment_box").each(function() {
-			if($(this).find('.detail_paid').val() != "") {
-				total += parseFloat($(this).find('.detail_paid').val().replace(/,/g,""))
+			if($(this).find('.detail_paid').length && $(this).find('.detail_paid').val() != "") {
+				paid_amount += parseFloat($(this).find('.detail_paid').val().replace(/,/g,""))
+			}
+			if($(this).find('.detail_total').val() != "") {
+				addition_total += parseFloat($(this).find('.detail_total').val().replace(/,/g,""))
 			}
 		})		
-		$(".payment-record-paid").html(ReplaceNumberWithDots(total.toFixed(0)))
+		$(".payment-record-paid").html(ReplaceNumberWithDots(paid_amount.toFixed(0)))
+		
+		//Total
+		var total = parseFloat($('.payment-record-total').attr("rel"))
+		var new_total = total + addition_total
 		
 		// remain
 		var receivable = parseFloat($('.payment-record-remain').attr("rel"))
-		var remain = receivable - total
+		var remain = receivable + addition_total - paid_amount
 		
 		$(".payment-record-remain").html(ReplaceNumberWithDots(remain.toFixed(0)))
+		$(".payment-record-total").html(ReplaceNumberWithDots(new_total.toFixed(0)))
 	}
 	
 	function updatePaymentRecordDetails(input) {
 		var box = input.parents(".payment_box")
 		var paid = 0
+		var addition_total = 0
 		if(box.find('.detail_paid').val() != "") {
 			paid = parseFloat(box.find('.detail_paid').val().replace(/,/g,""))
 		}
+		if(box.find('.detail_total').val() != "") {
+			addition_total = parseFloat(box.find('.detail_total').val().replace(/,/g,""))
+		}
 		var total = parseFloat(box.find('.detail_remain').attr("rel"))
 		
-		var remain = total - paid
+		var remain = total + addition_total - paid
 		
 		box.find('.detail_remain').html(ReplaceNumberWithDots(remain.toFixed(0)))
 		updatePaymentRecord()
@@ -286,42 +327,43 @@
 			}
 			
 			if (box.find("input.stock_check:checked").length && !$(this).hasClass("hidden") && box.find('input[name="contacts_courses['+number+'][course_id]"]').val() != "") {
-				
-				var line_total = 0
-				var quantity = 0
-				var price = 0
-				var price_discount_program = 0
-				var price_discount = 0
-				
-				if(box.find('input[name="books_contacts['+number+'][quantity]"]').length) {
-				  quantity = parseFloat(box.find('input[name="books_contacts['+number+'][quantity]"]').val())
-				}				
-				if(box.find('select[name="books_contacts['+number+'][price]"]').length) {
-				  price = parseFloat(box.find('select[name="books_contacts['+number+'][price]"]').select2("val"))*quantity
+				if (box.find(".price_stock").select2("val") != "no_price") {
+						var line_total = 0
+						var quantity = 0
+						var price = 0
+						var price_discount_program = 0
+						var price_discount = 0
+						
+						if(box.find('input[name="books_contacts['+number+'][quantity]"]').length) {
+						  quantity = parseFloat(box.find('input[name="books_contacts['+number+'][quantity]"]').val())
+						}				
+						if(box.find('select[name="books_contacts['+number+'][price]"]').length) {
+						  price = parseFloat(box.find('select[name="books_contacts['+number+'][price]"]').select2("val"))*quantity
+						}
+						if(box.find('input[name="books_contacts['+number+'][discount]"]').length && box.find('input[name="books_contacts['+number+'][discount]"]').val() != "") {
+						  price_discount = parseFloat(box.find('input[name="books_contacts['+number+'][discount]"]').val().replace(/,/g,""))
+						}       
+						if(box.find('input[name="books_contacts['+number+'][discount_program_id]"]').length && box.find('input[name="books_contacts['+number+'][discount_program_id]"]').val() != "") {
+						  var text = box.find('input[name="books_contacts['+number+'][discount_program_id]"]').select2("data").text
+						  var dd_v = parseFloat(text.split("[")[1].split("]")[0].split(" ")[0].replace(/,/g,""))
+						  var pp_type = text.split("[")[1].split("]")[0].split(" ")[1]
+						  price_discount_program = parseFloat(box.find('input[name="books_contacts['+number+'][discount_program_id]"]').select2("data").text.split("[")[1].split("]")[0].replace(/,/g,""))
+						  
+						  if(pp_type=="%") {
+							price_discount_program = (price_discount_program/100)*price
+						  }
+						}
+						
+						line_total = price - price_discount - price_discount_program
+						
+						box.find(".total_stock").html(ReplaceNumberWithDots(line_total.toFixed(0)))
+						
+						
+						total = total + line_total
+						total_list = total_list + price
+						total_program = total_program + price_discount_program
+						total_discount = total_discount + price_discount
 				}
-				if(box.find('input[name="books_contacts['+number+'][discount]"]').length && box.find('input[name="books_contacts['+number+'][discount]"]').val() != "") {
-				  price_discount = parseFloat(box.find('input[name="books_contacts['+number+'][discount]"]').val().replace(/,/g,""))
-				}       
-				if(box.find('input[name="books_contacts['+number+'][discount_program_id]"]').length && box.find('input[name="books_contacts['+number+'][discount_program_id]"]').val() != "") {
-				  var text = box.find('input[name="books_contacts['+number+'][discount_program_id]"]').select2("data").text
-				  var dd_v = parseFloat(text.split("[")[1].split("]")[0].split(" ")[0].replace(/,/g,""))
-				  var pp_type = text.split("[")[1].split("]")[0].split(" ")[1]
-				  price_discount_program = parseFloat(box.find('input[name="books_contacts['+number+'][discount_program_id]"]').select2("data").text.split("[")[1].split("]")[0].replace(/,/g,""))
-				  
-				  if(pp_type=="%") {
-					price_discount_program = (price_discount_program/100)*price
-				  }
-				}
-				
-				line_total = price - price_discount - price_discount_program
-				
-				box.find(".total_stock").html(ReplaceNumberWithDots(line_total.toFixed(0)))
-				
-				
-				total = total + line_total
-				total_list = total_list + price
-				total_program = total_program + price_discount_program
-				total_discount = total_discount + price_discount
 				
 				count = count + 1
 			}
@@ -388,55 +430,58 @@
 			var number = $(this).attr("rel")
 			var box = $(this)
 			if (!$(this).hasClass("hidden") && box.find('input[name="contacts_courses['+number+'][course_id]"]').val() != "") {
-				
-				var line_total = 0
-				var price = 0
-				var price_discount_program = 0
-				var price_discount = 0
-        
-				if(box.find('select[name="contacts_courses['+number+'][price]"]').length) {
-				  price = parseFloat(box.find('select[name="contacts_courses['+number+'][price]"]').val())
-				}
-				
-				if(box.find('input[name="contacts_courses['+number+'][discount]"]').length && box.find('input[name="contacts_courses['+number+'][discount]"]').val() != "") {
-				  price_discount = parseFloat(box.find('input[name="contacts_courses['+number+'][discount]"]').val().replace(/,/g,""))
-				}       
-				
-				// Discount Programs
-				box.find(".discount_program_box").each(function() {
+				if (box.find(".price_course").select2("val") != "no_price") {
+					var line_total = 0
+					var price = 0
+					var price_discount_program = 0
+					var price_discount = 0
+			
+					if(box.find('select[name="contacts_courses['+number+'][price]"]').length) {
+					  price = parseFloat(box.find('select[name="contacts_courses['+number+'][price]"]').val())
+					}
 					
-					if ($(this).find('select.price_discount_program').val() != "") {
-						var text = $(this).find('select.price_discount_program').select2("data").text
-						var dd_v = parseFloat(text.split("[")[1].split("]")[0].split(" ")[0].replace(/,/g,""))
-						var pp_type = text.split("[")[1].split("]")[0].split(" ")[1]
-						var d_value = parseFloat(text.split("[")[1].split("]")[0].replace(/,/g,""))
+					if(box.find('input[name="contacts_courses['+number+'][discount]"]').length && box.find('input[name="contacts_courses['+number+'][discount]"]').val() != "") {
+					  price_discount = parseFloat(box.find('input[name="contacts_courses['+number+'][discount]"]').val().replace(/,/g,""))
+					}       
+					
+					// Discount Programs
+					box.find(".discount_program_box").each(function() {
 						
-						if(pp_type=="%") {
-						  d_value = (d_value/100)*price
-						}
-						
-						price_discount_program = price_discount_program + d_value
-					}					
-				})
+						if ($(this).find('select.price_discount_program').val() != "") {
+							var text = $(this).find('select.price_discount_program').select2("data").text
+							var dd_v = parseFloat(text.split("[")[1].split("]")[0].split(" ")[0].replace(/,/g,""))
+							var pp_type = text.split("[")[1].split("]")[0].split(" ")[1]
+							var d_value = parseFloat(text.split("[")[1].split("]")[0].replace(/,/g,""))
+							
+							if(pp_type=="%") {
+							  d_value = (d_value/100)*price
+							}
+							
+							price_discount_program = price_discount_program + d_value
+						}					
+					})
+					
+					//Other Discounts
+					box.find(".other_discount_box").each(function() {					
+						if ($(this).find('input.price_other_discount').val() != "") {
+							var d_value = parseFloat($(this).find('input.price_other_discount').val().replace(/,/g,""))
+							
+							price_discount = price_discount + d_value
+						}					
+					})
+					
+					line_total = price - price_discount - price_discount_program
+					total_list = total_list + price
+					total_program = total_program + price_discount_program
+					total_discount = total_discount + price_discount
+					
+					box.find(".total_course").html(ReplaceNumberWithDots(line_total.toFixed(0)))
+					
+					
+					total = total + line_total
 				
-				//Other Discounts
-				box.find(".other_discount_box").each(function() {					
-					if ($(this).find('input.price_other_discount').val() != "") {
-						var d_value = parseFloat($(this).find('input.price_other_discount').val().replace(/,/g,""))
-						
-						price_discount = price_discount + d_value
-					}					
-				})
+				}	
 				
-				line_total = price - price_discount - price_discount_program
-				total_list = total_list + price
-				total_program = total_program + price_discount_program
-				total_discount = total_discount + price_discount
-				
-				box.find(".total_course").html(ReplaceNumberWithDots(line_total.toFixed(0)))
-				
-				
-				total = total + line_total
 				count = count + 1
 			}
 			
@@ -1552,7 +1597,7 @@
 					}
 				}
 			},
-			"columnDefs": [ { "targets": [0,1,2,3,4,5,6,8,9,10], "orderable": false } ],
+			"columnDefs": [ { "targets": [0,1,2,3,4,5,7,8,9], "orderable": false } ],
 			"order": [],
 			"aLengthMenu": [[10, 25, 50, 75, 100], [10, 25, 50, 75, 100]],
 			"iDisplayLength": 25
@@ -1597,7 +1642,7 @@
 					d.payment_statuses = $(".course-register-filter select[name='payment_statuses']").val()
 				}
 			},
-			"columnDefs": [ { "targets": [0,1,2,3,4,5,6,7,8], "orderable": false } ],
+			"columnDefs": [ { "targets": [0,1,2,3,4,6,7], "orderable": false } ],
 			"order": [],
 			"aLengthMenu": [[10, 25, 50, 75, 100], [10, 25, 50, 75, 100]],
 			"iDisplayLength": 25
@@ -1628,6 +1673,9 @@
 					}
 					if($(".payment-record-filter input[name='account_manager']").val()) {
 						d.account_manager =  $(".payment-record-filter input[name='account_manager']").val()
+					}
+					if($(".payment-record-filter input[name='company']").val()) {
+						d.company =  $(".payment-record-filter input[name='company']").val()
 					}
 				}
 			},
@@ -1820,7 +1868,7 @@
 					d.upfront = $(".payment-list-filter input[name='course[upfront]']:checked").val()
 				}
 			},
-			"columnDefs": [ { "targets": [0,1,2,3,4,5,6], "orderable": false } ],
+			"columnDefs": [ { "targets": [0,1,2,3,4,5,6,7,8,9], "orderable": false } ],
 			"order": [],
 			"aLengthMenu": [[10, 25, 50, 75, 100], [10, 25, 50, 75, 100]],
 			"iDisplayLength": 25
@@ -2456,11 +2504,9 @@
 			if (count > 0) {
 				var form = $(".listing_form")
 				var link = $(this)
-				if (typeof($(this).attr("ajax")) == 'undefined') {
-					$(".listing_form").attr("action", $(this).attr("rel"))
-					$(".listing_form").submit()
-				} else {
-					//alert(link.attr("rel"))
+				if (typeof($(this).attr("type")) != 'undefined' && $(this).attr("type") == "tab") {
+					parent.openTab(link.attr("rel")+"&"+form.serialize(), link.attr("title"))
+				} else if(typeof($(this).attr("type")) != 'undefined' && $(this).attr("type") == "ajax") {
 					$.ajax({
 							type: "POST",
 							url: link.attr("rel"),
@@ -2471,6 +2517,9 @@
 								window.parent.$(".tab-pane.active .main-frame")[0].contentWindow.reloadDatatable()
 							}
 					})
+				} else {
+					$(".listing_form").attr("action", $(this).attr("rel"))
+					$(".listing_form").submit()
 				}
 			} else {
 				alert("Need to choose contact(s) first!")
@@ -2786,7 +2835,13 @@
 			$(".transfer_total").html(ReplaceNumberWithDots(total.toFixed(0)))
 		})
 		
-		$(".payment_box .detail_paid").keyup(function() {
+		$(".payment_box .detail_paid,.payment_box .detail_total").keyup(function() {
+			updatePaymentRecordDetails($(this))
+		});
+		$(".payment_box .detail_paid,.payment_box .detail_total").change(function() {
+			updatePaymentRecordDetails($(this))
+		});
+		$(".payment_box .detail_paid,.payment_box .detail_total").click(function() {
 			updatePaymentRecordDetails($(this))
 		});
 		
@@ -2825,12 +2880,31 @@
 		})
 		
 		$(".stock_form_filter input").change(function() {
-			updateStockFormList($(".stock_form_filter input[name='program_id']").val(),$(".stock_form_filter input[name='subject_id']").val())
+			updateStockFormList($(".stock_form_filter input[name='stock_type_id']").val(),$(".stock_form_filter input[name='program_id']").val(),$(".stock_form_filter input[name='subject_id']").val())
 		})
 		
 		$(".import_export_form_filter input").change(function() {
-			updateImportExportList($(".import_export_form_filter input[name='program_id']").val(),$(".import_export_form_filter input[name='subject_id']").val())
+			updateImportExportList($(".import_export_form_filter input[name='stock_type_id']").val(),$(".import_export_form_filter input[name='program_id']").val(),$(".import_export_form_filter input[name='subject_id']").val())
 		})
+		
+		$(document).on("change", ".phrase_box .price_course", function() {
+			noPriceCheck($(this))
+		});
+		
+		$(document).on("change", ".stock_box .price_stock", function() {
+			noPriceCheck($(this))
+		});
+		
+		$(document).on("change", ".company_payment_form input[name='']", function() {
+			noPriceCheck($(this))
+		});
+		
+		$(".company_payment_form input").change(function() {
+			calculateCompanyPayment()
+		});
+		$(".company_payment_form input").keyup(function() {
+			calculateCompanyPayment()
+		});
 	})
 	
 

@@ -65,7 +65,9 @@ module CourseRegistersHelper
         actions += '<li>'+ActionController::Base.helpers.link_to('View Detail', {controller: "course_registers", action: "show", id: item.id, tab_page: 1}, title: "Course Register Detail: #{item.contact.display_name}", class: "tab_page")+'</li>'
       end
       
-      
+      if can? :delete, item
+        actions += '<li>'+ActionController::Base.helpers.link_to('Delete', {controller: "course_registers", action: "delete", id: item.id, tab_page: 1}, title: "Course Register: Delete", class: "tab_page")+'</li>'        
+      end
       
       #
       #if can? :course_register, item

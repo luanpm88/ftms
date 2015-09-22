@@ -111,7 +111,7 @@
 											  <label class="form-label"><%= f.label :total %></label>
 											  <span class="help"></span>
 											  <div class="input-with-iconx text-right">                                       
-												   <strong class="big-info"><%= format_price(@course_register.total) %></strong>
+												   <strong class="big-info payment-record-total" rel="<%= @course_register.total %>"><%= format_price(@course_register.total) %></strong>
 											  </div>
 										</div>	
 								   </div>
@@ -120,7 +120,7 @@
 											  <label class="form-label"><%= f.label :paid %></label>
 											  <span class="help"></span>
 											  <div class="input-with-iconx text-right">                                       
-												   <strong class="big-info payment-record-paid">0</strong>
+												   <strong class="big-info payment-record-paid"><%= format_price(@course_register.remain_amount) %></strong>
 											  </div>
 										 </div>	
 								   </div>
@@ -129,7 +129,7 @@
 											  <label class="form-label"><%= f.label :receivable %></label>
 											  <span class="help"></span>
 											  <div class="input-with-iconx text-right">                                       
-												   <strong class="big-info payment-record-remain" rel="<%= @course_register.remain_amount %>"><%= format_price(@course_register.remain_amount) %></strong>
+												   <strong class="big-info payment-record-remain" rel="<%= @course_register.remain_amount %>">0</strong>
 											  </div>
 										 </div>	
 								   </div>
@@ -207,9 +207,14 @@
                                              <div class="col-md-2">
 												  <div class="form-group">
 														<label class="form-label">Total</label>
-														<span class="help"></span>
-														<div class="input-with-iconz text-right">                                       
-															 <strong style="font-size: 18px" class="detail_total"><%= format_price(cc.total) %></strong>
+														<span class="help"><%= "(required)" if cc.no_price? %></span>
+														<div class="input-with-iconz text-right">
+															<% if cc.no_price? %>
+																 <%= text_field_tag "payment_record_details[#{cc.id}][total]", "", class: "form-control price_input detail_total required" %>
+															<% else %>
+																 <strong style="font-size: 18px" class="detail_total"><%= format_price(cc.total) %></strong>
+															<% end %>
+															 
 														</div>
 												  </div>
 											 </div>
@@ -217,8 +222,14 @@
 												  <div class="form-group">
 														<label class="form-label">Paid</label>
 														<span class="help"></span>
-														<div class="input-with-iconz">                                       
-															 <%= text_field_tag "payment_record_details[#{cc.id}][amount]", "", class: "form-control price_input detail_paid" %>
+														<div class="input-with-iconz">
+															<% if cc.paid? %>
+																 <div class="paid text-right">
+																	  <strong>Paid</strong>
+																 </div>
+															<% else %>
+																 <%= text_field_tag "payment_record_details[#{cc.id}][amount]", format_price(cc.remain), class: "form-control price_input detail_paid" %>
+															<% end %>
 														</div>
 												  </div>
 											 </div>
@@ -227,7 +238,7 @@
 														<label class="form-label">Receivable</label>
 														<span class="help"></span>
 														<div class="input-with-iconz text-right">                                       
-															 <strong style="font-size: 18px" class="detail_remain" rel="<%= cc.remain %>"><%= format_price(cc.remain) %></strong>
+															 <strong style="font-size: 18px" class="detail_remain" rel="<%= cc.remain %>">0</strong>
 														</div>
 												  </div>
 											 </div>
@@ -277,7 +288,7 @@
 																	<label class="form-label">Price</label>
 																	<span class="help"></span>
 																	<div class="input-with-iconz  text-right">                                       
-																		 <strong><%= format_price(bc.price) %></strong>
+																		 <strong><%= bc.price == -1 ? "No price" : format_price(bc.price) %></strong>
 																	</div>
 															  </div>
 															  <div class="form-group">
@@ -291,9 +302,14 @@
 														 <div class="col-md-2">
 																 <div class="form-group">
 																	   <label class="form-label">Total</label>
-																	   <span class="help"></span>
-																	   <div class="input-with-iconz text-right">                                       
-																			<strong style="font-size: 18px" class="detail_total"><%= format_price(bc.total) %></strong>
+																	   <span class="help"><%= "(required)" if bc.no_price? %></span>
+																	   <div class="input-with-iconz text-right">
+																		   <% if bc.no_price? %>
+																				<%= text_field_tag "stock_payment_record_details[#{bc.id}][total]", "", class: "form-control price_input detail_total required" %>
+																		   <% else %>
+																				<strong style="font-size: 18px" class="detail_total"><%= format_price(bc.total) %></strong>
+																		   <% end %>
+																			
 																	   </div>
 																 </div>
 															</div>
@@ -302,7 +318,13 @@
 																	   <label class="form-label">Paid</label>
 																	   <span class="help"></span>
 																	   <div class="input-with-iconz">                                       
-																			<%= text_field_tag "stock_payment_record_details[#{bc.id}][amount]", "", class: "form-control price_input detail_paid" %>
+																		   <% if bc.paid? %>
+																				<div class="paid text-right">
+																					 <strong>Paid</strong>
+																				</div>
+																		   <% else %>
+																				 <%= text_field_tag "stock_payment_record_details[#{bc.id}][amount]", format_price(bc.remain_amount), class: "form-control price_input detail_paid" %>
+																		   <% end %>
 																	   </div>
 																 </div>
 															</div>
@@ -311,7 +333,7 @@
 																	   <label class="form-label">Receivable</label>
 																	   <span class="help"></span>
 																	   <div class="input-with-iconz text-right">                                       
-																			<strong style="font-size: 18px" class="detail_remain" rel="<%= bc.remain_amount %>"><%= format_price(bc.remain_amount) %></strong>
+																			<strong style="font-size: 18px" class="detail_remain" rel="<%= bc.remain_amount %>">0</strong>
 																	   </div>
 																 </div>
 															</div>
@@ -356,11 +378,15 @@
 	 $(document).ready(function() {
 		  jQuery.validator.addMethod("payment_detail", function(value, element) {
 			   var val = 0
+			   var addition_total = 0
 			   if (value != "") {
 					val = parseFloat(value.replace(/,/g,""))
 			   }
 			   var total = parseFloat($(element).parents(".payment_box").find(".detail_remain").attr("rel"))
-			   return val <= total
+			   if($(element).parents(".payment_box").find("input.detail_total").length > 0) {
+					addition_total = parseFloat($(element).parents(".payment_box").find("input.detail_total").val().replace(/,/g,""))
+			   }
+			   return val <= total + addition_total
 		  }, "Paid amount is not valid. Please check again.");
 		  
 		  

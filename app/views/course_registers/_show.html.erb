@@ -44,7 +44,7 @@
 														<label class="form-label">Price</label>
 														<span class="help"></span>
 														<div class="input-with-iconz  text-right">                                       
-															 <strong><%= format_price(cc.price) %></strong>
+															 <strong><%= cc.no_price? ? "No price" : format_price(cc.price) %></strong>
 														</div>
 												  </div>
 											 </div>
@@ -83,7 +83,7 @@
 														<label class="form-label">Total</label>
 														<span class="help"></span>
 														<div class="input-with-iconz text-right">                                       
-															 <strong style="font-size: 18px"><%= format_price(cc.total) %></strong>
+															 <strong style="font-size: 18px"><%= cc.no_price? ? "No price" : format_price(cc.total) %></strong>
 														</div>
 												  </div>
 											 </div>
@@ -138,6 +138,7 @@
 																	</div>
 															  </div>
 														 </div>
+														 
 														 <div class="col-md-2">
 															  <div class="form-group">
 																	<label class="form-label">Quantity</label>

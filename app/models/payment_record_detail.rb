@@ -5,4 +5,8 @@ class PaymentRecordDetail < ActiveRecord::Base
   def amount=(new)
     self[:amount] = new.to_s.gsub(/\,/, '')
   end
+  
+  def total=(new)
+    self[:total] = new.to_s.gsub(/\,/, '')
+  end
 end

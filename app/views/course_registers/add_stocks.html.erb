@@ -1,0 +1,276 @@
+		<ul class="breadcrumb">
+				<li>
+				  <p>YOU ARE HERE</p>
+				</li>
+							<li>
+					<%= link_to 'Registration', course_registers_url %>
+							</li>
+      </ul>
+      <div class="page-title"> <i class="icon-edit"></i>
+				<h3>Stock <span class="semi-bold">Register</span></h3>
+      </div>
+      
+
+	  
+		       <div class="row new_course_register_page">
+            <div class="col-md-12">
+              <div class="grid simple">
+                <div class="grid-title no-border">
+                  
+                  
+                </div>     
+                
+                
+                
+                
+               <div class="grid-body no-border <%= "draft_form" if @course_register.draft? %>">
+                  
+                  
+                  <% if @course_register.errors.any? %>
+                    <div class="alert alert-error">
+                      <button data-dismiss="alert" class="close"></button>
+                      <div id="error_explanation">
+                        <h5><%= pluralize(@course_register.errors.count, "error") %> prohibited this course register from being saved:</h5>
+                  
+                        <ul>
+                        <% @course_register.errors.full_messages.each do |msg| %>
+                          <li><%= msg %></li>
+                        <% end %>
+                        </ul>
+                      </div>
+                    </div>
+                  <% end %>
+                    
+                 
+                  
+                  
+                  <%= form_for(@course_register, url: do_add_stocks_course_registers_path) do |f| %>
+					
+					<%= hidden_field_tag("tab_page", 1) if params[:tab_page] %>
+                    
+					
+					<h3>Stock List</h3>
+					
+					<div class="row stock_form_filter">
+						 <div class="col-md-3">
+							  <div class="form-group">
+								   <label class="form-label"><label>Stock Type</label></label>
+								   <span class="help"></span>
+								   <div class="input-with-icon date-group right">                                       
+										<i class=""></i>
+										<div class="input-with_add_but">
+											   <%= link_to '<i class="icon-plus"></i>'.html_safe, new_subject_path(tab_page: 1), title: "New Paper", :class => 'btn btn-sm btn-small btn-white add-agent-button tab_page' %>
+											   <input style="width:100%;margin-bottom: 5px;" name="stock_type_id" data="<%= stock_types_path(format: "json") %>" class="select2-ajax-stock-types" /> 
+										</div>
+								   </div>
+							  </div>	
+						 </div>
+						 <div class="col-md-3">
+							  <div class="form-group">
+								   <label class="form-label"><label>Program</label></label>
+								   <span class="help"></span>
+								   <div class="input-with-icon date-group right">                                       
+										<i class=""></i>
+										<div class="input-with_add_but">
+											   <%= link_to '<i class="icon-plus"></i>'.html_safe, new_course_type_path(tab_page: 1), title: "New Program", :class => 'btn btn-sm btn-small btn-white add-agent-button tab_page' %>
+											   <input style="width:100%;margin-bottom: 5px;" name="program_id" data="<%= course_types_path(format: "json") %>" class="select2-ajax-course-types" /> 
+										</div>
+								   </div>
+							  </div>
+						 </div>
+						 <div class="col-md-3">
+							  <div class="form-group">
+								   <label class="form-label"><label>Subject</label></label>
+								   <span class="help"></span>
+								   <div class="input-with-icon date-group right">                                       
+										<i class=""></i>
+										<div class="input-with_add_but">
+											   <%= link_to '<i class="icon-plus"></i>'.html_safe, new_subject_path(tab_page: 1), title: "New Paper", :class => 'btn btn-sm btn-small btn-white add-agent-button tab_page' %>
+											   <input style="width:100%;margin-bottom: 5px;" name="subject_id" data="<%= subjects_path(format: "json") %>" class="select2-ajax-subjects" /> 
+										</div>
+								   </div>
+							  </div>	
+						 </div>
+						 
+					</div>
+					
+					<div class="stock_box_list">
+						 
+					</div>
+					
+					
+					<br />
+					
+					<h3>Summary</h3> 
+					
+					
+					<div class="row column-seperation">
+						 <div class="col-md-3">
+							  <div class="row">
+								   <div class="col-md-12">										
+										<div class="form-group">
+											 <label class="form-label"><label>Payment type</label></label>
+											 <span class="help">(required)</span>
+											 <div class="input-with-icon right">                                       
+												  <select name="course_register[payment_type]" class="modern_select width100 required">
+													   <option value="self-financed">Self-financed</option>
+													   <option value="company-sponsored">Company-sponsored</option>
+												  </select>
+											 </div>
+										</div>										
+								   </div>
+							  </div>
+							  <div class="row company_sponsored_group">
+								   <div class="col-md-12">													   
+										<div class="form-group">
+											 <label class="form-label"><%= f.label :company %></label>											 
+											 <span class="help">(required)</span>
+											 <div class="input-with-icon  right">                                       
+												  <i class=""></i>
+												  <div class="input-with_add_but">
+													   <%= link_to '<i class="icon-plus"></i>'.html_safe, new_contact_path(:is_individual => false, tab_page: 1), title: "New Company", :class => 'btn btn-sm btn-small btn-white add-agent-button tab_page' %>
+													   <input style="width:100%;margin-bottom: 5px;" name="course_register[sponsored_company_id]" data="<%= contacts_path(is_individual: false, format: "json") %>" class="select2-ajax-contacts required" />
+												  </div>
+											 </div>
+										</div>
+								   </div>
+							  </div>							  
+						 </div>
+						 <div class="col-md-9">
+	 						  <div class="form-group">
+								   <label class="form-label"><label>Total Price</label></label>
+								   <span class="help"></span>
+								   <div class="input-with-icon right">
+										<table style="" class="table">
+											 <tr>
+												  <th>Type</th>
+												  <th class="text-center">Count</th>
+												  <th class="text-right">List Price</th>
+												  <th class="text-right">Discount Program</th>
+												  <th class="text-right">Other discount / credit</th>
+												  <th class="text-right">Total</th>
+											 </tr>											 
+											 <tr>
+												  <td class="text-left">Stock</td>
+												  <th class="text-center">
+													   <strong class="total_stock_count"></strong>
+												  </th>
+												  <td class="text-right">
+													   <strong class="total_stock_list_price"></strong>
+												  </td>
+												  <td class="text-right">
+													   <strong class="total_stock_discount_program_price"></strong>
+												  </td>
+												  <td class="text-right">
+													   <strong class="total_stock_other_discount_price"></strong>
+												  </td>
+
+												  <td class="text-right">
+													   <strong class="total_stock_price"></strong>
+												  </td>
+											 </tr>											 
+											 <tr>
+												  <td class="text-right" colspan="5">Total</td>
+												  <td class="text-right">
+													   <strong class="total_registration_price"></strong>
+													   <br /><input type="text" name="total_valid" style="height: 1px;border: none;background: none;padding: 0;margin-top: -20px;" />
+												  </td>
+											 </tr>
+										</table>
+									   
+								   </div>
+							  </div>										
+						 </div>
+					 </div>
+					
+					
+					<br />
+					
+					<h3>Student List</h3> 
+					
+					
+					<div class="row">                  
+						<div class="col-md-12">
+							<div class="grid simple">
+								<div class="grid-body no-border">
+										<table class="table table-striped no-more-tables no-filter">
+											<thead>
+												<tr>
+													<th width="1%">
+														<div class="checkbox check-default">
+															<input id="checkbox_all" type="checkbox" value="all" class="checkall">
+															<label for="checkbox_all"></label>
+														</div>
+													</th>
+													<th width="1%">
+														Avatar
+													</th>
+													<th class="text-left">Name</th>
+													<th>Info</th>
+													<th width="20%" class="text-center">Education Consultant</th>												
+												</tr>
+											</thead>
+											<tbody>
+												
+												<% @contacts.each do |item| %>
+													<tr>
+														<td>
+															<div class="checkbox check-default">
+																<input checked="checked" name="contact_ids[]" id="checkbox<%= item.id %>" type="checkbox" value="<%= item.id %>">
+																<label for="checkbox<%= item.id %>"></label>
+															</div>
+														</td>
+														<td>
+															<%= item.picture_link %>
+														</td>
+														<td>
+															<%= item.contact_link %>
+														</td>
+														<td>
+															<div class="text-left">
+																<strong><%= item.contact_link %></strong></div>
+																<div class="text-left"><%= item.html_info_line.html_safe+item.referrer_link.html_safe %></div>
+																
+														</td>
+														<td class="text-center">
+															<%= item.staff_col %>
+														</td>
+													</tr>
+													
+													
+												<% end %>
+							
+											</tbody>
+										</table>
+										
+									
+								</div>
+							</div>
+				
+							
+							
+							
+	
+						</div>
+					</div>
+					
+					
+					
+					
+					 
+						 
+					<div class="form-actions">  
+						 <div class="pull-right">
+						 <button type="submit" class="btn btn-success btn-cons"><i class="icon-ok"></i> Save</button>
+						  <%= link_to 'Cancel', users_path, :class => "btn btn-white btn-cons cancel-but" %>
+					   </div>
+					</div>
+							  
+				<% end %>
+			   </div>
+			 </div>
+            </div>
+			
+      </div>
+
+	 

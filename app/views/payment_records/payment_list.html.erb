@@ -85,8 +85,8 @@
 							<div class="listing_box_actions">
 								<div class="btn-group listing_actions"> <a href="#" data-toggle="dropdown" class="btn btn-white dropdown-toggle btn-demo-space"> List Actions (<span class="listing_checked_count">0</span>)<span class="caret"></span> </a>
 									<ul class="dropdown-menu">
-										<li><a href="#" rel="<%= export_list_contacts_path(format: "xls") %>">Pay</a></li>
-										<li><a href="#" rel="<%= export_list_contacts_path(format: "xls") %>">Print Payment List</a></li>
+										<li><a href="#" rel="<%= company_pay_payment_records_path(tab_page: 1) %>" type="tab" title="Company Payment">Company Pay</a></li>
+										<li><a href="#" rel="<%= print_payment_list_payment_records_path(format: "xls") %>">Print Payment List</a></li>
 									</ul>
 								</div>
 								<div class="checkbox check-default check_all_page_but" style="display: inline-block">
@@ -111,13 +111,18 @@
 															<label for="checkbox_all"></label>
 														</div>
 													</th>
-													<th>Contact</th>
-													<th>Description</th>
-													<th class="text-right">Total</th>
-													<th class="text-center">Payment Status</th>
-                                                    <th class="text-center">Registration</th>
+													<th>Student</th>
+													<th class="text-left">Description</th>
+													<th class="text-right">Payable Amount</th>
+													<th class="text-right">Paid Amount</th>
+													<th class="text-center">Paid On</th>                                                
+													<th class="text-center">At Bank</th>
+													<th class="text-right">Receivable</th>											
+													<th class="text-center" width="1%">Education Consultant</th>
 													<th class="text-right" width="1%">Actions</th>
 												</tr>
+												
+												
 											</thead>                                        
 										</table>
 								</div>

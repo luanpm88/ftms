@@ -8468,3 +8468,13 @@ form .icon-time {
     margin: 10px 0 20px 0;
     font-size: 14px;
 }
+h5.list_title {
+    margin: 0 0 5px 0;
+    border-bottom: solid 1px #ccc;
+}
+.user-name {
+    background: none;
+    white-space: normal;
+    padding: 0;
+    border: none;
+}

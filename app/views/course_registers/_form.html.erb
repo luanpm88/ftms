@@ -42,7 +42,7 @@
 					 
 					<div class="phrase_box_list">
 						 <% (0..9).each do |number| %>
-							  <div class="row column-seperation phrase_box phrase_box_<%= number.to_s %> <%= 'hidden'.html_safe if number >= 0 %>" rel="<%= number %>">
+							  <div class="row column-seperation item_box phrase_box phrase_box_<%= number.to_s %> <%= 'hidden'.html_safe if number >= 0 %>" rel="<%= number %>">
 								   <div class="phrase_box_label">Course #<%= number+1 %></div>
 								   <div class="phrase_box_close" rel="<%= number.to_s %>"><i class="icon icon-remove"></i></div>
 								   <div class="col-md-12">
@@ -72,7 +72,7 @@
 															 <i class=""></i>
 															 <div class="input-with_add_but">
 																  <%= link_to '<i class="icon-plus"></i>'.html_safe, new_course_path(tab_page: 1), title: "New Course", :class => 'btn btn-sm btn-small btn-white tab_page' %>
-																  <input style="width:100%;margin-bottom: 5px;" name="contacts_courses[<%= number %>][course_id]" data="<%= courses_path(format: "json") %>" class="select2-ajax-courses main_input registration_course required" value="" text="" box_number="<%= number %>" />
+																  <input style="width:100%;margin-bottom: 5px;" name="contacts_courses[<%= number %>][course_id]" data="<%= courses_path(format: "json") %>" class="select2-ajax-courses main_input registration_course required" box_number="<%= number %>" />
 															 </div>
 														</div>
 												  </div>
@@ -117,7 +117,20 @@
 					<h3>Stock Registration</h3>
 					
 					<div class="row stock_form_filter">
-						 <div class="col-md-3">
+						 <div class="col-md-2">
+							  <div class="form-group">
+								   <label class="form-label"><label>Stock Type</label></label>
+								   <span class="help"></span>
+								   <div class="input-with-icon date-group right">                                       
+										<i class=""></i>
+										<div class="input-with_add_but">
+											   <%= link_to '<i class="icon-plus"></i>'.html_safe, new_subject_path(tab_page: 1), title: "New Paper", :class => 'btn btn-sm btn-small btn-white add-agent-button tab_page' %>
+											   <input style="width:100%;margin-bottom: 5px;" name="stock_type_id" data="<%= stock_types_path(format: "json") %>" class="select2-ajax-stock-types" /> 
+										</div>
+								   </div>
+							  </div>	
+						 </div>
+						 <div class="col-md-2">
 							  <div class="form-group">
 								   <label class="form-label"><label>Program</label></label>
 								   <span class="help"></span>
@@ -125,12 +138,12 @@
 										<i class=""></i>
 										<div class="input-with_add_but">
 											   <%= link_to '<i class="icon-plus"></i>'.html_safe, new_course_type_path(tab_page: 1), title: "New Program", :class => 'btn btn-sm btn-small btn-white add-agent-button tab_page' %>
-											   <input style="width:100%;margin-bottom: 5px;" name="program_id" data="<%= course_types_path(format: "json") %>" class="select2-ajax-course-types" value="" text="" /> 
+											   <input style="width:100%;margin-bottom: 5px;" name="program_id" data="<%= course_types_path(format: "json") %>" class="select2-ajax-course-types" /> 
 										</div>
 								   </div>
 							  </div>
 						 </div>
-						 <div class="col-md-3">
+						 <div class="col-md-2">
 							  <div class="form-group">
 								   <label class="form-label"><label>Subject</label></label>
 								   <span class="help"></span>
@@ -138,7 +151,7 @@
 										<i class=""></i>
 										<div class="input-with_add_but">
 											   <%= link_to '<i class="icon-plus"></i>'.html_safe, new_subject_path(tab_page: 1), title: "New Paper", :class => 'btn btn-sm btn-small btn-white add-agent-button tab_page' %>
-											   <input style="width:100%;margin-bottom: 5px;" name="subject_id" data="<%= subjects_path(format: "json") %>" class="select2-ajax-subjects" value="" text="" /> 
+											   <input style="width:100%;margin-bottom: 5px;" name="subject_id" data="<%= subjects_path(format: "json") %>" class="select2-ajax-subjects" /> 
 										</div>
 								   </div>
 							  </div>	
@@ -242,7 +255,7 @@
 										</div>
 										
 								   </div>
-								   <div class="col-md-3">
+								   <!--<div class="col-md-3">
 										
 										<div class="form-group">
 										  <label class="form-label"><label>Deferred/Transferred Status</label></label>
@@ -295,7 +308,7 @@
 										  </div>
 										</div>
 										
-								   </div>
+								   </div>-->
 							  </div>
 						 </div>
 					 </div>
@@ -340,9 +353,9 @@
 								   <div class="col-md-12">													   
 										<div class="form-group">
 											 <label class="form-label"><%= f.label :company %></label>											 
-											 <span class="help"></span>
+											 <span class="help">(required)</span>
 											 <div class="input-with-icon  right">                                       
-												  <i class="">(required)</i>
+												  <i class=""></i>
 												  <div class="input-with_add_but">
 													   <%= link_to '<i class="icon-plus"></i>'.html_safe, new_contact_path(:is_individual => false, tab_page: 1), title: "New Company", :class => 'btn btn-sm btn-small btn-white add-agent-button tab_page' %>
 													   <input style="width:100%;margin-bottom: 5px;" name="course_register[sponsored_company_id]" data="<%= contacts_path(is_individual: false, format: "json") %>" class="select2-ajax-contacts required" value="<%= @contact.referrer_id %>" text="<%= @contact.referrer.name if !@contact.referrer.nil? %>" />
@@ -518,7 +531,7 @@
 													   <strong class="total_stock_price"></strong>
 												  </td>
 											 </tr>
-											 <tr>
+											 <!--<tr>
 												  <td class="text-right" colspan="5">Discount Program</td>
 												  <td class="text-right">
 													   <strong class="total_registration_discount_program"></strong>
@@ -529,7 +542,7 @@
 												  <td class="text-right">
 													   <strong class="total_registration_discount"></strong>
 												  </td>
-											 </tr>
+											 </tr>-->
 											 <tr>
 												  <td class="text-right" colspan="5">Deferred/Transferred Amount</td>
 												  <td class="text-right">
@@ -567,10 +580,10 @@
 
 <script>
 	 $(document).ready(function() {
-		  jQuery.validator.addMethod("transfer", function(value, element) {
-			   var remain = parseFloat($('.transfer-remain').html().replace(/,/g,""))
-			   return remain >= 0.0
-		  }, "Tranferred amout is not valid.");
+		//  jQuery.validator.addMethod("transfer", function(value, element) {
+		//	   var remain = parseFloat($('.transfer-remain').html().replace(/,/g,""))
+		//	   return remain >= 0.0
+		//  }, "Tranferred amout is not valid.");
 		  jQuery.validator.addMethod("total", function(value, element) {
 			   var total = parseFloat($('.total_registration_price').html().replace(/,/g,""))
 			   return total >= 0.0
@@ -581,9 +594,9 @@
 			   return total >= 0.0
 		  }, "Total amount is not valid. Please check again.");
 		  
-		  $("input[name='course_register[transfer]']").rules('add', {
-			   transfer: true
-		  });
+		//  $("input[name='course_register[transfer]']").rules('add', {
+		//	   transfer: true
+		//  });
 		  $("input[name='total_valid']").rules('add', {
 			   total: true
 		  });

@@ -220,17 +220,21 @@ class BooksController < ApplicationController
   def stock_form_list
     records = []
     
-    if params[:program_id].present? || params[:subject_id].present?
-      records = Book.active_books.order("name")      
+    if params[:stock_type_id].present? || params[:subject_id].present? || params[:subject_id].present?
+      records = Book.active_books.order("name")
+      records = records.where(stock_type_id: params[:stock_type_id]) if params[:stock_type_id].present?
       records = records.where(course_type_id: params[:program_id]) if params[:program_id].present?
-      records = records.where(course_type_id: params[:subject_id]) if params[:subject_id].present?
+      records = records.where(subject_id: params[:subject_id]) if params[:subject_id].present?
     end
     
-    contact = Contact.find(params[:contact_id])
-    
     @books = []
-    records.each do |r|
-      @books << r if !r.registered?(contact)
+    if params[:contact_id] != "undefined"
+      contact = Contact.find(params[:contact_id])      
+      records.each do |r|
+        @books << r if !r.registered?(contact)
+      end
+    else
+      @books = records
     end
     
     render layout: nil

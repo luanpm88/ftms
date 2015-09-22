@@ -44,10 +44,11 @@ class StockUpdatesController < ApplicationController
   def import_export_form_list
     @books = []
     
-    if params[:program_id].present? || params[:subject_id].present?
-      @books = Book.active_books.order("name")      
+    if params[:stock_type_id].present? || params[:program_id].present? || params[:subject_id].present?
+      @books = Book.active_books.order("name")
+      @books = @books.where(stock_type_id: params[:stock_type_id]) if params[:stock_type_id].present?
       @books = @books.where(course_type_id: params[:program_id]) if params[:program_id].present?
-      @books = @books.where(course_type_id: params[:subject_id]) if params[:subject_id].present?
+      @books = @books.where(subject_id: params[:subject_id]) if params[:subject_id].present?
     end 
     
     render layout: nil

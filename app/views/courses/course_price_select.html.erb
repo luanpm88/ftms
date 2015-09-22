@@ -6,16 +6,17 @@
             <div class="input-with-icon  right">                                       
                  <i class=""></i>
                  <div class="input-with-iconz right">
-                      <select name="contacts_courses[<%= params[:number].to_s %>][price]" class="text-right modern_select width100 required price_acourse">
+                      <select name="contacts_courses[<%= params[:number].to_s %>][price]" class="text-right modern_select width100 required price_course">
                         <% @course.prices.each do |price| %>
                             <option value="<%= price.amount %>" class="text-right"><%= format_price(price.amount) %></option>
                         <% end %>
+                              <option value="no_price" class="text-right">No Price</option>
                       </select>
                  </div>
             </div>
           </div>	                                                                                                                          
      </div>
-     <div class="col-md-7">
+     <div class="col-md-7 no_price_group">
           <div class="form-group">
                 <label class="form-label"><label>Total</label></label>
                 <span class="help"></span>
@@ -29,7 +30,7 @@
           </div>
      </div>
 </div>
-<div class="row">
+<div class="row no_price_group">
      <div class="col-md-12">
           <div class="form-group">
                 <label class="form-label"><label>Discount Program</label></label>
@@ -41,9 +42,8 @@
                               <div class="row discount_program_box phrase_boxx"  <%= 'style="display: none"'.html_safe if number > 0 %>>
                                    <div class="col-md-6">                                   
                                         <div class="input-with_add_but">
-                                          <%= link_to '<i class="icon-plus"></i>'.html_safe, new_discount_program_path(tab_page: 1), title: "New Discount Program", :class => 'btn btn-sm btn-small btn-white tab_page' %>
-                                          <!--<input style="width:100%;margin-bottom: 5px;" name="contacts_courses[<%= params[:number].to_s %>][discount_programs][<%= number.to_s %>][id]" data="<%= discount_programs_path(format: "json", course_type_id: @course.course_type_id) %>" class="select2-ajax-discount-programs main_input price_discount_program" />-->
-                                          <%= select_tag "contacts_courses["+params[:number].to_s+"][discount_programs]["+number.to_s+"][id]", options_for_select(DiscountProgram.active_discount_programs(@course.course_type_id).collect { |dp| [dp.display_name, dp.id] }), {:include_blank => '', class: "modern_select width100 main_input price_discount_program"} %>
+                                          <%= link_to '<i class="icon-plus"></i>'.html_safe, new_discount_program_path(tab_page: 1), title: "New Discount Program", :class => 'btn btn-sm btn-small btn-white tab_page' %>                                          
+                                          <%= select_tag "contacts_courses["+params[:number].to_s+"][discount_programs]["+number.to_s+"][id]", options_for_select(DiscountProgram.active_discount_programs(@course.course_type_id).collect { |dp| [dp.display_name, dp.id] }), {:include_blank => 'None', class: "modern_select width100 main_input price_discount_program"} %>
                                         </div>
                                    </div>
                                    <div class="col-md-6">
@@ -63,7 +63,7 @@
           </div>
      </div>
 </div>
-<div class="row">
+<div class="row no_price_group">
      <div class="col-md-12">
           <div class="form-group">
                <div class="row">

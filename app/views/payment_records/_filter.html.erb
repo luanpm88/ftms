@@ -41,13 +41,13 @@
 								<div class="input-with-icon  right">                                       
 									 <i class=""></i>
 									 <div class="input-with_add_butz">												   													   
-										  <%= select_tag 'bank_account', options_for_select(BankAccount.all.collect{ |u| [u.name, u.id] }), :include_blank => 'All', class: "modern_select width100 required" %>
+										  <%= select_tag 'bank_account', options_for_select(BankAccount.active_bank_accounts.collect{ |u| [u.name, u.id] }), :include_blank => 'All', class: "modern_select width100 required" %>
 									 </div>
 								</div>
 						</div>
 						<div class="col-md-2">
 							<h4>Program</h4>							
-							<%= select_tag 'course_types[]', options_for_select(CourseType.all.collect{ |u| [u.short_name, u.id] }), :include_blank => 'All', class: "modern_select width100" %>
+							<%= select_tag 'course_types[]', options_for_select(CourseType.active_course_types.collect{ |u| [u.short_name, u.id] }), :include_blank => 'All', class: "modern_select width100" %>
 						</div>
 						<div class="col-md-2">
 							<h4>Course</h4>							
@@ -56,10 +56,17 @@
 					</div>
 					<div class="row">
 						
-                        <div class="col-md-2 student-course-filter">
+                        <div class="col-md-3 student-course-filter">
 							<h4>Student</h4>
 							<div class="students-filter-box">
 								<input style="width:100%;margin-bottom: 5px;" name="filter[students[]]" data="<%= contacts_path(is_individual: true, contact_type_id: ContactType.student.id,format: "json") %>" class="select2-ajax-students multiple" value="<%= @student.id if !@student.nil? %>" text="<%= @student.display_name if !@student.nil? %>" />
+							</div>
+						</div>
+						
+						<div class="col-md-3 student-course-filter">
+							<h4>Company</h4>
+							<div class="">
+								<input style="width:100%;margin-bottom: 5px;" name="company" data="<%= contacts_path(is_individual: false, format: "json") %>" class="select2-ajax-companies" />
 							</div>
 						</div>
                         

@@ -1,0 +1,291 @@
+      <div class="page-title"> <i class="icon-edit"></i>
+        <h3>New Company Payment</h3>
+      </div>
+	  
+             <div class="row">
+            <div class="col-md-12">
+              <div class="grid simple">
+                <div class="grid-title no-border">
+                  <h4>Payment <span class="semi-bold">Details</span></h4>
+                  
+                </div>     
+                
+                
+                
+                
+                <div class="grid-body no-border">
+				  
+				  <% if @payment_record.errors.any? %>
+                    <div class="alert alert-error">
+                      <button data-dismiss="alert" class="close"></button>
+                      <div id="error_explanation">
+                        <h5><%= pluralize(@payment_record.errors.count, "error") %> prohibited this payment from being saved:</h5>
+                  
+                        <ul>
+                        <% @payment_record.errors.full_messages.each do |msg| %>
+                          <li><%= msg %></li>
+                        <% end %>
+                        </ul>
+                      </div>
+                    </div>
+                  <% end %>
+                  
+                  
+                  <%= form_for(@payment_record, :url => do_company_pay_payment_records_path) do |f| %>
+					
+					<%= hidden_field_tag("tab_page", 1) if params[:tab_page] %>
+                    
+					<div class="row column-seperation">
+						 <div class="col-md-8">
+							  
+                              <div class="row">
+                                <div class="col-md-4">
+                                  <div class="form-group">
+                                        <label class="form-label"><%= f.label :company %></label>
+                                        <span class="help">(required)</span>
+                                        <div class="input-with-iconz">                                       
+                                            <div class="">
+												<%= select_tag 'payment_record[company_id]', options_for_select(Contact.active_contacts.where(is_individual: false).collect{ |u| [u.name, u.id] }) , {:include_blank => 'None', class: "modern_select width100 required"} %>
+											</div>
+                                        </div>
+                                  </div>
+                                </div>
+                                <div class="col-md-4">
+                                  <div class="form-group">
+										<label class="form-label"><%= f.label :bank_acount %></label>
+										<span class="help">(required)</span>
+										<div class="input-with-icon  right">                                       
+											 <i class=""></i>
+											 <div class="input-with_add_butz">												   													   
+												  <%= select_tag 'payment_record[bank_account_id]', options_for_select(BankAccount.active_bank_accounts.collect{ |u| [u.name, u.id] }), {include_blank: "None", class: "modern_select width100 required"} %>
+											 </div>
+										</div>
+								   </div>	
+                                </div>
+							  <div class="col-md-4">
+                                  <div class="form-group">
+                                        <label class="form-label"><%= f.label :bank_ref %></label>
+                                        <span class="help">(required)</span>
+                                        <div class="input-with-iconx">                                       
+                                            <%= f.text_field :bank_ref, :class => "form-control required" %>
+                                        </div>
+                                   </div>	
+                                </div>
+                                
+							  </div>
+							  <div class="row">
+                                
+                                <div class="col-md-4">
+                                  <div class="form-group">
+                                        <label class="form-label"><%= f.label :payment_date %></label>
+                                        <span class="help">(required)</span>
+                                        <div class="input-with-icon  right">                                       
+                                             <i class=""></i>
+                                             <div class="input-append success date col-md-10 no-padding">
+                                               <%= f.text_field :payment_date, :class => "form-control required", value: @payment_record.payment_date.strftime("%d-%b-%Y") %>
+                                               <span class="add-on"><span class="arrow"></span><i class="icon-th"></i></span>
+                                             </div>
+                                             <br style="clear: both" />
+                                        </div>
+                                   </div>	
+                                </div>
+								
+                                <div class="col-md-4">
+                                  <div class="form-group">
+                                        <label class="form-label"><%= f.label :expected_date_of_collection %></label>
+                                        <span class="help"></span>
+                                        <div class="input-with-icon  right">                                       
+                                             <i class=""></i>
+                                             <div class="input-append success date col-md-10 no-padding">
+                                               <%= f.text_field :debt_date, :class => "form-control", value: @payment_record.debt_date.strftime("%d-%b-%Y") %>
+                                               <span class="add-on"><span class="arrow"></span><i class="icon-th"></i></span>
+                                             </div>
+                                             <br style="clear: both" />
+                                        </div>
+                                   </div>	
+                                </div>
+                              </div>
+							  							  
+							  
+							  <div class="row company_payment_form">
+								   <div class="col-md-4">
+										<div class="form-group">
+											  <label class="form-label"><%= f.label :total %></label>
+											  <span class="help">(required)</span>
+											  <div class="input-with-iconx">                                       
+												  <%= f.text_field :amount, :class => "form-control price_input required company_payment_detail_total" %>
+											  </div>
+										</div>	
+								   </div>
+								   <div class="col-md-5">
+									  <div class="form-group">
+											  <label class="form-label"><%= f.label :paid %></label>
+											  <span class="help">(required)</span>
+											  <div class="input-with-iconx">
+												<% @course_types.each do |ct| %>
+													<div class="row">
+													  <div class="col-md-3">
+														<%= ct.short_name %><br />(<%= @course_type_count[ct.id] %>)
+														<%= hidden_field_tag "payment_record_details["+ct.id.to_s+"][course_type_id]", ct.id %>
+													  </div>
+													  <div class="col-md-9">
+														<%= text_field_tag "payment_record_details["+ct.id.to_s+"][amount]", "", :class => "form-control price_input required company_payment_detail_paid" %>
+													  </div>	
+													</div>
+												<% end %>
+											  </div>
+									  </div>
+										
+								   </div>
+								   <div class="col-md-3">
+										<div class="form-group">
+											  <label class="form-label"><%= f.label :receivable %></label>
+											  <span class="help"></span>
+											  <div class="input-with-iconx text-right">                                       
+												   <strong class="big-info company_payment_detail_remain" rel=""></strong>
+											  </div>
+										 </div>	
+								   </div>
+							  </div>
+							  
+							  
+						 </div>
+						 <div class="col-md-4">
+							  <div class="form-group">
+								<label class="form-label"><%= f.label :desciption %></label>
+								<span class="help"></span>
+								<div class="input-with-icon  right">                                       
+									<i class=""></i>
+									  <%= f.text_area :note, :class => "form-control" %>
+								</div>
+							  </div>
+							  <div class="form-group">
+								<label class="form-label"><%= f.label :note_log %></label>
+								<span class="help"></span>
+								<div class="input-with-icon  right">                                       
+									<i class=""></i>
+									  <%= text_area_tag :note_log, "", {:class => "form-control"} %>
+								</div>
+							  </div>
+						 </div>
+						 
+						 
+					</div>
+						 
+						 
+					<h3>Registraton List</h3>
+					
+					<div class="row">
+						<div class="col-md-12">
+							<div class="grid simple ">								
+								<div class="grid-body no-border">									 
+										<table class="table table-striped no-more-tables no-filter">
+											<thead>
+												<tr>
+													<th width="1%">
+														<div class="checkbox check-default">
+															<input id="checkbox_all" type="checkbox" value="all" class="checkall">
+															<label for="checkbox_all"></label>
+														</div>
+													</th>
+													<th>Student</th>
+													<th class="text-left">Description</th>
+													<th class="text-right">Payable Amount</th>
+													<th class="text-right">Paid Amount</th>
+													<th class="text-center">Paid On</th>                                                
+													<th class="text-center">At Bank</th>
+													<th class="text-right">Receivable</th>											
+													<th class="text-center" width="1%">Education Consultant</th>
+													
+												</tr>
+												
+												<% @course_registers.each do |item| %>
+												  <tr>
+													<td>
+													  <div class="checkbox check-default"><input checked="checked" name="course_register_ids[]" id="checkbox<%= item.id %>" type="checkbox" value="<%= item.id %>"><label for="checkbox<%= item.id %>"></label></div>
+													</td>
+													<td>
+													  <%= item.contact.contact_link %>
+													</td>
+													<td>
+													  <%= item.description.html_safe %>
+													</td>
+													<td class="text-right">
+													  <%= format_price(item.total) %>
+													</td>
+													<td class="text-right">
+													  <%= format_price(item.paid_amount) %>
+													</td>
+													<td class="text-center">
+													  <%= item.all_payment_records.last.payment_date.strftime("%d-%b-%Y") %>
+													</td>
+													<td class="text-center">
+													  <%= item.all_payment_records.last.bank_account.name %>
+													</td>
+													<td class="text-right">
+													  <%= ApplicationController.helpers.format_price(item.remain_amount) %>
+													</td>
+													<td class="text-center">
+													  <%= item.contact.account_manager.staff_col %>
+													</td>													  
+												  </tr>
+												<% end %>
+												
+											</thead>                                        
+										</table>
+								</div>
+							</div>
+				
+						</div>
+				
+					</div>
+					
+					
+					
+						 
+					<div class="form-actions">  
+						 <div class="pull-right">
+						 <button type="submit" class="btn btn-success btn-cons"><i class="icon-ok"></i> Pay</button>
+						  <%= link_to 'Cancel', users_path, :class => "btn btn-white btn-cons cancel-but" %>
+					   </div>
+					</div>
+							  
+					
+					
+					<% end %>
+			   </div>
+			 </div>
+            </div>
+			
+     </div>
+
+<script>
+	 $(document).ready(function() {
+		  jQuery.validator.addMethod("company_payment", function(value, element) {
+				var paid = 0
+				var total = 0
+				
+				if($('.company_payment_detail_total').val() != "") {
+					total = parseFloat($('.company_payment_detail_total').val().replace(/,/g,""))
+				}
+				
+				$('.company_payment_detail_paid').each(function() {
+					if($(this).val() != "") {
+						paid += parseFloat($(this).val().replace(/,/g,""))
+					}
+				})
+				
+				var remain = total - paid
+				return remain >= 0
+		  }, "Paid amount is not valid. Please check again.");
+		  
+		  
+		  $(".company_payment_detail_paid").rules('add', {
+			company_payment: true
+		  });
+		  
+		  $(".company_payment_detail_total").rules('add', {
+			company_payment: true
+		  });
+	 });
+</script>

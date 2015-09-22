@@ -183,7 +183,47 @@ class CourseRegistersController < ApplicationController
     end      
     render layout: "content"
   end
-
+  
+  def add_stocks
+    if params[:ids].present?
+      if !params[:check_all_page].nil?
+        params[:intake_year] = params["filter"]["intake(1i)"] if params["filter"].present?
+        params[:intake_month] = params["filter"]["intake(2i)"] if params["filter"].present?
+        
+        if params[:is_individual] == "false"
+          params[:contact_types] = nil
+        end        
+        
+        @contacts = Contact.filters(params, current_user)
+      else
+        @contacts = Contact.where(id: params[:ids])
+      end
+    end
+    
+    @course_register = CourseRegister.new    
+    
+    render layout: "content"
+  end
+  
+  def do_add_stocks    
+    params[:contact_ids].each do |cid|
+      @course_register = CourseRegister.new(course_register_params)
+      @course_register.user = current_user
+      @course_register.contact_id = cid
+      @course_register.update_books_contacts(params[:books_contacts]) if !params[:books_contacts].nil?     
+      
+      if !@course_register.books_contacts.empty?
+        @course_register.save
+        @course_register.add_status("active")        
+        @course_register.save_draft(current_user)
+      end
+    end
+    
+    respond_to do |format|
+        format.html { redirect_to params[:tab_page].present? ? "/home/close_tab" : @course_register, notice: 'Course register was successfully created.' }
+        format.json { render action: 'show', status: :created, location: @course_register }
+    end
+  end
 
   private
     # Use callbacks to share common setup or constraints between actions.

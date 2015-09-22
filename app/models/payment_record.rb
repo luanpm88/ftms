@@ -3,7 +3,7 @@ class PaymentRecord < ActiveRecord::Base
   belongs_to :course_register
   belongs_to :user
   belongs_to :bank_account
-  belongs_to :contact
+  belongs_to :company, class_name: "Contact"
   
   has_many :payment_record_details
   
@@ -22,10 +22,12 @@ class PaymentRecord < ActiveRecord::Base
   after_save :update_statuses
   
   def update_statuses
-    course_register.update_statuses
-    course_register.contacts_courses.each do |cc|
-      cc.update_statuses
-    end
+    if !course_register.nil?
+      course_register.update_statuses
+      course_register.contacts_courses.each do |cc|
+        cc.update_statuses
+      end
+    end      
   end
   
   def self.filter(params, user)
@@ -34,6 +36,10 @@ class PaymentRecord < ActiveRecord::Base
     if params["students"].present?
       @records = @records.joins(:course_register)
       @records = @records.where("course_registers.contact_id IN (#{params["students"]})")
+    end
+    
+    if params["company"].present?
+      @records = @records.where(company_id: params["company"])
     end
     
     if params["from_date"].present?
@@ -95,14 +101,14 @@ class PaymentRecord < ActiveRecord::Base
     actions_col = 8
     @records.each do |item|
       item = [
-              item.course_register.contact.display_name,
-              '<div class="text-left">'+item.course_register.course_list(false)+"</div>",
-              '<div class="text-right">'+ApplicationController.helpers.format_price(item.course_register.total)+"</div>",
+              item.contact.display_name,
+              '<div class="text-left">'+item.description+"</div>",
+              '<div class="text-right">'+ApplicationController.helpers.format_price(item.ordered_total)+"</div>",
               '<div class="text-right">'+ApplicationController.helpers.format_price(item.total)+'</div>',
               '<div class="text-center">'+item.payment_date.strftime("%d-%b-%Y")+"</div>",
               '<div class="text-center">'+item.bank_account.name+"</div>",
-              '<div class="text-right">'+ApplicationController.helpers.format_price(item.course_register.remain_amount(item.payment_date))+"</div>",
-              '<div class="text-center">'+item.course_register.contact.account_manager.staff_col+"</div>",
+              '<div class="text-right">'+ApplicationController.helpers.format_price(item.remain)+"</div>",
+              '<div class="text-center">'+item.contact.staff_col+"</div>",
               ""
               #'<div class="text-right">'+ApplicationController.helpers.format_price(item.amount)+"</div>",
               #'<div class="text-center">'+item.payment_date.strftime("%d-%b-%Y")+"</div>",
@@ -110,9 +116,6 @@ class PaymentRecord < ActiveRecord::Base
               ##'<div class="text-center">'+item.course_register.display_payment_status+"</div>",
               #'<div class="text-center">'+item.course_register.course_register_link+"</div>",
               #'<div class="text-right">'+ApplicationController.helpers.format_price(item.course_register.remain_amount)+"</div>",
-              #
-              #
-              #
               #'<div class="text-center">'+item.course_register.user.staff_col+"</div>",  
             ]
       data << item
@@ -128,6 +131,26 @@ class PaymentRecord < ActiveRecord::Base
     
     return {result: result, items: @records, actions_col: actions_col}
     
+  end
+  
+  def contact
+    company.nil? ? course_register.contact : company
+  end
+  
+  def description
+    company.nil? ? course_register.course_list(false) : ""
+  end
+  
+  def ordered_total
+    company.nil? ? course_register.total : amount
+  end
+  
+  def remain
+    if company.nil?
+      return course_register.remain_amount(self.payment_date)
+    else
+      amount - total
+    end
   end
   
   
@@ -227,10 +250,24 @@ class PaymentRecord < ActiveRecord::Base
   def update_payment_record_details(params)
     params.each do |row|
       cc = ContactsCourse.find(row[0])
-      if cc.present? && row[1]["amount"].present?
+      if cc.present? && (row[1]["amount"].present? || row[1]["total"].present?)
         pd = self.payment_record_details.new
         pd.amount = row[1]["amount"]
         pd.contacts_course_id = row[0]
+        if cc.no_price?
+          pd.total = row[1]["total"]
+        end        
+      end
+    end
+
+  end
+  
+  def update_company_payment_record_details(params)
+    params.each do |row|
+      if row[1]["amount"].present? && row[1]["course_type_id"].present?
+        pd = self.payment_record_details.new
+        pd.amount = row[1]["amount"]
+        pd.course_type_id = row[1]["course_type_id"]       
       end
     end
 
@@ -238,11 +275,14 @@ class PaymentRecord < ActiveRecord::Base
   
   def update_stock_payment_record_details(params)
     params.each do |row|
-      cc = ContactsCourse.find(row[0])
-      if cc.present? && row[1]["amount"].present?
+      bc = BooksContact.find(row[0])
+      if bc.present? && (row[1]["amount"].present? || row[1]["total"].present?)
         pd = self.payment_record_details.new
         pd.amount = row[1]["amount"]
         pd.books_contact_id = row[0]
+        if bc.no_price?
+          pd.total = row[1]["total"]
+        end
       end
     end
 
@@ -250,6 +290,16 @@ class PaymentRecord < ActiveRecord::Base
   
   def total
     payment_record_details.sum(:amount)
+  end
+  
+  def amount=(new)
+    self[:amount] = new.to_s.gsub(/\,/, '')
+  end
+  
+  def course_registers
+    return [] if self.course_register_ids.nil?
+    cr_ids = self.course_register_ids.split("][").map {|s| s.gsub("[","").gsub("]","") }
+    return CourseRegister.where(id: cr_ids)
   end
   
 end

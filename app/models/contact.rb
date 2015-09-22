@@ -1367,4 +1367,8 @@ class Contact < ActiveRecord::Base
     return arr.join("\n")
   end
   
+  def staff_col
+    account_manager.nil? ? "" : account_manager.staff_col
+  end
+  
 end

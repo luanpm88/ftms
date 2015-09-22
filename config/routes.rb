@@ -46,6 +46,10 @@ Hkerp::Application.routes.draw do
       get :trash
       get :payment_list
       get :datatable_payment_list
+      
+      get :company_pay
+      post :do_company_pay
+      post :print_payment_list
     end
   end
   resources :stock_updates do
@@ -61,6 +65,8 @@ Hkerp::Application.routes.draw do
       get :print
       get :delivery_list
       get :trash
+      
+      
     end
   end
   resources :books_contacts do
@@ -174,6 +180,9 @@ Hkerp::Application.routes.draw do
       get :field_history
       
       ####################
+      
+      get :add_stocks
+      post :do_add_stocks
     end
   end
   resources :course_types_subjects
@@ -222,6 +231,7 @@ Hkerp::Application.routes.draw do
       post :deliver_all
       post :delivery_counting
       get :stock_statistics
+      
     end
   end
   

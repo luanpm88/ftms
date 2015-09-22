@@ -1,5 +1,6 @@
 class PaymentRecordsController < ApplicationController
   include PaymentRecordsHelper
+  include CourseRegistersHelper
   
   load_and_authorize_resource
   
@@ -47,7 +48,7 @@ class PaymentRecordsController < ApplicationController
       if @payment_record.save
         # create note log
         if params[:note_log].present?
-          @payment_record.course_register.contact.activities.create(user_id: current_user.id, note: params[:note_log])
+          @payment_record.course_register.contact.activities.create(user_id: current_user.id, note: params[:note_log]) if params[:note_log].present?
         end
         
         format.html { redirect_to params[:tab_page].present? ? "/home/close_tab" : @payment_record, notice: 'Payment record was successfully created.' }
@@ -85,10 +86,10 @@ class PaymentRecordsController < ApplicationController
   end
   
   def datatable_payment_list
-    result = PaymentRecord.datatable_payment_list(params, current_user)
+    result = CourseRegister.payment_list(params, current_user)
     
     result[:items].each_with_index do |item, index|
-      actions = render_contacts_course_actions(item)      
+      actions = render_course_register_actions(item)      
       result[:result]["data"][index][result[:actions_col]] = actions
     end
     
@@ -130,7 +131,121 @@ class PaymentRecordsController < ApplicationController
     end
   end
   
+  def company_pay
+    if params[:ids].present?
+      if !params[:check_all_page].nil?
+        params[:intake_year] = params["filter"]["intake(1i)"] if params["filter"].present?
+        params[:intake_month] = params["filter"]["intake(2i)"] if params["filter"].present?
+        
+        if params[:is_individual] == "false"
+          params[:contact_types] = nil
+        end        
+        
+        @course_registers = CourseRegister.filter(params, current_user)
+      else
+        @course_registers = CourseRegister.where(id: params[:ids])
+      end
+    end
+    
+    course_type_ids = []
+    @course_type_count= {}
+    @course_registers.each do |cr|        
+      cr.contacts_courses.each do |cc|
+        course_type_ids << cc.course.course_type_id
+        @course_type_count[cc.course.course_type_id] = @course_type_count[cc.course.course_type_id].nil? ? 1 : @course_type_count[cc.course.course_type_id]+1
+      end
+    end
+    
+    @course_types = CourseType.where(id: course_type_ids).order("short_name")
+    
+    @payment_record = PaymentRecord.new    
+    @payment_record.payment_date = Time.now
+    @payment_record.debt_date = Time.now
+
+    
+    render layout: "content"
+  end
+
+  def do_company_pay
+    @payment_record = PaymentRecord.new(payment_record_params)
+    @payment_record.user = current_user
+    @payment_record.status = 1
+    @payment_record.update_company_payment_record_details(params[:payment_record_details]) if params[:payment_record_details].present?
+    
+    @payment_record.course_register_ids = "["+params[:course_register_ids].join("][")+"]"
+
+    respond_to do |format|
+      if @payment_record.save
+        # create note log
+        if params[:note_log].present?
+          @payment_record.contact.activities.create(user_id: current_user.id, note: params[:note_log]) if params[:note_log].present?
+        end
+        
+        format.html { redirect_to params[:tab_page].present? ? "/home/close_tab" : @payment_record, notice: 'Payment record was successfully created.' }
+        format.json { render action: 'show', status: :created, location: @payment_record }
+      else
+        format.html { render action: 'new', tab_page: params[:tab_page] }
+        format.json { render json: @payment_record.errors, status: :unprocessable_entity }
+      end
+    end
+  end
   
+  def print_payment_list
+    if params[:ids].present?
+      if !params[:check_all_page].nil?
+        params[:intake_year] = params["filter"]["intake(1i)"] if params["filter"].present?
+        params[:intake_month] = params["filter"]["intake(2i)"] if params["filter"].present?
+        
+        if params[:is_individual] == "false"
+          params[:contact_types] = nil
+        end        
+        
+        @course_registers = CourseRegister.filter(params, current_user)
+      else
+        @course_registers = CourseRegister.where(id: params[:ids])
+      end
+      
+      @course_registers = @course_registers.includes(:contact).order("contacts.name, contact_id")
+      
+      paper_ids = []
+      
+      @list = []
+      @course_registers.each do |cr|        
+        cr.contacts_courses.each do |cc|
+          row = {}
+          row[:contact_name] = cc.contact.name
+          row[:course] = cc.course.display_name
+          row[:phrases] = Phrase.where(id: cc.course.courses_phrases.includes(:phrase).map(&:phrase_id)).order("name").map(&:"name").join("; ")
+          row[:company] = !cr.sponsored_company.nil? ? cr.sponsored_company.name : ""          
+          
+          row[:papers] = {}          
+          row[:papers][cc.course.subject_id] = "X"          
+          paper_ids << cc.course.subject_id
+          
+          @list << row
+        end
+        cr.books_contacts.each do |bc|
+          row = {}
+          row[:contact_name] = bc.contact.name
+          row[:stock] = bc.book.display_name
+          row[:company] = !cr.sponsored_company.nil? ? cr.sponsored_company.name : ""         
+          
+          row[:papers] = {}          
+          row[:papers][bc.book.subject_id] = "X"          
+          paper_ids << bc.book.subject_id
+          
+          @list << row
+        end
+      end
+      
+      @papers = Subject.where(id: paper_ids).order("name")
+      
+      respond_to do |format|
+        format.html {render "print_payment_list.xls.erb"}
+        format.xls
+      end
+    end      
+  end
 
   private
     # Use callbacks to share common setup or constraints between actions.
@@ -140,6 +255,6 @@ class PaymentRecordsController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def payment_record_params
-      params.require(:payment_record).permit(:bank_account_id, :payment_date, :course_register_id, :amount, :debt_date, :user_id, :note)
+      params.require(:payment_record).permit(:company_id, :bank_account_id, :payment_date, :course_register_id, :amount, :debt_date, :user_id, :note)
     end
 end

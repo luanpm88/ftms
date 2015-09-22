@@ -5,6 +5,8 @@ class ContactsCourse < ActiveRecord::Base
   belongs_to :course_register
   belongs_to :discount_program
   
+  has_many :payment_record_details
+  
   after_create :update_statuses
   
   def self.all_contacts_courses
@@ -18,6 +20,7 @@ class ContactsCourse < ActiveRecord::Base
   end
   
   def courses_phrase_list
+    return "" if no_price? || courses_phrases.empty?
     Course.render_courses_phrase_list(courses_phrases.joins(:phrase).order("phrases.name, courses_phrases.start_at"))
   end
   
@@ -29,7 +32,25 @@ class ContactsCourse < ActiveRecord::Base
   end
   
   def total
-    price - other_discount_amount.to_f - discount_program_amount
+    if price != -1
+      return price - other_discount_amount.to_f - discount_program_amount
+    else
+      return no_price_payment_record_detail.nil? ? 0 : no_price_payment_record_detail.total.to_f
+    end
+  end
+  
+  def no_price_payment_record_detail
+    payment_record_details.includes(:payment_record).where(payment_records: {status: 1}).first
+  end
+  
+  def no_price?
+    #price == -1    
+    if price == -1
+      # find total in payment record
+      no_price_payment_record_detail.nil? ? true : false
+    else
+      return false
+    end
   end
   
   def discount_program_amount_old
@@ -95,7 +116,7 @@ class ContactsCourse < ActiveRecord::Base
   end
   
   def paid?
-    paid == total
+    paid == total && !no_price?
   end
   
   def out_of_date?

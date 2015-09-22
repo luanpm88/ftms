@@ -1278,7 +1278,9 @@ CREATE TABLE payment_record_details (
     amount numeric,
     payment_record_id integer,
     created_at timestamp without time zone NOT NULL,
-    updated_at timestamp without time zone NOT NULL
+    updated_at timestamp without time zone NOT NULL,
+    total numeric,
+    course_type_id integer
 );
 
 
@@ -1316,7 +1318,10 @@ CREATE TABLE payment_records (
     created_at timestamp without time zone NOT NULL,
     updated_at timestamp without time zone NOT NULL,
     status integer,
-    bank_ref character varying
+    bank_ref character varying,
+    course_register_ids text,
+    company_id integer,
+    amount numeric
 );
 
 
@@ -2897,4 +2902,14 @@ INSERT INTO schema_migrations (version) VALUES ('20150919012300');
 INSERT INTO schema_migrations (version) VALUES ('20150919020639');
 
 INSERT INTO schema_migrations (version) VALUES ('20150921022253');
+
+INSERT INTO schema_migrations (version) VALUES ('20150922022436');
+
+INSERT INTO schema_migrations (version) VALUES ('20150922061328');
+
+INSERT INTO schema_migrations (version) VALUES ('20150922083840');
+
+INSERT INTO schema_migrations (version) VALUES ('20150922085050');
+
+INSERT INTO schema_migrations (version) VALUES ('20150922090434');
 

@@ -237,6 +237,7 @@ class Ability
       can :delivery_list, Delivery
       can :trash, Delivery
       
+      
       can :read, DeliveryDetail
       can :create, DeliveryDetail
       
@@ -299,6 +300,8 @@ class Ability
       end
       can :field_history, CourseRegister
       can :export_student_course, CourseRegister
+      can :add_stocks, CourseRegister
+      can :do_add_stocks, CourseRegister
     end
     
     if user.has_role? "education_consultant"
@@ -335,6 +338,10 @@ class Ability
       can :delete, BankAccount do |c|
         !c.statuses.include?("delete_pending") && !c.statuses.include?("deleted")
       end
+      
+      can :company_pay, PaymentRecord
+      can :do_company_pay, PaymentRecord
+      can :print_payment_list, PaymentRecord
     end
     
     if user.has_role? "manager"
@@ -548,6 +555,9 @@ class Ability
       can :create, PaymentRecord
       can :print, PaymentRecord
       can :trash, PaymentRecord
+      can :company_pay, PaymentRecord
+      can :do_company_pay, PaymentRecord
+      can :print_payment_list, PaymentRecord
       
       can :datatable, Activity
       can :read, Activity

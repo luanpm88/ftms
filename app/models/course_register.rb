@@ -77,26 +77,29 @@ class CourseRegister < ActiveRecord::Base
         cc = self.contacts_courses.new
         cc.course_id = row[1]["course_id"]
         cc.contact_id = contact.id
-        cc.courses_phrase_ids = "["+row[1]["courses_phrase_ids"].join("][")+"]" if !row[1]["courses_phrase_ids"].nil?
-        cc.upfront = row[1]["upfront"]
-        cc.price = row[1]["price"]        
-        cc.discount = row[1]["discount"]
-        #cc.sponsored_company_id = row[1]["sponsored_company_id"]
         
-        # Discount programs
-        dps = []
-        row[1]["discount_programs"].each do |r|
-          dps << {id: r[1]["id"], list_price: r[1]["list_price"]} if r[1]["id"].present?
+        if row[1]["price"] == "no_price"
+          cc.price = -1
+        else
+          cc.courses_phrase_ids = "["+row[1]["courses_phrase_ids"].join("][")+"]" if !row[1]["courses_phrase_ids"].nil?
+          #cc.upfront = row[1]["upfront"]
+          cc.price = row[1]["price"]        
+          cc.discount = row[1]["discount"]
+          
+          # Discount programs
+          dps = []
+          row[1]["discount_programs"].each do |r|
+            dps << {id: r[1]["id"], list_price: r[1]["list_price"]} if r[1]["id"].present?
+          end
+          cc.discount_programs = dps.to_json
+          
+          # Other Discounts
+          dps = []
+          row[1]["other_discounts"].each do |r|
+            dps << {amount: r[1]["amount"].to_s.gsub(/\,/, ''), description: r[1]["description"]} if r[1]["amount"].present?
+          end
+          cc.other_discounts = dps.to_json
         end
-        cc.discount_programs = dps.to_json
-        
-        # Other Discounts
-        dps = []
-        row[1]["other_discounts"].each do |r|
-          dps << {amount: r[1]["amount"].to_s.gsub(/\,/, ''), description: r[1]["description"]} if r[1]["amount"].present?
-        end
-        cc.other_discounts = dps.to_json
-        
       end
     end
 
@@ -110,9 +113,14 @@ class CourseRegister < ActiveRecord::Base
         cc.book_id = row[1]["book_id"]
         cc.quantity = row[1]["quantity"]
         cc.contact_id = contact.id
-        cc.price = row[1]["price"]
-        cc.discount_program_id = row[1]["discount_program_id"]
-        cc.discount = row[1]["discount"]
+        
+        if row[1]["price"] == "no_price"
+          cc.price = -1
+        else
+          cc.price = row[1]["price"]
+          cc.discount_program_id = row[1]["discount_program_id"]
+          cc.discount = row[1]["discount"]
+        end
       end
     end
   end
@@ -188,7 +196,7 @@ class CourseRegister < ActiveRecord::Base
     
     if !params["order"].nil?
       case params["order"]["0"]["column"]
-      when "7"
+      when "6"
         order = "course_registers.created_at"
       else
         order = "course_registers.created_at"
@@ -204,7 +212,7 @@ class CourseRegister < ActiveRecord::Base
     
     data = []
     
-    actions_col = 10
+    actions_col = 9
     @records.each do |item|
       ############### BEGIN REVISION #########################
       # update approved status
@@ -215,8 +223,7 @@ class CourseRegister < ActiveRecord::Base
       item = [
               "<div class=\"checkbox check-default\"><input name=\"ids[]\" id=\"checkbox#{item.id}\" type=\"checkbox\" value=\"#{item.id}\"><label for=\"checkbox#{item.id}\"></label></div>",
               item.contact.contact_link,
-              item.course_list,
-              item.book_list,
+              item.description,
               '<div class="text-center">'+item.display_delivery_status+"</div>",
               '<div class="text-right"><label class="col_label top0">Total:</label>'+ApplicationController.helpers.format_price(item.total)+"<label class=\"col_label top0\">Paid:</label>"+ApplicationController.helpers.format_price(item.paid_amount)+"<label class=\"col_label top0\">Receivable:</label>"+ApplicationController.helpers.format_price(item.remain_amount)+"</div>",
               '<div class="text-center">'+item.display_payment_status+item.display_payment+"</div>",
@@ -240,6 +247,89 @@ class CourseRegister < ActiveRecord::Base
     
   end
   
+  def self.payment_list(params, user)
+    ActionView::Base.send(:include, Rails.application.routes.url_helpers)
+    
+    @records = self.filter(params, user)
+    @records = @records.where("course_registers.status IS NOT NULL AND course_registers.status LIKE ?", "%[active]%")
+    @records = @records.search(params["search"]["value"]) if !params["search"]["value"].empty?
+    
+    if !params["order"].nil?
+      case params["order"]["0"]["column"]
+      when false
+      else
+        order = "course_registers.created_at"
+      end
+      order += " "+params["order"]["0"]["dir"]
+    else
+      order = "course_registers.created_at DESC, course_registers.created_at DESC"
+    end
+    @records = @records.order(order) if !order.nil?
+    
+    total = @records.count
+    @records = @records.limit(params[:length]).offset(params["start"])
+    
+    data = []
+    
+    actions_col = 9
+    @records.each do |item|
+      ############### BEGIN REVISION #########################
+      # update approved status
+      if params[:status].present? && params[:status] == "approved"
+        item.remove_annoucing_users([user])
+      end
+      ############### END REVISION #########################
+      item = [
+              "<div class=\"checkbox check-default\"><input name=\"ids[]\" id=\"checkbox#{item.id}\" type=\"checkbox\" value=\"#{item.id}\"><label for=\"checkbox#{item.id}\"></label></div>",
+              item.contact.contact_link,
+              item.description,
+              '<div class="text-right">'+ApplicationController.helpers.format_price(item.total)+"</div>",
+              '<div class="text-right">'+ApplicationController.helpers.format_price(item.paid_amount)+"</div>",
+              '<div class="text-center">'+item.paid_on+"</div>",
+              '<div class="text-center">'+item.bank_account_name+"</div>",
+              '<div class="text-right">'+ApplicationController.helpers.format_price(item.remain_amount)+"</div>",
+              '<div class="text-center">'+item.contact.account_manager.staff_col+"</div>",
+              ""
+              #"<div class=\"checkbox check-default\"><input name=\"ids[]\" id=\"checkbox#{item.id}\" type=\"checkbox\" value=\"#{item.id}\"><label for=\"checkbox#{item.id}\"></label></div>",
+              #item.contact.contact_link,
+              #item.description,
+              #'<div class="text-center">'+item.display_delivery_status+"</div>",
+              #'<div class="text-right"><label class="col_label top0">Total:</label>'+ApplicationController.helpers.format_price(item.total)+"<label class=\"col_label top0\">Paid:</label>"+ApplicationController.helpers.format_price(item.paid_amount)+"<label class=\"col_label top0\">Receivable:</label>"+ApplicationController.helpers.format_price(item.remain_amount)+"</div>",
+              #'<div class="text-center">'+item.display_payment_status+item.display_payment+"</div>",
+              #'<div class="text-center">'+item.created_at.strftime("%d-%b-%Y")+"</div>",
+              #'<div class="text-center">'+item.contact.account_manager.staff_col+"</div>",
+              #'<div class="text-center">'+item.display_statuses+"</div>",
+              #""
+            ]
+      data << item
+      
+    end
+    
+    result = {
+              "drawn" => params[:drawn],
+              "recordsTotal" => total,
+              "recordsFiltered" => total
+    }
+    result["data"] = data
+    
+    return {result: result, items: @records, actions_col: actions_col}
+    
+  end
+  
+  def paid_on
+    self.all_payment_records.empty? ? "" : self.all_payment_records.last.payment_date.strftime("%d-%b-%Y")
+  end
+  def bank_account_name
+    self.all_payment_records.empty? ? "" : self.all_payment_records.last.bank_account.name
+  end
+  def description
+    str = []
+    str << "<h5 class=\"list_title\">Courses: </h5>#{course_list}" if !contacts_courses.empty?
+    str << "<h5 class=\"list_title\">Stocks: </h5>#{book_list}" if !books_contacts.empty?
+    
+    return str.join("<br />")
+  end
+  
   def self.student_course_registers(params, user)
     ActionView::Base.send(:include, Rails.application.routes.url_helpers)
     link_helper = ActionController::Base.helpers    
@@ -254,9 +344,7 @@ class CourseRegister < ActiveRecord::Base
     
     if !params["order"].nil?
       case params["order"]["0"]["column"]
-      when "0"
-        order = "course_registers.created_at"
-      when "2"
+      when "5"
         order = "course_registers.created_at"
       else
         order = "course_registers.created_at"
@@ -272,15 +360,14 @@ class CourseRegister < ActiveRecord::Base
     
     data = []
     
-    actions_col = 8
+    actions_col = 7
     @records.each do |item|
       item = [
               item.contact.contact_link,
-              item.course_list,
-              item.book_list,
+              item.description,
               '<div class="text-center">'+item.display_delivery_status+"</div>",
               '<div class="text-right"><label class="col_label top0">Total:</label>'+ApplicationController.helpers.format_price(item.total)+"<label class=\"col_label top0\">Paid:</label>"+ApplicationController.helpers.format_price(item.paid_amount)+"<label class=\"col_label top0\">Remain:</label>"+ApplicationController.helpers.format_price(item.remain_amount)+"</div>",
-              '<div class="text-center">'+item.display_payment_status+item.payment+"</div>",
+              '<div class="text-center">'+item.display_payment_status+item.display_payment+"</div>",
               '<div class="text-center">'+item.created_at.strftime("%d-%b-%Y")+"</div>",
               '<div class="text-center">'+item.contact.account_manager.staff_col+"</div>",
               ""
@@ -330,7 +417,7 @@ class CourseRegister < ActiveRecord::Base
   def book_list
     arr = []
     books.each do |row|
-      arr << "<div><strong>"+row[:book].name+"</strong></div>"
+      arr << "<div><strong>"+row[:book].display_name+"</strong></div>"
       #arr << row[:volumns].map(&:name).join(", ")
     end
     
@@ -447,7 +534,26 @@ class CourseRegister < ActiveRecord::Base
     return total #records.sum(:amount)
   end
   
+  def no_price?
+    # check if course no price
+    contacts_courses.each do |cc|
+      if cc.no_price?
+        return true
+      end      
+    end
+    
+    # check if stock no price
+    books_contacts.each do |bc|
+      if bc.no_price?
+        return true
+      end      
+    end
+    
+    return false
+  end
+  
   def paid?
+    return false if no_price?    
     paid_amount == total
   end
   
