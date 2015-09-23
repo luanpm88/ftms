@@ -80,11 +80,13 @@ class Contact < ActiveRecord::Base
   def active_courses
     courses.includes(:contacts_courses).joins("LEFT JOIN course_registers ON course_registers.id = contacts_courses.course_register_id")
           .where(course_registers: {parent_id: nil}).where("course_registers.status IS NOT NULL AND course_registers.status LIKE ?", "%[active]%")
+          .uniq
   end
   
   def active_contacts_courses
     contacts_courses.joins("LEFT JOIN course_registers ON course_registers.id = contacts_courses.course_register_id")
                     .where(course_registers: {parent_id: nil}).where("course_registers.status IS NOT NULL AND course_registers.status LIKE ?", "%[active]%")
+                    .uniq
   end
   
   def active_course_registers
@@ -198,8 +200,8 @@ class Contact < ActiveRecord::Base
     @records = @records.where("contacts.referrer_id IN (#{params[:companies]})") if params[:companies].present?
     
     if params[:courses].present?
-      @records = @records.joins(:courses)
-      @records = @records.where("courses.id IN (#{params[:courses]})")
+      c_ids = Course.find(params[:courses]).active_contacts.map(&:id)
+      @records = @records.where(id: c_ids)
     end
     
     if params[:courses_phrases].present?
@@ -376,9 +378,6 @@ class Contact < ActiveRecord::Base
   end
   
   def self.course_students(params, user)
-    ActionView::Base.send(:include, Rails.application.routes.url_helpers)
-    link_helper = ActionController::Base.helpers
-    
     @course = Course.find(params[:courses])
     
     @records = self.filters(params, user)
@@ -900,7 +899,7 @@ class Contact < ActiveRecord::Base
   end
   
   def course_list_link(title=nil)
-    title = title.nil? ? "Course List (#{courses.count.to_s})" : title
+    title = title.nil? ? "Course List (#{active_courses.count.to_s})" : title
     ActionController::Base.helpers.link_to(title, {controller: "contacts", action: "edit", id: self.id, tab_page: 1, tab: "course"}, title: "#{display_name}: Course List", class: "tab_page")
   end
   
@@ -1369,6 +1368,18 @@ class Contact < ActiveRecord::Base
   
   def staff_col
     account_manager.nil? ? "" : account_manager.staff_col
+  end
+  
+  def active_courses_with_phrases
+    arr = []
+    active_courses.each do |c|
+      row = {}
+      row[:course] = c
+      row[:courses_phrases] = c.courses_phrases_by_sudent(self).where(course_id: c.id).includes(:phrase).order("phrases.id, courses_phrases.start_at")
+
+      arr << row
+    end
+    return arr
   end
   
 end

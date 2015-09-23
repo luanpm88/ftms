@@ -251,6 +251,8 @@ Hkerp::Application.routes.draw do
       get :field_history
       
       get :course_phrases_form
+      get :transfer_course
+      get :course_phrases_list
     end
   end
   

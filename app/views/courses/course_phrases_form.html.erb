@@ -58,7 +58,7 @@
 													   <i class=""></i>
 													   <div class="input-with_add_but">
 															<%= link_to '<i class="icon-plus"></i>'.html_safe, new_phrase_path(tab_page: 1), title: "New Phrase", :class => 'btn btn-sm btn-small btn-white add-agent-button tab_page' %>															
-                                                            <%= select_tag "courses_phrases["+number.to_s+"][phrase_id]", options_for_select((@phrases.collect { |p| [p.name, p.id] })), {:include_blank => '', class: "modern_select main_input width100"} %>
+                                                            <%= select_tag "courses_phrases["+number.to_s+"][phrase_id]", options_for_select(@phrases.collect { |p| [p.name, p.id] }), {include_blank: 'None', class: "modern_select main_input width100"} %>
 													   </div>
 												  </div>
 											 </div>

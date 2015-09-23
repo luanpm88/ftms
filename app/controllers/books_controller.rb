@@ -231,7 +231,7 @@ class BooksController < ApplicationController
     if params[:contact_id] != "undefined"
       contact = Contact.find(params[:contact_id])      
       records.each do |r|
-        @books << r if !r.registered?(contact)
+        @books << r # if !r.registered?(contact)
       end
     else
       @books = records
@@ -276,9 +276,15 @@ class BooksController < ApplicationController
         row[:contact] = bc.contact
         row[:address] = bc.course_register.display_mailing_address
         row[:address_title] = bc.course_register.display_mailing_title
-        row[:list] = !bc.delivered? ? [bc] : []
+        row[:list] = !bc.delivered? ? {bc.contact_id.to_s+"_"+bc.book_id.to_s => bc} : {}
       else
-        row[:list] << bc if !bc.delivered?
+        if !bc.delivered?
+          if row[:list][bc.contact_id.to_s+"_"+bc.book_id.to_s].nil?
+            row[:list][bc.contact_id.to_s+"_"+bc.book_id.to_s] = bc
+          else
+            row[:list][bc.contact_id.to_s+"_"+bc.book_id.to_s].quantity += bc.quantity
+          end         
+        end
       end
       
       @list << row if @books_contacts.count == index+1

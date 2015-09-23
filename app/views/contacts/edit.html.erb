@@ -92,44 +92,8 @@
 								<% if @contact.contact_types.include?(ContactType.student) %>
 										<div class="tab-pane <%= "active" if ["course"].include?(params[:tab]) %>" id="course">
 												
-												<%= render "courses/filters" %>
+												<%= render "course" %>
 												
-												<style>
-														.student-course-filter {
-																position: absolute;
-																top: -90000px;
-														}
-												</style>
-												
-												<div class="row">
-														<div class="col-md-12">													
-															<div class="grid simple ">
-																<div class="grid-title no-border">
-																	<h4>Listing  <span class="semi-bold">Course</span></h4>															
-																</div>
-																
-																
-																
-																<div class="grid-body no-border">															 
-																		<table class="table table-striped no-more-tables datatable-student-courses no-filter">
-																			<thead>
-																				<tr>                                                
-																					<th class="text-left" width="1%">Intake</th>
-																					<th class="text-left nowrap">Course</th>																			
-																					<th class="text-left">Phrase [Date]</th>
-																					<th class="text-center">For exam</th>
-																					<th class="text-center">Lecturer</th>
-																					<th class="text-center">Created On</th>																			
-																					<th class="text-right" width="1%">Actions</th>
-																				</tr>
-																			</thead>                                        
-																		</table>
-																</div>
-															</div>
-												
-														</div>
-												
-												</div>
 										</div>
 							
 										<div class="tab-pane <%= "active" if ["course_registration"].include?(params[:tab]) %>" id="course_registration">

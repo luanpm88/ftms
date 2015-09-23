@@ -1,0 +1,153 @@
+       <div class="row">
+            <div class="col-md-12">
+              <div class="grid simple">
+                <div class="grid-titles no-border">
+                  <h4>Transfer <span class="semi-bold">Course</span></h4>
+                  
+                </div>     
+                
+                <div class="grid-body no-border transfer_upfront_to_course_from">
+                  <%= form_for("") do |f| %>
+					
+					<%= hidden_field_tag("tab_page", 1) if params[:tab_page] %>
+					
+					<div class="row column-seperation">
+						 <div class="col-md-3">
+                            <h3>From</h3>           
+                            
+
+                            <div class="form-group">
+                               <label class="form-label"><label>Name</label></label>
+                               <span class="help"></span>
+                               <div class="input-with-icon right">                                       
+                                   <strong><%= @contact.display_name %></strong>
+                               </div>
+                            </div>
+                            
+                            
+                           
+						 </div>
+						 <div class="col-md-3">
+							  <h3>To Contact</h3>
+							
+							  <div class="form-group">
+                               <label class="form-label"><label>Name</label></label>
+                               <span class="help"></span>
+                               <div class="input-with-icon right">                                       
+                                   <strong><%= @contact.display_name %></strong>
+                               </div>
+                            </div>
+									
+						 
+						 </div>
+						 
+						 <div class="col-md-3">
+							  <h3>Admin Fee</h3>
+							  <div class="form-group">
+                                    <label class="form-label"><label>Amount</label></label>
+                                    <span class="help"></span>
+                                    <div class="input-with-iconz right">                                       
+                                         <i class=""></i>
+                                          <div class="input-with_add_butz">
+                                            <%= text_field_tag "admin_fee", "", class: "form-control price_input price_discount" %>
+                                          </div>
+                                    </div>
+							  </div>
+							  
+						 </div>
+					</div>
+					
+					<hr />
+					
+					<div class="row column-seperation <%= "draft_form" if @course.draft? %>">
+                         
+						 <div class="col-md-4">
+							  <h3>Course</h3>
+							
+							  <div class="form-group">
+								   <label class="form-label">Name</label>
+								   <span class="help"></span>
+								   <div class="input-with-icon right">                                       
+									   <strong class="big-info"><%= @course.display_name %></strong>
+								   </div>
+							  </div>
+									
+							  <div class="form-group">
+								   <label class="form-label">Register On</label>
+								   <span class="help"></span>
+								   <div class="input-with-icon right">                                       
+									   <strong><%= @contacts_course.course_register.created_at.strftime("%d-%b-%Y") %></strong>
+								   </div>
+							  </div>
+
+						 </div>
+						 
+						 
+						 <div class="col-md-4">
+							  <h3>To Course</h3>
+							
+							  <div class="form-group">
+									<label class="form-label"><%= f.label :name %></label>
+									<span class="help">(required)</span>
+									<div class="input-with-icon  right">                                       
+										 <i class=""></i>
+										 <div class="input-with_add_but">
+											  <%= link_to '<i class="icon-plus"></i>'.html_safe, new_course_path(tab_page: 1), title: "New Course", :class => 'btn btn-sm btn-small btn-white tab_page' %>
+											  <%= select_tag 'course_id', options_for_select(Course.active_courses({upfront: @course.upfront ? "false" : "", course_type_id: @course.course_type_id, subject_id: @course.subject_id}).collect{ |u| [u.name, u.id] }), {include_blank: "None", class: "modern_select required width100 to_course"} %>
+										 </div>
+									</div>
+							  </div>
+									
+							  <div class="course_phrases_list"></div>
+						 
+						 </div>
+						 <div class="col-md-2">
+							  <h3>To Hour</h3>
+							  <div class="form-group">
+                                    <label class="form-label"><label>Hour</label></label>
+                                    <span class="help"></span>
+                                    <div class="input-with-iconz right">                                       
+                                         <i class=""></i>
+                                          <div class="input-with_add_butz">
+                                            <%= text_field_tag "hour", "", class: "form-control price_input price_discount" %>
+                                          </div>
+                                    </div>
+							  </div>
+							  
+						 </div>
+						 <div class="col-md-2">
+							  <h3>To Money</h3>
+							  <div class="form-group">
+                                    <label class="form-label"><label>Money</label></label>
+                                    <span class="help"></span>
+                                    <div class="input-with-iconz right">                                       
+                                         <i class=""></i>
+                                          <div class="input-with_add_butz">
+                                            <%= text_field_tag "money", "", class: "form-control price_input price_discount" %>
+                                          </div>
+                                    </div>
+							  </div>
+							  
+						 </div>
+						 
+					</div>
+						 <br />
+					<div class="row">
+						 
+					</div>
+					
+                      <div class="form-actions">  
+                           <div class="pull-right">
+                              <button type="submit" class="btn btn-success btn-cons"><i class="icon-ok"></i> Save</button>
+
+                            <%= link_to 'Cancel', users_path, :class => "btn btn-white btn-cons cancel-but" %>
+                         </div>
+                      </div>
+
+							  
+					<% end %>
+			   </div>
+			 </div>
+            </div>
+			
+      </div>

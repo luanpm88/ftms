@@ -6,7 +6,7 @@
     
         <% group_name = "" %>
         <div>
-            <% @course.courses_phrases.includes(:phrase).order("phrases.name DESC, courses_phrases.start_at").each do |courses_phrase| %>
+            <% @course.courses_phrases.includes(:phrase).order("phrases.name, courses_phrases.start_at").each do |courses_phrase| %>
                 
                     <% if group_name != courses_phrase.phrase.name %>
                         <% if group_name != "" %><br style="clear: both" /><% end %>

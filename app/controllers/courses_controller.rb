@@ -3,7 +3,7 @@ class CoursesController < ApplicationController
   
   load_and_authorize_resource
   
-  before_action :set_course, only: [:delete, :show, :edit, :update, :destroy] # [delete] for revision-feature
+  before_action :set_course, only: [:transfer_to_course, :delete, :show, :edit, :update, :destroy] # [delete] for revision-feature
 
   # GET /courses
   # GET /courses.json
@@ -114,7 +114,7 @@ class CoursesController < ApplicationController
     result = Course.student_courses(params, current_user)
     
     result[:items].each_with_index do |item, index|
-      actions = render_student_courses_actions(item)      
+      actions = render_student_courses_actions(item, params[:students])      
       result[:result]["data"][index][result[:actions_col]] = actions
     end
     
@@ -206,6 +206,19 @@ class CoursesController < ApplicationController
   def course_phrases_form
     @course = params[:course_id].present? ? Course.find(params[:course_id]) : Course.new
     @phrases = Phrase.active_phrases.includes(:subjects).where(subjects: {id: params[:value].split("_")[1]})
+    render layout: nil
+  end
+  
+  def transfer_course
+    @contact = Contact.find(params[:contact_id])
+    
+    @contacts_course = ContactsCourse.find(@contact.active_contacts_courses.where(course_id: @course.id).first.id)
+    
+    render layout: "content"
+  end
+  
+  def course_phrases_list
+    
     render layout: nil
   end
   

@@ -213,7 +213,7 @@ class UsersController < ApplicationController
                                           .where(course_registers: {parent_id: nil}).where("course_registers.status IS NOT NULL AND course_registers.status LIKE ?", "%[active]%")
                                           .where(course_types: {id: ct.id})
                                           .where(contacts: {account_manager_id: u.id})
-                                          .where("course_registers.created_date >= ? AND course_registers.created_date <= ? ", @from_date.beginning_of_day, @to_date.end_of_day)
+                                          .where("course_registers.created_at >= ? AND course_registers.created_at <= ? ", @from_date.beginning_of_day, @to_date.end_of_day)
         
         contacts_courses.each do |cc|
           receivable += cc.remain(@from_date, @to_date)
@@ -266,7 +266,7 @@ class UsersController < ApplicationController
                             .where(course_registers: {parent_id: nil}).where("course_registers.status IS NOT NULL AND course_registers.status LIKE ?", "%[active]%")
                             .where(contacts: {account_manager_id: u.id})
                             .where(course_types: {id: ct.id})
-                            .where("course_registers.created_date >= ? AND course_registers.created_date <= ? ", @from_date.beginning_of_day, @to_date.end_of_day)
+                            .where("course_registers.created_at >= ? AND course_registers.created_at <= ? ", @from_date.beginning_of_day, @to_date.end_of_day)
 
         paper = @papers.count
         paper_total += @papers.count

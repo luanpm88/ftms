@@ -40,6 +40,18 @@ class Course < ActiveRecord::Base
                       }
                   }
   
+  def active_contacts_courses
+    contacts_courses.includes(:course_register)
+          .where(course_registers: {parent_id: nil}).where("course_registers.status IS NOT NULL AND course_registers.status LIKE ?", "%[active]%")
+          .uniq
+  end
+  
+  def active_contacts
+    contacts.includes(:contacts_courses).joins("LEFT JOIN course_registers ON course_registers.id = contacts_courses.course_register_id")
+          .where(course_registers: {parent_id: nil}).where("course_registers.status IS NOT NULL AND course_registers.status LIKE ?", "%[active]%")
+          .uniq
+  end
+  
   def self.all_courses
     self.active_courses.order("created_at DESC")
   end
@@ -64,14 +76,15 @@ class Course < ActiveRecord::Base
   def self.filters(params, user)
     @records = self.main_courses.joins(:course_type,:subject)
     
-    @records = @records.search(params["search"]["value"]) if !params["search"]["value"].empty?
+    #@records = @records.search(params["search"]["value"]) if !params["search"]["value"].empty?
+    @records = @records.where("LOWER(course_types.short_name) LIKE ? OR LOWER(subjects.name) LIKE ?", "%#{params["search"]["value"].downcase}%", "%#{params["search"]["value"].downcase}%") if !params["search"]["value"].empty?
     @records = @records.where("EXTRACT(YEAR FROM courses.intake) = ? ", params["intake_year"]) if params["intake_year"].present?
     @records = @records.where("EXTRACT(MONTH FROM courses.intake) = ? ", params["intake_month"]) if params["intake_month"].present?
     @records = @records.where("courses.course_type_id IN (#{params["course_types"].join(",")})") if params["course_types"].present?
     @records = @records.where("courses.subject_id IN (#{params["subjects"].join(",")})") if params["subjects"].present?
     
     if params["students"].present?
-      @records = @records.joins(:contacts)
+      @records = @records.includes(:contacts)
       @records = @records.where("contacts.id IN (#{params["students"]})") if params["students"].present?
     end
     
@@ -107,9 +120,6 @@ class Course < ActiveRecord::Base
   end
   
   def self.datatable(params, user)
-    ActionView::Base.send(:include, Rails.application.routes.url_helpers)
-    link_helper = ActionController::Base.helpers    
-    
     @records =  self.filters(params, user)
     
     if !params["order"].nil?
@@ -127,7 +137,7 @@ class Course < ActiveRecord::Base
       end
       order += " "+params["order"]["0"]["dir"] if !["0","1","3"].include?(params["order"]["0"]["column"])
     else
-      order = "courses.intake DESC"
+      order = "courses.intake DESC, course_types.short_name, subjects.name"
     end
     
     @records = @records.order(order) if !order.nil?
@@ -194,7 +204,7 @@ class Course < ActiveRecord::Base
     if !params["order"].nil?
       case params["order"]["0"]["column"]
       when "0"
-        order = "courses.intake #{params["order"]["0"]["dir"]}, course_types.short_name, subjects.name"
+        order = "courses.upfront DESC, courses.intake #{params["order"]["0"]["dir"]}, course_types.short_name, subjects.name"
       when "1"
         order = "course_types.short_name #{params["order"]["0"]["dir"]}, subjects.name"
       when "3"
@@ -206,7 +216,7 @@ class Course < ActiveRecord::Base
       end
       order += " "+params["order"]["0"]["dir"] if !["0","1","3"].include?(params["order"]["0"]["column"])
     else
-      order = "course_registers.created_date DESC"
+      order = "courses.upfront DESC, courses.intake DESC, course_types.short_name, subjects.name"
     end
     
     @records = @records.order(order) if !order.nil?
@@ -287,11 +297,11 @@ class Course < ActiveRecord::Base
   end
   
   def contacts_course(student)
-    contacts_courses.where(contact_id: student.id).first
+    active_contacts_courses.where(contact_id: student.id).first
   end
   
   def contacts_courses_by_student(student)
-    contacts_courses.where(contact_id: student.id)
+    active_contacts_courses.where(contact_id: student.id)
   end
   
   def course_register(student)
@@ -412,8 +422,20 @@ class Course < ActiveRecord::Base
   def self.main_courses
     self.where(parent_id: nil)
   end
-  def self.active_courses
-    self.main_courses.where("status IS NOT NULL AND status LIKE ?", "%[active]%")
+  def self.active_courses(filter=nil)
+    result = self.main_courses.where("status IS NOT NULL AND status LIKE ?", "%[active]%")
+    if !filter.nil?
+      if filter[:course_type_id].present?
+        result = result.where(course_type_id: filter[:course_type_id])
+      end
+      if filter[:subject_id].present?
+        result = result.where(subject_id: filter[:subject_id])
+      end
+      if filter[:upfront].present?
+        result = result.where(upfront: filter[:upfront])
+      end
+    end    
+    return result
   end
   
   def draft?

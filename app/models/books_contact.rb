@@ -180,7 +180,7 @@ class BooksContact < ActiveRecord::Base
       end
       order += " "+params["order"]["0"]["dir"]
     else
-      order = "books_contacts.created_at DESC"
+      order = "contacts.name, books.name"
     end
     
     @records = @records.order(order) if !order.nil?

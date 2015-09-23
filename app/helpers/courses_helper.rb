@@ -23,6 +23,11 @@ module CoursesHelper
       
       actions += '<li class="divider"></li>' if group_1 > 0
       
+      
+      
+      
+      
+      
       if can? :update, item
         actions += '<li>'+item.course_link("Edit", courses_path(tab_page: 1))+'</li>'        
       end
@@ -36,10 +41,21 @@ module CoursesHelper
       return actions.html_safe
   end
   
-  def render_student_courses_actions(item)
+  def render_student_courses_actions(item, contact_id)
     actions = '<div class="text-right"><div class="btn-group actions">
                     <button class="btn btn-mini btn-white btn-demo-space dropdown-toggle" data-toggle="dropdown">Actions <span class="caret"></span></button>'
-      actions += '<ul class="dropdown-menu">'      
+      actions += '<ul class="dropdown-menu">'
+      
+      
+      group_1 = 0      
+
+      if can? :transfer_course, item
+        actions += '<li>'+ActionController::Base.helpers.link_to('Transfer', {controller: "courses", action: "transfer_course", contact_id: contact_id, id: item.id, tab_page: 1}, title: "#{Contact.find(contact_id).name}: Transfer [#{item.display_name}]", class: "tab_page")+'</li>'
+        group_1 += 1
+      end
+      
+      actions += '<li class="divider"></li>' if group_1 > 0
+
       
       if can? :read, Contact
         actions += '<li>'+item.student_list_link+'</li>'        

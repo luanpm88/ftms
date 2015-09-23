@@ -1,5 +1,20 @@
 <script>
 	
+	function ajaxCoursePhrasesList(course_id) {
+		if (course_id == "") {
+			$(".course_phrases_list").html("")
+			return
+		}
+		$.ajax({
+			url: "<%= course_phrases_list_courses_path %>?id="+course_id,
+			success: function(data, textStatus, jqXHR)
+			{
+				$(".course_phrases_list").html(data)
+				//alert(data)
+			}
+		})
+	}
+	
 	function calculateCompanyPayment() {
 		var paid = 0
 		var total = 0
@@ -1140,8 +1155,8 @@
 					
 					d.is_individual = $(".contact-filter select[name=is_individual]").select2("val");
 					
-					if($(".contact-filter select[name='tags[]'").val()) {
-						d.tags = $(".contact-filter select[name='tags[]'").val()
+					if($(".contact-filter select[name='tags[]']").val()) {
+						d.tags = $(".contact-filter select[name='tags[]']").val()
 					}
 					
 					if($(".contact-filter select[name='course_types[]']").val()) {
@@ -1218,8 +1233,8 @@
 					
 					d.is_individual = $(".contact-filter select[name=is_individual]").select2("val");
 					
-					if($(".contact-filter select[name='tags[]'").val()) {
-						d.tags = $(".contact-filter select[name='tags[]'").val()
+					if($(".contact-filter select[name='tags[]']").val()) {
+						d.tags = $(".contact-filter select[name='tags[]']").val()
 					}
 					
 					if($(".contact-filter select[name='course_types[]']").val()) {
@@ -2905,6 +2920,11 @@
 		});
 		$(".company_payment_form input").keyup(function() {
 			calculateCompanyPayment()
+		});
+		
+		
+		$(".transfer_upfront_to_course_from .to_course").change(function() {
+			ajaxCoursePhrasesList($(this).select2("val"))
 		});
 	})
 	

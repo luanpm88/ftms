@@ -101,6 +101,10 @@ class Ability
       end
       can :field_history, Course
       can :course_phrases_form, Course
+      can :transfer_course, Course do |c|
+        c.upfront?
+      end
+      can :course_phrases_list, Course
       
       
       
