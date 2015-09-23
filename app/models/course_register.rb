@@ -281,7 +281,7 @@ class CourseRegister < ActiveRecord::Base
       ############### END REVISION #########################
       item = [
               "<div class=\"checkbox check-default\"><input name=\"ids[]\" id=\"checkbox#{item.id}\" type=\"checkbox\" value=\"#{item.id}\"><label for=\"checkbox#{item.id}\"></label></div>",
-              item.contact.contact_link,
+              item.contact.contact_link+"<br />".html_safe+item.contact.referrer_link,
               item.description,
               '<div class="text-right">'+ApplicationController.helpers.format_price(item.total)+"</div>",
               '<div class="text-right">'+ApplicationController.helpers.format_price(item.paid_amount)+"</div>",

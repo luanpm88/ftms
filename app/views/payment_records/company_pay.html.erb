@@ -200,7 +200,7 @@
 												</tr>
 												
 												<% @course_registers.each do |item| %>
-												  <tr>
+												  <tr class="row_selected">
 													<td>
 													  <div class="checkbox check-default"><input checked="checked" name="course_register_ids[]" id="checkbox<%= item.id %>" type="checkbox" value="<%= item.id %>"><label for="checkbox<%= item.id %>"></label></div>
 													</td>
@@ -217,10 +217,10 @@
 													  <%= format_price(item.paid_amount) %>
 													</td>
 													<td class="text-center">
-													  <%= item.all_payment_records.last.payment_date.strftime("%d-%b-%Y") %>
+													  <%= item.paid_on %>
 													</td>
 													<td class="text-center">
-													  <%= item.all_payment_records.last.bank_account.name %>
+													  <%= item.bank_account_name %>
 													</td>
 													<td class="text-right">
 													  <%= ApplicationController.helpers.format_price(item.remain_amount) %>

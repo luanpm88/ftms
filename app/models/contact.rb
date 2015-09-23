@@ -559,7 +559,7 @@ class Contact < ActiveRecord::Base
   end
   
   def referrer_link
-    referrer.nil? ? "" : '<i class="icon-building"></i> '+referrer.contact_link
+    referrer.nil? ? "" : ('<i class="icon-building"></i> '+referrer.contact_link).html_safe
   end
   
   def contact_link(title=nil)

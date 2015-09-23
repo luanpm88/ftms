@@ -1321,7 +1321,8 @@ CREATE TABLE payment_records (
     bank_ref character varying,
     course_register_ids text,
     company_id integer,
-    amount numeric
+    amount numeric,
+    parent_id integer
 );
 
 
@@ -2912,4 +2913,6 @@ INSERT INTO schema_migrations (version) VALUES ('20150922083840');
 INSERT INTO schema_migrations (version) VALUES ('20150922085050');
 
 INSERT INTO schema_migrations (version) VALUES ('20150922090434');
+
+INSERT INTO schema_migrations (version) VALUES ('20150923012830');
 
