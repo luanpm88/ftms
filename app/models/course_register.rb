@@ -271,7 +271,7 @@ class CourseRegister < ActiveRecord::Base
     
     data = []
     
-    actions_col = 9
+    actions_col = 8
     @records.each do |item|
       ############### BEGIN REVISION #########################
       # update approved status
@@ -281,13 +281,12 @@ class CourseRegister < ActiveRecord::Base
       ############### END REVISION #########################
       item = [
               "<div class=\"checkbox check-default\"><input name=\"ids[]\" id=\"checkbox#{item.id}\" type=\"checkbox\" value=\"#{item.id}\"><label for=\"checkbox#{item.id}\"></label></div>",
-              item.contact.contact_link+"<br />".html_safe+item.contact.referrer_link,
+              item.contact.contact_link,
               item.description,
               '<div class="text-right">'+ApplicationController.helpers.format_price(item.total)+"</div>",
               '<div class="text-right">'+ApplicationController.helpers.format_price(item.paid_amount)+"</div>",
-              '<div class="text-center">'+item.paid_on+"</div>",
-              '<div class="text-center">'+item.bank_account_name+"</div>",
               '<div class="text-right">'+ApplicationController.helpers.format_price(item.remain_amount)+"</div>",
+              '<div class="text-center">'+item.display_payment_status+item.display_payment+"</div>",
               '<div class="text-center">'+item.contact.account_manager.staff_col+"</div>",
               ""
               #"<div class=\"checkbox check-default\"><input name=\"ids[]\" id=\"checkbox#{item.id}\" type=\"checkbox\" value=\"#{item.id}\"><label for=\"checkbox#{item.id}\"></label></div>",
@@ -522,6 +521,8 @@ class CourseRegister < ActiveRecord::Base
   end
   
   def paid_amount(date=nil)
+    return total if self.company_payment_records(date).count > 0
+    
     records = all_payment_records
     if date.present?
       records = records.where("payment_date <= ?", date)
@@ -553,7 +554,7 @@ class CourseRegister < ActiveRecord::Base
   end
   
   def paid?
-    return false if no_price?    
+    return false if no_price? && paid_amount.to_f == 0
     paid_amount == total
   end
   
@@ -916,6 +917,14 @@ class CourseRegister < ActiveRecord::Base
     else
       return "Address"
     end    
+  end
+  
+  def company_payment_records(date=nil)
+    records = PaymentRecord.where("course_register_ids LIKE ?", "%#{self.id}%")
+    if date.present?
+      records = records.where("payment_date <= ?", date)
+    end
+    return records
   end
   
 end

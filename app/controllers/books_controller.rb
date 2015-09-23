@@ -276,9 +276,9 @@ class BooksController < ApplicationController
         row[:contact] = bc.contact
         row[:address] = bc.course_register.display_mailing_address
         row[:address_title] = bc.course_register.display_mailing_title
-        row[:list] = [bc]
+        row[:list] = !bc.delivered? ? [bc] : []
       else
-        row[:list] << bc
+        row[:list] << bc if !bc.delivered?
       end
       
       @list << row if @books_contacts.count == index+1

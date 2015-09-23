@@ -69,6 +69,22 @@
 								<input style="width:100%;margin-bottom: 5px;" name="company" data="<%= contacts_path(is_individual: false, format: "json") %>" class="select2-ajax-companies" />
 							</div>
 						</div>
+						
+						<div class="col-md-3">
+							<h4>Receivable?</h4>
+							<div class="form-group" style="margin-bottom: 5px;">								 
+								 <div class="input-with-icon right">                                       
+									  <div class="radio radio-success" style="padding: 5px">
+											<input class="required" id="receivable_all" type="radio" name="receivable" value="" checked="checked">
+										   <label for="receivable_all">All</label>
+										   <input class="required" id="receivable_true" type="radio" name="receivable" value="receivable">
+										   <label for="receivable_true">Yes</label>
+										   <input class="required" id="receivable_false" type="radio" name="receivable" value="paid">
+										   <label for="receivable_false">No</label>
+									  </div>
+								 </div>
+							</div>
+					  </div>	
                         
                         
                     </div>

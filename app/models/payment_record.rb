@@ -5,6 +5,9 @@ class PaymentRecord < ActiveRecord::Base
   belongs_to :bank_account
   belongs_to :company, class_name: "Contact"
   
+  belongs_to :parent, class_name: "PaymentRecord"
+  has_one :previous, class_name: "PaymentRecord", foreign_key: "parent_id"
+  
   has_many :payment_record_details
   
   include PgSearch
@@ -19,15 +22,21 @@ class PaymentRecord < ActiveRecord::Base
                       }
                   }
   
-  after_save :update_statuses
+  after_save :update_course_register_statuses
+  after_create :update_statuses
   
-  def update_statuses
+  def update_course_register_statuses
     if !course_register.nil?
       course_register.update_statuses
       course_register.contacts_courses.each do |cc|
         cc.update_statuses
       end
-    end      
+    end
+    if company.nil?
+      self.course_registers.each do |cr|
+        cr.update_statuses
+      end
+    end    
   end
   
   def self.filter(params, user)
@@ -63,6 +72,10 @@ class PaymentRecord < ActiveRecord::Base
       @records = @records.where("contacts_courses.course_id = ?", params["courses"])
     end
     
+    if params["receivable"].present?
+      @records = @records.where(cache_payment_status: params["receivable"])
+    end
+    
     # role
     if !user.has_role?("manager") && !user.has_role?("admin") && !user.has_role?("accountant")
       @records = @records.joins(:course_register => :contact)
@@ -74,7 +87,7 @@ class PaymentRecord < ActiveRecord::Base
   end
   
   def self.datatable(params, user)
-    @records = self.filter(params, user)
+    @records = self.filter(params, user).where(parent_id: nil)
     
     @records = @records.search(params["search"]["value"]) if !params["search"]["value"].empty?
     
@@ -104,9 +117,9 @@ class PaymentRecord < ActiveRecord::Base
               item.contact.display_name,
               '<div class="text-left">'+item.description+"</div>",
               '<div class="text-right">'+ApplicationController.helpers.format_price(item.ordered_total)+"</div>",
-              '<div class="text-right">'+ApplicationController.helpers.format_price(item.total)+'</div>',
-              '<div class="text-center">'+item.payment_date.strftime("%d-%b-%Y")+"</div>",
-              '<div class="text-center">'+item.bank_account.name+"</div>",
+              '<div class="text-right">'+ApplicationController.helpers.format_price(item.paid_amount)+'</div>',
+              '<div class="text-right">'+item.paid_on+"</div>",
+              '<div class="text-left">'+item.bank_account_name+"</div>",
               '<div class="text-right">'+ApplicationController.helpers.format_price(item.remain)+"</div>",
               '<div class="text-center">'+item.contact.staff_col+"</div>",
               ""
@@ -133,6 +146,27 @@ class PaymentRecord < ActiveRecord::Base
     
   end
   
+  def paid_on
+    if company.nil?
+      self.payment_record_link
+    else
+      (company_records.map {|r| r.payment_record_link(payment_date.strftime("%d-%b-%Y"))}).join("<br />")
+    end    
+  end
+  
+  def bank_account_name
+    if company.nil?
+      self.bank_account.name
+    else
+      (company_records.map {|r| r.bank_account.name}).join("<br />")
+    end    
+  end
+  
+  def payment_record_link(title=nil)
+    title = title.nil? ? "<i class=\"icon icon-print\"></i> Receipt [#{self.payment_date.strftime("%d-%b-%Y")}]".html_safe : title
+    ActionController::Base.helpers.link_to(title, {controller: "payment_records", action: "show", id: self.id, tab_page: 1}, title: "Receipt [#{self.payment_date.strftime("%d-%b-%Y")}]", class: "tab_page")
+  end
+  
   def contact
     company.nil? ? course_register.contact : company
   end
@@ -141,8 +175,36 @@ class PaymentRecord < ActiveRecord::Base
     company.nil? ? course_register.course_list(false) : ""
   end
   
+  def company_records
+    records = []    
+    interval = last_company_record
+    records << interval
+    while !interval.previous.nil? do
+      interval = interval.previous
+      records << interval
+    end
+    
+    return records
+  end
+  
+  def last_company_record
+    result = self
+    while !result.parent.nil? do
+      result = result.parent
+    end    
+    return result
+  end
+  
+  def first_company_record
+    result = self
+    while !result.previous.nil? do
+      result = result.previous
+    end    
+    return result
+  end
+  
   def ordered_total
-    company.nil? ? course_register.total : amount
+    company.nil? ? course_register.total : first_company_record.amount
   end
   
   def remain
@@ -153,6 +215,30 @@ class PaymentRecord < ActiveRecord::Base
     end
   end
   
+  def paid_amount
+    result = 0.0
+    company_records.each do |pr|
+      result += pr.total
+    end
+    return result
+  end
+  
+  
+  def payment_status
+    if company.nil?
+      return ""
+    else
+      if paid?
+        return "paid"
+      else
+        return "receivable"
+      end      
+    end
+  end
+  
+  def update_statuses
+    self.update_attribute(:cache_payment_status, self.payment_status)
+  end
   
   def self.datatable_payment_list(params, user)
     @records = ContactsCourse.joins(:course_register, :contact).where("course_registers.parent_id IS NULL").where("course_registers.status LIKE ?", "%[active]%")
@@ -241,7 +327,13 @@ class PaymentRecord < ActiveRecord::Base
     
   end
   
-  
+  def paid?
+    if company.nil?
+      return true
+    else
+      return remain == 0
+    end    
+  end
   
   def trash
     self.update_attribute(:status, 0)
@@ -298,8 +390,19 @@ class PaymentRecord < ActiveRecord::Base
   
   def course_registers
     return [] if self.course_register_ids.nil?
-    cr_ids = self.course_register_ids.split("][").map {|s| s.gsub("[","").gsub("]","") }
+    cr_ids = first_company_payment.course_register_ids.split("][").map {|s| s.gsub("[","").gsub("]","") }
     return CourseRegister.where(id: cr_ids)
+  end
+  
+  def save_old_record(rid)    
+      @old_record = PaymentRecord.find(rid)
+      @old_record.parent = self
+      @old_record.save
+      
+      self.company = @old_record.company
+      self.course_register_ids = @old_record.course_register_ids
+      self.total = @old_record.remain
+      self.save
   end
   
 end

@@ -19,7 +19,7 @@
 											 <div class="input-with-icon right">                                       
 												  <div class="radio radio-success" style="padding: 5px">
 														<input class="required" id="upfront_all" type="radio" name="course[upfront]" value="" checked="checked">
-													   <label for="upfront_all">None</label>
+													   <label for="upfront_all">All</label>
 													   <input class="required" id="upfront_true" type="radio" name="course[upfront]" value="true">
 													   <label for="upfront_true">Yes</label>
 													   <input class="required" id="upfront_false" type="radio" name="course[upfront]" value="false">
@@ -36,11 +36,11 @@
 											</div>
 										</div>
 								  </div>								  
-								  <div class="col-md-2">
+								  <div class="col-md-3">
 									  <h4>Program</h4>							
 									  <%= select_tag 'course_types[]', options_for_select(CourseType.active_course_types.collect{ |u| [u.short_name, u.id] }), class: "modern_select width100", multiple: "multiple" %>
 								  </div>							
-								  <div class="col-md-2">
+								  <div class="col-md-3">
 									  <h4>Paper</h4>							
 									  <%= select_tag 'subjects[]', options_for_select(Subject.active_subjects.collect{ |u| [u.name, u.id] }), class: "modern_select width100", multiple: "multiple" %>
 								  </div>									  
@@ -50,7 +50,18 @@
 										  <input style="width:100%;margin-bottom: 5px;" name="student" data="<%= contacts_path(is_individual: true, contact_type_id: ContactType.student.id,format: "json") %>" class="select2-ajax-contacts" value="<%= @contact.id if !@contact.nil? %>" text="<%= @contact.display_name if !@contact.nil? %>" />
 									  </div>
 								  </div>
-									<div class="col-md-2">
+						</div>
+						<div class="row">
+									<div class="col-md-3">
+										<h4>Company</h4>
+										<div class="">
+											<div class="input-with-icon  right">                                       
+											<i class=""></i>
+											<input style="width:100%;margin-bottom: 5px;" name="company" data="<%= contacts_path(is_individual: false, format: "json") %>" class="select2-ajax-companies"/>
+											</div>
+										</div>
+									</div>
+									<div class="col-md-3">
 									  <h4>Payment Status</h4>
 										<div class="input-with-icon  right">                                       
 											<i class=""></i>
@@ -62,15 +73,8 @@
 											</select>
 										</div>
 								  </div>
-									<div class="col-md-3">
-										<h4>Company</h4>
-										<div class="">
-											<div class="input-with-icon  right">                                       
-											<i class=""></i>
-											<input style="width:100%;margin-bottom: 5px;" name="company" data="<%= contacts_path(is_individual: false, format: "json") %>" class="select2-ajax-companies"/>
-											</div>
-										</div>
-									</div>
+									
+									
 						</div>
 						
                   </div>		    
@@ -115,9 +119,8 @@
 													<th class="text-left">Description</th>
 													<th class="text-right">Payable Amount</th>
 													<th class="text-right">Paid Amount</th>
-													<th class="text-center">Paid On</th>                                                
-													<th class="text-center">At Bank</th>
-													<th class="text-right">Receivable</th>											
+													<th class="text-right">Receivable</th>
+													<th class="text-center">Payment Status</th>
 													<th class="text-center" width="1%">Education Consultant</th>
 													<th class="text-right" width="1%">Actions</th>
 												</tr>

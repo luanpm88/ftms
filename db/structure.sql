@@ -1322,7 +1322,8 @@ CREATE TABLE payment_records (
     course_register_ids text,
     company_id integer,
     amount numeric,
-    parent_id integer
+    parent_id integer,
+    cache_payment_status character varying
 );
 
 
@@ -2915,4 +2916,6 @@ INSERT INTO schema_migrations (version) VALUES ('20150922085050');
 INSERT INTO schema_migrations (version) VALUES ('20150922090434');
 
 INSERT INTO schema_migrations (version) VALUES ('20150923012830');
+
+INSERT INTO schema_migrations (version) VALUES ('20150923023541');
 

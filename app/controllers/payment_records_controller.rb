@@ -132,20 +132,27 @@ class PaymentRecordsController < ApplicationController
   end
   
   def company_pay
-    if params[:ids].present?
-      if !params[:check_all_page].nil?
-        params[:intake_year] = params["filter"]["intake(1i)"] if params["filter"].present?
-        params[:intake_month] = params["filter"]["intake(2i)"] if params["filter"].present?
-        
-        if params[:is_individual] == "false"
-          params[:contact_types] = nil
-        end        
-        
-        @course_registers = CourseRegister.filter(params, current_user)
-      else
-        @course_registers = CourseRegister.where(id: params[:ids])
+    @old_record = PaymentRecord.find(params[:id]) if params[:id].present?
+    if @old_record.nil?
+      if params[:ids].present?
+        if !params[:check_all_page].nil?
+          params[:intake_year] = params["filter"]["intake(1i)"] if params["filter"].present?
+          params[:intake_month] = params["filter"]["intake(2i)"] if params["filter"].present?
+          
+          if params[:is_individual] == "false"
+            params[:contact_types] = nil
+          end        
+          
+          @course_registers = CourseRegister.filter(params, current_user)
+        else
+          @course_registers = CourseRegister.where(id: params[:ids])
+        end
       end
+    else
+      @course_registers = @old_record.course_registers
     end
+    
+      
     
     course_type_ids = []
     @course_type_count= {}
@@ -172,14 +179,22 @@ class PaymentRecordsController < ApplicationController
     @payment_record.status = 1
     @payment_record.update_company_payment_record_details(params[:payment_record_details]) if params[:payment_record_details].present?
     
-    @payment_record.course_register_ids = "["+params[:course_register_ids].join("][")+"]"
+    @payment_record.course_register_ids = "["+params[:course_register_ids].join("][")+"]" if !params[:old_record_id].present?
 
     respond_to do |format|
       if @payment_record.save
+        #save old record        
+        if params[:old_record_id].present?
+          @payment_record.save_old_record(params[:old_record_id])
+        end
+        
         # create note log
         if params[:note_log].present?
           @payment_record.contact.activities.create(user_id: current_user.id, note: params[:note_log]) if params[:note_log].present?
         end
+        
+        
+        
         
         format.html { redirect_to params[:tab_page].present? ? "/home/close_tab" : @payment_record, notice: 'Payment record was successfully created.' }
         format.json { render action: 'show', status: :created, location: @payment_record }

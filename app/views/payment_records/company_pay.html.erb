@@ -34,6 +34,7 @@
                   <%= form_for(@payment_record, :url => do_company_pay_payment_records_path) do |f| %>
 					
 					<%= hidden_field_tag("tab_page", 1) if params[:tab_page] %>
+					<%= hidden_field_tag("old_record_id", @old_record.id) if !@old_record.nil? %>
                     
 					<div class="row column-seperation">
 						 <div class="col-md-8">
@@ -45,7 +46,14 @@
                                         <span class="help">(required)</span>
                                         <div class="input-with-iconz">                                       
                                             <div class="">
-												<%= select_tag 'payment_record[company_id]', options_for_select(Contact.active_contacts.where(is_individual: false).collect{ |u| [u.name, u.id] }) , {:include_blank => 'None', class: "modern_select width100 required"} %>
+											  <% if @old_record.nil? %>
+													<%= select_tag 'payment_record[company_id]', options_for_select(Contact.active_contacts.where(is_individual: false).collect{ |u| [u.name, u.id] }) , {:include_blank => 'None', class: "modern_select width100 required"} %>
+											  <% else %>
+												<div class="text-right">
+												  <strong class="big-infoz"><%= @old_record.company.name %></strong>												  
+												</div>
+											  <% end %>
+												
 											</div>
                                         </div>
                                   </div>
@@ -112,8 +120,15 @@
 										<div class="form-group">
 											  <label class="form-label"><%= f.label :total %></label>
 											  <span class="help">(required)</span>
-											  <div class="input-with-iconx">                                       
-												  <%= f.text_field :amount, :class => "form-control price_input required company_payment_detail_total" %>
+											  <div class="input-with-iconx">
+												  <% if @old_record.nil? %>
+													<%= f.text_field :amount, :class => "form-control price_input required company_payment_detail_total" %>
+												  <% else %>
+													<div class="text-right">
+													  <strong class="big-info"><%= format_price(@old_record.remain) %></strong>
+													  <%= f.hidden_field :amount, value: format_price(@old_record.remain), :class => "required company_payment_detail_total" %>
+													</div>
+												  <% end %>
 											  </div>
 										</div>	
 								   </div>
@@ -184,7 +199,7 @@
 												<tr>
 													<th width="1%">
 														<div class="checkbox check-default">
-															<input id="checkbox_all" type="checkbox" value="all" class="checkall">
+															<input <%= 'disabled="disabled"' if !@old_record.nil? %> checked="checked" id="checkbox_all" type="checkbox" value="all" class="checkall">
 															<label for="checkbox_all"></label>
 														</div>
 													</th>
@@ -202,7 +217,10 @@
 												<% @course_registers.each do |item| %>
 												  <tr class="row_selected">
 													<td>
-													  <div class="checkbox check-default"><input checked="checked" name="course_register_ids[]" id="checkbox<%= item.id %>" type="checkbox" value="<%= item.id %>"><label for="checkbox<%= item.id %>"></label></div>
+													  <div class="checkbox check-default">
+														<input <%= 'disabled="disabled"' if !@old_record.nil? %> checked="checked" name="course_register_ids[]" id="checkbox<%= item.id %>" type="checkbox" value="<%= item.id %>">
+														<label for="checkbox<%= item.id %>"></label>
+													  </div>
 													</td>
 													<td>
 													  <%= item.contact.contact_link %>

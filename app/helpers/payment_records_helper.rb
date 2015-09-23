@@ -4,9 +4,23 @@ module PaymentRecordsHelper
                     <button class="btn btn-mini btn-white btn-demo-space dropdown-toggle" data-toggle="dropdown">Actions <span class="caret"></span></button>'
       actions += '<ul class="dropdown-menu">'      
       
-      if can? :print, item
-        actions += '<li>'+ActionController::Base.helpers.link_to("<i class=\"icon icon-print\"></i> Receipt [#{item.payment_date.strftime("%d-%b-%Y")}]".html_safe, {controller: "payment_records", action: "show", id: item.id, tab_page: 1}, title: "Receipt [#{item.payment_date.strftime("%d-%b-%Y")}]", class: "tab_page")+'</li>'        
+      if can? :company_pay_remain, item
+        actions += '<li>'+ActionController::Base.helpers.link_to("Pay", {controller: "payment_records", action: "company_pay", id: item.id, tab_page: 1}, title: "Pay", class: "tab_page")+'</li>'        
       end
+      
+      if item.company.nil?
+        if can? :print, item
+          actions += '<li>'+ActionController::Base.helpers.link_to("<i class=\"icon icon-print\"></i> Receipt [#{item.payment_date.strftime("%d-%b-%Y")}]".html_safe, {controller: "payment_records", action: "show", id: item.id, tab_page: 1}, title: "Receipt [#{item.payment_date.strftime("%d-%b-%Y")}]", class: "tab_page")+'</li>'        
+        end
+      else
+        item.company_records.each do |pr|
+          if can? :print, pr
+            actions += '<li>'+ActionController::Base.helpers.link_to("<i class=\"icon icon-print\"></i> Receipt [#{pr.payment_date.strftime("%d-%b-%Y")}]".html_safe, {controller: "payment_records", action: "show", id: pr.id, tab_page: 1}, title: "Receipt [#{pr.payment_date.strftime("%d-%b-%Y")}]", class: "tab_page")+'</li>'        
+          end
+        end
+      end
+      
+        
       
       actions += '</ul></div></div>'
       

@@ -342,6 +342,9 @@ class Ability
       can :company_pay, PaymentRecord
       can :do_company_pay, PaymentRecord
       can :print_payment_list, PaymentRecord
+      can :company_pay_remain, PaymentRecord do |pr|
+        !pr.paid?
+      end
     end
     
     if user.has_role? "manager"
@@ -558,6 +561,9 @@ class Ability
       can :company_pay, PaymentRecord
       can :do_company_pay, PaymentRecord
       can :print_payment_list, PaymentRecord
+      can :company_pay_remain, PaymentRecord do |pr|
+        !pr.paid?
+      end
       
       can :datatable, Activity
       can :read, Activity
