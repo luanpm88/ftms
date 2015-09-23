@@ -23,7 +23,7 @@
 								<div class="input-with-icon  right">                                       
 									<i class=""></i>
 									<div class="input-append success date col-md-10 no-padding">
-									  <%= text_field_tag :created_to, "", :class => "form-control" %>
+									  <%= text_field_tag :created_to, Time.now.strftime("%d-%b-%Y"), :class => "form-control" %>
 									  <span class="add-on"><span class="arrow"></span><i class="icon-th"></i></span>
 									</div>
 									<br style="clear: both" />
