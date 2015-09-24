@@ -157,6 +157,11 @@ class CourseRegister < ActiveRecord::Base
       @records = @records.where("cache_payment_status LIKE ?", "%"+params["payment_statuses"]+"%")
     end
     
+    if params["company"].present?
+      @records = @records.where(payment_type: "caompany-sponsored").where(sponsored_company_id: params["company"])
+    end
+    
+    
     course_ids = nil
     if params["intake_year"].present? && params["intake_month"].present?
       course_ids = Course.where("EXTRACT(YEAR FROM courses.intake) = ? AND EXTRACT(MONTH FROM courses.intake) = ? ", params["intake_year"], params["intake_month"]).map(&:id)
