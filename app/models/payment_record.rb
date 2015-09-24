@@ -401,7 +401,7 @@ class PaymentRecord < ActiveRecord::Base
       
       self.company = @old_record.company
       self.course_register_ids = @old_record.course_register_ids
-      self.total = @old_record.remain
+      self.amount = @old_record.remain
       self.save
   end
   
