@@ -1,18 +1,64 @@
 <script>
 	
-	function ajaxCoursePhrasesList(course_id) {
+	function updatePhraseListBoxHour() {
+		$(".phrase_list_box_hour").each(function() {
+			var box = $(this)
+			var total = 0
+			box.find(".courses_phrase_item").each(function() {
+				if ($(this).prop('checked')) {
+					total += parseInt($(this).attr("hour"))
+				}
+			})
+			box.find(".total_phrase_hour").html(total)
+		})
+	}
+	
+	function checkTransferToBoxes() {
+		var to_course = $("select[name='transfer[to_course_id]']").val()
+		var to_hour = $("select[name='transfer[to_hour]']").val()
+		var to_money = $("select[name='transfer[to_money]']").val()
+	}
+	
+	function ajaxTransferToBox(course_id) {
 		if (course_id == "") {
-			$(".course_phrases_list").html("")
+			$(".transfer_to_box").html("")
 			return
 		}
 		$.ajax({
-			url: "<%= course_phrases_list_courses_path %>?id="+course_id,
+			url: "<%= transfer_to_box_courses_path %>?id="+course_id,
 			success: function(data, textStatus, jqXHR)
 			{
-				$(".course_phrases_list").html(data)
-				//alert(data)
+				$(".transfer_to_box").html(data)
+				$(".transfer_to_box").find(".modern_select").select2()
+				format_price($('.transfer_to_box').find('input.price_input'));
 			}
 		})
+	}
+	
+	function ajaxCoursePhrasesList(input) {
+		var box = input.parents(".transfer_course_box")
+		var course_id = input.select2("val")
+		var contact = ""
+		var to_contact = ""
+		if (course_id == "") {
+			box.find(".course_phrases_list").html("")
+			return
+		}
+		if (typeof(input.attr("contact_id")) != 'undefined') {
+			contact = "&contact_id="+input.attr("contact_id")
+		}
+		if ($("input[name='transfer[to_contact_id]']") != "") {
+			to_contact = "&to_contact_id="+$("input[name='transfer[to_contact_id]']").val()
+		}
+		$.ajax({
+			url: "<%= course_phrases_list_courses_path %>?id="+course_id+contact+to_contact,
+			success: function(data, textStatus, jqXHR)
+			{
+				box.find(".course_phrases_list").html(data)
+				updatePhraseListBoxHour()
+			}
+		})
+		
 	}
 	
 	function calculateCompanyPayment() {
@@ -585,6 +631,7 @@
 			success:function(data, textStatus, jqXHR)
 			{
 				box.html(data)
+				updatePhraseListBoxHour()
 			}
 		});
 	}
@@ -1764,7 +1811,7 @@
 					}
 				}
 			},
-			"columnDefs": [ { "targets": [0,1,2,3,4,5,6,7,9,10,11], "orderable": false } ],
+			"columnDefs": [ { "targets": [0,1,2,3,4,5,6,8,9], "orderable": false } ],
 			"order": [],
 			"aLengthMenu": [[10, 25, 50, 75, 100], [10, 25, 50, 75, 100]],
 			"iDisplayLength": 25
@@ -2923,8 +2970,19 @@
 		});
 		
 		
-		$(".transfer_upfront_to_course_from .to_course").change(function() {
-			ajaxCoursePhrasesList($(this).select2("val"))
+		$(document).on("change", ".transfer_course_from .course_select", function() {
+			ajaxCoursePhrasesList($(this))
+		});
+		$(document).on("change", ".transfer_course_from .from_course", function() {
+			ajaxTransferToBox($(this).select2("val"))
+		});
+		if($(".transfer_course_from").length) {
+			$(".transfer_course_from .from_course").trigger("change")
+		}
+		
+		updatePhraseListBoxHour()
+		$(document).on("change", ".courses_phrase_item", function() {
+			updatePhraseListBoxHour()
 		});
 	})
 	

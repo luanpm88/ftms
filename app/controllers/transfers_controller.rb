@@ -33,7 +33,9 @@ class TransfersController < ApplicationController
   def create
     @transfer = Transfer.new(transfer_params)
     @transfer.user = current_user
-    @transfer.update_transfer_details(params[:transfer_details])
+    # @transfer.update_transfer_details(params[:transfer_details])
+    @transfer.courses_phrase_ids = "["+params[:from_courses_phrases].join("][")+"]" if params[:from_courses_phrases].present?
+    @transfer.to_courses_phrase_ids = "["+params[:to_courses_phrases].join("][")+"]" if params[:to_courses_phrases].present?
 
     respond_to do |format|
       if @transfer.save
@@ -156,6 +158,6 @@ class TransfersController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def transfer_params
-      params.require(:transfer).permit(:admin_fee, :transfer_for, :contact_id, :user_id, :transfer_date, :hour, :money, :courses_phrase_ids => [])
+      params.require(:transfer).permit(:to_course_id, :course_id, :admin_fee, :transfer_for, :contact_id, :to_contact_id, :user_id, :transfer_date, :hour, :money, :courses_phrase_ids => [])
     end
 end

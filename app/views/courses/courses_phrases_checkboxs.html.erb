@@ -1,5 +1,8 @@
-<div class="form-group">
-
+<div class="form-group phrase_list_box_hour">
+    
+    <h4 style="margin-top: 0">
+        Total Hour: <strong class="total_phrase_hour"></strong>
+    </h4>
 
     <label class="form-label"><label>Phrase List</label></label>
     <div class="input-with-icon right">
@@ -16,21 +19,25 @@
                     <% end %>
                     
                     <% if !@course.upfront %>
-                        <% if !CoursesPhrase.find(courses_phrase.id).registered?(Contact.find(params[:contact_id])) %>
+                        <% if !Contact.find(params[:contact_id]).courses_phrase_registered?(CoursesPhrase.find(courses_phrase.id)) %>
                             <div class="row-fluid phrase_checkbox">
                                  <div class="checkbox check-success">
-                                     <%= check_box_tag "contacts_courses["+params[:number].to_s+"][courses_phrase_ids][]", courses_phrase.id, true, {id: "checkbox_"+params[:number]+ "_"+courses_phrase.id.to_s} %>
+                                     <%= check_box_tag "contacts_courses["+params[:number].to_s+"][courses_phrase_ids][]", courses_phrase.id, true, {id: "checkbox_"+params[:number]+ "_"+courses_phrase.id.to_s, class: "courses_phrase_item", hour: CoursesPhrase.find(courses_phrase.id).hour} %>
                                      <label for="checkbox_<%= params[:number] %>_<%= courses_phrase.id %>">
-                                          [<%= courses_phrase.start_at.strftime("%d-%b-%Y")  if courses_phrase.start_at.present? %>]
+                                            <span>
+                                                <%= CoursesPhrase.find(courses_phrase.id).display_name if courses_phrase.start_at.present? %>
+                                            </span>
                                      </label>
                                  </div>
                             </div>
                         <% else %>
                             <div class="row-fluid phrase_checkbox" title="Registered">
                                  <div class="checkbox check-default">
-                                     <%= check_box_tag "disabled", courses_phrase.id, true, {id: "checkbox_"+params[:number]+ "_"+courses_phrase.id.to_s, disabled: "disabled"} %>
+                                     <%= check_box_tag "disabled", courses_phrase.id, true, {id: "checkbox_"+params[:number]+ "_"+courses_phrase.id.to_s, disabled: "disabled", class: "courses_phrase_item", hour: CoursesPhrase.find(courses_phrase.id).hour} %>
                                      <label for="checkbox_<%= params[:number] %>_<%= courses_phrase.id %>">
-                                          [<%= courses_phrase.start_at.strftime("%d-%b-%Y") if courses_phrase.start_at.present? %>]
+                                          <span>
+                                                <%= CoursesPhrase.find(courses_phrase.id).display_name if courses_phrase.start_at.present? %>
+                                            </span>
                                      </label>
                                  </div>
                             </div>

@@ -6,10 +6,11 @@
                   
                 </div>     
                 
-                <div class="grid-body no-border transfer_upfront_to_course_from">
-                  <%= form_for("") do |f| %>
+                <div class="grid-body no-border transfer_course_from">
+                  <%= form_for(@transfer) do |f| %>
 					
 					<%= hidden_field_tag("tab_page", 1) if params[:tab_page] %>
+					<%= f.hidden_field :contact_id %>
 					
 					<div class="row column-seperation">
 						 <div class="col-md-3">
@@ -20,7 +21,7 @@
                                <label class="form-label"><label>Name</label></label>
                                <span class="help"></span>
                                <div class="input-with-icon right">                                       
-                                   <strong><%= @contact.display_name %></strong>
+                                   <strong><%= @transfer.contact.display_name %></strong>
                                </div>
                             </div>
                             
@@ -31,12 +32,16 @@
 							  <h3>To Contact</h3>
 							
 							  <div class="form-group">
-                               <label class="form-label"><label>Name</label></label>
-                               <span class="help"></span>
-                               <div class="input-with-icon right">                                       
-                                   <strong><%= @contact.display_name %></strong>
-                               </div>
-                            </div>
+								   <label class="form-label"><%= f.label :name %></label>
+								   <span class="help">(required)</span>							   
+								   <div class="input-with-icon  right">                                       
+										<i class=""></i>
+										<div class="input-with_add_but">
+											 <%= link_to '<i class="icon-plus"></i>'.html_safe, new_contact_path(contact_type_id: ContactType.lecturer.id, tab_page: 1), title: "New Lecturer", :class => 'btn btn-sm btn-small btn-white add-agent-button tab_page' %>
+											 <input style="width:100%;margin-bottom: 5px;" name="transfer[to_contact_id]" data="<%= contacts_path(is_individual: "true", format: "json") %>" class="select2-ajax-contacts" value="<%= @transfer.contact_id %>" text="<%= @transfer.contact.display_name %>" />
+										</div>
+								   </div>
+							  </div>
 									
 						 
 						 </div>
@@ -45,11 +50,11 @@
 							  <h3>Admin Fee</h3>
 							  <div class="form-group">
                                     <label class="form-label"><label>Amount</label></label>
-                                    <span class="help"></span>
+                                    <span class="help">(required)</span>
                                     <div class="input-with-iconz right">                                       
                                          <i class=""></i>
                                           <div class="input-with_add_butz">
-                                            <%= text_field_tag "admin_fee", "", class: "form-control price_input price_discount" %>
+                                            <%= f.text_field "admin_fee", class: "form-control price_input price_discount required" %>
                                           </div>
                                     </div>
 							  </div>
@@ -61,73 +66,35 @@
 					
 					<div class="row column-seperation <%= "draft_form" if @course.draft? %>">
                          
-						 <div class="col-md-4">
+						 <div class="col-md-4 transfer_course_box">
 							  <h3>Course</h3>
-							
+							  
 							  <div class="form-group">
-								   <label class="form-label">Name</label>
-								   <span class="help"></span>
-								   <div class="input-with-icon right">                                       
-									   <strong class="big-info"><%= @course.display_name %></strong>
+								   <label class="form-label"><%= f.label :name %></label>
+								   <span class="help">(required)</span>
+								   <div class="input-with-icon  right">                                       
+										<i class=""></i>
+										<div class="input-with_add_but">
+											 <%= link_to '<i class="icon-plus"></i>'.html_safe, new_course_path(tab_page: 1), title: "New Course", :class => 'btn btn-sm btn-small btn-white tab_page' %>
+											 <%= select_tag 'transfer[course_id]', options_for_select(@transfer.contact.active_courses.collect{ |u| [u.name, u.id] }, @transfer.course.id), {include_blank: "None", contact_id: @transfer.contact_id, class: "modern_select course_select required width100 from_course"} %>
+										</div>
 								   </div>
-							  </div>
-									
-							  <div class="form-group">
+							  </div>									
+							  <!--<div class="form-group">
 								   <label class="form-label">Register On</label>
 								   <span class="help"></span>
 								   <div class="input-with-icon right">                                       
 									   <strong><%= @contacts_course.course_register.created_at.strftime("%d-%b-%Y") %></strong>
 								   </div>
-							  </div>
+							  </div>-->
+							  <div class="course_phrases_list"></div>
 
 						 </div>
 						 
+						 <div class="col-md-8 transfer_to_box">
 						 
-						 <div class="col-md-4">
-							  <h3>To Course</h3>
-							
-							  <div class="form-group">
-									<label class="form-label"><%= f.label :name %></label>
-									<span class="help">(required)</span>
-									<div class="input-with-icon  right">                                       
-										 <i class=""></i>
-										 <div class="input-with_add_but">
-											  <%= link_to '<i class="icon-plus"></i>'.html_safe, new_course_path(tab_page: 1), title: "New Course", :class => 'btn btn-sm btn-small btn-white tab_page' %>
-											  <%= select_tag 'course_id', options_for_select(Course.active_courses({upfront: @course.upfront ? "false" : "", course_type_id: @course.course_type_id, subject_id: @course.subject_id}).collect{ |u| [u.name, u.id] }), {include_blank: "None", class: "modern_select required width100 to_course"} %>
-										 </div>
-									</div>
-							  </div>
-									
-							  <div class="course_phrases_list"></div>
+							  
 						 
-						 </div>
-						 <div class="col-md-2">
-							  <h3>To Hour</h3>
-							  <div class="form-group">
-                                    <label class="form-label"><label>Hour</label></label>
-                                    <span class="help"></span>
-                                    <div class="input-with-iconz right">                                       
-                                         <i class=""></i>
-                                          <div class="input-with_add_butz">
-                                            <%= text_field_tag "hour", "", class: "form-control price_input price_discount" %>
-                                          </div>
-                                    </div>
-							  </div>
-							  
-						 </div>
-						 <div class="col-md-2">
-							  <h3>To Money</h3>
-							  <div class="form-group">
-                                    <label class="form-label"><label>Money</label></label>
-                                    <span class="help"></span>
-                                    <div class="input-with-iconz right">                                       
-                                         <i class=""></i>
-                                          <div class="input-with_add_butz">
-                                            <%= text_field_tag "money", "", class: "form-control price_input price_discount" %>
-                                          </div>
-                                    </div>
-							  </div>
-							  
 						 </div>
 						 
 					</div>
@@ -151,3 +118,27 @@
             </div>
 			
       </div>
+
+<script>
+	 $(document).ready(function() {
+		  jQuery.validator.addMethod("valid_transfer", function(value, element) {
+			   var to_course = "";
+			   if($("select[name='transfer[to_course_id]']").length) {
+				 to_course = $("select[name='transfer[to_course_id]']").val();
+			   }
+			   var to_hour = ""
+			   if($("input[name='transfer[hour]']").length) {
+				 to_hour = $("input[name='transfer[hour]']").val();
+			   }
+			   var to_money = ""
+			   if($("input[name='transfer[money]']").length) {
+				 to_money = $("input[name='transfer[money]']").val();
+			   }
+			   return to_course != "" || to_hour != "" || to_course != "";
+		  }, "Unvalid transfer details. Please check the details below.");
+
+		  $("input[name='transfer[admin_fee]']").rules('add', {
+			   valid_transfer: true
+		  });
+	 });
+</script>

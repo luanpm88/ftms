@@ -1,0 +1,48 @@
+                     <div class="row">
+							<div class="col-md-6 transfer_course_box to_course_box">
+								   <h3>To Course</h3>
+								 
+								   <div class="form-group">
+										 <label class="form-label"><label>Name</label></label>
+										 <span class="help"></span>
+										 <div class="input-with-icon  right">                                       
+											  <i class=""></i>
+											  <div class="input-with_add_but">
+												   <%= link_to '<i class="icon-plus"></i>'.html_safe, new_course_path(tab_page: 1), title: "New Course", :class => 'btn btn-sm btn-small btn-white tab_page' %>
+												   <%= select_tag 'transfer[to_course_id]', options_for_select(Course.active_courses({upfront: @transfer.course.upfront ? "false" : "", course_type_id: @transfer.course.upfront ? @transfer.course.course_type_id : "", subject_id: @transfer.course.upfront ? @transfer.course.subject_id : ""}).collect{ |u| [u.name, u.id] }), {include_blank: "None", class: "modern_select course_select width100 to_course"} %>
+											  </div>
+										 </div>
+								   </div>
+										 
+								   <div class="course_phrases_list"></div>
+							  
+							  </div>
+							  <div class="col-md-3 to_hour_box">
+								   <h3>To Hour</h3>
+								   <div class="form-group">
+										 <label class="form-label"><label>Hour</label></label>
+										 <span class="help"></span>
+										 <div class="input-with-iconz right">                                       
+											  <i class=""></i>
+											   <div class="input-with_add_butz">
+												 <%= text_field_tag "transfer[hour]", "", class: "form-control price_input price_discount" %>
+											   </div>
+										 </div>
+								   </div>
+								   
+							  </div>
+							  <div class="col-md-3 to_money_box">
+								   <h3>To Money</h3>
+								   <div class="form-group">
+										 <label class="form-label"><label>Money</label></label>
+										 <span class="help"></span>
+										 <div class="input-with-iconz right">                                       
+											  <i class=""></i>
+											   <div class="input-with_add_butz">
+												 <%= text_field_tag "transfer[money]", "", class: "form-control price_input price_discount" %>
+											   </div>
+										 </div>
+								   </div>
+								   
+							  </div>
+					 </div>

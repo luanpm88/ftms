@@ -8,7 +8,8 @@ class CoursesPhrase < ActiveRecord::Base
   end
   
   def display_name
-    course.course_type.short_name+"-"+course.subject.name+" ("+self.start_at.strftime("%d-%b-%Y")+")"
+    (self.start_at.strftime("%d-%b-%Y")+" <span class=\"badge badge-success \">#{self.hour.to_s}</span>").html_safe
+    # "["+course.course_type.short_name+"-"+course.subject.name+" ("+self.start_at.strftime("%d-%b-%Y")+")"+", "+self.hour.to_s+" hours"+"]"
   end
   
   def registered?(contact)

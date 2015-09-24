@@ -67,6 +67,7 @@ class Contact < ActiveRecord::Base
   has_one :current_revision, -> { order created_at: :desc }, class_name: 'Contact', foreign_key: "draft_for"
   
   has_many :transfers
+  has_many :received_transfers, class_name: "Transfer", foreign_key: "to_contact_id"
   
   has_many :transferred_records, :class_name => "Transfer", :foreign_key => "transfer_for"
   
@@ -852,11 +853,21 @@ class Contact < ActiveRecord::Base
   end
   
   def active_transfers
-    Transfer.where("transfers.parent_id IS NULL AND transfers.status IS NOT NULL AND transfers.status LIKE ?", "%[active]%").where("contact_id = ? OR transfer_for = ?", self.id, self.id)
+    transfers.where("transfers.parent_id IS NULL AND transfers.status IS NOT NULL AND transfers.status LIKE ?", "%[active]%")
+  end
+  
+  def active_received_transfers
+    received_transfers.where("transfers.parent_id IS NULL AND transfers.status IS NOT NULL AND transfers.status LIKE ?", "%[active]%")
+  end
+  
+  def active_all_transfers
+    Transfer.where("transfers.parent_id IS NULL AND transfers.status IS NOT NULL AND transfers.status LIKE ?", "%[active]%")
+            .where("contact_id = ? OR to_contact_id = ?", self.id, self.id)
+            .order("created_at ASC")
   end
   
   def transfer_count
-    active_transfers.count
+    active_all_transfers.count
   end
   
   def payment_count
@@ -956,7 +967,7 @@ class Contact < ActiveRecord::Base
   end
   
   def course_count
-    active_courses.uniq.count
+    active_courses_with_phrases.count
   end
   
   def book_count
@@ -1325,11 +1336,23 @@ class Contact < ActiveRecord::Base
   end
   
   def budget_hour
-    active_transferred_records.sum(:hour) - active_course_registers.sum(:transfer_hour)
+    hours = {}
+    active_received_transfers.each do |transfer|
+      hours[transfer.course.course_type_id] = hours[transfer.course.course_type_id].nil? ? transfer.hour.to_f :  hours[transfer.course.course_type_id] + transfer.hour.to_f
+    end
+    return hours
+  end
+  
+  def display_budget_hour
+    str = []
+    budget_hour.each do |col|
+      str << CourseType.find(col[0]).short_name+": "+col[1].to_s if col[1] > 0
+    end
+    return str.join("<br >").html_safe
   end
   
   def budget_money
-    active_transferred_records.sum(:money) - active_transferred_records.sum(:admin_fee) - active_course_registers.sum(:transfer)
+    active_received_transfers.sum(:money)
   end
   
   def active_transferred_records
@@ -1371,15 +1394,101 @@ class Contact < ActiveRecord::Base
   end
   
   def active_courses_with_phrases
-    arr = []
+    origin = []
     active_courses.each do |c|
       row = {}
       row[:course] = c
-      row[:courses_phrases] = c.courses_phrases_by_sudent(self).where(course_id: c.id).includes(:phrase).order("phrases.id, courses_phrases.start_at")
+      row[:courses_phrases] = c.courses_phrases_by_student(self).where(course_id: c.id).includes(:phrase).order("phrases.id, courses_phrases.start_at")
 
-      arr << row
+      origin << row
     end
-    return arr
+    
+    # transferred to others
+    active_all_transfers.each do |transfer|
+      
+      
+      
+        
+      # TRANSFER      
+      if self == transfer.contact
+        new_origin = []
+        origin.each do |row|
+          remove_course = false
+          
+          
+          if row[:course].id == transfer.course.id
+            
+            # upfront course
+            if transfer.course.upfront == true
+              remove_course = true
+            else
+              row[:courses_phrases] -= transfer.courses_phrases
+              remove_course = true if row[:courses_phrases].empty?
+            end
+          end
+
+          
+          # remove course
+          new_origin << row if remove_course == false
+        end
+        origin = new_origin
+      end
+      
+      
+      
+      # RECEIVED
+      if self == transfer.to_contact
+        if transfer.to_course.present?
+          # add or update course
+          course = transfer.to_course
+          courses_phrases = transfer.to_courses_phrases
+          
+          exist = false
+          origin.each do |row|
+            if row[:course] == transfer.to_course
+              row[:courses_phrases] += transfer.to_courses_phrases
+              row[:courses_phrases] = row[:courses_phrases].uniq
+              
+              exist = true
+            end           
+          end
+          origin << {course: course, courses_phrases: courses_phrases} if exist == false
+          
+          
+        end
+      end
+      
+    end
+    
+    
+    return origin
+  end
+  
+  def active_course(course_id)
+    active_courses_with_phrases.each do |row|
+      if row[:course].id == course_id
+        return row
+      end      
+    end
+    return nil
+  end
+  
+  def display_active_course(course_id)
+    arr = []
+    arr << "<div class=\"nowrap\"><strong>"+active_course(course_id)[:course].display_name+"</strong></div>"
+    arr << "<div class=\"courses_phrases_list\">"+Course.render_courses_phrase_list(active_course(course_id)[:courses_phrases])+"</div>" if !active_course(course_id)[:courses_phrases].empty?
+    return arr.join("")
+  end
+  
+  def courses_phrase_registered?(courses_phrase)
+    active_courses_with_phrases.each do |row|
+      row[:courses_phrases].each do |cp|
+        if cp.id == courses_phrase.id
+          return true
+        end        
+      end
+    end
+    return false
   end
   
 end

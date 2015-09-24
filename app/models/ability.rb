@@ -101,9 +101,7 @@ class Ability
       end
       can :field_history, Course
       can :course_phrases_form, Course
-      can :transfer_course, Course do |c|
-        c.upfront?
-      end
+      can :transfer_course, Course
       can :course_phrases_list, Course
       
       
@@ -406,6 +404,7 @@ class Ability
       can :approve_delete, Course do |c|
         c.statuses.include?("delete_pending")
       end
+      can :transfer_to_box, Course
       
       
       ## COURSE TYPE

@@ -20,6 +20,9 @@ class Course < ActiveRecord::Base
   
   has_many :course_prices, :dependent => :destroy
   
+  has_many :transfers
+  has_many :received_transfers, class_name: "Transfer", foreign_key: "to_course_id"
+  
   ########## BEGIN REVISION ###############
   has_many :drafts, :class_name => "Course", :foreign_key => "parent_id"
   belongs_to :parent, :class_name => "Course", :foreign_key => "parent_id"  
@@ -40,6 +43,16 @@ class Course < ActiveRecord::Base
                       }
                   }
   
+  def active_transfers
+    transfers.where("transfers.parent_id IS NULL AND transfers.status IS NOT NULL AND transfers.status LIKE ?", "%[active]%").where("contact_id = ? OR transfer_for = ?", self.id, self.id)
+            .uniq
+  end
+  
+  def active_received_transfers
+    received_transfers.where("transfers.parent_id IS NULL AND transfers.status IS NOT NULL AND transfers.status LIKE ?", "%[active]%").where("contact_id = ? OR transfer_for = ?", self.id, self.id)
+            .uniq
+  end
+  
   def active_contacts_courses
     contacts_courses.includes(:course_register)
           .where(course_registers: {parent_id: nil}).where("course_registers.status IS NOT NULL AND course_registers.status LIKE ?", "%[active]%")
@@ -50,6 +63,10 @@ class Course < ActiveRecord::Base
     contacts.includes(:contacts_courses).joins("LEFT JOIN course_registers ON course_registers.id = contacts_courses.course_register_id")
           .where(course_registers: {parent_id: nil}).where("course_registers.status IS NOT NULL AND course_registers.status LIKE ?", "%[active]%")
           .uniq
+  end
+  
+  def active_transfers
+    Transfer.active_transfers.where(course_id: self.id)
   end
   
   def self.all_courses
@@ -73,8 +90,14 @@ class Course < ActiveRecord::Base
     
   end
   
-  def self.filters(params, user)
-    @records = self.main_courses.joins(:course_type,:subject)
+  def self.filters(params, user, active=false)
+    if active
+      @records = self.active_courses.joins(:course_type,:subject)
+    else
+      @records = self.main_courses.joins(:course_type,:subject)
+    end
+    
+    
     
     #@records = @records.search(params["search"]["value"]) if !params["search"]["value"].empty?
     @records = @records.where("LOWER(course_types.short_name) LIKE ? OR LOWER(subjects.name) LIKE ?", "%#{params["search"]["value"].downcase}%", "%#{params["search"]["value"].downcase}%") if !params["search"]["value"].empty?
@@ -194,53 +217,23 @@ class Course < ActiveRecord::Base
     
     @student = Contact.find(params[:students])
     
-    @records =  self.filters(params, user)
-    
-    @records = @records.includes(:contacts_courses => :course_register)
-    @records = @records.where(contacts_courses: {contact_id: @student.id})
-    
-    
-    
-    if !params["order"].nil?
-      case params["order"]["0"]["column"]
-      when "0"
-        order = "courses.upfront DESC, courses.intake #{params["order"]["0"]["dir"]}, course_types.short_name, subjects.name"
-      when "1"
-        order = "course_types.short_name #{params["order"]["0"]["dir"]}, subjects.name"
-      when "3"
-        order = "courses.for_exam_year #{params["order"]["0"]["dir"]}, courses.for_exam_month #{params["order"]["0"]["dir"]}"
-      when "5"
-        order = "course_registers.created_date"
-      else
-        order = "course_registers.created_date"
-      end
-      order += " "+params["order"]["0"]["dir"] if !["0","1","3"].include?(params["order"]["0"]["column"])
-    else
-      order = "courses.upfront DESC, courses.intake DESC, course_types.short_name, subjects.name"
-    end
-    
-    @records = @records.order(order) if !order.nil?
-    
-    #@records = @records.group_by(&:course)
+    @records =  @student.active_courses_with_phrases
     
     total = @records.count
-    @records = @records.limit(params[:length]).offset(params["start"])
-    data = []
     
-
+    data = []
     actions_col = 6
 
     @records.each do |item|
       itemz = [
-              '<div class="text-left nowrap">'+item.display_intake+"</div>",
-              '<div class="text-left nowrap">'+item.program_paper_name+"</div>",
-              '<div class="text-left">'+item.courses_phrase_list_by_sudent(@student)+"</div>",
-              '<div class="text-center">'+item.display_for_exam+"</div>",
-              '<div class="text-center nowrap">'+item.display_lecturer+"</div>",             
-              '<div class="text-center">'+item.list_course_registers_by_student(@student)+"</div>",              
+              '<div class="text-left nowrap">'+item[:course].display_intake+"</div>",
+              '<div class="text-left nowrap">'+item[:course].program_paper_name+"</div>",
+              '<div class="text-left">'+@student.display_active_course(item[:course].id)+"</div>",
+              '<div class="text-center">'+item[:course].display_for_exam+"</div>",
+              '<div class="text-center nowrap">'+item[:course].display_lecturer+"</div>",             
+              '<div class="text-center">'+item[:course].list_course_registers_by_student(@student)+"</div>",              
               "", 
-            ]
-      
+            ]     
 
         data << itemz
     end
@@ -273,21 +266,25 @@ class Course < ActiveRecord::Base
     return "<div>"+arr.join("").html_safe+"</div>"
   end
   
+  def ordered_courses_phrases
+    courses_phrases.joins(:phrase).order("phrases.id, courses_phrases.start_at")
+  end
+  
   def courses_phrase_list
-    Course.render_courses_phrase_list(courses_phrases.joins(:phrase).order("phrases.id, courses_phrases.start_at"))
+    Course.render_courses_phrase_list(ordered_courses_phrases)
   end
   
   def courses_phrase_list_by_sudent(student)
-    Course.render_courses_phrase_list(courses_phrases_by_sudent(student).includes(:phrase).order("phrases.id, courses_phrases.start_at"))    
+    Course.render_courses_phrase_list(ordered_courses_phrases)    
   end
   
-  def courses_phrases_by_sudent(student)
+  def courses_phrases_by_student(student)
     ccs = contacts_courses_by_student(student)
     if !ccs.empty?
       ids = []
       ccs.each do |cc|
         cc.courses_phrases.each do |cp|
-          ids << cp.id if cp.registered?(student)
+          ids << cp.id
         end
       end
       return CoursesPhrase.where(id: ids)

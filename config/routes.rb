@@ -253,6 +253,7 @@ Hkerp::Application.routes.draw do
       get :course_phrases_form
       get :transfer_course
       get :course_phrases_list
+      get :transfer_to_box
     end
   end
   

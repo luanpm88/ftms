@@ -7,7 +7,7 @@
 															 <label class="form-label"><label>Deferred/Transferred Hour</label></label>
 															 <span class="help"></span>
 															 <div class="input-with-iconz text-right">
-																<strong class="big-info"><%= format_price(@contact.budget_hour) %></strong>
+																<strong class="big-info"><%= @contact.display_budget_hour %></strong>
 															 </div>
 														   </div>
 														   
@@ -49,15 +49,14 @@
                                                                         <tr>
 																				<th class="text-center">From</th>
 																				<th class="text-center">To</th>
-                                                                                <th>Date</th>
-																				<th class="text-left">Description</th>
+																				<th class="text-left">Course</th>
+																				<th class="text-left">To.Course</th>
 																				<th class="text-center">Hour</th>
 																				<th class="text-right">Money</th>
 																				<th class="text-right">Fee</th>                                                
-																				<th class="text-right">Total</th>
+																				
 																				<th class="text-center">Created on</th>
-																				<th class="text-center" width="1%">Education Consultant</th>
-																				<th class="text-right" width="1%">Status</th>
+																				<th class="text-center" width="1%">Status</th>
 																				<th class="text-right" width="1%">Actions</th>
                                                                         </tr>
                                                                     </thead>                                        

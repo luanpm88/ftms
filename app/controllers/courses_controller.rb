@@ -3,7 +3,7 @@ class CoursesController < ApplicationController
   
   load_and_authorize_resource
   
-  before_action :set_course, only: [:transfer_to_course, :delete, :show, :edit, :update, :destroy] # [delete] for revision-feature
+  before_action :set_course, only: [:transfer_to_box, :transfer_to_course, :delete, :show, :edit, :update, :destroy] # [delete] for revision-feature
 
   # GET /courses
   # GET /courses.json
@@ -114,7 +114,7 @@ class CoursesController < ApplicationController
     result = Course.student_courses(params, current_user)
     
     result[:items].each_with_index do |item, index|
-      actions = render_student_courses_actions(item, params[:students])      
+      actions = render_student_courses_actions(item[:course], params[:students])      
       result[:result]["data"][index][result[:actions_col]] = actions
     end
     
@@ -210,14 +210,36 @@ class CoursesController < ApplicationController
   end
   
   def transfer_course
-    @contact = Contact.find(params[:contact_id])
+    @transfer = @course.transfers.new(contact_id: params[:contact_id])
     
-    @contacts_course = ContactsCourse.find(@contact.active_contacts_courses.where(course_id: @course.id).first.id)
+    @contacts_course = ContactsCourse.find(@transfer.contact.active_contacts_courses.where(course_id: @course.id).first.id)
     
     render layout: "content"
   end
   
   def course_phrases_list
+    @disable = {}
+    if !params[:contact_id].present?
+      @courses_phrases = @course.ordered_courses_phrases
+      @type = "to"
+      if params[:to_contact_id].present?
+        @to_contact = Contact.find(params[:to_contact_id])
+        
+        @courses_phrases.each do |cp|
+            @disable[cp.id] = @to_contact.courses_phrase_registered?(cp)
+        end
+      end
+    else
+      @to_contact = Contact.find(params[:contact_id])
+      @courses_phrases = @to_contact.active_course(@course.id)[:courses_phrases]
+      @type = "from"
+    end
+    
+    render layout: nil
+  end
+  
+  def transfer_to_box
+    @transfer = @course.transfers.new
     
     render layout: nil
   end

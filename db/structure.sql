@@ -1716,7 +1716,12 @@ CREATE TABLE transfers (
     updated_at timestamp without time zone NOT NULL,
     status text,
     parent_id integer,
-    annoucing_user_ids text
+    annoucing_user_ids text,
+    course_id integer,
+    to_contact_id integer,
+    to_course_id integer,
+    to_courses_phrase_ids text,
+    courses_phrase_ids text
 );
 
 
@@ -2918,4 +2923,14 @@ INSERT INTO schema_migrations (version) VALUES ('20150922090434');
 INSERT INTO schema_migrations (version) VALUES ('20150923012830');
 
 INSERT INTO schema_migrations (version) VALUES ('20150923023541');
+
+INSERT INTO schema_migrations (version) VALUES ('20150924005949');
+
+INSERT INTO schema_migrations (version) VALUES ('20150924011036');
+
+INSERT INTO schema_migrations (version) VALUES ('20150924011052');
+
+INSERT INTO schema_migrations (version) VALUES ('20150924032918');
+
+INSERT INTO schema_migrations (version) VALUES ('20150924034522');
 

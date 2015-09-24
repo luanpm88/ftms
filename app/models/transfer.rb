@@ -3,7 +3,9 @@ class Transfer < ActiveRecord::Base
   
   belongs_to :contact
   belongs_to :user
-  
+  belongs_to :course
+  belongs_to :to_course, class_name: "Course"
+  belongs_to :to_contact, class_name: "Contact"
   
   belongs_to :transferred_contact, class_name: "Contact", foreign_key: "transfer_for"
   
@@ -12,7 +14,7 @@ class Transfer < ActiveRecord::Base
   ########## BEGIN REVISION ###############
   validate :check_exist
   
-  has_many :drafts, :class_name => "Transfer", :foreign_key => "parent_id"
+  has_many :drafts, :class_name => "Transfer", :foreign_key => "parent_id", :dependent => :destroy
   belongs_to :parent, :class_name => "Transfer", :foreign_key => "parent_id"  
   has_one :current, -> { order created_at: :desc }, class_name: 'Transfer', foreign_key: "parent_id"
   ########## END REVISION ###############
@@ -45,44 +47,40 @@ class Transfer < ActiveRecord::Base
     ########## END REVISION-FEATURE #########################
     
     if params["from_date"].present?
-      @records = @records.where("transfers.transfer_date >= ?", params["from_date"].to_datetime.beginning_of_day)
+      @records = @records.where("transfers.created_at >= ?", params["from_date"].to_datetime.beginning_of_day)
     end
     if params["to_date"].present?
-      @records = @records.where("transfers.transfer_date <= ?", params["to_date"].to_datetime.end_of_day)
+      @records = @records.where("transfers.created_at <= ?", params["to_date"].to_datetime.end_of_day)
     end
     
     if params["from_contact"].present?
       @records = @records.where(contact_id: params["from_contact"])
     end
     if params["to_contact"].present?
-      @records = @records.where(transfer_for: params["to_contact"])
+      @records = @records.where(to_contact_id: params["to_contact"])
     end
     
     if params["contact"].present?
-      @records = @records.where("transfer_for = ? OR contact_id = ?", params["contact"], params["contact"])
+      @records = @records.where("to_contact_id = ? OR contact_id = ?", params["contact"], params["contact"])
     end
     
     return @records
   end
   
   def self.datatable(params, user)
-    ActionView::Base.send(:include, Rails.application.routes.url_helpers)
-    link_helper = ActionController::Base.helpers    
-    
     @records = self.filter(params, user)
     
     @records = @records.search(params["search"]["value"]) if !params["search"]["value"].empty?
     
     if !params["order"].nil?
       case params["order"]["0"]["column"]
-      when "6"
-        order = "transfers.transfer_date"
+      when "7"
       else
-        order = "transfers.transfer_date"
+        order = "transfers.created_at"
       end
       order += " "+params["order"]["0"]["dir"]
     else
-      order = "transfers.transfer_date"
+      order = "transfers.created_at"
     end
     
     @records = @records.order(order) if !order.nil?
@@ -93,7 +91,7 @@ class Transfer < ActiveRecord::Base
     
     data = []
     
-    actions_col = 11
+    actions_col = 9
     
     
     @records.each do |item|
@@ -104,18 +102,16 @@ class Transfer < ActiveRecord::Base
       end
       ############### END REVISION #########################
       
-      sign = params["contact"].present? && params["contact"].to_i == item.transferred_contact.id ? "+" : ""
+      # sign = params["contact"].present? && params["contact"].to_i == item.transferred_contact.id ? "+" : ""
       item = [
               '<div class="text-center">'+item.contact.contact_link+"</div>",
-              '<div class="text-center">'+item.transferred_contact.contact_link+"</div>",              
-              '<div class="text-left">'+item.transfer_date.strftime("%d-%b-%Y")+"</div>",
-              '<div class="text-left">'+item.description+"</div>",
-              '<div class="text-center">'+sign.to_s+item.hour.to_s+"</div>",
-              '<div class="text-right">'+sign.to_s+ApplicationController.helpers.format_price(item.money)+"</div>",
-              '<div class="text-right">'+sign.to_s+ApplicationController.helpers.format_price(item.admin_fee.to_f)+"</div>",
-              '<div class="text-right">'+sign.to_s+ApplicationController.helpers.format_price(item.total)+"</div>",
+              '<div class="text-center">'+item.to_contact.contact_link+"</div>",              
+              '<div class="text-left">'+item.diplay_from_course+"</div>",
+              '<div class="text-left">'+item.diplay_to_course+"</div>",
+              '<div class="text-center">'+item.display_hour+"</div>",
+              '<div class="text-right">'+item.display_money+"</div>",
+              '<div class="text-right">'+ApplicationController.helpers.format_price(item.admin_fee.to_f)+"</div>",              
               '<div class="text-center">'+item.created_at.strftime("%d-%b-%Y <br/> %I:%M %p").html_safe+"</div>",
-              '<div class="text-center">'+item.contact.account_manager.staff_col+"</div>",
               '<div class="text-center">'+item.display_statuses+"</div>",
               ""
             ]
@@ -132,6 +128,48 @@ class Transfer < ActiveRecord::Base
     
     return {result: result, items: @records, actions_col: actions_col}
     
+  end
+  
+  def courses_phrases
+    return [] if courses_phrase_ids.nil?
+    ids = self.courses_phrase_ids.split("][").map {|s| s.gsub("[","").gsub("]","") }
+    return CoursesPhrase.where(id: ids)
+  end
+  
+  def to_courses_phrases
+    return [] if to_courses_phrase_ids.nil?
+    ids = self.to_courses_phrase_ids.split("][").map {|s| s.gsub("[","").gsub("]","") }
+    return CoursesPhrase.where(id: ids)
+  end
+  
+  def diplay_from_course
+    if !course.nil?
+      arr = []
+      arr << "<div class=\"nowrap\"><strong>"+course.display_name+"</strong></div>"
+      arr << "<div class=\"courses_phrases_list\">"+Course.render_courses_phrase_list(courses_phrases)+"</div>" if courses_phrases
+      return arr.join("")
+    else
+      ""
+    end
+  end
+  
+  def diplay_to_course
+    if !to_course.nil?
+      arr = []
+      arr << "<div class=\"nowrap\"><strong>"+to_course.display_name+"</strong></div>"
+      arr << "<div class=\"courses_phrases_list\">"+Course.render_courses_phrase_list(to_courses_phrases)+"</div>" if to_courses_phrases
+      return arr.join("")
+    else
+      ""
+    end    
+  end
+  
+  def display_hour
+    hour.to_f == 0 ? "" : hour.to_s
+  end
+  
+  def display_money
+    money.to_f == 0 ? "" : ApplicationController.helpers.format_price(money)
   end
   
   def total
