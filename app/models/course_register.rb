@@ -158,7 +158,7 @@ class CourseRegister < ActiveRecord::Base
     end
     
     if params["company"].present?
-      @records = @records.where(payment_type: "caompany_sponsored").where(sponsored_company_id: params["company"])
+      @records = @records.where(payment_type: "company-sponsored").where(sponsored_company_id: params["company"])
     end
     
     
