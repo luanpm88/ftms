@@ -8423,7 +8423,8 @@ td .logo {
     
 }
 .page-sidebar ul.sub-menu li a.noti .badge {
-    color: #f35958;
+    background: #f35958;
+    color: #fff;
 }
 .page-sidebar ul.sub-menu li a.approved .badge {
     color: #fff;
