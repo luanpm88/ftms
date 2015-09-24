@@ -253,6 +253,8 @@ class PaymentRecordsController < ApplicationController
         end
       end
       
+      @list = @list.sort! { |a,b| a[:contact_name]+a[:course] <=> b[:contact_name]+b[:course] }
+      
       @papers = Subject.where(id: paper_ids).order("name")
       
       #respond_to do |format|
