@@ -390,7 +390,7 @@ class PaymentRecord < ActiveRecord::Base
   
   def course_registers
     return [] if self.course_register_ids.nil?
-    cr_ids = first_company_payment.course_register_ids.split("][").map {|s| s.gsub("[","").gsub("]","") }
+    cr_ids = first_company_record.course_register_ids.split("][").map {|s| s.gsub("[","").gsub("]","") }
     return CourseRegister.where(id: cr_ids)
   end
   
