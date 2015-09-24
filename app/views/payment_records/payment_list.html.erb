@@ -9,80 +9,82 @@
                     	<h3>Payment - <span class="semi-bold"> Management</span></h3>	
                 </div>
 				
-				<div class="grid simple ">
-                  <div class="grid-body no-border filters payment-list-filter">
-						<div class="row order-filters">						
-								  <div class="col-md-3">
-										<div class="form-group" style="margin-bottom: 5px;">
-											 <label class="form-label">Upfront?</label>
-											 <span class="help"></span>
-											 <div class="input-with-icon right">                                       
-												  <div class="radio radio-success" style="padding: 5px">
-														<input class="required" id="upfront_all" type="radio" name="course[upfront]" value="" checked="checked">
-													   <label for="upfront_all">All</label>
-													   <input class="required" id="upfront_true" type="radio" name="course[upfront]" value="true">
-													   <label for="upfront_true">Yes</label>
-													   <input class="required" id="upfront_false" type="radio" name="course[upfront]" value="false">
-													   <label for="upfront_false">No</label>
-												  </div>
-											 </div>
-										</div>
-										<div class="intake_group">
-											<h4>Intake</h4>
-											<div class="date_select_filter">
-												<div class="input-with-icon date-group-my right">                                       
-												<%= date_select(:filter, :intake, {include_blank: true, use_short_month: true}) %>
-												</div>
-											</div>
-										</div>
-								  </div>								  
-								  <div class="col-md-3">
-									  <h4>Program</h4>							
-									  <%= select_tag 'course_types[]', options_for_select(CourseType.active_course_types.collect{ |u| [u.short_name, u.id] }), class: "modern_select width100", multiple: "multiple" %>
-								  </div>							
-								  <div class="col-md-3">
-									  <h4>Paper</h4>							
-									  <%= select_tag 'subjects[]', options_for_select(Subject.active_subjects.collect{ |u| [u.name, u.id] }), class: "modern_select width100", multiple: "multiple" %>
-								  </div>									  
-								  <div class="col-md-3 student-course-register-filter">
-									  <h4>Student</h4>                        
-									  <div class="lecturers-filter-box">
-										  <input style="width:100%;margin-bottom: 5px;" name="student" data="<%= contacts_path(is_individual: true, contact_type_id: ContactType.student.id,format: "json") %>" class="select2-ajax-contacts" value="<%= @contact.id if !@contact.nil? %>" text="<%= @contact.display_name if !@contact.nil? %>" />
-									  </div>
-								  </div>
-						</div>
-						<div class="row">
-									<div class="col-md-3">
-										<h4>Company</h4>
-										<div class="">
-											<div class="input-with-icon  right">                                       
-											<i class=""></i>
-											<input style="width:100%;margin-bottom: 5px;" name="company" data="<%= contacts_path(is_individual: false, format: "json") %>" class="select2-ajax-companies"/>
-											</div>
-										</div>
-									</div>
-									<div class="col-md-3">
-									  <h4>Payment Status</h4>
-										<div class="input-with-icon  right">                                       
-											<i class=""></i>
-											<select name="payment_statuses" class="modern_select width100">
-												<option value="">All</option>
-												<option value="chase_for_payment">Chase for payment</option>
-												<option value="receivable">Receivable</option>
-												<option value="fully_paid">Fully paid</option>
-											</select>
-										</div>
-								  </div>
-									
-									
-						</div>
-						
-                  </div>		    
-				</div>
+				
                 
 				
 				<%= form_tag("", {class: "listing_form", method: "post", target: "_blank"}) do |f| %>
-				
+					
+					<div class="grid simple ">
+						<div class="grid-body no-border filters payment-list-filter">
+							  <div class="row order-filters">						
+										<div class="col-md-3">
+											  <div class="form-group" style="margin-bottom: 5px;">
+												   <label class="form-label">Upfront?</label>
+												   <span class="help"></span>
+												   <div class="input-with-icon right">                                       
+														<div class="radio radio-success" style="padding: 5px">
+															  <input class="required" id="upfront_all" type="radio" name="course[upfront]" value="" checked="checked">
+															 <label for="upfront_all">All</label>
+															 <input class="required" id="upfront_true" type="radio" name="course[upfront]" value="true">
+															 <label for="upfront_true">Yes</label>
+															 <input class="required" id="upfront_false" type="radio" name="course[upfront]" value="false">
+															 <label for="upfront_false">No</label>
+														</div>
+												   </div>
+											  </div>
+											  <div class="intake_group">
+												  <h4>Intake</h4>
+												  <div class="date_select_filter">
+													  <div class="input-with-icon date-group-my right">                                       
+													  <%= date_select(:filter, :intake, {include_blank: true, use_short_month: true}) %>
+													  </div>
+												  </div>
+											  </div>
+										</div>								  
+										<div class="col-md-3">
+											<h4>Program</h4>							
+											<%= select_tag 'course_types[]', options_for_select(CourseType.active_course_types.collect{ |u| [u.short_name, u.id] }), class: "modern_select width100", multiple: "multiple" %>
+										</div>							
+										<div class="col-md-3">
+											<h4>Paper</h4>							
+											<%= select_tag 'subjects[]', options_for_select(Subject.active_subjects.collect{ |u| [u.name, u.id] }), class: "modern_select width100", multiple: "multiple" %>
+										</div>									  
+										<div class="col-md-3 student-course-register-filter">
+											<h4>Student</h4>                        
+											<div class="lecturers-filter-box">
+												<input style="width:100%;margin-bottom: 5px;" name="student" data="<%= contacts_path(is_individual: true, contact_type_id: ContactType.student.id,format: "json") %>" class="select2-ajax-contacts" value="<%= @contact.id if !@contact.nil? %>" text="<%= @contact.display_name if !@contact.nil? %>" />
+											</div>
+										</div>
+							  </div>
+							  <div class="row">
+										  <div class="col-md-3">
+											  <h4>Company</h4>
+											  <div class="">
+												  <div class="input-with-icon  right">                                       
+												  <i class=""></i>
+												  <input style="width:100%;margin-bottom: 5px;" name="company" data="<%= contacts_path(is_individual: false, format: "json") %>" class="select2-ajax-companies"/>
+												  </div>
+											  </div>
+										  </div>
+										  <div class="col-md-3">
+											<h4>Payment Status</h4>
+											  <div class="input-with-icon  right">                                       
+												  <i class=""></i>
+												  <select name="payment_statuses" class="modern_select width100">
+													  <option value="">All</option>
+													  <option value="chase_for_payment">Chase for payment</option>
+													  <option value="receivable">Receivable</option>
+													  <option value="fully_paid">Fully paid</option>
+												  </select>
+											  </div>
+										</div>
+										  
+										  
+							  </div>
+							  
+						</div>		    
+					  </div>
+					
 					<div class="row">
 						<div class="col-md-12">
 							
