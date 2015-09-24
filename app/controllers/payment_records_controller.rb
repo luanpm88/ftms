@@ -239,6 +239,9 @@ class PaymentRecordsController < ApplicationController
           
           @list << row
         end
+      end
+      
+      @course_registers.each do |cr|        
         cr.books_contacts.each do |bc|
           row = {}
           row[:contact_name] = bc.contact.name
@@ -252,8 +255,7 @@ class PaymentRecordsController < ApplicationController
           @list << row
         end
       end
-      
-      @list = @list.sort! { |a| a[:contact_name].downcase+a[:course].to_s.downcase }
+
       
       @papers = Subject.where(id: paper_ids).order("name")
       
