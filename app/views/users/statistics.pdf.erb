@@ -1,0 +1,138 @@
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<style>
+  * {
+    font-family: arial;
+  }
+  .page {
+    padding: 0;
+  }
+  .logo img {
+    width: 220px;
+    padding: 0;
+    margin: 0;
+  }
+  .heading {
+    text-align: center;
+  }
+  .text-left {
+    text-align: left;
+  }
+  .text-center {
+    text-align: center;
+  }
+  .text-right {
+    text-align: right;
+  }
+  .list {
+    width: 100%;
+    margin-top: 20px;
+    border-left: 1px solid #000000;
+    border-top: 1px solid #000000;
+    border-bottom: none;
+    border-right: none;
+    font-size: 14px;
+  }
+  .list th {
+      background: none repeat scroll 0 0 #EFEFEF;
+      border-bottom: 1px solid #000000;
+      border-right: 1px solid #000000;
+      border-top: none;
+      border-left: none;
+      padding: 5px;
+  }
+  .list td {
+      border-bottom: 1px solid #000000;
+      border-right: 1px solid #000000;
+      border-top: none;
+      border-left: none;
+      padding: 5px;
+  }
+</style>
+
+<div class="page">
+  <div class="logo">
+    <img src="<%= params[:pdf].present? ? "file://"+File.join(Rails.root, 'public', 'img', 'FTMSGlobalNew_transparent.png') : url_for("/img/FTMSGlobalNew_transparent.png") %>" class="login-logo" />
+  </div>
+  
+  <div class="heading">
+    <h1 class="text-center">SALES STATISTICS</h1>
+    <h2 class="text-center">From <%= @from_date.strftime("%d-%b-%Y") %> To <%= @to_date.strftime("%d-%b-%Y") %></h2>
+  </div>
+  
+  
+          <table width="100%" cellpadding="10" class="list" cellpadding="0" cellspacing="0">
+                              <thead>
+                                  <tr>                                                
+                                      <th>Consultant</th>
+									  
+                                      <th class="text-center">Program</th>
+									  <th class="text-center">Note Log</th>
+                                      <th class="text-right">Sales</th>
+									  <th class="text-right">Receivable</th>
+									  <th class="text-center">Paper</th>
+									  <th class="text-center">New Inquiry</th>
+									  <th class="text-center">New Student</th>									  
+                                  </tr>
+                              </thead>
+								<% @result.each do |u| %>										
+										<tr class="total_row">
+												<td>
+														<%= u[:user].user_link %>
+												</td>
+												
+												<td class="text-center">
+														
+														All</td>
+												<td class="text-center">
+														<strong><%= u[:note] %></strong>
+												</td>
+												<td class="text-right">
+														<strong><%= format_price(u[:total]) %></strong>
+												</td>
+												<td class="text-right">
+														<strong><%= format_price(u[:receivable]) %></strong>
+												</td>
+												<td class="text-center">
+														<strong><%= u[:paper] %></strong>
+												</td>												
+												<td class="text-center">
+														<strong><%= u[:inquiry] %></strong>
+												</td>
+												<td class="text-center">
+														<strong><%= u[:student] %></strong>
+												</td>
+												
+										</tr>
+										<% u[:statistics].each do |row| %>	
+												<tr class="details_row detail-u-<%= u[:user].id %>" style="background: #efefef">                                                
+													  <td>
+																
+													  </td>
+													  
+													  <td class="text-center">
+																<%= row[:course_type].short_name %>
+													  </td>
+													  <td></td>
+													  <td class="text-right">
+																<%= format_price(row[:total]) %>
+													  </td>
+													  <td class="text-right">
+																<strong><%= format_price(row[:receivable]) %></strong>
+														</td>
+													  <td class="text-center">
+																<%= row[:paper] %>
+													  </td>													  
+													  <td class="text-center">
+																<%= row[:inquiry] %>
+													  </td>
+													  <td class="text-center">
+																<%= row[:student] %>
+													  </td>
+												</tr>
+										<% end %>
+								<% end %>
+                          </table>
+  
+ 
+  
+</div>

@@ -1,0 +1,86 @@
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<style>
+  * {
+    font-family: arial;
+  }
+  .page {
+    padding: 0;
+  }
+  .logo img {
+    width: 220px;
+    padding: 0;
+    margin: 0;
+  }
+  .heading {
+    text-align: center;
+  }
+  .text-left {
+    text-align: left;
+  }
+  .text-center {
+    text-align: center;
+  }
+  .list {
+    width: 100%;
+    margin-top: 20px;
+    border-left: 1px solid #000000;
+    border-top: 1px solid #000000;
+    border-bottom: none;
+    border-right: none;
+    font-size: 12px;
+  }
+  .list th {
+      background: none repeat scroll 0 0 #EFEFEF;
+      border-bottom: 1px solid #000000;
+      border-right: 1px solid #000000;
+      border-top: none;
+      border-left: none;
+      padding: 5px;
+  }
+  .list td {
+      border-bottom: 1px solid #000000;
+      border-right: 1px solid #000000;
+      border-top: none;
+      border-left: none;
+      padding: 5px;
+  }
+</style>
+
+<div class="page">
+  <div class="logo">
+    <img src="<%= params[:action] == "print_payment_list" ? "file://"+File.join(Rails.root, 'public', 'img', 'FTMSGlobalNew_transparent.png') : url_for("/img/FTMSGlobalNew_transparent.png") %>" class="login-logo" />
+  </div>
+  
+  <div class="heading">
+    <h1 class="text-center">COMPANY PAYMENT LIST</h1>
+  </div>
+  
+  
+  <table width="100%" cellpadding="10" class="list" cellpadding="0" cellspacing="0">
+      <tr>
+        <th class="text-left">STUDENT NAME</th>
+        <th class="text-left">COURSE</th>
+        <th class="text-left">PHRASES</th>
+        <th class="text-left">STOCK</th>
+        <th class="text-left">COMPANY</th>
+        <% @papers.each do |paper| %>
+          <th class="text-center"><%= paper.name %></th>
+        <% end %>
+      </tr>
+    <% @list.each do |row| %>
+      <tr>
+        <td class="text-left"><%= row[:contact_name] %></td>
+        <td class="text-left"><%= row[:course] %></td>
+        <td class="text-left"><%= row[:phrases] %></td>
+        <td class="text-left"><%= row[:stock] %></td>
+        <td class="text-left"><%= row[:company] %></td>
+        <% @papers.each do |paper| %>
+          <td class="text-center"><%= row[:papers][paper.id] %></td>
+        <% end %>
+      </tr>
+    <% end %>
+</table>
+  
+ 
+  
+</div>

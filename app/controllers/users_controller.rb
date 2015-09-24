@@ -295,6 +295,23 @@ class UsersController < ApplicationController
       @result << row
     end
     
+    if params[:pdf].present?
+      render  :pdf => "sales_statistics_"+Time.now.strftime("%d_%b_%Y"),
+            :template => 'users/statistics.pdf.erb',
+            :layout => nil,
+            :orientation => 'Landscape',
+            :footer => {
+               :center => "",
+               :left => "",
+               :right => "",               
+               :page_size => "A4",
+               :margin  => {:top    => 0, # default 10 (mm)
+                          :bottom => 0,
+                          :left   => 0,
+                          :right  => 0},
+            }
+    end
+    
     
   end
   

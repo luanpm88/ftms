@@ -11,6 +11,9 @@
       </div>
       
       <div class="grid simple ">
+		
+		
+		
         <form id="user-sales-statistic-filters-form" action="<%= url_for({controller: "users", action: "statistic"})%>">
 				<% if params[:tab_page] %>
 						 <%= hidden_field_tag "tab_page", 1 %>
@@ -60,10 +63,11 @@
 	  </div>
       
       <div class="row">
-          <div class="col-md-12">              
+          <div class="col-md-12">
+				<%= link_to 'New Course', statistic_users_path(pdf: true), :class => 'btn btn-primary btn-cons', target: "_blank" %>
               <div class="grid simple ">                  
                   <div class="grid-body no-border">                       
-                          <table class="table no-more-tables no-filter">
+                        <table class="table no-more-tables no-filter">
                               <thead>
                                   <tr>                                                
                                       <th>Consultant</th>

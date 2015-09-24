@@ -172,7 +172,18 @@ class PaymentRecord < ActiveRecord::Base
   end
   
   def description
-    company.nil? ? course_register.course_list(false) : ""
+    if company.nil?
+      course_register.course_list(false)
+    else
+      paper_count = 0
+      students = {}
+      course_registers.each do |cr|
+        paper_count += cr.contacts_courses.count
+        students[cr.contact_id] = students[cr.contact_id].nil? ? 1 : students[cr.contact_id] + 1
+      end
+      
+      return "Student count: <strong>#{students.count.to_s}</strong><br />Paper count: <strong>#{paper_count.to_s}<strong>"
+    end
   end
   
   def company_records
