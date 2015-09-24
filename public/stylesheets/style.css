@@ -8426,7 +8426,8 @@ td .logo {
     color: #f35958;
 }
 .page-sidebar ul.sub-menu li a.approved .badge {
-    color: #0AA699;
+    color: #fff;
+    background: #0AA699;
 }
 .delete_pending {
     background: #f35958;
