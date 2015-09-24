@@ -253,7 +253,7 @@ class PaymentRecordsController < ApplicationController
         end
       end
       
-      @list = @list.sort! { |a| a[:contact_name]+a[:course].to_s }
+      @list = @list.sort! { |a| a[:contact_name] }
       
       @papers = Subject.where(id: paper_ids).order("name")
       
