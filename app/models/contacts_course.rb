@@ -30,6 +30,12 @@ class ContactsCourse < ActiveRecord::Base
   def discount=(new)
     self[:discount] = new.to_s.gsub(/\,/, '')
   end
+  def hour=(new)
+    self[:hour] = new.to_s.gsub(/\,/, '')
+  end
+  def money=(new)
+    self[:money] = new.to_s.gsub(/\,/, '')
+  end 
   
   def total
     if price != -1

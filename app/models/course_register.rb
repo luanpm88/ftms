@@ -18,7 +18,7 @@ class CourseRegister < ActiveRecord::Base
   ########## BEGIN REVISION ###############
   validate :check_exist
   
-  has_many :drafts, :class_name => "CourseRegister", :foreign_key => "parent_id"
+  has_many :drafts, :class_name => "CourseRegister", :foreign_key => "parent_id", :dependent => :destroy
   belongs_to :parent, :class_name => "CourseRegister", :foreign_key => "parent_id"  
   has_one :current, -> { order created_at: :desc }, class_name: 'CourseRegister', foreign_key: "parent_id"
   ########## END REVISION ###############
@@ -99,6 +99,10 @@ class CourseRegister < ActiveRecord::Base
             dps << {amount: r[1]["amount"].to_s.gsub(/\,/, ''), description: r[1]["description"]} if r[1]["amount"].present?
           end
           cc.other_discounts = dps.to_json
+          
+          #budget
+          cc.hour = row[1]["hour"]
+          cc.money = row[1]["money"]
         end
       end
     end

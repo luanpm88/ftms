@@ -650,7 +650,9 @@ CREATE TABLE contacts_courses (
     report boolean DEFAULT true,
     discount_programs text,
     other_discounts text,
-    cache_payment_status text
+    cache_payment_status text,
+    hour numeric,
+    money numeric
 );
 
 
@@ -2933,4 +2935,8 @@ INSERT INTO schema_migrations (version) VALUES ('20150924011052');
 INSERT INTO schema_migrations (version) VALUES ('20150924032918');
 
 INSERT INTO schema_migrations (version) VALUES ('20150924034522');
+
+INSERT INTO schema_migrations (version) VALUES ('20150925011740');
+
+INSERT INTO schema_migrations (version) VALUES ('20150925011752');
 

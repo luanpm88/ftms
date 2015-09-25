@@ -1340,6 +1340,9 @@ class Contact < ActiveRecord::Base
     active_received_transfers.each do |transfer|
       hours[transfer.course.course_type_id] = hours[transfer.course.course_type_id].nil? ? transfer.hour.to_f :  hours[transfer.course.course_type_id] + transfer.hour.to_f
     end
+    active_contacts_courses.joins("LEFT JOIN courses ON courses.id = contacts_courses.course_id").each do |cc|
+      hours[cc.course.course_type_id] = hours[cc.course.course_type_id].nil? ? -cc.hour.to_f : hours[cc.course.course_type_id] - cc.hour.to_f
+    end
     return hours
   end
   
@@ -1352,7 +1355,7 @@ class Contact < ActiveRecord::Base
   end
   
   def budget_money
-    active_received_transfers.sum(:money)
+    active_received_transfers.sum(:money) - active_contacts_courses.sum(:money)
   end
   
   def active_transferred_records

@@ -307,11 +307,15 @@ class Notification < ActiveRecord::Base
       end
   
   def self.stock_pending_count(user)
-    self.book_pending_count(user).to_i + self.stock_type_pending_count(user).to_i
+    count = self.book_pending_count(user).to_i + self.stock_type_pending_count(user).to_i
+    
+    return count == 0 ? "" : count
   end
 
   def self.stock_approved_count(user)
-    self.stock_type_approved_count(user).to_i + self.book_approved_count(user).to_i
+    count = self.stock_type_approved_count(user).to_i + self.book_approved_count(user).to_i
+    
+    return count == 0 ? "" : count
   end
   
   

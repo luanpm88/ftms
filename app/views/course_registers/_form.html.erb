@@ -6,7 +6,12 @@
                   
                 </div>     
                 
-                
+                <div class="budget_values">
+					<div class="budget_money"><%= @contact.budget_money %></div>
+					<% @contact.budget_hour.each do |val| %>
+						 <div class="budget_hour budget_hour_<%= val[0] %>" rel="<%= val[0] %>"><%= val[1] %></div>
+					<% end %>
+				</div>
                 
                 
                <div class="grid-body no-border <%= "draft_form" if @course_register.draft? %>">

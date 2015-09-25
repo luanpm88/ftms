@@ -1,5 +1,43 @@
 <script>
 	
+	function calculateBudgetValues() {
+		var budget_money = parseFloat($(".budget_money").html())
+		var input_budget_money = 0
+		$(".phrase_box .input_budget_money").each(function() {
+		  if($(this).val() != "") {
+			input_budget_money += parseFloat($(this).val().replace(/,/g,""))
+		  }
+		})
+		var remain = budget_money - input_budget_money
+		$(".item_budget_money").html(ReplaceNumberWithDots(remain.toFixed(0)))
+		
+		
+		
+		$(".phrase_box .input_budget_hour").each(function() {
+			var id = $(this).attr("rel")
+			var input_budget_hour = 0
+			if($(this).val() != "") {
+			  input_budget_hour = parseFloat($(this).val().replace(/,/g,""))
+			}
+			var remain = 0 - input_budget_hour
+			$(".item_budget_hour_"+id).html(ReplaceNumberWithDots(remain.toFixed(0)))
+		  })
+		  $(".budget_hour").each(function() {
+			var id = $(this).attr("rel")
+			
+			var budget_hour = parseFloat($(".budget_hour_"+id).html())
+			var input_budget_hour = 0
+			$(".phrase_box .input_budget_hour_"+id).each(function() {
+			  if($(this).val() != "") {
+				input_budget_hour += parseFloat($(this).val().replace(/,/g,""))
+			  }
+			})
+			var remain = budget_hour - input_budget_hour
+			$(".item_budget_hour_"+id).html(ReplaceNumberWithDots(remain.toFixed(0)))
+		  })
+		
+	}
+	
 	function updatePhraseListBoxHour() {
 		$(".phrase_list_box_hour").each(function() {
 			var box = $(this)
@@ -554,6 +592,7 @@
 		$(".total_course_other_discount_price").html(ReplaceNumberWithDots(total_discount.toFixed(0)))
 		$(".total_course_count").html(count)
 		updateTotalRegsitrationPrice()
+		calculateBudgetValues()
 		return total
 	}
 	
