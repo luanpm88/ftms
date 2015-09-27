@@ -47,7 +47,7 @@
 
 <% @list.each_with_index do |row,index| %>
     <% if !row[:list].empty? %>
-          <div class="page" style="top: <%= 510*index %>px; position: absolute" >
+          <div class="page" style="top: <%= 1020*index %>px; position: absolute" >
             <div class="logo">
               <img src="<%= params[:action] == "delivery_note" ? "file://"+File.join(Rails.root, 'public', 'img', 'FTMSGlobalNew_transparent.png') : url_for("/img/FTMSGlobalNew_transparent.png") %>" class="login-logo" />
             </div>
@@ -102,8 +102,8 @@
             <table width="100%" cellpadding="10" class="list" cellspacing="0">
               <tr>
                 <th width="1%">No.</th>
-                <th>Book</th>
-                <th class="text-center">Book Type</th>
+                <th class="text-left">Course</th>
+                <th class="text-left">Book Type</th>
                 <th class="text-center">Quantity</th>
               </tr>
               <% row[:list].each_with_index do |d, num| %>
@@ -114,10 +114,10 @@
                       
                     </td>
                     <td class="text-left">
-                      <div><strong><%= d[1].book.display_name %></strong></div>          
+                      <div><strong><%= d[1].book.paper_name %></strong></div>          
                     </td>
-                    <td class="text-center">
-                      <%= d[1].book.stock_type.name %>
+                    <td class="text-left">
+                      <%= d[1].book.type_name %>
                     </td>
                     <td class="text-center">
                       <%= d[1].remain %>

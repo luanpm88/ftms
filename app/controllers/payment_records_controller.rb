@@ -259,12 +259,11 @@ class PaymentRecordsController < ApplicationController
       
       @papers = Subject.where(id: paper_ids).order("name")
       
-      #respond_to do |format|
-      #  format.html {render "print_payment_list.xls.erb"}
-      #  format.xls
-      #end
-      
-      render  :pdf => "payment_list_"+Time.now.strftime("%d_%b_%Y"),
+      respond_to do |format|
+        format.html {render "print_payment_list.xls.erb"}
+        format.xls
+        format.pdf {
+          render  :pdf => "payment_list_"+Time.now.strftime("%d_%b_%Y"),
             :template => 'payment_records/print_payment_list.pdf.erb',
             :layout => nil,
             :orientation => 'Landscape',
@@ -278,6 +277,10 @@ class PaymentRecordsController < ApplicationController
                           :left   => 0,
                           :right  => 0},
             }
+        }
+      end
+      
+      
     end      
   end
 

@@ -59,11 +59,11 @@
       <td>
         <strong>Student:</strong>
       </td>
-      <td width="60%">
+      <td width="40%">
         <%= @delivery.course_register.contact.display_name %>
       </td>
       <td>
-        <strong>Date:</strong>
+        <strong>Delivered Date:</strong>
       </td>
       <td>
         <%= @delivery.delivery_date.strftime("%d-%b-%Y") %>
@@ -80,10 +80,10 @@
     </tr>
     <tr>
       <td>
-        <strong>Address:</strong>
+        <strong><%= @delivery.course_register.display_mailing_title %>:</strong>
       </td>
       <td colspan="2">
-        <%= @delivery.course_register.mailing_address %>
+        <%= @delivery.course_register.display_mailing_address %>
       </td>
     </tr>
     <tr>
@@ -99,8 +99,8 @@
   <table width="100%" cellpadding="10" class="list" cellspacing="0">
     <tr>
       <th width="1%">No.</th>
-      <th>Title</th>
-      <th class="text-center">Book Type</th>
+      <th class="text-left">Course</th>
+      <th class="text-left">Book Type</th>
       <th class="text-center">Quantity</th>
     </tr>
     <% @delivery.delivery_details.each_with_index do |d, index| %>
@@ -110,9 +110,9 @@
           
         </td>
         <td class="text-left">
-          <div><strong><%= d.book.display_name %></strong></div>          
+          <div><strong><%= d.book.paper_name %></strong></div>          
         </td>
-        <td class="text-center">
+        <td class="text-left">
           <%= d.book.type_name %>
         </td>
         <td class="text-center">
@@ -135,7 +135,7 @@
       <br />
       <br />
       <br />
-      <span style="font-weight: normal"><%= @delivery.user.name %></span>
+      
       </th>      
     </tr>
     

@@ -687,9 +687,22 @@ class Book < ActiveRecord::Base
   ############### END REVISION #########################
   
   def display_name
+    
+    
+    return [paper_name,type_name].join("-")
+  end
+  
+  def paper_name
     str = []
     str << course_type.short_name if !course_type.nil?
     str << subject.name if !subject.nil?
+    
+    return str.join("-").html_safe
+  end
+  
+  def type_name
+    str = []    
+    str << stock_type.name if !stock_type.nil?
     str = str.join("-") + "-" + name
     
     return str.html_safe

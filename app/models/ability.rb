@@ -77,9 +77,10 @@ class Ability
       can :related_info_box, Contact
       can :field_history, Contact
       can :ajax_quick_info, Contact
-      can :add_course, Contact do |c|
-        c.statuses.include?("active")
-      end      
+      can :add_course, Contact
+      #do |c|
+      #  c.statuses.include?("active")
+      #end      
       can :update, Contact
       can :delete, Contact do |c|
         !c.statuses.include?("delete_pending")
@@ -279,20 +280,25 @@ class Ability
       can :student_course_registers, CourseRegister
       can :read, CourseRegister
       can :create, CourseRegister
-      can :deliver_stock, CourseRegister do |cr|
-        cr.statuses.include?("active") && cr.books.count > 0 && !cr.delivered?
-      end
-      can :delivery_print, CourseRegister do |cr|
-        cr.statuses.include?("active")
-      end
-      can :pay_registration, CourseRegister do |cr|
-        cr.statuses.include?("active") && !cr.paid?
-      end      
+      can :deliver_stock, CourseRegister
+      #do |cr|
+      #  cr.statuses.include?("active") && cr.books.count > 0 && !cr.delivered?
+      #end
+      can :delivery_print, CourseRegister
+      #do |cr|
+      #  cr.statuses.include?("active")
+      #end
+      can :pay_registration, CourseRegister
+      #do |cr|
+      #  cr.statuses.include?("active") && !cr.paid?
+      #end      
       can :course_register, Contact do |contact|
-        contact.statuses.include?("active") && (contact.contact_types.include?(ContactType.student) || contact.contact_types.include?(ContactType.inquiry))
+        #contact.statuses.include?("active") &&
+        (contact.contact_types.include?(ContactType.student) || contact.contact_types.include?(ContactType.inquiry))
       end
       can :transfer_course, Contact do |contact|
-        contact.statuses.include?("active") && contact.contact_types.include?(ContactType.student)
+        #contact.statuses.include?("active") &&
+        contact.contact_types.include?(ContactType.student)
       end
       can :update, CourseRegister do |c|
         c.all_deliveries.empty? && c.all_payment_records.empty?
@@ -420,15 +426,6 @@ class Ability
       end   
       
       
-      can :update, Contact
-      can :update_tag, Contact
-      can :course_students, Contact
-      can :seminar_students, Contact
-      can :export_list, Contact
-      can :related_info_box, Contact
-      can :add_course, Contact do |c|
-        c.statuses.include?("active")
-      end
       can :approved, Contact
       can :field_history, Contact
       

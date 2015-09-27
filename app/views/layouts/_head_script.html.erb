@@ -851,9 +851,11 @@
 		if($('input[name="contact[is_individual]"]:checked').val() == "true" || $('select[name="is_individual"]').val() == "true") {
 			$(".personal-box").show();
 			$(".company-box").hide();
+			$("input[name='contact[email]']").addClass("required");
 		} else {
 			$(".personal-box").hide();
 			$(".company-box").show();
+			$("input[name='contact[email]']").removeClass("required");
 		}
 	}
 	

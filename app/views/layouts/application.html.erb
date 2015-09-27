@@ -398,13 +398,13 @@
 					<% end %>
 					<ul class="sub-menu">
 						<li<% if params[:controller] == "course_registers" && params[:action] == "index" %> class="active"<% end %>>
-							<a title="Registration Management (pending)" href="<%= url_for(course_registers_path(tab_page:1, status: "pending")) %>" class="tab_page noti">
+							<a title="Course/Stock Registration Management (pending)" href="<%= url_for(course_registers_path(tab_page:1, status: "pending")) %>" class="tab_page noti">
 								<span class="badge badge-important pull-right alert-level2"><%= Notification.course_register_pending_count(current_user) %></span>
 							</a>
-							<a title="Registration Management (approved)" href="<%= url_for(course_registers_path(tab_page:1, status: "approved")) %>" class="tab_page noti approved">
+							<a title="Course/Stock Registration Management (approved)" href="<%= url_for(course_registers_path(tab_page:1, status: "approved")) %>" class="tab_page noti approved">
 								<span class="badge badge-important pull-right alert-level2"><%= Notification.course_register_approved_count(current_user) %></span>
 							</a>
-							<%= link_to 'Registration Management', course_registers_path(tab_page:1), class: "tab_page" %>
+							<%= link_to 'Course/Stock Registration Management', course_registers_path(tab_page:1), class: "tab_page" %>
 						</li>
 						
 						<li<% if params[:controller] == "course_types" && params[:action] == "index" %> class="active"<% end %>>

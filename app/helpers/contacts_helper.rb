@@ -33,7 +33,7 @@ module ContactsHelper
       
       group_2 = 0
       if can? :add_course, item
-        actions += '<li>'+ActionController::Base.helpers.link_to('Add Course', {controller: "course_registers", action: "new", contact_id: item.id, tab_page: 1}, psrc: course_registers_path(tab_page: 1), title: "#{item.display_name}: Course Register", class: "tab_page")+'</li>'
+        actions += '<li>'+ActionController::Base.helpers.link_to('Add Course/Stock', {controller: "course_registers", action: "new", contact_id: item.id, tab_page: 1}, psrc: course_registers_path(tab_page: 1), title: "#{item.display_name}: Course Register", class: "tab_page")+'</li>'
         group_2 += 1
       end
       
