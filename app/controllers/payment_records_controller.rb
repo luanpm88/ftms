@@ -283,6 +283,27 @@ class PaymentRecordsController < ApplicationController
       
     end      
   end
+  
+  def pay_transfer
+    @payment_record = PaymentRecord.new(payment_record_params)
+    @payment_record.user = current_user
+    @payment_record.status = 1
+    
+    respond_to do |format|
+      if @payment_record.save
+        # create note log
+        if params[:note_log].present?
+          @payment_record.transfer.contact.activities.create(user_id: current_user.id, note: params[:note_log]) if params[:note_log].present?
+        end
+        
+        format.html { redirect_to params[:tab_page].present? ? "/home/close_tab" : @payment_record, notice: 'Payment record was successfully created.' }
+        format.json { render action: 'show', status: :created, location: @payment_record }
+      else
+        format.html { render action: 'new', tab_page: params[:tab_page] }
+        format.json { render json: @payment_record.errors, status: :unprocessable_entity }
+      end
+    end
+  end
 
   private
     # Use callbacks to share common setup or constraints between actions.
@@ -292,6 +313,6 @@ class PaymentRecordsController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def payment_record_params
-      params.require(:payment_record).permit(:company_id, :bank_account_id, :payment_date, :course_register_id, :amount, :debt_date, :user_id, :note)
+      params.require(:payment_record).permit(:transfer_id, :company_id, :bank_account_id, :payment_date, :course_register_id, :amount, :debt_date, :user_id, :note)
     end
 end

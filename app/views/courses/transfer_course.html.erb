@@ -13,40 +13,85 @@
 					<%= f.hidden_field :contact_id %>
 					
 					<div class="row column-seperation">
-						 <div class="col-md-3">
+						 <div class="col-md-6">
                             <h3>From</h3>           
                             
 
                             <div class="form-group">
-                               <label class="form-label"><label>Name</label></label>
+                               <label class="form-label"><label>Contact</label></label>
                                <span class="help"></span>
-                               <div class="input-with-icon right">                                       
-                                   <strong><%= @transfer.contact.display_name %></strong>
+                               <div class="input-with-icon right">
+								   <div class="input-with_add_but">
+										<%= link_to '<i class="icon-plus"></i>'.html_safe, new_contact_path(contact_type_id: ContactType.lecturer.id, tab_page: 1), title: "New Lecturer", :class => 'btn btn-sm btn-small btn-white add-agent-button tab_page' %>
+										<input disabled="disabled" style="width:100%;margin-bottom: 5px;" name="transfer[contact_id]" data="<%= contacts_path(is_individual: "true", format: "json") %>" class="select2-ajax-contacts" value="<%= @transfer.contact_id %>" text="<%= @transfer.contact.display_name %>" />
+								   </div>
                                </div>
                             </div>
-                            
-                            
+							
+							<div class="form-group transfer_course_box">
+								   <div class="form-group">
+											<label class="form-label"><%= f.label :course %></label>
+											<span class="help">(required)</span>
+											<div class="input-with-icon  right">                                       
+												 <i class=""></i>
+												 <div class="input-with_add_but">
+													  <%= link_to '<i class="icon-plus"></i>'.html_safe, new_course_path(tab_page: 1), title: "New Course", :class => 'btn btn-sm btn-small btn-white tab_page' %>
+													  <%= select_tag 'transfer[course_id]', options_for_select(@transfer.contact.active_courses_with_phrases.collect{ |u| [u[:course].name, u[:course].id] }, @transfer.course.id), {include_blank: "None", contact_id: @transfer.contact_id, class: "modern_select course_select required width100 from_course"} %>
+												 </div>
+											</div>
+								   </div>
+								   
+								   <div class="course_phrases_list"></div>
+	
+							</div>
                            
 						 </div>
-						 <div class="col-md-3">
-							  <h3>To Contact</h3>
-							
-							  <div class="form-group">
-								   <label class="form-label"><%= f.label :name %></label>
-								   <span class="help">(required)</span>							   
-								   <div class="input-with-icon  right">                                       
-										<i class=""></i>
-										<div class="input-with_add_but">
-											 <%= link_to '<i class="icon-plus"></i>'.html_safe, new_contact_path(contact_type_id: ContactType.lecturer.id, tab_page: 1), title: "New Lecturer", :class => 'btn btn-sm btn-small btn-white add-agent-button tab_page' %>
-											 <input style="width:100%;margin-bottom: 5px;" name="transfer[to_contact_id]" data="<%= contacts_path(is_individual: "true", format: "json") %>" class="select2-ajax-contacts" value="<%= @transfer.contact_id %>" text="<%= @transfer.contact.display_name %>" />
+						 <div class="col-md-6">
+							  <h3>To</h3>
+							  
+							  <div class="row">
+								   <div class="col-md-8">
+										<div class="form-group">
+											 <label class="form-label"><%= f.label :contact %></label>
+											 <span class="help">(required)</span>							   
+											 <div class="input-with-icon  right">                                       
+												  <i class=""></i>
+												  <div class="input-with_add_but">
+													   <%= link_to '<i class="icon-plus"></i>'.html_safe, new_contact_path(contact_type_id: ContactType.lecturer.id, tab_page: 1), title: "New Lecturer", :class => 'btn btn-sm btn-small btn-white add-agent-button tab_page' %>
+													   <input style="width:100%;margin-bottom: 5px;" name="transfer[to_contact_id]" data="<%= contacts_path(is_individual: "true", format: "json") %>" class="select2-ajax-contacts" value="<%= @transfer.contact_id %>" text="<%= @transfer.contact.display_name %>" />
+												  </div>
+											 </div>
+										</div>
+								   </div>
+								   <div class="col-md-4">
+										<div class="form-group">
+											 <label class="form-label"><label>Type</label></label>
+											 <span class="help">(required)</span>
+											 <div class="input-with-icon  right">
+												  <select name="transfer[to_type]" class="modern_select required width100">
+													   <option value="">None</option>
+													   <option value="course">Course</option>
+													   <option value="hour">Hour</option>
+													   <option value="money">Money</option>
+												  </select>
+											 </div>
 										</div>
 								   </div>
 							  </div>
-									
+							  
+							  <div class="transfer_to_box">
+						 
+							  
+						 
+							  </div>
 						 
 						 </div>
-						 
-						 <div class="col-md-3">
+					</div>
+					
+					<hr />
+					
+					<div class="row">
+						 <div class="col-md-6">
 							  <h3>Admin Fee</h3>
 							  <div class="form-group">
                                     <label class="form-label"><label>Amount</label></label>
@@ -62,43 +107,9 @@
 						 </div>
 					</div>
 					
-					<hr />
 					
-					<div class="row column-seperation <%= "draft_form" if @course.draft? %>">
-                         
-						 <div class="col-md-4 transfer_course_box">
-							  <h3>Course</h3>
-							  
-							  <div class="form-group">
-								   <label class="form-label"><%= f.label :name %></label>
-								   <span class="help">(required)</span>
-								   <div class="input-with-icon  right">                                       
-										<i class=""></i>
-										<div class="input-with_add_but">
-											 <%= link_to '<i class="icon-plus"></i>'.html_safe, new_course_path(tab_page: 1), title: "New Course", :class => 'btn btn-sm btn-small btn-white tab_page' %>
-											 <%= select_tag 'transfer[course_id]', options_for_select(@transfer.contact.active_courses.collect{ |u| [u.name, u.id] }, @transfer.course.id), {include_blank: "None", contact_id: @transfer.contact_id, class: "modern_select course_select required width100 from_course"} %>
-										</div>
-								   </div>
-							  </div>									
-							  <!--<div class="form-group">
-								   <label class="form-label">Register On</label>
-								   <span class="help"></span>
-								   <div class="input-with-icon right">                                       
-									   <strong><%= @contacts_course.course_register.created_at.strftime("%d-%b-%Y") %></strong>
-								   </div>
-							  </div>-->
-							  <div class="course_phrases_list"></div>
-
-						 </div>
-						 
-						 <div class="col-md-8 transfer_to_box">
-						 
-							  
-						 
-						 </div>
-						 
-					</div>
-						 <br />
+					
+					
 					<div class="row">
 						 
 					</div>

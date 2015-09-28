@@ -1,45 +1,45 @@
-                     <div class="row">
-							<div class="col-md-6 transfer_course_box to_course_box">
-								   <h3>To Course</h3>
-								 
+                     <div class="row transfer_type_box transfer_type_box_course" style="display:none">
+							<div class="col-md-12 transfer_course_box to_course_box" type="">
 								   <div class="form-group">
-										 <label class="form-label"><label>Name</label></label>
+										 <label class="form-label"><label>Course</label></label>
 										 <span class="help"></span>
 										 <div class="input-with-icon  right">                                       
-											  <i class=""></i>
+											  <i class="">(required)</i>
 											  <div class="input-with_add_but">
 												   <%= link_to '<i class="icon-plus"></i>'.html_safe, new_course_path(tab_page: 1), title: "New Course", :class => 'btn btn-sm btn-small btn-white tab_page' %>
-												   <%= select_tag 'transfer[to_course_id]', options_for_select(Course.active_courses({upfront: @transfer.course.upfront ? "false" : "", course_type_id: @transfer.course.upfront ? @transfer.course.course_type_id : "", subject_id: @transfer.course.upfront ? @transfer.course.subject_id : ""}).collect{ |u| [u.name, u.id] }), {include_blank: "None", class: "modern_select course_select width100 to_course"} %>
+												   <%= select_tag 'transfer[to_course_id]', options_for_select(Course.active_courses({upfront: !@transfer.course.upfront, course_type_id: @transfer.course.upfront ? @transfer.course.course_type_id : "", subject_id: @transfer.course.upfront ? @transfer.course.subject_id : ""}).collect{ |u| [u.name, u.id] }), {include_blank: "None", class: "modern_select course_select width100 to_course required"} %>
 											  </div>
 										 </div>
 								   </div>
 										 
 								   <div class="course_phrases_list"></div>
 							  
-							  </div>
-							  <div class="col-md-3 to_hour_box">
-								   <h3>To Hour</h3>
+							</div>
+					 </div>
+					 <div class="row transfer_type_box transfer_type_box_hour" style="display:none">
+							  <div class="col-md-12 to_hour_box">
 								   <div class="form-group">
 										 <label class="form-label"><label>Hour</label></label>
-										 <span class="help"></span>
+										 <span class="help">(required)</span>
 										 <div class="input-with-iconz right">                                       
 											  <i class=""></i>
 											   <div class="input-with_add_butz">
-												 <%= text_field_tag "transfer[hour]", "", class: "form-control price_input price_discount" %>
+												 <%= text_field_tag "transfer[hour]", "", class: "form-control price_input price_discount required" %>
 											   </div>
 										 </div>
 								   </div>
 								   
 							  </div>
-							  <div class="col-md-3 to_money_box">
-								   <h3>To Money</h3>
+					 </div>
+					 <div class="row transfer_type_box transfer_type_box_money" style="display:none">
+							  <div class="col-md-12 to_money_box">
 								   <div class="form-group">
 										 <label class="form-label"><label>Money</label></label>
-										 <span class="help"></span>
+										 <span class="help">(required)</span>
 										 <div class="input-with-iconz right">                                       
 											  <i class=""></i>
 											   <div class="input-with_add_butz">
-												 <%= text_field_tag "transfer[money]", "", class: "form-control price_input price_discount" %>
+												 <%= text_field_tag "transfer[money]", "", class: "form-control price_input price_discount required" %>
 											   </div>
 										 </div>
 								   </div>

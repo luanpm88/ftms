@@ -122,12 +122,12 @@ class BooksContact < ActiveRecord::Base
     
     if params["course_types"].present?
       @records = @records.includes(:book)
-                          .where(books: {id: params["course_types"].split(",")})
+                          .where(books: {course_type_id: params["course_types"].split(",")})
     end
     
     if params["subjects"].present?
       @records = @records.includes(:book => :subject)
-                          .where(subjects: {id: params["subjects"].split(",")})
+                          .where(subjects: {subject_id: params["subjects"].split(",")})
     end
     
     if params["student"].present?
@@ -148,6 +148,10 @@ class BooksContact < ActiveRecord::Base
     
     if params[:courses].present?
       @records = @records.includes(:course_register => :contacts_courses).where(contacts_courses: {course_id: params[:courses].split(",")})
+    end
+    
+    if params["upfront"].present?
+      @records = @records.where(upfront: params["upfront"])
     end
 
     
@@ -202,13 +206,14 @@ class BooksContact < ActiveRecord::Base
     @records = @records.limit(params[:length]).offset(params["start"])
     data = []
     
-    actions_col = 6
+    actions_col = 7
     @records.each do |item|      
       item = [
               "<div class=\"checkbox check-default\"><input name=\"ids[]\" id=\"checkbox#{item.id}\" type=\"checkbox\" value=\"#{item.id}\"><label for=\"checkbox#{item.id}\"></label></div>",
               item.contact.contact_link,
               item.book.display_name,
-              '<div class="text-center">'+ item.quantity.to_s+"</div>", 
+              '<div class="text-center">'+ item.quantity.to_s+"</div>",
+              '<div class="text-center">'+ item.display_upfront+"</div>",
               '<div class="text-center">'+ item.display_delivery_status+"</div>",
               '<div class="text-center">'+ item.course_register.course_register_link+"</div>", 
               ""
@@ -252,6 +257,24 @@ class BooksContact < ActiveRecord::Base
   
   def all_payment_records
     course_register.all_payment_records.includes(:payment_record_details).where(payment_record_details: {books_contact_id: self.id})
+  end
+  
+  def display_upfront(link=true)
+    ActionView::Base.send(:include, Rails.application.routes.url_helpers)
+    link_helper = ActionController::Base.helpers
+    
+    url = link ? link_helper.url_for({controller: "books_contacts", action: "check_upfront", value: !self.upfront, id: self.id}) : "#none"
+    
+    ApplicationController.helpers.check_ajax_button(upfront, url, "upfront?")    
+  end
+  
+  def display_delivery_status    
+    if delivered?
+      return "<a class=\"check-radio ajax-check-radioz\" href=\"#c\"><i class=\"#{delivered?.to_s} icon-check#{delivered? ? "" : "-empty"}\"></i></a>"
+    else
+      return "<div class=\"nowrap check-radio\">"+ActionController::Base.helpers.link_to("<i class=\"#{delivered?.to_s} icon-check#{delivered? ? "" : "-empty"}\"></i>".html_safe, {controller: "deliveries", action: "new", course_register_id: self.course_register_id, tab_page: 1}, title: "Deliver Stock: #{self.contact.display_name}", title: 'Materials Delivery', class: "tab_page")+"</div>"
+    end
+
   end
   
 end

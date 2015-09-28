@@ -368,7 +368,7 @@ class CourseRegister < ActiveRecord::Base
     
     data = []
     
-    actions_col = 7
+    actions_col = 8
     @records.each do |item|
       item = [
               item.contact.contact_link,
@@ -378,6 +378,7 @@ class CourseRegister < ActiveRecord::Base
               '<div class="text-center">'+item.display_payment_status+item.display_payment+"</div>",
               '<div class="text-center">'+item.created_at.strftime("%d-%b-%Y")+"</div>",
               '<div class="text-center">'+item.contact.account_manager.staff_col+"</div>",
+              '<div class="text-center">'+item.display_statuses+"</div>",
               ""
             ]
       data << item
@@ -425,7 +426,7 @@ class CourseRegister < ActiveRecord::Base
   def book_list
     arr = []
     books.each do |row|
-      arr << "<div><strong>"+row[:book].display_name+"</strong></div>"
+      arr << "<div><strong>#{row[:books_contact].quantity} - "+row[:book].display_name+" <br /><span>"+row[:books_contact].display_upfront+"</span></strong></div><br />"
       #arr << row[:volumns].map(&:name).join(", ")
     end
     
@@ -436,6 +437,7 @@ class CourseRegister < ActiveRecord::Base
     arr = []
     books_contacts.each do |bc|
       item = {}
+      item[:books_contact] = bc
       item[:book] = bc.book
       #item[:volumns] = bc.volumns
       arr << item

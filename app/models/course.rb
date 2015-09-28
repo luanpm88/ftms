@@ -218,6 +218,7 @@ class Course < ActiveRecord::Base
     @student = Contact.find(params[:students])
     
     @records =  @student.active_courses_with_phrases
+    @records = @records.sort {|a, b| b[:course].intake <=> a[:course].intake}
     
     total = @records.count
     
@@ -231,7 +232,7 @@ class Course < ActiveRecord::Base
               '<div class="text-left">'+@student.display_active_course(item[:course].id)+"</div>",
               '<div class="text-center">'+item[:course].display_for_exam+"</div>",
               '<div class="text-center nowrap">'+item[:course].display_lecturer+"</div>",             
-              '<div class="text-center">'+item[:course].list_course_registers_by_student(@student)+"</div>",              
+              '<div class="text-center">'+item[:course].created_at.strftime("%d-%b-%Y")+"</div>",              
               "", 
             ]     
 
@@ -248,6 +249,8 @@ class Course < ActiveRecord::Base
     return {result: result, items: @records, actions_col: actions_col}
     
   end
+  
+  
   
   def self.render_courses_phrase_list(list, contacts_course = nil)
     arr = []
@@ -428,7 +431,7 @@ class Course < ActiveRecord::Base
       if filter[:subject_id].present?
         result = result.where(subject_id: filter[:subject_id])
       end
-      if filter[:upfront].present?
+      if !filter[:upfront].nil?
         result = result.where(upfront: filter[:upfront])
       end
     end    

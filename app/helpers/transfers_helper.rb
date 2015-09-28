@@ -26,6 +26,24 @@ module TransfersHelper
       actions += '<li class="divider"></li>' if group_1 > 0
       
       
+      group_2 = 0
+      if can? :pay, item
+        actions += '<li>'+ActionController::Base.helpers.link_to('Pay Admin Fee', {controller: "transfers", action: "pay", id: item.id, tab_page: 1}, title: "Pay Admin Fee: #{item.contact.display_name}", class: "tab_page")+'</li>'
+        group_2 += 1
+      end
+      
+      actions += '<li class="divider"></li>' if group_2 > 0
+      
+      group_3 = 0
+      item.all_payment_records.each do |pr|
+        if can? :print, pr
+          actions += '<li>'+ActionController::Base.helpers.link_to("<i class=\"icon icon-print\"></i> Receipt [#{pr.payment_date.strftime("%d-%b-%Y")}]".html_safe, {controller: "payment_records", action: "show", id: pr.id, tab_page: 1}, title: "#{item.contact.display_name}: Receipt [#{pr.payment_date.strftime("%d-%b-%Y")}]", class: "tab_page")+'</li>'
+          group_3 += 1
+        end
+      end
+      
+      #actions += '<li class="divider"></li>' if group_3 > 0
+      
       #if can? :update, item
       #  actions += '<li>'+ActionController::Base.helpers.link_to('Edit', {controller: "subjects", action: "edit", id: item.id, tab_page: 1}, psrc: subjects_path(tab_page: 1), title: "Edit: #{item.name}", class: "tab_page")+'</li>'        
       #end

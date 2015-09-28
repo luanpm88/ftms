@@ -37,4 +37,17 @@ class CoursesPhrase < ActiveRecord::Base
     course.name+"-"+phrase.name
   end
   
+  def courses_phrase_money(contact, course)
+    cc = contact.active_contacts_courses.where(course_id: course.id).where("courses_phrase_ids LIKE ?", "%[#{self.id}]%").first
+    return 0 if cc.nil?
+    
+    total = cc.price
+    hours = 0
+    ContactsCourse.find(cc.id).courses_phrases.each do |cp|
+      hours += cp.hour
+    end
+    
+    return (total/hours)*hour
+  end
+  
 end

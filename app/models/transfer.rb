@@ -10,6 +10,7 @@ class Transfer < ActiveRecord::Base
   belongs_to :transferred_contact, class_name: "Contact", foreign_key: "transfer_for"
   
   has_many :transfer_details, :dependent => :destroy
+  has_many :payment_records
   
   ########## BEGIN REVISION ###############
   validate :check_exist
@@ -18,6 +19,8 @@ class Transfer < ActiveRecord::Base
   belongs_to :parent, :class_name => "Transfer", :foreign_key => "parent_id"  
   has_one :current, -> { order created_at: :desc }, class_name: 'Transfer', foreign_key: "parent_id"
   ########## END REVISION ###############
+  
+  after_create :update_statuses
   
   pg_search_scope :search,
                   against: [:money],
@@ -28,6 +31,10 @@ class Transfer < ActiveRecord::Base
                         prefix: true
                       }
                   }
+  
+  def all_payment_records
+    payment_records.where(status: 1).order("payment_date DESC, payment_records.created_at DESC")
+  end
   
   def self.filter(params, user)
     @records = self.main_transfers
@@ -64,6 +71,10 @@ class Transfer < ActiveRecord::Base
       @records = @records.where("to_contact_id = ? OR contact_id = ?", params["contact"], params["contact"])
     end
     
+    if params["payment_statuses"].present?
+      @records = @records.where("cache_payment_status LIKE ?", "%"+params["payment_statuses"]+"%")
+    end
+    
     return @records
   end
   
@@ -80,7 +91,7 @@ class Transfer < ActiveRecord::Base
       end
       order += " "+params["order"]["0"]["dir"]
     else
-      order = "transfers.created_at"
+      order = "transfers.created_at DESC"
     end
     
     @records = @records.order(order) if !order.nil?
@@ -110,9 +121,10 @@ class Transfer < ActiveRecord::Base
               '<div class="text-left">'+item.diplay_to_course+"</div>",
               '<div class="text-center">'+item.display_hour+"</div>",
               '<div class="text-right">'+item.display_money+"</div>",
-              '<div class="text-right">'+ApplicationController.helpers.format_price(item.admin_fee.to_f)+"</div>",              
+              '<div class="text-right"><label class="col_label top0">Total:</label>'+ApplicationController.helpers.format_price(item.total)+"<label class=\"col_label top0\">Paid:</label>"+ApplicationController.helpers.format_price(item.paid)+"<label class=\"col_label top0\">Receivable:</label>"+ApplicationController.helpers.format_price(item.remain)+"</div>",
+              #'<div class="text-right">'+ApplicationController.helpers.format_price(item.admin_fee.to_f)+"</div>",              
               '<div class="text-center">'+item.created_at.strftime("%d-%b-%Y <br/> %I:%M %p").html_safe+"</div>",
-              '<div class="text-center">'+item.display_statuses+"</div>",
+              '<div class="text-center">'+item.display_statuses+"<br /><br />"+item.display_payment_status+"</div>",
               ""
             ]
       data << item
@@ -147,6 +159,7 @@ class Transfer < ActiveRecord::Base
       arr = []
       arr << "<div class=\"nowrap\"><strong>"+course.display_name+"</strong></div>"
       arr << "<div class=\"courses_phrases_list\">"+Course.render_courses_phrase_list(courses_phrases)+"</div>" if courses_phrases
+      arr << "<br /><div>Hour: <strong>#{contact.active_course(course.id, self.created_at-1.second)[:hour]}</strong> <br /> Money: <strong>#{ApplicationController.helpers.format_price(contact.active_course(course.id, self.created_at-1.second)[:money])}</trong></div>"
       return arr.join("")
     else
       ""
@@ -154,22 +167,35 @@ class Transfer < ActiveRecord::Base
   end
   
   def diplay_to_course
-    if !to_course.nil?
-      arr = []
-      arr << "<div class=\"nowrap\"><strong>"+to_course.display_name+"</strong></div>"
-      arr << "<div class=\"courses_phrases_list\">"+Course.render_courses_phrase_list(to_courses_phrases)+"</div>" if to_courses_phrases
-      return arr.join("")
+    if to_type == "course"
+      if !to_course.nil?
+        arr = []
+        arr << "<div class=\"nowrap\"><strong>"+to_course.display_name+"</strong></div>"
+        arr << "<div class=\"courses_phrases_list\">"+Course.render_courses_phrase_list(to_courses_phrases)+"</div>" if to_courses_phrases
+        arr << "<br /><div>Hour: <strong>#{to_course_hour}</strong> <br /> Money: <strong>#{ApplicationController.helpers.format_price(to_course_money)}</trong></div>"
+        return arr.join("")
+      else
+        "N/A"
+      end
     else
-      ""
-    end    
+      "N/A"
+    end
   end
   
   def display_hour
-    hour.to_f == 0 ? "" : hour.to_s
+    if to_type == "hour"
+      hour.to_f.to_s
+    else
+      "N/A"
+    end
   end
   
   def display_money
-    money.to_f == 0 ? "" : ApplicationController.helpers.format_price(money)
+    if to_type == "money"
+      ApplicationController.helpers.format_price(money.to_f)
+    else
+      "N/A"
+    end
   end
   
   def total
@@ -181,6 +207,14 @@ class Transfer < ActiveRecord::Base
   end
   def admin_fee=(new)
     self[:admin_fee] = new.to_s.gsub(/\,/, '')
+  end
+  
+  def to_course_hour=(new)
+    self[:to_course_hour] = new.to_s.gsub(/\,/, '')
+  end
+  
+  def to_course_money=(new)
+    self[:to_course_money] = new.to_s.gsub(/\,/, '')
   end
   
   def description
@@ -448,5 +482,76 @@ class Transfer < ActiveRecord::Base
   
   ############### END REVISION #########################
   
+  def last_payment
+    all_payment_records.order("payment_date DESC, created_at DESC").first
+  end
+  
+  def real_debt_date
+    if !last_payment.nil?
+      self.last_payment.debt_date
+    else
+      self.created_at
+    end
+  end
+  
+  def out_of_date?
+    return false if paid?
+    
+    return real_debt_date.nil? ? false : real_debt_date < Time.now
+  end
+  
+  def total
+    admin_fee
+  end
+  
+  def paid(from_date=nil, to_date=nil)
+    total = all_payment_records
+    if from_date.present?
+      total = total.where("payment_records.payment_date >= ?", @from_date.beginning_of_day)
+    end
+    if to_date.present?
+      total = total.where("payment_records.payment_date <= ? ", @to_date.end_of_day)
+    end
+    
+    total = total.sum(:amount)
+    
+    return total
+  end
+  
+  def remain(from_date=nil, to_date=nil)
+    total - paid(from_date=nil, to_date=nil)
+  end
+  
+  def paid?
+    paid == total
+  end
+  
+  def payment_status
+    str = []
+    if paid?
+      str << "fully_paid"
+    else
+      str << "receivable"
+    end
+    if out_of_date?    
+      str << "chase_for_payment"
+    end
+    
+    return str
+  end
+  
+  def update_statuses
+    # payment
+    self.update_attribute(:cache_payment_status, self.payment_status.join(","))
+  end
+  
+  def display_payment_status
+    line = []
+    payment_status.each do |s|
+      line << "<div class=\"#{s} text-center\">#{s}</div>".html_safe
+    end
+    
+    return line.join("")
+  end
   
 end

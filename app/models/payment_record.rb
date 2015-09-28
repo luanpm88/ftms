@@ -4,6 +4,7 @@ class PaymentRecord < ActiveRecord::Base
   belongs_to :user
   belongs_to :bank_account
   belongs_to :company, class_name: "Contact"
+  belongs_to :transfer
   
   belongs_to :parent, class_name: "PaymentRecord"
   has_one :previous, class_name: "PaymentRecord", foreign_key: "parent_id"
@@ -32,19 +33,23 @@ class PaymentRecord < ActiveRecord::Base
         cc.update_statuses
       end
     end
-    if company.nil?
+    if !company.nil?
       self.course_registers.each do |cr|
         cr.update_statuses
       end
-    end    
+    end
+    if !transfer.nil?
+      transfer.update_statuses
+    end  
   end
   
   def self.filter(params, user)
      @records = self.where(status: 1)
      
     if params["students"].present?
-      @records = @records.joins(:course_register)
-      @records = @records.where("course_registers.contact_id IN (#{params["students"]})")
+      @records = @records.joins("LEFT JOIN course_registers ON course_registers.id = payment_records.course_register_id")
+                          .joins("LEFT JOIN transfers ON transfers.id = payment_records.transfer_id")
+      @records = @records.where("course_registers.contact_id IN (?) OR payment_records.company_id IN (?)  OR transfers.contact_id IN (?)", params["students"], params["students"], params["students"])
     end
     
     if params["company"].present?
@@ -119,7 +124,7 @@ class PaymentRecord < ActiveRecord::Base
               '<div class="text-right">'+ApplicationController.helpers.format_price(item.ordered_total)+"</div>",
               '<div class="text-right">'+ApplicationController.helpers.format_price(item.paid_amount)+'</div>',
               '<div class="text-right">'+item.paid_on+"</div>",
-              '<div class="text-left">'+item.bank_account_name+"</div>",
+              '<div class="text-center">'+item.bank_account_name+"</div>",
               '<div class="text-right">'+ApplicationController.helpers.format_price(item.remain)+"</div>",
               '<div class="text-center">'+item.contact.staff_col+"</div>",
               ""
@@ -147,10 +152,12 @@ class PaymentRecord < ActiveRecord::Base
   end
   
   def paid_on
-    if company.nil?
-      self.payment_record_link
-    else
+    if !company.nil?
       (company_records.map {|r| r.payment_record_link(payment_date.strftime("%d-%b-%Y"))}).join("<br />")
+    elsif !transfer.nil?
+      transfer.created_at.strftime("%d-%b-%Y")
+    else
+      self.payment_record_link      
     end    
   end
   
@@ -168,13 +175,17 @@ class PaymentRecord < ActiveRecord::Base
   end
   
   def contact
-    company.nil? ? course_register.contact : company
+    if !company.nil?
+      company
+    elsif !transfer.nil?
+      transfer.contact
+    else
+      course_register.contact
+    end
   end
   
   def description
-    if company.nil?
-      course_register.course_list(false)
-    else
+    if !company.nil?
       paper_count = 0
       students = {}
       course_registers.each do |cr|
@@ -183,6 +194,10 @@ class PaymentRecord < ActiveRecord::Base
       end
       
       return "Student count: <strong>#{students.count.to_s}</strong><br />Paper count: <strong>#{paper_count.to_s}<strong>"
+    elsif !transfer.nil?
+      "Defer/Transfer at [#{transfer.created_at.strftime("%d-%b-%Y")}]"
+    else
+      course_register.course_list(false)
     end
   end
   
@@ -215,14 +230,22 @@ class PaymentRecord < ActiveRecord::Base
   end
   
   def ordered_total
-    company.nil? ? course_register.total : first_company_record.amount
+    if !company.nil?
+      first_company_record.amount
+    elsif !transfer.nil?
+      transfer.total
+    else
+      course_register.total
+    end
   end
   
   def remain
-    if company.nil?
-      return course_register.remain_amount(self.payment_date)
-    else
+    if !company.nil?
       amount - total
+    elsif !transfer.nil?
+      transfer.remain
+    else
+      return course_register.remain_amount(self.payment_date)
     end
   end
   
@@ -340,7 +363,7 @@ class PaymentRecord < ActiveRecord::Base
   
   def paid?
     if company.nil?
-      return true
+      return total == amount
     else
       return remain == 0
     end    
@@ -392,7 +415,11 @@ class PaymentRecord < ActiveRecord::Base
   end
   
   def total
-    payment_record_details.sum(:amount)
+    if !transfer.nil?
+      self.amount
+    else
+      payment_record_details.sum(:amount)
+    end
   end
   
   def amount=(new)

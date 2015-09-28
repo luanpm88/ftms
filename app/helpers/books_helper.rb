@@ -24,6 +24,8 @@ module BooksHelper
       
       actions += '<li class="divider"></li>' if group_1 > 0
       
+      
+      
       if can? :create, StockUpdate
         actions += '<li>'+ActionController::Base.helpers.link_to('Import/Export', {controller: "stock_updates", action: "new", book_id: item.id, tab_page: 1}, psrc: books_path(tab_page: 1), title: "#{item.name}: Import/Export", class: "tab_page")+'</li>'        
       end
@@ -44,7 +46,11 @@ module BooksHelper
   def render_student_book_actions(item, student)
     actions = '<div class="text-right"><div class="btn-group actions">
                     <button class="btn btn-mini btn-white btn-demo-space dropdown-toggle" data-toggle="dropdown">Actions <span class="caret"></span></button>'
-      actions += '<ul class="dropdown-menu">'      
+      actions += '<ul class="dropdown-menu">'
+      
+      
+      
+            
       
       delivery_details = item.delivery_details.joins(:delivery => :course_register).where(course_registers: {contact_id: student.id})
       

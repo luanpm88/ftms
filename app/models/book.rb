@@ -40,6 +40,16 @@ class Book < ActiveRecord::Base
     self.active_books.order("name").search(params[:q]).limit(50).map {|model| {:id => model.id, :text => model.name} }
   end
   
+  def self.active_books_contacts
+    BooksContact.joins("LEFT JOIN course_registers ON course_registers.id = books_contacts.course_register_id")
+                    .where(course_registers: {parent_id: nil}).where("course_registers.status IS NOT NULL AND course_registers.status LIKE ?", "%[active]%")
+                    .uniq
+  end
+  
+  def active_books_contacts
+    Book.active_books_contacts.where(book_id: self.id).uniq
+  end
+  
   def cover_path(version = nil)
     if self.image_url.nil?
       return "public/img/avatar.jpg"
@@ -58,7 +68,7 @@ class Book < ActiveRecord::Base
   end
   
   def self.filter(params, user)
-    @records = self.main_books.includes(:stock_type, :course_type, :subject)
+    @records = self.main_books.includes(:stock_type, :course_type, :subject, :books_contacts => :course_register)
     @records = @records.where("books.course_type_ids LIKE ? OR books.course_type_ids LIKE ? OR books.course_type_ids LIKE ? OR books.course_type_ids LIKE ? ", "%[#{params["program_id"]},%", "%,#{params["program_id"]},%", "%,#{params["program_id"]}]%", "%[#{params["program_id"]}]%") if params["program_id"].present?
     @records = @records.where("books.subject_ids LIKE ? OR books.subject_ids LIKE ? OR books.subject_ids LIKE ? OR books.subject_ids LIKE ? ", "%[#{params["subject_id"]},%", "%,#{params["subject_id"]},%", "%,#{params["subject_id"]}]%", "%[#{params["subject_id"]}]%") if params["subject_id"].present?
     
@@ -233,22 +243,23 @@ class Book < ActiveRecord::Base
     @records = @records.search(params["search"]["value"]) if !params["search"]["value"].empty?
     
     @records = @records.includes(:books_contacts => :course_register)
-    @records = @records.where(books_contacts: {contact_id: @student.id})
+    bids = Book.active_books_contacts.where(contact_id: @student.id).map(&:book_id)
+    @records = @records.where(id: bids)
     
     if !params["order"].nil?
       case params["order"]["0"]["column"]
-      when "3"
-        order = "books.name"
-      when "4"
+      when "1"
+        order = "course_types.short_name #{params["order"]["0"]["dir"]}, subjects.name #{params["order"]["0"]["dir"]}, books.name #{params["order"]["0"]["dir"]}"
+      when "2"
         order = "books.publisher"
-      when "6"
-        order = "books.created_at"
+      when "4"
+        order = "course_registers.created_at"
       else
         order = "books.name"
       end
-      order += " "+params["order"]["0"]["dir"]
+      order += " "+params["order"]["0"]["dir"] if !["1"].include?(params["order"]["0"]["column"])
     else
-      order = "books.created_at"
+      order = "course_registers.created_at"
     end
     
     
@@ -259,17 +270,15 @@ class Book < ActiveRecord::Base
     @records = @records.limit(params[:length]).offset(params["start"])
     data = []
     
-    actions_col = 9
+    actions_col = 7
     @records.each do |item|
       item = [
-              item.cover_link,              
-              '<div class="text-center">'+item.course_type_short_name+"</div>",
-              '<div class="text-center">'+item.subject_name+"</div>",
-              item.book_link,
+              item.cover_link,
+              item.book_link(item.display_name),
               '<div class="text-left">'+item.publisher.to_s+"</div>",
-              '<div class="text-right">'+ApplicationController.helpers.format_price(@student.books_contact(item).total)+"</div>",
-              '<div class="text-center">'+ @student.books_contact(item).course_register.created_at.strftime("%d-%b-%Y")+"</div>",
-              '<div class="text-center">'+ @student.books_contact(item).course_register.display_delivery_status+"</div>", 
+              '<div class="text-center">'+item.active_books_contacts.where(contact_id: @student.id).sum(:quantity).to_s+"</div>", #'<div class="text-right">'+ApplicationController.helpers.format_price(@student.books_contact(item).total)+"</div>",
+              '<div class="text-center">'+ item.display_registerd_at+"</div>",
+              '<div class="text-center">'+ item.display_delivery_status+"</div>", 
               '<div class="text-center">'+item.user.staff_col+"</div>",
               ""
             ]
@@ -286,6 +295,22 @@ class Book < ActiveRecord::Base
     
     return {result: result, items: @records, actions_col: actions_col}
     
+  end
+  
+  def course_registers
+    CourseRegister.where(id: active_books_contacts.map(&:course_register_id))
+  end
+  
+  def display_registerd_at
+    (course_registers.map {|cr| cr.created_at.strftime("%d-%b-%Y")}).join("<br />").html_safe
+  end
+  
+  def display_delivery_status
+    str = []
+    active_books_contacts.each do |bc|
+      str << bc.display_delivery_status
+    end
+    return str.join("<br />").html_safe
   end
   
   def cover_link

@@ -32,6 +32,8 @@ Hkerp::Application.routes.draw do
       get :field_history
       
       ####################
+      
+      get :pay
     end
   end
   resources :activities do
@@ -50,6 +52,8 @@ Hkerp::Application.routes.draw do
       get :company_pay
       post :do_company_pay
       post :print_payment_list
+      
+      post :pay_transfer
     end
   end
   resources :stock_updates do
@@ -72,6 +76,7 @@ Hkerp::Application.routes.draw do
   resources :books_contacts do
     collection do
       get :datatable
+      get :check_upfront
     end
   end
   resources :book_prices

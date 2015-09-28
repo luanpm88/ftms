@@ -50,8 +50,8 @@ module ApplicationHelper
       return actions.html_safe
   end
   
-  def check_ajax_button(checked, url)	
-    "<a href=\"#{url}\" class=\"check-radio ajax-check-radio\"><i class=\"#{checked.to_s} icon-#{(checked ? "check" : "check-empty")}\"></i></a>"
+  def check_ajax_button(checked, url, subfix="")	
+    "<a href=\"#{url}\" class=\"check-radio ajax-check-radio\"><i class=\"#{checked.to_s} icon-#{(checked ? "check" : "check-empty")}\"></i></a> #{subfix}"
   end
   
   def split_prices(array)

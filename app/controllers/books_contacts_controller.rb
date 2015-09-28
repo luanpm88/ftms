@@ -1,7 +1,7 @@
 class BooksContactsController < ApplicationController
   include BooksContactsHelper
   
-  before_action :set_books_contact, only: [:show, :edit, :update, :destroy]
+  before_action :set_books_contact, only: [:check_upfront, :show, :edit, :update, :destroy]
 
   # GET /books_contacts
   # GET /books_contacts.json
@@ -73,6 +73,12 @@ class BooksContactsController < ApplicationController
     end
     
     render json: result[:result]
+  end
+  
+  def check_upfront
+    @books_contact.update_attribute(:upfront, params[:value])
+    
+    render layout: nil
   end
 
   private

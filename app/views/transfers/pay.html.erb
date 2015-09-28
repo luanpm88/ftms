@@ -1,0 +1,181 @@
+      <div class="page-title"> <i class="icon-edit"></i>
+        <h3>New Company Payment</h3>
+      </div>
+	  
+             <div class="row">
+            <div class="col-md-12">
+              <div class="grid simple">
+                <div class="grid-title no-border">
+                  <h4>Payment <span class="semi-bold">Details</span></h4>
+                  
+                </div>     
+                
+                
+                
+                
+                <div class="grid-body no-border">
+				  
+				  <% if @payment_record.errors.any? %>
+                    <div class="alert alert-error">
+                      <button data-dismiss="alert" class="close"></button>
+                      <div id="error_explanation">
+                        <h5><%= pluralize(@payment_record.errors.count, "error") %> prohibited this payment from being saved:</h5>
+                  
+                        <ul>
+                        <% @payment_record.errors.full_messages.each do |msg| %>
+                          <li><%= msg %></li>
+                        <% end %>
+                        </ul>
+                      </div>
+                    </div>
+                  <% end %>
+                  
+                  
+                  <%= form_for(@payment_record, :url => pay_transfer_payment_records_path) do |f| %>
+					
+					<%= hidden_field_tag("tab_page", 1) if params[:tab_page] %>
+                    <%= f.hidden_field :transfer_id %>
+                    
+					<div class="row column-seperation">
+						 <div class="col-md-8">
+							  
+                              <div class="row">
+                                <div class="col-md-4">
+                                  <div class="form-group">
+                                        <label class="form-label"><%= f.label :contact %></label>
+                                        <span class="help">(required)</span>
+                                        <div class="input-with-iconz">                                       
+                                            <div class="">
+											  <strong class="big-infoz"><%= @transfer.contact.display_name %></strong>
+											</div>
+                                        </div>
+                                  </div>
+                                </div>
+                                <div class="col-md-4">
+                                  <div class="form-group">
+										<label class="form-label"><%= f.label :bank_acount %></label>
+										<span class="help">(required)</span>
+										<div class="input-with-icon  right">                                       
+											 <i class=""></i>
+											 <div class="input-with_add_butz">												   													   
+												  <%= select_tag 'payment_record[bank_account_id]', options_for_select(BankAccount.active_bank_accounts.collect{ |u| [u.name, u.id] }), {include_blank: "None", class: "modern_select width100 required"} %>
+											 </div>
+										</div>
+								   </div>	
+                                </div>
+							  <div class="col-md-4">
+                                  <div class="form-group">
+                                        <label class="form-label"><%= f.label :bank_ref %></label>
+                                        <span class="help">(required)</span>
+                                        <div class="input-with-iconx">                                       
+                                            <%= f.text_field :bank_ref, :class => "form-control required" %>
+                                        </div>
+                                   </div>	
+                                </div>
+                                
+							  </div>
+							  <div class="row">
+                                
+                                <div class="col-md-4">
+                                  <div class="form-group">
+                                        <label class="form-label"><%= f.label :payment_date %></label>
+                                        <span class="help">(required)</span>
+                                        <div class="input-with-icon  right">                                       
+                                             <i class=""></i>
+                                             <div class="input-append success date col-md-10 no-padding">
+                                               <%= f.text_field :payment_date, :class => "form-control required", value: Time.now.strftime("%d-%b-%Y") %>
+                                               <span class="add-on"><span class="arrow"></span><i class="icon-th"></i></span>
+                                             </div>
+                                             <br style="clear: both" />
+                                        </div>
+                                   </div>	
+                                </div>
+								
+                                <div class="col-md-4">
+                                  <div class="form-group">
+                                        <label class="form-label"><%= f.label :expected_date_of_collection %></label>
+                                        <span class="help"></span>
+                                        <div class="input-with-icon  right">                                       
+                                             <i class=""></i>
+                                             <div class="input-append success date col-md-10 no-padding">
+                                               <%= f.text_field :debt_date, :class => "form-control", value: Time.now.strftime("%d-%b-%Y") %>
+                                               <span class="add-on"><span class="arrow"></span><i class="icon-th"></i></span>
+                                             </div>
+                                             <br style="clear: both" />
+                                        </div>
+                                   </div>	
+                                </div>
+                              </div>
+							  							  
+							  
+							  <div class="row transfer_payment_form">
+								   <div class="col-md-4">
+										<div class="form-group">
+											  <label class="form-label"><%= f.label :total %></label>
+											  <span class="help">(required)</span>
+											  <div class="input-with-iconx text-right">
+												  <strong class="big-info payment-record-total" rel="<%= @transfer.total %>"><%= format_price(@transfer.total) %></strong>
+											  </div>
+										</div>	
+								   </div>
+								   <div class="col-md-5">
+									  <div class="form-group">
+											  <label class="form-label"><%= f.label :paid %></label>
+											  <span class="help">(required)</span>
+											  <div class="input-with-iconx text-right">
+												<%= text_field_tag "payment_record[amount]", format_price(@transfer.remain), :class => "form-control price_input required payment-record-paid" %>
+											  </div>
+									  </div>
+										
+								   </div>
+								   <div class="col-md-3">
+										<div class="form-group">
+											  <label class="form-label"><%= f.label :receivable %></label>
+											  <span class="help"></span>
+											  <div class="input-with-iconx text-right">                                       
+												   <strong class="big-info payment-record-remain" rel="<%= @transfer.remain %>">0</strong>
+											  </div>
+										 </div>	
+								   </div>
+							  </div>
+							  
+							  
+						 </div>
+						 <div class="col-md-4">
+							  <div class="form-group">
+								<label class="form-label"><%= f.label :desciption %></label>
+								<span class="help"></span>
+								<div class="input-with-icon  right">                                       
+									<i class=""></i>
+									  <%= f.text_area :note, :class => "form-control" %>
+								</div>
+							  </div>
+							  <div class="form-group">
+								<label class="form-label"><%= f.label :note_log %></label>
+								<span class="help"></span>
+								<div class="input-with-icon  right">                                       
+									<i class=""></i>
+									  <%= text_area_tag :note_log, "", {:class => "form-control"} %>
+								</div>
+							  </div>
+						 </div>
+						 
+						 
+					</div>
+						 
+					<div class="form-actions">  
+						 <div class="pull-right">
+						 <button type="submit" class="btn btn-success btn-cons"><i class="icon-ok"></i> Pay</button>
+						  <%= link_to 'Cancel', users_path, :class => "btn btn-white btn-cons cancel-but" %>
+					   </div>
+					</div>
+							  
+					
+					
+					<% end %>
+			   </div>
+			 </div>
+            </div>
+			
+     </div>
+

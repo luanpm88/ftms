@@ -78,6 +78,12 @@ class Contact < ActiveRecord::Base
   after_validation :update_cache
   before_validation :check_type
   
+  def active_books
+    books.includes(:books_contacts).joins("LEFT JOIN course_registers ON course_registers.id = books_contacts.course_register_id")
+          .where(course_registers: {parent_id: nil}).where("course_registers.status IS NOT NULL AND course_registers.status LIKE ?", "%[active]%")
+          .uniq
+  end
+  
   def active_courses
     courses.includes(:contacts_courses).joins("LEFT JOIN course_registers ON course_registers.id = contacts_courses.course_register_id")
           .where(course_registers: {parent_id: nil}).where("course_registers.status IS NOT NULL AND course_registers.status LIKE ?", "%[active]%")
@@ -971,7 +977,7 @@ class Contact < ActiveRecord::Base
   end
   
   def book_count
-    books.uniq.count
+    active_books.count
   end
   
   def vat_name
@@ -1337,11 +1343,13 @@ class Contact < ActiveRecord::Base
   
   def budget_hour
     hours = {}
-    active_received_transfers.each do |transfer|
-      hours[transfer.course.course_type_id] = hours[transfer.course.course_type_id].nil? ? transfer.hour.to_f :  hours[transfer.course.course_type_id] + transfer.hour.to_f
+    active_received_transfers.where(to_type: "hour").each do |transfer|
+      hour_id = transfer.course.course_type_id.to_s+"-"+transfer.course.subject_id.to_s
+      hours[hour_id] = hours[hour_id].nil? ? transfer.hour.to_f :  hours[hour_id] + transfer.hour.to_f
     end
     active_contacts_courses.joins("LEFT JOIN courses ON courses.id = contacts_courses.course_id").each do |cc|
-      hours[cc.course.course_type_id] = hours[cc.course.course_type_id].nil? ? -cc.hour.to_f : hours[cc.course.course_type_id] - cc.hour.to_f
+      hour_id = cc.course.course_type_id.to_s+"-"+cc.course.subject_id.to_s
+      hours[hour_id] = hours[hour_id].nil? ? -cc.hour.to_f : hours[hour_id] - cc.hour.to_f
     end
     return hours
   end
@@ -1349,13 +1357,13 @@ class Contact < ActiveRecord::Base
   def display_budget_hour
     str = []
     budget_hour.each do |col|
-      str << CourseType.find(col[0]).short_name+": "+col[1].to_s if col[1] > 0
+      str << CourseType.find(col[0].split("-")[0]).short_name+"-"+Subject.find(col[0].split("-")[1]).name+": "+col[1].to_s if col[1] > 0
     end
     return str.join("<br >").html_safe
   end
   
   def budget_money
-    active_received_transfers.sum(:money) - active_contacts_courses.sum(:money)
+    active_received_transfers.where(to_type: "money").sum(:money) - active_contacts_courses.sum(:money)
   end
   
   def active_transferred_records
@@ -1396,22 +1404,29 @@ class Contact < ActiveRecord::Base
     account_manager.nil? ? "" : account_manager.staff_col
   end
   
-  def active_courses_with_phrases
+  def active_courses_with_phrases(datetime=nil)
     origin = []
-    active_courses.each do |c|
+    accs = active_contacts_courses
+    accs = accs.where("course_registers.created_at <= ?", datetime) if !datetime.nil?
+    accs.each do |cc|
       row = {}
-      row[:course] = c
-      row[:courses_phrases] = c.courses_phrases_by_student(self).where(course_id: c.id).includes(:phrase).order("phrases.id, courses_phrases.start_at")
-
+      row[:course] = cc.course
+      th = 0
+      ContactsCourse.find(cc.id).courses_phrases.each do |cp|
+        th += cp.hour
+      end
+      row[:hour] = th == 0 ? "N/A" : th
+      row[:money] = ContactsCourse.find(cc.id).price
+      row[:courses_phrases] = ContactsCourse.find(cc.id).courses_phrases
+      row[:created_at] = ContactsCourse.find(cc.id).course_register.created_at
       origin << row
     end
     
     # transferred to others
-    active_all_transfers.each do |transfer|
+    transfers = active_all_transfers
+    transfers = transfers.where("transfers.created_at <= ?", datetime) if !datetime.nil?
+    transfers.each do |transfer|
       
-      
-      
-        
       # TRANSFER      
       if self == transfer.contact
         new_origin = []
@@ -1419,7 +1434,7 @@ class Contact < ActiveRecord::Base
           remove_course = false
           
           
-          if row[:course].id == transfer.course.id
+          if row[:course].id == transfer.course.id && row[:created_at] < transfer.created_at
             
             # upfront course
             if transfer.course.upfront == true
@@ -1455,7 +1470,7 @@ class Contact < ActiveRecord::Base
               exist = true
             end           
           end
-          origin << {course: course, courses_phrases: courses_phrases} if exist == false
+          origin << {course: course, courses_phrases: courses_phrases, hour: transfer.to_course_hour, money: transfer.to_course_money, created_at: transfer.created_at} if exist == false
           
           
         end
@@ -1463,12 +1478,43 @@ class Contact < ActiveRecord::Base
       
     end
     
+    # uniq courses
+    #row[:course] = cc.course
+    #  th = 0
+    #  ContactsCourse.find(cc.id).courses_phrases.each do |cp|
+    #    th += cp.hour
+    #  end
+    #  row[:hour] = th == 0 ? "N/A" : th
+    #  row[:money] = ContactsCourse.find(cc.id).price
+    #  row[:courses_phrases] = ContactsCourse.find(cc.id).courses_phrases
+    #  row[:created_at] = cc.course_register.created_at
+    merged_courses = {}
+    origin.each do |item|
+      if merged_courses[item[:course].id].nil?
+        merged_courses[item[:course].id] = {}
+        merged_courses[item[:course].id][:course] = item[:course]
+        merged_courses[item[:course].id][:hour] = item[:hour]
+        merged_courses[item[:course].id][:money] = item[:money]
+        merged_courses[item[:course].id][:courses_phrases] = item[:courses_phrases]
+        merged_courses[item[:course].id][:created_at] = item[:created_at]
+      else
+        merged_courses[item[:course].id][:hour] = item[:hour]
+        merged_courses[item[:course].id][:money] = item[:money]
+        merged_courses[item[:course].id][:courses_phrases] = item[:courses_phrases]
+        merged_courses[item[:course].id][:created_at] = item[:created_at]
+      end     
+    end
     
-    return origin
+    new_origin = []
+    merged_courses.each do |mc|
+      new_origin << mc[1]
+    end
+    
+    return new_origin
   end
   
-  def active_course(course_id)
-    active_courses_with_phrases.each do |row|
+  def active_course(course_id, datetime=nil)
+    active_courses_with_phrases(datetime).each do |row|
       if row[:course].id == course_id
         return row
       end      

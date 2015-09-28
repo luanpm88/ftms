@@ -206,13 +206,14 @@ class CoursesController < ApplicationController
   def course_phrases_form
     @course = params[:course_id].present? ? Course.find(params[:course_id]) : Course.new
     @phrases = Phrase.active_phrases.includes(:subjects).where(subjects: {id: params[:value].split("_")[1]})
+    
     render layout: nil
   end
   
   def transfer_course
     @transfer = @course.transfers.new(contact_id: params[:contact_id])
     
-    @contacts_course = ContactsCourse.find(@transfer.contact.active_contacts_courses.where(course_id: @course.id).first.id)
+    #@contacts_course = ContactsCourse.find(@transfer.contact.active_contacts_courses.where(course_id: @course.id).first.id)
     
     render layout: "content"
   end
@@ -232,6 +233,8 @@ class CoursesController < ApplicationController
     else
       @to_contact = Contact.find(params[:contact_id])
       @courses_phrases = @to_contact.active_course(@course.id)[:courses_phrases]
+      @hour = @to_contact.active_course(@course.id)[:hour]
+      @money = @to_contact.active_course(@course.id)[:money]
       @type = "from"
     end
     

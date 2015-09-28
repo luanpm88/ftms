@@ -171,6 +171,9 @@ class Ability
       can :statistics, Book
       
       can :datatable, BooksContact
+      can :check_upfront, BooksContact
+      
+      
       
       can :view, ContactTag
       can :datatable, ContactTag
@@ -280,7 +283,9 @@ class Ability
       can :student_course_registers, CourseRegister
       can :read, CourseRegister
       can :create, CourseRegister
-      can :deliver_stock, CourseRegister
+      can :deliver_stock, CourseRegister do |cr|
+        cr.books.count > 0 && !cr.delivered?
+      end
       #do |cr|
       #  cr.statuses.include?("active") && cr.books.count > 0 && !cr.delivered?
       #end
@@ -288,7 +293,9 @@ class Ability
       #do |cr|
       #  cr.statuses.include?("active")
       #end
-      can :pay_registration, CourseRegister
+      can :pay_registration, CourseRegister do |cr|
+        !cr.paid?
+      end
       #do |cr|
       #  cr.statuses.include?("active") && !cr.paid?
       #end      
@@ -338,7 +345,7 @@ class Ability
       #end
     end
     
-    if user.has_role? "accountant"
+    if user.has_role?("accountant") || user.has_role?("manager")
       can :create, BankAccount
       can :update, BankAccount do |c|
         c.course_registers.empty? && c.payment_records.empty?
@@ -353,6 +360,13 @@ class Ability
       can :company_pay_remain, PaymentRecord do |pr|
         !pr.paid?
       end
+      can :pay_transfer, PaymentRecord
+      
+      
+      can :pay, Transfer do |t|
+        !t.paid?
+      end
+      
     end
     
     if user.has_role? "manager"

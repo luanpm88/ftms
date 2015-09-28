@@ -3,7 +3,7 @@ class TransfersController < ApplicationController
   
   load_and_authorize_resource
   
-  before_action :set_transfer, only: [:delete, :show, :edit, :update, :destroy]
+  before_action :set_transfer, only: [:pay, :delete, :show, :edit, :update, :destroy]
 
   # GET /transfers
   # GET /transfers.json
@@ -149,7 +149,17 @@ class TransfersController < ApplicationController
   end
   
   ########## BEGIN REVISION ###############
-
+  
+  def pay
+    @payment_record = @transfer.payment_records.new
+    
+    render layout: "content"
+  end
+  
+  def do_pay
+    #code
+  end
+  
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_transfer
@@ -158,6 +168,6 @@ class TransfersController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def transfer_params
-      params.require(:transfer).permit(:to_course_id, :course_id, :admin_fee, :transfer_for, :contact_id, :to_contact_id, :user_id, :transfer_date, :hour, :money, :courses_phrase_ids => [])
+      params.require(:transfer).permit(:to_type, :to_course_hour, :to_course_money, :to_course_id, :course_id, :admin_fee, :transfer_for, :contact_id, :to_contact_id, :user_id, :transfer_date, :hour, :money, :courses_phrase_ids => [])
     end
 end

@@ -49,6 +49,24 @@
 											  <input style="width:100%;margin-bottom: 5px;" name="student" data="<%= contacts_path(is_individual: true, contact_type_id: ContactType.student.id,format: "json") %>" class="select2-ajax-contacts" value="<%= @contact.id if !@contact.nil? %>" text="<%= @contact.display_name if !@contact.nil? %>" />
 										  </div>
 									  </div>
+									  
+									  
+									  <div class="col-md-3">
+										<h4>Upfront?</h4>
+										<div class="form-group" style="margin-bottom: 5px;">								 
+											 <div class="input-with-icon right">                                       
+												  <div class="radio radio-success" style="padding: 5px">
+														<input class="required" id="upfront_all" type="radio" name="upfront" value="" checked="checked">
+													   <label for="upfront_all">All</label>
+													   <input class="required" id="upfront_true" type="radio" name="upfront" value="true">
+													   <label for="upfront_true">Yes</label>
+													   <input class="required" id="upfront_false" type="radio" name="upfront" value="false">
+													   <label for="upfront_false">No</label>
+												  </div>
+											 </div>
+										</div>
+									</div>	
+									  
 										<div class="col-md-2">
 										  <h4>Delivery Status</h4>
 											<div class="input-with-icon  right">                                       
@@ -107,6 +125,7 @@
 													<th>Contact</th>
 													<th>Stock</th>
 													<th class="text-center">Quantity</th>
+													<th class="text-center">Upfront</th>
 													<th class="text-center">Status</th>
 													<th class="text-center">Registration</th>
 													<th class="text-right" width="1%">Actions</th>

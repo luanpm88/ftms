@@ -303,7 +303,8 @@ CREATE TABLE books_contacts (
     created_at timestamp without time zone NOT NULL,
     updated_at timestamp without time zone NOT NULL,
     quantity integer,
-    cache_delivery_status text
+    cache_delivery_status text,
+    upfront boolean DEFAULT false
 );
 
 
@@ -1325,7 +1326,8 @@ CREATE TABLE payment_records (
     company_id integer,
     amount numeric,
     parent_id integer,
-    cache_payment_status character varying
+    cache_payment_status character varying,
+    transfer_id integer
 );
 
 
@@ -1723,7 +1725,11 @@ CREATE TABLE transfers (
     to_contact_id integer,
     to_course_id integer,
     to_courses_phrase_ids text,
-    courses_phrase_ids text
+    courses_phrase_ids text,
+    to_type character varying,
+    to_course_hour numeric,
+    to_course_money numeric,
+    cache_payment_status text
 );
 
 
@@ -2939,4 +2945,16 @@ INSERT INTO schema_migrations (version) VALUES ('20150924034522');
 INSERT INTO schema_migrations (version) VALUES ('20150925011740');
 
 INSERT INTO schema_migrations (version) VALUES ('20150925011752');
+
+INSERT INTO schema_migrations (version) VALUES ('20150928015218');
+
+INSERT INTO schema_migrations (version) VALUES ('20150928040432');
+
+INSERT INTO schema_migrations (version) VALUES ('20150928065302');
+
+INSERT INTO schema_migrations (version) VALUES ('20150928065317');
+
+INSERT INTO schema_migrations (version) VALUES ('20150928111009');
+
+INSERT INTO schema_migrations (version) VALUES ('20150928111201');
 
