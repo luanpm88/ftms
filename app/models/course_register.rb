@@ -9,6 +9,8 @@ class CourseRegister < ActiveRecord::Base
   belongs_to :bank_account
   belongs_to :sponsored_company, class_name: "Contact"
   
+  belongs_to :account_manager, class_name: "User"
+  
   has_many :deliveries, :dependent => :destroy
   
   has_many :payment_records, :dependent => :destroy
@@ -103,6 +105,7 @@ class CourseRegister < ActiveRecord::Base
           #budget
           cc.hour = row[1]["hour"]
           cc.money = row[1]["money"]
+          cc.additional_money = row[1]["additional_money"]
         end
       end
     end

@@ -279,7 +279,7 @@ class Seminar < ActiveRecord::Base
   def similar_contacts(data={})
     result = []
     if data[:email].present?
-      result += Contact.where("LOWER(email) = ? OR LOWER(name) = ? OR LOWER(mobile) = ?", data[:email].strip.downcase, data[:name].strip.downcase, Contact.format_mobile(data[:mobile]))
+      result += Contact.main_contacts.where("LOWER(email) = ? OR LOWER(name) = ? OR LOWER(mobile) = ?", data[:email].strip.downcase, data[:name].strip.downcase, Contact.format_mobile(data[:mobile]))
     end
     
     return result

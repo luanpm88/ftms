@@ -40,6 +40,8 @@ class CourseRegistersController < ApplicationController
     @course_register.update_contacts_courses(params[:contacts_courses])
     @course_register.update_books_contacts(params[:books_contacts]) if !params[:books_contacts].nil?
     
+    @course_register.account_manager = @course_register.contact.account_manager
+    
     authorize! :add_course, @course_register.contact
     
     respond_to do |format|
@@ -49,7 +51,8 @@ class CourseRegistersController < ApplicationController
         @course_register.update_status("create", current_user)        
         @course_register.save_draft(current_user)
         
-        format.html { redirect_to params[:tab_page].present? ? "/home/close_tab?contact_id=#{params[:contact_id]}" : @course_register, notice: 'Course register was successfully created.' }
+        @tab = {url: {controller: "contacts", action: "edit", id: @course_register.contact.id, tab_page: 1, tab: "course_registration"}, title: @course_register.contact.display_name}
+        format.html { render "/home/close_tab", layout: nil }
         format.json { render action: 'show', status: :created, location: @course_register }
       else
         format.html { render action: 'new', tab_page: params[:tab_page] }
@@ -210,7 +213,8 @@ class CourseRegistersController < ApplicationController
       @course_register = CourseRegister.new(course_register_params)
       @course_register.user = current_user
       @course_register.contact_id = cid
-      @course_register.update_books_contacts(params[:books_contacts]) if !params[:books_contacts].nil?     
+      @course_register.update_books_contacts(params[:books_contacts]) if !params[:books_contacts].nil?      
+      @course_register.account_manager_id = Contact.find(cid).account_manager
       
       if !@course_register.books_contacts.empty?
         @course_register.save

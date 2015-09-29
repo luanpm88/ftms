@@ -8,6 +8,10 @@
     <% if !@contact.nil? %>
         parent.openTab("<%= url_for({controller: "contacts", action: "edit", id: @contact.id, tab_page: 1}) %>", "<%= @contact.display_name %>")
     <% end %>
+    
+    <% if !@tab.nil? %>
+        parent.openTab("<%= url_for(@tab[:url]) %><%= @tab[:subfix] %>", "<%= @tab[:title] %>")
+    <% end %>
 
     parent.closeTab(cid)
     

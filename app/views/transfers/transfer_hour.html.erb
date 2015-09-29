@@ -1,0 +1,154 @@
+       <div class="row">
+            <div class="col-md-12">
+              <div class="grid simple">
+                <div class="grid-titles no-border">
+                  <h4>Transfer <span class="semi-bold">Hour</span></h4>
+                  
+                </div>     
+                
+                <div class="grid-body no-border transfer_course_from">
+                  <%= form_for(@transfer) do |f| %>
+					
+					<%= hidden_field_tag("tab_page", 1) if params[:tab_page] %>
+					<%= f.hidden_field :contact_id %>
+					<%= hidden_field_tag "transfer[to_type]", "money" %>
+					
+					<div class="row column-seperation">
+						 <div class="col-md-6">
+                            <h3>From</h3>           
+                            
+
+                            <div class="form-group">
+                               <label class="form-label"><label>Contact</label></label>
+                               <span class="help"></span>
+                               <div class="input-with-icon right">
+								   <div class="input-with_add_but">
+										<%= link_to '<i class="icon-plus"></i>'.html_safe, new_contact_path(contact_type_id: ContactType.lecturer.id, tab_page: 1), title: "New Lecturer", :class => 'btn btn-sm btn-small btn-white add-agent-button tab_page' %>
+										<input disabled="disabled" style="width:100%;margin-bottom: 5px;" name="transfer[contact_id]" data="<%= contacts_path(is_individual: "true", format: "json") %>" class="select2-ajax-contacts" value="<%= @transfer.contact_id %>" text="<%= @transfer.contact.display_name %>" />
+								   </div>
+                               </div>
+                            </div>
+							
+							<div class="form-group transfer_hour_box">
+							  <label class="form-label"><label>Deferred/Tranferred Hour</label></label>
+								   <div class="budget_values">
+										<% @contact.budget_hour.each do |val| %>
+											 <div class="row column-seperation hour_input_group">
+												  
+												  <div class="col-md-6 ">
+													   <div class="row">												  
+															<div class="col-md-6">
+																 <%= CourseType.find(val[0].split("-")[0]).short_name+"-"+Subject.find(val[0].split("-")[1]).name %>
+															</div>
+															<div class="col-md-6">
+																 <div style="font-weight: bold" class="budget_hour budget_hour_<%= val[0] %>" rel="<%= val[0] %>" value="<%= val[1] %>"><%= val[1] %></div>
+															</div>
+													   </div>
+												  </div>
+												  <div class="col-md-6">
+													   <%= text_field_tag "from_hours["+val[0]+"]", 0, class: "form-control price_input required input_budget_hour input_budget_hour_"+val[0] %>
+												  </div>
+											 </div>
+										<% end %>
+									</div>
+	
+							</div>
+                           
+						 </div>
+						 <div class="col-md-6">
+							  <h3>To</h3>
+							  
+								   <div class="form-group">
+										<label class="form-label"><%= f.label :contact %></label>
+										<span class="help">(required)</span>							   
+										<div class="input-with-icon  right">                                       
+											 <i class=""></i>
+											 <div class="input-with_add_but">
+												  <%= link_to '<i class="icon-plus"></i>'.html_safe, new_contact_path(contact_type_id: ContactType.lecturer.id, tab_page: 1), title: "New Lecturer", :class => 'btn btn-sm btn-small btn-white add-agent-button tab_page' %>
+												  <input style="width:100%;margin-bottom: 5px;" name="transfer[to_contact_id]" data="<%= contacts_path(is_individual: "true", format: "json") %>" class="select2-ajax-contacts" value="<%= @transfer.contact_id %>" text="<%= @transfer.contact.display_name %>" />
+											 </div>
+										</div>
+								   </div>
+
+							  
+							  <div class="form-group">
+								   <label class="form-label"><label>Money</label></label>
+								   <span class="help">(required)</span>
+								   <div class="input-with-iconz right">                                       
+										<i class=""></i>
+										 <div class="input-with_add_butz">
+										   <%= text_field_tag "transfer[money]", "", class: "form-control price_input price_discount required" %>
+										 </div>
+								   </div>
+							  </div>
+						 
+						 </div>
+					</div>
+					
+					<hr />
+					
+					<div class="row">
+						 <div class="col-md-6">
+							  <h3>Admin Fee</h3>
+							  <div class="form-group">
+                                    <label class="form-label"><label>Amount</label></label>
+                                    <span class="help">(required)</span>
+                                    <div class="input-with-iconz right">                                       
+                                         <i class=""></i>
+                                          <div class="input-with_add_butz">
+                                            <%= f.text_field "admin_fee", class: "form-control price_input price_discount required" %>
+                                          </div>
+                                    </div>
+							  </div>
+							  
+						 </div>
+					</div>
+					
+					
+					
+					
+					<div class="row">
+						 
+					</div>
+					
+                      <div class="form-actions">  
+                           <div class="pull-right">
+                              <button type="submit" class="btn btn-success btn-cons"><i class="icon-ok"></i> Save</button>
+
+                            <%= link_to 'Cancel', users_path, :class => "btn btn-white btn-cons cancel-but" %>
+                         </div>
+                      </div>
+
+							  
+					<% end %>
+			   </div>
+			 </div>
+            </div>
+			
+      </div>
+
+<script>
+	 $(document).ready(function() {
+		  jQuery.validator.addMethod("valid_transfer_hour", function(value, element) {
+			   var hour = 0
+			   $('.hour_input_group').each(function() {
+					var box = $(this)
+					if (box.find(".input_budget_hour").val() != "") {
+					  var vv = parseFloat(box.find(".input_budget_hour").val().replace(/,/g,""))    
+					  hour += vv
+					}
+			   })
+			   var money = 0
+			   if ($("input[name='transfer[money]']").val() != "") {
+					money = parseFloat($("input[name='transfer[money]']").val().replace(/,/g,""))    
+			   }
+			   
+			   
+			   return hour > 0 && money > 0
+		  }, "Unvalid transfer details. Please check the details below.");
+
+		  $("input[name='transfer[admin_fee]']").rules('add', {
+			   valid_transfer_hour: true
+		  });
+	 });
+</script>

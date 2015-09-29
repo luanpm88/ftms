@@ -34,6 +34,9 @@ Hkerp::Application.routes.draw do
       ####################
       
       get :pay
+      
+      get :transfer_hour
+      patch :do_transfer_hour
     end
   end
   resources :activities do
@@ -148,7 +151,7 @@ Hkerp::Application.routes.draw do
       get :remove_contacts
       
       get :import_list
-      post :import_list
+      patch :import_list
       
       get :check_contact
       
@@ -162,6 +165,8 @@ Hkerp::Application.routes.draw do
       get :field_history
       
       ####################
+      
+      patch :do_import_list
     end
   end
   resources :contacts_courses do

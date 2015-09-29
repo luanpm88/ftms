@@ -10,7 +10,7 @@ class Transfer < ActiveRecord::Base
   belongs_to :transferred_contact, class_name: "Contact", foreign_key: "transfer_for"
   
   has_many :transfer_details, :dependent => :destroy
-  has_many :payment_records
+  has_many :payment_records, :dependent => :destroy
   
   ########## BEGIN REVISION ###############
   validate :check_exist
@@ -161,6 +161,12 @@ class Transfer < ActiveRecord::Base
       arr << "<div class=\"courses_phrases_list\">"+Course.render_courses_phrase_list(courses_phrases)+"</div>" if courses_phrases
       arr << "<br /><div>Hour: <strong>#{contact.active_course(course.id, self.created_at-1.second)[:hour]}</strong> <br /> Money: <strong>#{ApplicationController.helpers.format_price(contact.active_course(course.id, self.created_at-1.second)[:money])}</trong></div>"
       return arr.join("")
+    elsif !from_hour.nil?
+      arr = []
+      JSON.parse(from_hour).each do |r|
+        arr << CourseType.find(r[0].split("-")[0]).short_name+"-"+Subject.find(r[0].split("-")[1]).name+": "+r[1].to_s+" hours" if r[1].to_f > 0
+      end
+      return "<strong>"+arr.join("<br />")+"</strong>"
     else
       ""
     end

@@ -12,6 +12,9 @@
       
 		
 		<% if !@list.nil? %>
+			<%= form_for(@seminar, url: do_import_list_seminars_path, html: { multipart: true }) do |f| %>
+				<%= hidden_field_tag("tab_page", 1) %>
+				<%= hidden_field_tag("id", @seminar.id) %>
 				<div class="row">
 						<div class="col-md-12">								
 								<h4><span class="semi-bold">Statistic</span></h4>
@@ -23,7 +26,7 @@
 								<br />
 								
 								<h4><span class="semi-bold">Listing Result</span></h4>
-								<table class="table">
+								<table class="table seminar_import_box">
 										<tr>
 												<th>Name</th>
 												<th>Company</th>
@@ -31,21 +34,22 @@
 												<th>Email</th>
 												<th class="text-center">Present?</th>
 												<th class="text-center">Status</th>
-												<th class="text-right">Actions</th>
+												<th class="text-right" width="1%">Actions</th>
+												<th class="text-center" width="1%"></th>
 										</tr>
-										<% @list[:list].each do |row| %>
-												<tr class="raw_rol row_<%= row[:status] %>">
+										<% @list[:list].each_with_index do |row,index| %>
+												<tr class="raw_rol row_<%= row[:status] %> seminar_import_row seminar_group seminar_group_<%= index %>">
 														<td>
-																<%= row[:name] %>
+																<%= text_field_tag "rows["+index.to_s+"][name]", row[:name], class: "form-control" %>
 														</td>
 														<td>
-																<%= row[:company] %>
+																<%= text_field_tag "rows["+index.to_s+"][company]", row[:company], class: "form-control" %>
 														</td>
 														<td>
-																<%= row[:mobile] %>
+																<%= text_field_tag "rows["+index.to_s+"][mobile]", row[:mobile], class: "form-control" %>
 														</td>
 														<td>
-																<%= row[:email] %>
+																<%= text_field_tag "rows["+index.to_s+"][email]", row[:email], class: "form-control" %>
 														</td>
 														<td class="text-center">
 																<% if row[:present].present? %>
@@ -53,6 +57,7 @@
 																<% else %>
 																		<a class="check-radio ajax-check-radio" href="#"><i class="false icon-check-empty"></i></a>
 																<% end %>
+																<%= hidden_field_tag "rows["+index.to_s+"][present]", row[:present].present?, class: "form-control" %>
 														</td>
 														<td class="text-center">
 																<% if ["not_sure"].include?(row[:status]) %>
@@ -62,46 +67,66 @@
 																		<span class="<%= row[:status] %>">New</span>
 																<% end %>
 														</td>
-														<td class="text-right">
-																<% if !["new_imported","old_imported"].include?(row[:status])  %>
-																		<a href="#" class="btn btn-mini btn-primary">Use This</a>
-																		<!--<a href="#" class="btn btn-mini btn-white" title="Announce to Account Manager">Announce</a>-->
-																<% end %>
+														<td>
+																
+														</td>
+														<td>
+															<% if !["old_imported"].include?(row[:status]) %>
+																		<div class="checkbox check-success pull-right">
+																			<input group="<%= index %>" name="rows[<%= index %>][check]" id="checkbox_<%= index %>" type="checkbox" value="true" class="checkall">
+																			<label for="checkbox_<%= index %>"></label>
+																		</div>																	
+															<% end %>
 														</td>
 														
 												</tr>
 												<% row[:contacts].each do |contact| %>
-														<tr class="dark_row row_<%= row[:status] %>">
-																<td>
-																		<i class="icon-long-arrow-right"></i> <%= contact.contact_link %>
-																</td>
-																<td>
-																		<%= contact.referrer_link %>
-																</td>
-																<td>
-																		<%= contact.mobile %>
-																</td>
-																<td>
-																		<%= contact.email %>
-																</td>
-																<td class="text-center">
-																		<% if row[:selected_id] == contact.id && ["new_imported","old_imported"].include?(row[:status]) %>
-																				<a class="check-radio ajax-check-radio" href="#"><i class="true icon-check"></i></a>
-																		<% elsif ["new_imported","old_imported"].include?(row[:status]) %>
+													<% if true %>
+															<tr class="dark_row row_<%= row[:status] %> seminar_group seminar_group_<%= index %>" >
+																	<td>
+																			<i class="icon-long-arrow-right"></i> <%= contact.contact_link %>
+																			<%= hidden_field_tag "contacts["+contact.id.to_s+"][id]", contact.id, class: "form-control" %>
+																	</td>
+																	<td>
+																			<%= contact.referrer_link %>																		
+																	</td>
+																	<td>
+																			<%= contact.mobile %>
+																	</td>
+																	<td>
+																			<%= contact.email %>
+																	</td>
+																	<td class="text-center">
+																		<% if row[:present].present? %>
+																			<a class="check-radio ajax-check-radio" href="#"><i class="true icon-check"></i></a>
+																		<% else %>
 																				<a class="check-radio ajax-check-radio" href="#"><i class="false icon-check-empty"></i></a>
 																		<% end %>
-																</td>
-																<td class="text-center">
-																		<%= "<span class=\"#{row[:status]}\">Existing</span>".html_safe if row[:selected_id] == contact.id && ["new_imported","old_imported"].include?(row[:status]) %>
-																</td>
-																<td class="text-right">
-																		<%= contact.contact_link("<span class=\"btn btn-mini btn-white\">Update</span>".html_safe) %>
+																		<%= hidden_field_tag "contacts["+contact.id.to_s+"][present]", row[:present].present?, class: "form-control" %>
+																			<!--<% if row[:selected_id] == contact.id && ["new_imported","old_imported"].include?(row[:status]) %>
+																					<a class="check-radio ajax-check-radio" href="#"><i class="true icon-check"></i></a>
+																			<% elsif ["new_imported","old_imported"].include?(row[:status]) %>
+																					<a class="check-radio ajax-check-radio" href="#"><i class="false icon-check-empty"></i></a>
+																			<% end %>-->
+																	</td>
+																	<td class="text-center">
+																			<%= "<span class=\"#{row[:status]}\">Existing</span>".html_safe if contact.seminars.include?(@seminar) %>
+																	</td>
+																	<td class="text-center">
+
+																				<%= contact.contact_link("<span class=\"btn btn-mini btn-white\">Update</span>".html_safe) %>
+
+																	</td>
+																	<td>
 																		<% if !["new_imported","old_imported"].include?(row[:status]) %>
-																				<a href="#" class="btn btn-mini btn-info">Use This</a>
+																			<div class="checkbox check-success pull-right">
+																				<input checked="checked" group="<%= index %>" name="contacts[<%= contact.id %>][check]" id="checkbox_c_<%= contact.id %>" type="checkbox" value="true" class="checkall">
+																				<label for="checkbox_c_<%= contact.id %>"></label>
+																			</div>
 																		<% end %>
-																		
-																</td>
-														</tr>
+																	</td>
+															</tr>
+													<% end %>
 												<% end %>
 										<% end %>
 								</table>
@@ -114,7 +139,16 @@
 								</div>-->
 								
 						</div>
+						<div class="form-actions">  
+							<div class="pull-right">
+							<button type="submit" class="btn btn-success btn-cons"><i class="icon-ok"></i> Import</button>
+							 <%= link_to 'Cancel', users_path, :class => "btn btn-white btn-cons cancel-but" %>
+						  </div>
+					   </div>
 				</div>
+				
+							  
+			<% end %>
 				
 		<% end %>
 		
@@ -136,7 +170,7 @@
                                
                   
                   
-                  <%= form_for(import_list_seminars_path, html: { multipart: true }) do |f| %>
+                  <%= form_for(@seminar, url: import_list_seminars_path, html: { multipart: true }) do |f| %>
 					
 					<%= hidden_field_tag("tab_page", 1) if params[:tab_page] %>
 					<%= hidden_field_tag("id", @seminar.id) %>

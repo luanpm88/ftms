@@ -596,7 +596,8 @@ CREATE TABLE contacts (
     status text,
     draft_for integer,
     "tmp_StudentID" text,
-    annoucing_user_ids text
+    annoucing_user_ids text,
+    creator_id integer
 );
 
 
@@ -653,7 +654,8 @@ CREATE TABLE contacts_courses (
     other_discounts text,
     cache_payment_status text,
     hour numeric,
-    money numeric
+    money numeric,
+    additional_money numeric
 );
 
 
@@ -855,7 +857,8 @@ CREATE TABLE course_registers (
     parent_id integer,
     status text,
     sponsored_company_id integer,
-    preferred_mailing character varying
+    preferred_mailing character varying,
+    account_manager_id integer
 );
 
 
@@ -1729,7 +1732,8 @@ CREATE TABLE transfers (
     to_type character varying,
     to_course_hour numeric,
     to_course_money numeric,
-    cache_payment_status text
+    cache_payment_status text,
+    from_hour text
 );
 
 
@@ -2957,4 +2961,12 @@ INSERT INTO schema_migrations (version) VALUES ('20150928065317');
 INSERT INTO schema_migrations (version) VALUES ('20150928111009');
 
 INSERT INTO schema_migrations (version) VALUES ('20150928111201');
+
+INSERT INTO schema_migrations (version) VALUES ('20150929010152');
+
+INSERT INTO schema_migrations (version) VALUES ('20150929025355');
+
+INSERT INTO schema_migrations (version) VALUES ('20150929030738');
+
+INSERT INTO schema_migrations (version) VALUES ('20150929035828');
 

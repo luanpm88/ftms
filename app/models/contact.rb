@@ -49,10 +49,11 @@ class Contact < ActiveRecord::Base
   has_many :books_contacts
   has_and_belongs_to_many :books
   
-  has_many :contacts_seminars
+  has_many :contacts_seminars, :dependent => :destroy
   has_and_belongs_to_many :seminars
   
   belongs_to :account_manager, :class_name => "User"
+  belongs_to :creator, :class_name => "User"
   
   has_and_belongs_to_many :course_types
   
@@ -61,7 +62,7 @@ class Contact < ActiveRecord::Base
   
   has_many :course_registers, :dependent => :destroy
   
-  has_many :drafts, :class_name => "Contact", :foreign_key => "draft_for"
+  has_many :drafts, :class_name => "Contact", :foreign_key => "draft_for", :dependent => :destroy
   belongs_to :draft_for_contact, :class_name => "Contact", :foreign_key => "draft_for"
   
   has_one :current_revision, -> { order created_at: :desc }, class_name: 'Contact', foreign_key: "draft_for"
@@ -1149,8 +1150,10 @@ class Contact < ActiveRecord::Base
   def check_statuses
     if !statuses.include?("deleted") && !statuses.include?("delete_pending") && !statuses.include?("update_pending") && !statuses.include?("new_pending") && !statuses.include?("education_consultant_pending") && !statuses.include?("no_education_consultant")
       add_status("active")
-      
-      
+      if self.account_manager.present? && !self.creator.present?
+        self.creator = self.account_manager 
+        self.save
+      end
     else
       delete_status("active")
     end    
@@ -1343,6 +1346,7 @@ class Contact < ActiveRecord::Base
   
   def budget_hour
     hours = {}
+    
     active_received_transfers.where(to_type: "hour").each do |transfer|
       hour_id = transfer.course.course_type_id.to_s+"-"+transfer.course.subject_id.to_s
       hours[hour_id] = hours[hour_id].nil? ? transfer.hour.to_f :  hours[hour_id] + transfer.hour.to_f
@@ -1351,13 +1355,28 @@ class Contact < ActiveRecord::Base
       hour_id = cc.course.course_type_id.to_s+"-"+cc.course.subject_id.to_s
       hours[hour_id] = hours[hour_id].nil? ? -cc.hour.to_f : hours[hour_id] - cc.hour.to_f
     end
+    
+    active_transfers.where.not(from_hour: nil).each do |transfer|
+        JSON.parse(transfer.from_hour).each do |row|
+          hours[row[0]] -= row[1].to_f
+        end
+    end
+    
     return hours
+  end
+  
+  def budget_hour_sum
+    total = 0
+    budget_hour.each do |col|
+      total += col[1]
+    end
+    return total
   end
   
   def display_budget_hour
     str = []
     budget_hour.each do |col|
-      str << CourseType.find(col[0].split("-")[0]).short_name+"-"+Subject.find(col[0].split("-")[1]).name+": "+col[1].to_s if col[1] > 0
+      str << CourseType.find(col[0].split("-")[0]).short_name+"-"+Subject.find(col[0].split("-")[1]).name+": "+col[1].to_s if col[1] != 0
     end
     return str.join("<br >").html_safe
   end

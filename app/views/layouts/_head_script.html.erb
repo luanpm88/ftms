@@ -1,5 +1,24 @@
 <script>
 	
+	function calculateTransferHourFrom() {
+		$('.hour_input_group').each(function() {
+			var box = $(this)
+			var total = parseFloat(box.find(".budget_hour").attr("value").replace(/,/g,""))
+			var input = 0
+			
+			if (box.find(".input_budget_hour").val() != "") {
+			  var vv = parseFloat(box.find(".input_budget_hour").val().replace(/,/g,""))    
+			  if (vv > total) {
+						  vv = total
+						  box.find(".input_budget_hour").val(ReplaceNumberWithDots(total.toFixed(0)))
+				  }
+			  
+			  var remain = total - vv
+			  box.find(".budget_hour").html(ReplaceNumberWithDots(remain.toFixed(0)))
+			}
+		})
+	}
+	
 	function calculateTransferPayForm() {
 		var total = parseFloat($(".transfer_payment_form .payment-record-total").html().replace(/,/g,""))
 		var remain = parseFloat($(".transfer_payment_form .payment-record-remain").attr("rel").replace(/,/g,""))
@@ -25,7 +44,14 @@
 		var input_budget_money = 0
 		$(".phrase_box .input_budget_money").each(function() {
 		  if($(this).val() != "") {
-			input_budget_money += parseFloat($(this).val().replace(/,/g,""))
+			var vv = parseFloat($(this).val().replace(/,/g,""))
+			
+			if (vv > budget_money) {
+				vv = budget_money
+				$(this).val(ReplaceNumberWithDots(budget_money.toFixed(0)))
+			}
+			
+			input_budget_money += vv
 		  }
 		})
 		var remain = budget_money - input_budget_money
@@ -49,7 +75,14 @@
 			var input_budget_hour = 0
 			$(".phrase_box .input_budget_hour_"+id).each(function() {
 			  if($(this).val() != "") {
-				input_budget_hour += parseFloat($(this).val().replace(/,/g,""))
+				var vv = parseFloat($(this).val().replace(/,/g,""))
+				
+				if (vv > budget_hour) {
+					vv = budget_hour
+					$(this).val(ReplaceNumberWithDots(budget_hour.toFixed(0)))
+				}
+				
+				input_budget_hour += vv
 			  }
 			})
 			var remain = budget_hour - input_budget_hour
@@ -132,6 +165,7 @@
 				format_price($('.transfer_to_box').find('input.price_input'));
 				
 				transferToTypeCheck()
+				updatePhraseListBoxHour()
 			}
 		})
 	}
@@ -597,15 +631,38 @@
 					var price = 0
 					var price_discount_program = 0
 					var price_discount = 0
+					var hour = 0
+					var money = 0
+					var additional_money = 0
 			
 					if(box.find('select[name="contacts_courses['+number+'][price]"]').length) {
 					  price = parseFloat(box.find('select[name="contacts_courses['+number+'][price]"]').val())
 					}
 					
-					if(box.find('input[name="contacts_courses['+number+'][discount]"]').length && box.find('input[name="contacts_courses['+number+'][discount]"]').val() != "") {
-					  price_discount = parseFloat(box.find('input[name="contacts_courses['+number+'][discount]"]').val().replace(/,/g,""))
-					}       
+					// Use Hour
+					if(box.find('input[name="contacts_courses['+number+'][hour]"]').length && box.find('input[name="contacts_courses['+number+'][hour]"]').val() != "") {
+					  hour = parseFloat(box.find('input[name="contacts_courses['+number+'][hour]"]').val().replace(/,/g,""))
+					}
+					if(box.find('input[name="contacts_courses['+number+'][additional_money]"]').length && box.find('input[name="contacts_courses['+number+'][additional_money]"]').val() != "") {
+					  additional_money = parseFloat(box.find('input[name="contacts_courses['+number+'][additional_money]"]').val().replace(/,/g,""))
+					}
+					if (hour > 0) {
+						price = additional_money
+					}
 					
+					
+					// Use Money
+					if(box.find('input[name="contacts_courses['+number+'][money]"]').length && box.find('input[name="contacts_courses['+number+'][money]"]').val() != "") {
+					  money = parseFloat(box.find('input[name="contacts_courses['+number+'][money]"]').val().replace(/,/g,""))
+					}
+					price = price - money
+					
+					
+					
+					//if(box.find('input[name="contacts_courses['+number+'][discount]"]').length && box.find('input[name="contacts_courses['+number+'][discount]"]').val() != "") {
+					//  price_discount = parseFloat(box.find('input[name="contacts_courses['+number+'][discount]"]').val().replace(/,/g,""))
+					//}       
+					//
 					// Discount Programs
 					box.find(".discount_program_box").each(function() {
 						
@@ -980,7 +1037,7 @@
 		
 		var tid = "tab_"+tname.replace(/\s/g, "_").replace(/[^a-zA-Z0-9\_]/g, "").toLowerCase();
 		
-		if($('a[tsrc="'+tsrc+'"]').length == 0) {
+		if($('a[rel="'+tid+'"]').length == 0) {
 			
 			var parent = ""
 			if (psrc) {
@@ -1012,8 +1069,7 @@
 
 		} else {
 		  $('#main-tab a[rel="'+tid+'"]').tab('show')
-		  
-		  reloadTab(tid)
+		  $('iframe#'+tid).attr("src",tsrc)
 		}
 		
 		
@@ -3105,6 +3161,23 @@
 		});
 		$(document).on("change", ".transfer_payment_form .payment-record-paid", function() {
 			calculateTransferPayForm()
+		});
+		
+		//Seminar check import
+		$(".seminar_group input[type=checkbox]").change(function(){
+			var group = $(this).attr("group")
+			if($(this).attr("checked") == "checked") {
+			  $(".seminar_group_"+group).removeClass("row_selected")
+			  $(".seminar_group_"+group+" input[type=checkbox]").attr("checked",false)
+			  $(this).attr("checked",true)
+			}
+		})
+		
+		$(document).on("keyup", ".input_budget_hour", function() {
+			calculateTransferHourFrom()
+		});
+		$(document).on("change", ".input_budget_hour", function() {
+			calculateTransferHourFrom()
 		});
 	})
 	

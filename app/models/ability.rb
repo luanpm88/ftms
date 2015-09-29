@@ -77,10 +77,9 @@ class Ability
       can :related_info_box, Contact
       can :field_history, Contact
       can :ajax_quick_info, Contact
-      can :add_course, Contact
-      #do |c|
-      #  c.statuses.include?("active")
-      #end      
+      can :add_course, Contact do |c|
+        !c.statuses.include?("deleted")
+      end      
       can :update, Contact
       can :delete, Contact do |c|
         !c.statuses.include?("delete_pending")
@@ -197,6 +196,7 @@ class Ability
       can :check_contact, Seminar      
       can :seminar_features, Seminar
       can :import_list, Seminar
+      can :do_import_list, Seminar
       can :update, Seminar
       can :delete, Seminar do |c|
         !c.statuses.include?("delete_pending") && !c.statuses.include?("deleted")
@@ -276,6 +276,11 @@ class Ability
         !c.statuses.include?("delete_pending") && !c.statuses.include?("deleted")
       end
       can :field_history, Transfer
+      can :transfer_hour, Contact do |c|
+        c.budget_hour_sum > 0
+      end
+      can :transfer_hour, Transfer
+      can :do_transfer_hour, Transfer
       
       
       
@@ -284,28 +289,19 @@ class Ability
       can :read, CourseRegister
       can :create, CourseRegister
       can :deliver_stock, CourseRegister do |cr|
-        cr.books.count > 0 && !cr.delivered?
+        !cr.statuses.include?("deleted") && cr.books.count > 0 && !cr.delivered?
       end
-      #do |cr|
-      #  cr.statuses.include?("active") && cr.books.count > 0 && !cr.delivered?
-      #end
-      can :delivery_print, CourseRegister
-      #do |cr|
-      #  cr.statuses.include?("active")
-      #end
+      can :delivery_print, CourseRegister do |cr|
+        !cr.statuses.include?("deleted")
+      end
       can :pay_registration, CourseRegister do |cr|
-        !cr.paid?
+        !cr.statuses.include?("deleted") && !cr.paid?
       end
-      #do |cr|
-      #  cr.statuses.include?("active") && !cr.paid?
-      #end      
       can :course_register, Contact do |contact|
-        #contact.statuses.include?("active") &&
-        (contact.contact_types.include?(ContactType.student) || contact.contact_types.include?(ContactType.inquiry))
+        !contact.statuses.include?("deleted") && (contact.contact_types.include?(ContactType.student) || contact.contact_types.include?(ContactType.inquiry))
       end
       can :transfer_course, Contact do |contact|
-        #contact.statuses.include?("active") &&
-        contact.contact_types.include?(ContactType.student)
+        !contact.statuses.include?("deleted") && contact.contact_types.include?(ContactType.student)
       end
       can :update, CourseRegister do |c|
         c.all_deliveries.empty? && c.all_payment_records.empty?
@@ -331,18 +327,7 @@ class Ability
       can :approve_delete, Contact do |c|
         c.statuses.include?("delete_pending") && c.account_manager  == user && c.current.user.lower?("education_consultant")
       end
-      
-      #can :approved, Book
-      #
-      #can :approve_new, Book do |c|
-      #  c.statuses.include?("new_pending") && c.current.user.lower?("education_consultant")
-      #end
-      #can :approve_update, Book do |c|
-      #  c.statuses.include?("update_pending") && c.current.user.lower?("education_consultant")
-      #end
-      #can :approve_delete, Book do |c|
-      #  c.statuses.include?("delete_pending") && c.current.user.lower?("education_consultant")
-      #end
+
     end
     
     if user.has_role?("accountant") || user.has_role?("manager")

@@ -50,7 +50,11 @@ module TransfersHelper
       #
       #if can? :destroy, item
       #  actions += '<li>'+ActionController::Base.helpers.link_to('Destroy', {controller: "subjects", action: "destroy", id: item.id}, method: :delete, data: { confirm: 'Are you sure?' })+'</li>'        
-      #end 
+      #end
+      
+      if can? :delete, item
+        actions += '<li>'+ActionController::Base.helpers.link_to('Delete', {controller: "transfers", action: "delete", id: item.id, tab_page: 1}, title: "Transfer: Delete", class: "tab_page")+'</li>'        
+      end
       
       actions += '</ul></div></div>'
       

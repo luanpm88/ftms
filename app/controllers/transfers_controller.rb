@@ -36,13 +36,16 @@ class TransfersController < ApplicationController
     # @transfer.update_transfer_details(params[:transfer_details])
     @transfer.courses_phrase_ids = "["+params[:from_courses_phrases].join("][")+"]" if params[:from_courses_phrases].present?
     @transfer.to_courses_phrase_ids = "["+params[:to_courses_phrases].join("][")+"]" if params[:to_courses_phrases].present?
+    
+    @transfer.from_hour = params[:from_hours].to_json if params[:from_hours].present?
 
     respond_to do |format|
       if @transfer.save
         @transfer.update_status("create", current_user)        
         @transfer.save_draft(current_user)
         
-        format.html { redirect_to params[:tab_page].present? ? "/home/close_tab" : @transfer, notice: 'Transfer was successfully created.' }
+        @tab = {url: {controller: "contacts", action: "edit", id: @transfer.contact.id, tab_page: 1, tab: "transfer"}, title: @transfer.contact.display_name}
+        format.html { render "/home/close_tab", layout: nil }
         format.json { render action: 'show', status: :created, location: @transfer }
       else
         format.html { render action: 'new', tab_page: params[:tab_page] }
@@ -160,6 +163,20 @@ class TransfersController < ApplicationController
     #code
   end
   
+  def transfer_hour
+    @contact = Contact.find(params[:contact_id])
+    @transfer = Transfer.new
+    @transfer.contact = @contact
+    @transfer.transfer_date = Time.now
+    @transfer.transferred_contact = @transfer.contact
+    
+    render layout: "content"
+  end
+  
+  def do_transfer_hour
+    #code
+  end
+  
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_transfer
@@ -168,6 +185,6 @@ class TransfersController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def transfer_params
-      params.require(:transfer).permit(:to_type, :to_course_hour, :to_course_money, :to_course_id, :course_id, :admin_fee, :transfer_for, :contact_id, :to_contact_id, :user_id, :transfer_date, :hour, :money, :courses_phrase_ids => [])
+      params.require(:transfer).permit(:from_hour, :to_type, :to_course_hour, :to_course_money, :to_course_id, :course_id, :admin_fee, :transfer_for, :contact_id, :to_contact_id, :user_id, :transfer_date, :hour, :money, :courses_phrase_ids => [])
     end
 end

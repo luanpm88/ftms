@@ -95,14 +95,20 @@
      
 </div>
           
-<div class="row no_price_group">
+<div class="row no_price_group column-seperation">
      <div class="col-md-6">
           <div class="row">
                <div class="col-md-8">
                     <div class="form-group">
                          <label class="form-label"><label>Hour</label></label>
                          <div class="input-with-iconz right">                                       
-                              <%= text_field_tag "contacts_courses["+params[:number].to_s+"][hour]", "", class: "form-control price_input main_input price_other_discount input_budget_hour input_budget_hour_"+@course.course_type_id.to_s, rel: @course.course_type_id.to_s %>
+                              <%= text_field_tag "contacts_courses["+params[:number].to_s+"][hour]", "", class: "form-control price_input input_budget_hour input_budget_hour_"+@course.course_type_id.to_s+"-"+@course.subject_id.to_s, rel: @course.course_type_id.to_s+"-"+@course.subject_id.to_s %>
+                         </div>
+                    </div>
+                    <div class="form-group">
+                         <label class="form-label"><label>Additional Money</label></label>
+                         <div class="input-with-iconz right">                                       
+                              <%= text_field_tag "contacts_courses["+params[:number].to_s+"][additional_money]", "", class: "form-control price_input" %>
                          </div>
                     </div>
                </div>
@@ -110,7 +116,7 @@
                     <div class="form-group">
                          <label class="form-label"><label>Remain</label></label>
                          <div class="input-with-iconz text-right">                                       
-                              <strong class="item_budget_hour_<%= @course.course_type_id %>">0</strong>
+                              <strong class="item_budget_hour_<%= @course.course_type_id %>-<%= @course.subject_id %>">0</strong>
                          </div>
                     </div>
                </div>
@@ -122,7 +128,7 @@
                     <div class="form-group">
                          <label class="form-label"><label>Money</label></label>
                          <div class="input-with-iconz right">                                       
-                              <%= text_field_tag "contacts_courses["+params[:number].to_s+"][money]", "", class: "form-control price_input main_input price_other_discount input_budget_money" %>
+                              <%= text_field_tag "contacts_courses["+params[:number].to_s+"][money]", "", class: "form-control price_input input_budget_money" %>
                          </div>
                     </div>
                </div>

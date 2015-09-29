@@ -6,6 +6,7 @@ class PaymentRecord < ActiveRecord::Base
   belongs_to :company, class_name: "Contact"
   belongs_to :transfer
   
+  
   belongs_to :parent, class_name: "PaymentRecord"
   has_one :previous, class_name: "PaymentRecord", foreign_key: "parent_id"
   
