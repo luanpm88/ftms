@@ -1473,27 +1473,27 @@ class Contact < ActiveRecord::Base
       
       
       
-      # RECEIVED
-      if self == transfer.to_contact
-        if transfer.to_course.present?
-          # add or update course
-          course = transfer.to_course
-          courses_phrases = transfer.to_courses_phrases
-          
-          exist = false
-          origin.each do |row|
-            if row[:course] == transfer.to_course
-              row[:courses_phrases] += transfer.to_courses_phrases
-              row[:courses_phrases] = row[:courses_phrases].uniq
-              
-              exist = true
-            end           
-          end
-          origin << {course: course, courses_phrases: courses_phrases, hour: transfer.to_course_hour, money: transfer.to_course_money, created_at: transfer.created_at} if exist == false
-          
-          
-        end
-      end
+      ## RECEIVED
+      #if self == transfer.to_contact
+      #  if transfer.to_course.present?
+      #    # add or update course
+      #    course = transfer.to_course
+      #    courses_phrases = transfer.to_courses_phrases
+      #    
+      #    exist = false
+      #    origin.each do |row|
+      #      if row[:course] == transfer.to_course
+      #        row[:courses_phrases] += transfer.to_courses_phrases
+      #        row[:courses_phrases] = row[:courses_phrases].uniq
+      #        
+      #        exist = true
+      #      end           
+      #    end
+      #    origin << {course: course, courses_phrases: courses_phrases, hour: transfer.to_course_hour, money: transfer.to_course_money, created_at: transfer.created_at} if exist == false
+      #    
+      #    
+      #  end
+      #end
       
     end
     
