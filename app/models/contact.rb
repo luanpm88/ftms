@@ -1453,7 +1453,7 @@ class Contact < ActiveRecord::Base
           remove_course = false
           
           
-          if !row[:course].nil? && row[:course].id == transfer.course.id && row[:created_at] < transfer.created_at
+          if !transfer.course.nil? && !row[:course].nil? && row[:course].id == transfer.course.id && row[:created_at] < transfer.created_at
             
             # upfront course
             if transfer.course.upfront == true
