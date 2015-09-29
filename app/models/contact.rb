@@ -1443,7 +1443,7 @@ class Contact < ActiveRecord::Base
     
     # transferred to others
     transfers = active_all_transfers
-    transfers = transfers.where("transfers.created_at <= ?", datetime) if !datetime.nil?
+    transfers = transfers.where.not(course_id: nil).where("transfers.created_at <= ?", datetime) if !datetime.nil?
     transfers.each do |transfer|
       
       # TRANSFER      
