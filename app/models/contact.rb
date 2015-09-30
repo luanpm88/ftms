@@ -130,6 +130,7 @@ class Contact < ActiveRecord::Base
     self.update_cache_course_type_ids
     self.update_cache_intakes
     self.update_cache_subjects
+    self.update_cache_search
   end
   
   def check_type
@@ -774,7 +775,7 @@ class Contact < ActiveRecord::Base
   end
   
   pg_search_scope :search,
-                against: [:name, :address, :website, :phone, :mobile, :fax, :email, :tax_code, :note, :account_number, :bank, :bases],
+                against: [:cache_search, :name, :address, :website, :phone, :mobile, :fax, :email, :tax_code, :note, :account_number, :bank, :bases],
                 using: {
                   tsearch: {
                     dictionary: 'english',
@@ -1580,17 +1581,18 @@ class Contact < ActiveRecord::Base
     return false
   end
   
-  #def update_cache_search
-  #  str = []
-  #  str << 
-  #  str <<
-  #  str <<
-  #  str <<
-  #  str <<
-  #  str <<
-  #  str <<
-  #  str << 
-  #end
+  def update_cache_search
+    return false if !self.draft_for.nil?
+    
+    str = []
+    str << mobile.to_s.gsub(/^84/,"")
+    str << "0" + mobile.to_s.gsub(/^84/,"")
+    str << phone.to_s.gsub(/^84/,"")
+    str << "0" + phone.to_s.gsub(/^84/,"")
+    str << referrer.name if !referrer.nil?
+    
+    self.update_attribute(:cache_search, str.join(" "))
+  end
   
   
   

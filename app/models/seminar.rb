@@ -40,6 +40,10 @@ class Seminar < ActiveRecord::Base
       @records = @records.where("seminars.id IN (#{sids})")
     end
     
+    if params["course_types"].present?
+      @records = @records.where(course_type_id: params["course_types"])
+    end
+    
     ########## BEGIN REVISION-FEATURE #########################
     
     if params[:status].present?

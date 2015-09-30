@@ -1703,7 +1703,7 @@
 			"ajax": {
 				"url": "<%= datatable_seminars_path %>",
 				"data": function ( d ) {
-					d.course_types = $("select[name='filter[course_types[]]']").val()
+					d.course_types = $(".seminar-filter select[name='filter[course_types[]]']").val()
 					if($(".seminar-filter select[name='status']").val()) {
 						d.status =  $(".seminar-filter select[name='status']").val()						
 					}
@@ -1725,7 +1725,7 @@
 			"ajax": {
 				"url": "<%= student_seminars_seminars_path %>",
 				"data": function ( d ) {
-					d.course_types = $("select[name='filter[course_types[]]']").val()
+					d.course_types = $(".seminar-filter select[name='filter[course_types[]]']").val()
 					if($(".seminar-filter select[name='status']").val()) {
 						d.status =  $(".seminar-filter select[name='status']").val()						
 					}

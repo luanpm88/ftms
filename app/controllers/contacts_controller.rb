@@ -114,6 +114,7 @@ class ContactsController < ApplicationController
         end        
         @contact.update_status("create", current_user)        
         @contact.save_draft(current_user)
+        @contact.update_info
 
         format.html { redirect_to params[:tab_page].present? ? {action: "edit", id: @contact.id,tab_page: 1} : contacts_url, notice: 'Contact was successfully created.' }
         format.json { render action: 'show', status: :created, location: @contact }
@@ -167,6 +168,8 @@ class ContactsController < ApplicationController
         @contact.update_status("update", current_user)
         
         @contact.save_draft(current_user)
+        
+        @contact.update_info
         
         format.html { redirect_to params[:tab_page].present? ? {action: "edit",id: @contact.id,tab_page: 1} : contacts_url, notice: 'Contact was successfully updated.' }
         format.json { head :no_content }

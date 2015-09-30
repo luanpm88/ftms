@@ -457,7 +457,7 @@ class PaymentRecord < ActiveRecord::Base
   end
   
   def update_cache_search
-    return if !self.parent_id.nil?
+    return false if !self.parent_id.nil?
     
     str = []
     str << description

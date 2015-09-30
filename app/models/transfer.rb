@@ -22,9 +22,10 @@ class Transfer < ActiveRecord::Base
   
   after_create :update_statuses
   after_update :update_contact_info
+  after_create :update_cache_search
   
   pg_search_scope :search,
-                  against: [:money],
+                  against: [:money, :cache_search],
                   using: {
                       tsearch: {
                         dictionary: 'english',
@@ -565,5 +566,25 @@ class Transfer < ActiveRecord::Base
     
     return line.join("")
   end
+  
+  def update_cache_search
+    return false if !self.parent_id.nil?
+    
+    str = []
+    str << contact.display_name
+    str << to_contact.display_name
+    str << diplay_from_course
+    str << diplay_to_course
+    str << display_hour
+    str << display_money
+    str << total.to_s
+    str << paid.to_s
+    str << remain.to_s
+    str << display_statuses
+    str << display_payment_status
+    
+    update_attribute(:cache_search, str.join(" "))
+  end
+  
   
 end
