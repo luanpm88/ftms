@@ -73,8 +73,18 @@ class Course < ActiveRecord::Base
     self.active_courses.order("created_at DESC")
   end
   
-  def self.full_text_search(q)
-    self.active_courses.order("upfront DESC, courses.intake DESC").search(q).limit(50).map {|model| {:id => model.id, :text => model.display_name} }
+  def self.full_text_search(q, params=nil)
+    result = self.main_courses.order("upfront DESC, courses.intake DESC")
+    if !params.nil?
+      if params[:student_id].present?
+        contact = Contact.find(params[:student_id])
+        learned_course_ids = contact.learned_courses.map{|c| c.id}
+        
+        result = result.where.not(id: learned_course_ids)
+      end      
+    end
+    
+    result = result.search(q).limit(50).map {|model| {:id => model.id, :text => model.display_name} }
   end
   
   def course_exist

@@ -17,7 +17,7 @@ class CoursesController < ApplicationController
     respond_to do |format|
       format.html { render layout: "content" if params[:tab_page].present? }
       format.json {
-        render json: Course.full_text_search(params[:q])
+        render json: Course.full_text_search(params[:q], params)
       }
     end
   end

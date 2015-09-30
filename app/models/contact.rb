@@ -977,6 +977,16 @@ class Contact < ActiveRecord::Base
     active_courses_with_phrases.count
   end
   
+  def learned_courses
+    arr = []
+    active_courses_with_phrases.each do |row|
+      if row[:course].upfront || row[:courses_phrases].count == row[:course].courses_phrases.count
+        arr << row[:course]
+      end
+    end
+    return arr
+  end
+  
   def book_count
     active_books.count
   end

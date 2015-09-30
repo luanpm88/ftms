@@ -6,10 +6,10 @@
                   
                 </div>     
                 
-                <div class="budget_values">
+                <div class="budget_values hidden">
 					<div class="budget_money"><%= @contact.budget_money %></div>
 					<% @contact.budget_hour.each do |val| %>
-						 <div class="budget_hour budget_hour_<%= val[0] %>" rel="<%= val[0] %>"><%= val[1] %></div>
+						 <div class="budget_hour budget_hour_<%= val[0] %>" rel="1<%= val[0] %>">1<%= val[1] %></div>
 					<% end %>
 				</div>
                 
@@ -63,7 +63,7 @@
 															 <i class=""></i>
 															 <div class="input-with_add_but">
 																  <%= link_to '<i class="icon-plus"></i>'.html_safe, new_course_path(tab_page: 1), title: "New Course", :class => 'btn btn-sm btn-small btn-white tab_page' %>
-																  <input style="width:100%;margin-bottom: 5px;" name="contacts_courses[<%= number %>][course_id]" data="<%= courses_path(format: "json") %>" class="select2-ajax-courses main_input registration_course required" box_number="<%= number %>" />
+																  <input style="width:100%;margin-bottom: 5px;" name="contacts_courses[<%= number %>][course_id]" data="<%= courses_path(format: "json", student_id: @contact.id) %>" class="select2-ajax-courses main_input registration_course required" box_number="<%= number %>" />
 															 </div>
 														</div>
 												  </div>

@@ -858,7 +858,8 @@ CREATE TABLE course_registers (
     status text,
     sponsored_company_id integer,
     preferred_mailing character varying,
-    account_manager_id integer
+    account_manager_id integer,
+    cache_search text
 );
 
 
@@ -2972,4 +2973,6 @@ INSERT INTO schema_migrations (version) VALUES ('20150929030738');
 INSERT INTO schema_migrations (version) VALUES ('20150929035828');
 
 INSERT INTO schema_migrations (version) VALUES ('20150930022051');
+
+INSERT INTO schema_migrations (version) VALUES ('20150930040411');
 

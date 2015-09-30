@@ -89,6 +89,8 @@
 			$(".item_budget_hour_"+id).html(ReplaceNumberWithDots(remain.toFixed(0)))
 		  })
 		
+		
+		
 	}
 	
 	function updatePhraseListBoxHour() {
@@ -621,7 +623,7 @@
 		var total_program = 0
 		var total_discount = 0
 		var count = 0
-		
+		calculateBudgetValues()
 		$('.phrase_box_list .phrase_box').each(function() {	
 			var number = $(this).attr("rel")
 			var box = $(this)

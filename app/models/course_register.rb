@@ -28,10 +28,7 @@ class CourseRegister < ActiveRecord::Base
   include PgSearch
   
   pg_search_scope :search,
-                  against: [:mailing_address],
-                  associated_against: {
-                    contact: [:name]
-                  },
+                  against: [:mailing_address, :cache_search],
                   using: {
                       tsearch: {
                         dictionary: 'english',
@@ -41,6 +38,7 @@ class CourseRegister < ActiveRecord::Base
                   }
   
   after_create :update_statuses
+  after_create :update_cache_search
   
   def all_deliveries
     deliveries.where(status: 1).order("deliveries.delivery_date DESC, deliveries.created_at DESC")
@@ -946,6 +944,22 @@ class CourseRegister < ActiveRecord::Base
       records = records.where("payment_date <= ?", date)
     end
     return records
+  end
+  
+  def update_cache_search
+    str = []
+    str << contact.display_name
+    str << description
+    str << display_delivery_status
+    str << total.to_s
+    str << paid_amount.to_s
+    str << remain_amount.to_s
+    str << display_payment_status+display_payment
+    str << self.created_at.strftime("%d-%b-%Y")
+    str << contact.account_manager.name
+    str << display_statuses
+    
+    self.update_attribute(:cache_search, str.join(" "))
   end
   
 end
