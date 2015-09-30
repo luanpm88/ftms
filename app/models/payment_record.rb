@@ -79,7 +79,7 @@ class PaymentRecord < ActiveRecord::Base
     end
     
     if params["receivable"].present?
-      @records = @records.where(cache_payment_status: params["receivable"])
+      @records = @records.where("cache_payment_status LIKE ?", "%#{params["receivable"]}%")
     end
     
     # role
@@ -262,10 +262,11 @@ class PaymentRecord < ActiveRecord::Base
   def payment_status
     if !company.nil?
       if paid?
-        return "paid"
+        str << "paid"
       else
-        return "receivable"
+        str << "receivable"
       end
+      return str
     elsif !transfer.nil?
       transfer.payment_status
     else
@@ -274,7 +275,7 @@ class PaymentRecord < ActiveRecord::Base
   end
   
   def update_statuses
-    self.update_attribute(:cache_payment_status, self.payment_status)
+    self.update_attribute(:cache_payment_status, self.payment_status.join(","))
   end
   
   def self.datatable_payment_list(params, user)
