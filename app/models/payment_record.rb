@@ -15,7 +15,7 @@ class PaymentRecord < ActiveRecord::Base
   include PgSearch
   
   pg_search_scope :search,
-                  against: [:note],
+                  against: [:note, :cache_search],
                   using: {
                       tsearch: {
                         dictionary: 'english',
@@ -26,6 +26,7 @@ class PaymentRecord < ActiveRecord::Base
   
   after_save :update_course_register_statuses
   after_create :update_statuses
+  after_create :update_cache_search
   
   def update_course_register_statuses
     if !course_register.nil?
@@ -453,6 +454,16 @@ class PaymentRecord < ActiveRecord::Base
       self.course_register_ids = @old_record.course_register_ids
       self.amount = @old_record.remain
       self.save
+  end
+  
+  def update_cache_search
+    str = []
+    str << description
+    str << bank_account_name
+    str << contact.display_name
+    str << contact.staff_col
+    
+    update_attribute(:cache_search, str.join(" "))
   end
   
 end

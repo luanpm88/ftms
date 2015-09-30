@@ -1330,7 +1330,8 @@ CREATE TABLE payment_records (
     amount numeric,
     parent_id integer,
     cache_payment_status character varying,
-    transfer_id integer
+    transfer_id integer,
+    cache_search text
 );
 
 
@@ -2969,4 +2970,6 @@ INSERT INTO schema_migrations (version) VALUES ('20150929025355');
 INSERT INTO schema_migrations (version) VALUES ('20150929030738');
 
 INSERT INTO schema_migrations (version) VALUES ('20150929035828');
+
+INSERT INTO schema_migrations (version) VALUES ('20150930022051');
 
