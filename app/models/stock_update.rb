@@ -4,8 +4,10 @@ class StockUpdate < ActiveRecord::Base
   belongs_to :book
   belongs_to :user
   
+  after_create :update_cache_search
+  
   pg_search_scope :search,
-                  against: [:note, :destination],
+                  against: [:note, :destination, :cache_search],
                   associated_against: {
                     book: [:name],
                     user: [:name]
@@ -101,6 +103,18 @@ class StockUpdate < ActiveRecord::Base
       ["Out Of Stock","out_of_stock"],
     ]
   end
-
   
+  def update_cache_search
+  
+    str = []
+    str << book.display_name
+    str << type_name
+    str << quantity.to_s
+    str << created_date.strftime("%d-%b-%Y")
+    str << user.name
+    
+    self.update_attribute(:cache_search, str.join(" "))
+  end
+  
+
 end

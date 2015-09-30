@@ -1,4 +1,6 @@
 class BooksContact < ActiveRecord::Base
+  include PgSearch
+  
   belongs_to :contact
   belongs_to :book
   
@@ -15,6 +17,20 @@ class BooksContact < ActiveRecord::Base
   #  b_ids = self.volumn_ids.split("][").map {|s| s.gsub("[","").gsub("]","") }
   #  return Book.where(id: b_ids)
   #end
+  
+  #pg_search_scope :search,
+  #      against: [],
+  #      associated_against: {
+  #                  contact: [:name],
+  #                  book: [:name]
+  #                },
+  #      using: {
+  #        tsearch: {
+  #          dictionary: 'english',
+  #          any_word: true,
+  #          prefix: true
+  #        }
+  #      }
   
   def no_price?
     price == -1
@@ -173,7 +189,11 @@ class BooksContact < ActiveRecord::Base
     
     @records = @records.includes(:course_register).where("course_registers.status IS NOT NULL AND course_registers.status LIKE ?", "%[active]%")
     
-    @records = @records.search(params["search"]["value"]) if !params["search"]["value"].empty?
+    if !params["search"]["value"].empty?
+      @records = @records.includes(:contact, :book => [:course_type, :subject, :stock_type])
+      q = "%#{params["search"]["value"].downcase}%"
+      @records = @records.where("LOWER(contacts.name) LIKE ? OR LOWER(books.name) LIKE ? OR LOWER(stock_types.name) LIKE ? OR LOWER(course_types.short_name) LIKE ? OR LOWER(subjects.name) LIKE ?", q,q,q,q,q)
+    end
     
     if !params["order"].nil?
       case params["order"]["0"]["column"]

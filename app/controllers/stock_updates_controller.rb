@@ -58,7 +58,8 @@ class StockUpdatesController < ApplicationController
     StockUpdate.update_stocks(params, current_user)
     
     respond_to do |format|
-        format.html { redirect_to import_export_books_path, notice: 'Stock was successfully updated.' }
+        @tab = {url: {controller: "books", action: "index", tab_page: 1}, title: "Stock Management"}
+        format.html { render "/home/close_tab", layout: nil }
         format.json { render action: 'show', status: :created, location: @stock_update }
     end
   end

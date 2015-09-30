@@ -80,7 +80,9 @@ class Ability
       can :add_course, Contact do |c|
         !c.statuses.include?("deleted")
       end      
-      can :update, Contact
+      can :update, Contact do |c|
+        !c.statuses.include?("delete_pending") && !c.statuses.include?("deleted")
+      end
       can :delete, Contact do |c|
         !c.statuses.include?("delete_pending")
       end
@@ -91,7 +93,7 @@ class Ability
       can :read, Course
       can :create, Course
       can :update, Course do |c|
-        c.contacts_courses.empty? && !c.statuses.include?("deleted")
+        !c.statuses.include?("delete_pending") && !c.statuses.include?("deleted")
       end
       can :student_courses, Course
       can :courses_phrases_checkboxs, Course
@@ -110,7 +112,7 @@ class Ability
       can :read, CourseType
       can :create, CourseType
       can :update, CourseType do |c|
-        c.courses.empty? && c.subjects.empty? && c.contacts.empty?
+        !c.statuses.include?("delete_pending") && !c.statuses.include?("deleted")
       end
       can :delete, CourseType do |ct|
         !ct.statuses.include?("delete_pending") && !ct.statuses.include?("deleted")
@@ -123,7 +125,7 @@ class Ability
       can :read, StockType
       can :create, StockType
       can :update, StockType do |c|
-        c.books.empty?
+        !c.statuses.include?("delete_pending") && !c.statuses.include?("deleted")
       end
       can :delete, StockType do |ct|
         !ct.statuses.include?("delete_pending") && !ct.statuses.include?("deleted")
@@ -138,7 +140,7 @@ class Ability
       can :create, Subject
       can :ajax_select_box, Subject
       can :update, Subject do |c|
-        c.phrases.empty?
+        !c.statuses.include?("delete_pending") && !c.statuses.include?("deleted")
       end
       can :delete, Subject do |ct|
         !ct.statuses.include?("delete_pending") && !ct.statuses.include?("deleted")
@@ -154,7 +156,7 @@ class Ability
       can :volumn_checkboxs, Book
       can :stock_price_form, Book      
       can :update, Book do |c|
-        c.books_contacts.empty?
+        !c.statuses.include?("delete_pending") && !c.statuses.include?("deleted")
       end
       can :delete, Book do |c|
         !c.statuses.include?("delete_pending") && !c.statuses.include?("deleted")
@@ -179,7 +181,7 @@ class Ability
       can :read, ContactTag
       can :create, ContactTag
       can :update, ContactTag do |c|
-        c.contacts.empty?
+        !c.statuses.include?("delete_pending") && !c.statuses.include?("deleted")
       end
       can :delete, ContactTag do |c|
         !c.statuses.include?("delete_pending") && !c.statuses.include?("deleted")
@@ -197,7 +199,9 @@ class Ability
       can :seminar_features, Seminar
       can :import_list, Seminar
       can :do_import_list, Seminar
-      can :update, Seminar
+      can :update, Seminar do |c|
+        !c.statuses.include?("delete_pending") && !c.statuses.include?("deleted")
+      end
       can :delete, Seminar do |c|
         !c.statuses.include?("delete_pending") && !c.statuses.include?("deleted")
       end
@@ -210,7 +214,7 @@ class Ability
       can :create, Phrase
       can :update, Phrase
       can :update, Phrase do |c|
-        c.subjects.empty?
+        !c.statuses.include?("delete_pending") && !c.statuses.include?("deleted")
       end
       can :delete, Phrase do |c|
         !c.statuses.include?("delete_pending") && !c.statuses.include?("deleted")
@@ -222,7 +226,7 @@ class Ability
       can :read, DiscountProgram
       can :create, DiscountProgram
       can :update, DiscountProgram do |c|
-        c.course_registers.empty? && c.contacts_courses.empty? && c.books_contacts.empty?
+        !c.statuses.include?("delete_pending") && !c.statuses.include?("deleted")
       end
       can :delete, DiscountProgram do |c|
         !c.statuses.include?("delete_pending") && !c.statuses.include?("deleted")
@@ -271,7 +275,9 @@ class Ability
       can :datatable, Transfer
       can :read, Transfer
       can :create, Transfer
-      can :update, Transfer
+      can :update, Transfer do |c|
+        !c.statuses.include?("delete_pending") && !c.statuses.include?("deleted")
+      end
       can :delete, Transfer do |c|
         !c.statuses.include?("delete_pending") && !c.statuses.include?("deleted")
       end
@@ -392,13 +398,6 @@ class Ability
       end   
       
       
-      can :datatable, Course
-      can :read, Course
-      can :create, Course
-      can :update, Course
-      can :student_courses, Course
-      can :courses_phrases_checkboxs, Course
-      can :course_price_select, Course
       can :approved, Course      
       can :approve_new, Course do |c|
         c.statuses.include?("new_pending")

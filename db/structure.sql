@@ -304,7 +304,8 @@ CREATE TABLE books_contacts (
     updated_at timestamp without time zone NOT NULL,
     quantity integer,
     cache_delivery_status text,
-    upfront boolean DEFAULT false
+    upfront boolean DEFAULT false,
+    cache_search text
 );
 
 
@@ -1617,7 +1618,8 @@ CREATE TABLE stock_updates (
     note text,
     created_at timestamp without time zone NOT NULL,
     updated_at timestamp without time zone NOT NULL,
-    destination text
+    destination text,
+    cache_search text
 );
 
 
@@ -2984,4 +2986,8 @@ INSERT INTO schema_migrations (version) VALUES ('20150930061037');
 INSERT INTO schema_migrations (version) VALUES ('20150930065327');
 
 INSERT INTO schema_migrations (version) VALUES ('20150930084316');
+
+INSERT INTO schema_migrations (version) VALUES ('20150930095837');
+
+INSERT INTO schema_migrations (version) VALUES ('20150930100044');
 
