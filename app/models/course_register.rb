@@ -168,7 +168,7 @@ class CourseRegister < ActiveRecord::Base
       @records = @records.where(payment_type: "company-sponsored").where(sponsored_company_id: params["company"])
     end
     
-    course_ids = []
+    course_ids = nil
     if params["upfront"].present?
       u_course_ids = Course.where(upfront: true).map(&:id)
     end
@@ -187,8 +187,7 @@ class CourseRegister < ActiveRecord::Base
         course_ids -= u_course_ids
       end
     end
-
-    @records = @records.joins(:contacts_courses => :course).where(courses: {id: course_ids}) if !course_ids.empty?
+    @records = @records.joins(:contacts_courses => :course).where(courses: {id: course_ids}) if !course_ids.nil?
 
     
     ########## BEGIN REVISION-FEATURE #########################
