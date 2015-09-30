@@ -229,6 +229,8 @@ class Course < ActiveRecord::Base
     
     params.delete("students")
     @courses = self.filters(params, user)
+    params["students"] = @student.id
+    
     @course_ids = @courses.map(&:id)
     
     @all_courses =  @student.active_courses_with_phrases
