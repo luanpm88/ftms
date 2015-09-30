@@ -9,7 +9,7 @@
                 <div class="budget_values hidden">
 					<div class="budget_money"><%= @contact.budget_money %></div>
 					<% @contact.budget_hour.each do |val| %>
-						 <div class="budget_hour budget_hour_<%= val[0] %>" rel="1<%= val[0] %>">1<%= val[1] %></div>
+						 <div class="budget_hour budget_hour_<%= val[0] %>" rel="<%= val[0] %>"><%= val[1] %></div>
 					<% end %>
 				</div>
                 
