@@ -184,7 +184,7 @@ class CourseRegister < ActiveRecord::Base
         course_ids = Course.where("EXTRACT(MONTH FROM courses.intake) = ? ", params["intake_month"]).map(&:id)
       end
       if params["upfront"] == "false"
-        course_ids -= u_course_ids
+        course_ids -= u_course_ids if !course_ids.nil?
       end
     end
     @records = @records.joins(:contacts_courses => :course).where(courses: {id: course_ids}) if !course_ids.nil?
