@@ -261,16 +261,16 @@ class PaymentRecord < ActiveRecord::Base
   
   def payment_status
     if !company.nil?
+      return course_register.payment_status
+    elsif !transfer.nil?
+      transfer.payment_status
+    else      
       if paid?
         str << "paid"
       else
         str << "receivable"
       end
       return str
-    elsif !transfer.nil?
-      transfer.payment_status
-    else
-      return course_register.payment_status
     end
   end
   
