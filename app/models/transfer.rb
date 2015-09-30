@@ -21,6 +21,7 @@ class Transfer < ActiveRecord::Base
   ########## END REVISION ###############
   
   after_create :update_statuses
+  after_update :update_contact_info
   
   pg_search_scope :search,
                   against: [:money],
@@ -31,6 +32,11 @@ class Transfer < ActiveRecord::Base
                         prefix: true
                       }
                   }
+  
+  def update_contact_info
+    self.contact.update_info
+    self.to_contact.update_info
+  end
   
   def all_payment_records
     payment_records.where(status: 1).order("payment_date DESC, payment_records.created_at DESC")

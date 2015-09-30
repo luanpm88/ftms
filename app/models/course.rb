@@ -227,7 +227,18 @@ class Course < ActiveRecord::Base
     
     @student = Contact.find(params[:students])
     
-    @records =  @student.active_courses_with_phrases
+    @courses = self.filters(params, user)
+    @course_ids = @courses.where(contacts_courses: {contact_id: @student.id}).map(&:id)
+    
+    @all_courses =  @student.active_courses_with_phrases
+    
+    @records = []
+    @all_courses.each do |c|
+      if @course_ids.include?(c[:course].id)
+        @records << c
+      end      
+    end
+    
     @records = @records.sort {|a, b| b[:course].intake <=> a[:course].intake}
     
     total = @records.count

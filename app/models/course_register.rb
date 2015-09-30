@@ -948,6 +948,8 @@ class CourseRegister < ActiveRecord::Base
   end
   
   def update_cache_search
+    return if !self.parent_id.nil?
+    
     str = []
     str << contact.display_name
     str << description

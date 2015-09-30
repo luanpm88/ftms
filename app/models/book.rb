@@ -27,7 +27,11 @@ class Book < ActiveRecord::Base
   mount_uploader :image, BookUploader
   
   pg_search_scope :search,
-                against: [:name, :publisher],                
+                against: [:name, :publisher],
+                associated_against: {
+                  course_type: [:short_name],
+                  subject: [:name]
+                },
                 using: {
                   tsearch: {
                     dictionary: 'english',
@@ -69,8 +73,8 @@ class Book < ActiveRecord::Base
   
   def self.filter(params, user)
     @records = self.main_books.includes(:stock_type, :course_type, :subject, :books_contacts => :course_register)
-    @records = @records.where("books.course_type_ids LIKE ? OR books.course_type_ids LIKE ? OR books.course_type_ids LIKE ? OR books.course_type_ids LIKE ? ", "%[#{params["program_id"]},%", "%,#{params["program_id"]},%", "%,#{params["program_id"]}]%", "%[#{params["program_id"]}]%") if params["program_id"].present?
-    @records = @records.where("books.subject_ids LIKE ? OR books.subject_ids LIKE ? OR books.subject_ids LIKE ? OR books.subject_ids LIKE ? ", "%[#{params["subject_id"]},%", "%,#{params["subject_id"]},%", "%,#{params["subject_id"]}]%", "%[#{params["subject_id"]}]%") if params["subject_id"].present?
+    @records = @records.where(course_type_id: params["program_id"]) if params["program_id"].present?
+    @records = @records.where(subject_id: params["subject_id"]) if params["subject_id"].present?
     
     ########## BEGIN REVISION-FEATURE #########################
     
@@ -277,8 +281,8 @@ class Book < ActiveRecord::Base
               item.book_link(item.display_name),
               '<div class="text-left">'+item.publisher.to_s+"</div>",
               '<div class="text-center">'+item.active_books_contacts.where(contact_id: @student.id).sum(:quantity).to_s+"</div>", #'<div class="text-right">'+ApplicationController.helpers.format_price(@student.books_contact(item).total)+"</div>",
-              '<div class="text-center">'+ item.display_registerd_at+"</div>",
-              '<div class="text-center">'+ item.display_delivery_status+"</div>", 
+              '<div class="text-center">'+ item.display_registerd_at(@student)+"</div>",
+              '<div class="text-center">'+ item.display_delivery_status(@student)+"</div>", 
               '<div class="text-center">'+item.user.staff_col+"</div>",
               ""
             ]
@@ -301,13 +305,13 @@ class Book < ActiveRecord::Base
     CourseRegister.where(id: active_books_contacts.map(&:course_register_id))
   end
   
-  def display_registerd_at
-    (course_registers.map {|cr| cr.created_at.strftime("%d-%b-%Y")}).join("<br />").html_safe
+  def display_registerd_at(contact)
+    (course_registers.where(contact_id: contact.id).map {|cr| cr.created_at.strftime("%d-%b-%Y")}).join("<br />").html_safe
   end
   
-  def display_delivery_status
+  def display_delivery_status(contact)
     str = []
-    active_books_contacts.each do |bc|
+    active_books_contacts.where(contact_id: contact.id).each do |bc|
       str << bc.display_delivery_status
     end
     return str.join("<br />").html_safe

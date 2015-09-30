@@ -511,11 +511,22 @@ class Contact < ActiveRecord::Base
   end
   
   def joined_course_types
-    active_contacts_courses.map {|cc| cc.course.course_type}.uniq
+    # active_contacts_courses.map {|cc| cc.course.course_type}.uniq
+    cts = []
+    active_courses_with_phrases.each do |row|
+      cts << row[:course].course_type
+    end
+    
+    return cts.uniq
   end
   
   def intakes
-    active_contacts_courses.map {|cc| {year: cc.course.intake.year, month: cc.course.intake.month}}.uniq    
+    # active_contacts_courses.map {|cc| {year: cc.course.intake.year, month: cc.course.intake.month}}.uniq
+    result = []
+    active_courses_with_phrases.each do |row|
+      result << {year: row[:course].intake.year, month: row[:course].intake.month}
+    end
+    return result.uniq
   end
   
   def update_cache_intakes
@@ -523,7 +534,12 @@ class Contact < ActiveRecord::Base
   end
   
   def subjects
-    contacts_courses.map {|cc| cc.course.subject}.uniq
+    # contacts_courses.map {|cc| cc.course.subject}.uniq
+    sus = []
+    active_courses_with_phrases.each do |row|
+      sus << row[:course].subject
+    end    
+    return sus.uniq
   end
   
   def update_cache_subjects
@@ -759,11 +775,6 @@ class Contact < ActiveRecord::Base
   
   pg_search_scope :search,
                 against: [:name, :address, :website, :phone, :mobile, :fax, :email, :tax_code, :note, :account_number, :bank, :bases],
-                associated_against: {
-                  city: [:name],
-                  state: [:name],
-                  agents: [:name]
-                },
                 using: {
                   tsearch: {
                     dictionary: 'english',
@@ -917,13 +928,13 @@ class Contact < ActiveRecord::Base
   end
   
   def course_list_link(title=nil)
-    title = title.nil? ? "Course List (#{active_courses.count.to_s})" : title
+    title = title.nil? ? "Course List (#{active_courses_with_phrases.count.to_s})" : title
     ActionController::Base.helpers.link_to(title, {controller: "contacts", action: "edit", id: self.id, tab_page: 1, tab: "course"}, title: "#{display_name}: Course List", class: "tab_page")
   end
   
   def course_count_link
     if is_individual
-      result = active_courses.count == 0 ? "" : self.course_list_link("["+active_courses.count.to_s+"]")
+      result = active_courses_with_phrases.count == 0 ? "" : self.course_list_link("["+active_courses_with_phrases.count.to_s+"]")
     else
       result = contacts_link
     end
@@ -1568,5 +1579,19 @@ class Contact < ActiveRecord::Base
     end
     return false
   end
+  
+  #def update_cache_search
+  #  str = []
+  #  str << 
+  #  str <<
+  #  str <<
+  #  str <<
+  #  str <<
+  #  str <<
+  #  str <<
+  #  str << 
+  #end
+  
+  
   
 end

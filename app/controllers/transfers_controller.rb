@@ -44,6 +44,10 @@ class TransfersController < ApplicationController
         @transfer.update_status("create", current_user)        
         @transfer.save_draft(current_user)
         
+        # update contact infos
+        Contact.find(@transfer.contact_id).update_info
+        Contact.find(@transfer.to_contact_id).update_info
+        
         @tab = {url: {controller: "contacts", action: "edit", id: @transfer.contact.id, tab_page: 1, tab: "transfer"}, title: @transfer.contact.display_name}
         format.html { render "/home/close_tab", layout: nil }
         format.json { render action: 'show', status: :created, location: @transfer }
@@ -61,6 +65,10 @@ class TransfersController < ApplicationController
       if @transfer.update(transfer_params)
         @transfer.update_status("update", current_user)        
         @transfer.save_draft(current_user)
+        
+        # update contact infos
+        Contact.find(@transfer.contact_id).update_info
+        Contact.find(@transfer.to_contact_id).update_info
         
         format.html { redirect_to params[:tab_page].present? ? "/home/close_tab" : @transfer, notice: 'Transfer was successfully updated.' }
         format.json { head :no_content }
