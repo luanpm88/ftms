@@ -102,9 +102,9 @@ class Course < ActiveRecord::Base
   
   def self.filters(params, user, active=false)
     if active
-      @records = self.active_courses.joins(:course_type,:subject)
+      @records = self.active_courses.joins(:course_type,:subject,:contacts)
     else
-      @records = self.main_courses.joins(:course_type,:subject)
+      @records = self.main_courses.joins(:course_type,:subject,:contacts)
     end
     
     
@@ -228,7 +228,7 @@ class Course < ActiveRecord::Base
     @student = Contact.find(params[:students])
     
     @courses = self.filters(params, user)
-    @course_ids = @courses.where(contacts_courses: {contact_id: @student.id}).map(&:id)
+    @course_ids = @courses.map(&:id)
     
     @all_courses =  @student.active_courses_with_phrases
     
