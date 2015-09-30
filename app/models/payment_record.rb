@@ -318,9 +318,11 @@ class PaymentRecord < ActiveRecord::Base
       @records = @records.includes(:course_register).where(course_registers: {payment_type: "company-sponsored", sponsored_company_id: params["company"]})
     end
     
-    
-    
-    @records = @records.search(params["search"]["value"]) if !params["search"]["value"].empty?
+    if !params["search"]["value"].empty?
+      q = params["search"]["value"].downcase
+      @records = @records.joins(:contact, :course => :course_types)
+                          .where("LOWER(contacts.name) LIKE ? OR course_types.short_name LIKE ?", q, q)
+    end
     
     if !params["order"].nil?
       case params["order"]["0"]["column"]
