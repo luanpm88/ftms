@@ -181,7 +181,7 @@ class CourseRegister < ActiveRecord::Base
       course_ids = Course.where("EXTRACT(MONTH FROM courses.intake) = ? ", params["intake_month"]).map(&:id)
     end
     
-    course_ids += u_course_ids if u_course_ids.present?
+    course_ids -= u_course_ids if u_course_ids.present?
     @records = @records.joins(:contacts_courses => :course).where(courses: {id: course_ids}) if !course_ids.empty?
 
     
