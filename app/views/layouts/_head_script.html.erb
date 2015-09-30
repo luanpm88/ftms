@@ -1801,16 +1801,16 @@
 						d.intake_year =  $(".course-register-filter select[name='filter[intake(1i)]']").val()
 					}
 					
-					if($(".course-register-filter input[name='courses']").val()) {
-						d.courses =  $(".course-register-filter input[name='courses']").val()
+					if($(".course-register-filter input[name='courses']").select2("val")) {
+						d.courses =  $(".course-register-filter input[name='courses']").select2("val")
 					}
 					
-					if($(".course-register-filter input[name='courses_phrases']").val()) {
-						d.courses_phrases =  $(".course-register-filter input[name='courses_phrases']").val()
+					if($(".course-register-filter input[name='courses_phrases']").select2("val")) {
+						d.courses_phrases =  $(".course-register-filter input[name='courses_phrases']").select2("val")
 					}
 					
-					if($(".course-register-filter input[name='student']").val()) {
-						d.student =  $(".course-register-filter input[name='student']").val()
+					if($(".course-register-filter input[name='student']").select2("val")) {
+						d.student =  $(".course-register-filter input[name='student']").select2("val")
 					}
 					
 					d.delivery_statuses = $(".course-register-filter select[name='delivery_statuses']").val()
