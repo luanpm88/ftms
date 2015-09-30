@@ -168,28 +168,20 @@ class CourseRegister < ActiveRecord::Base
       @records = @records.where(payment_type: "company-sponsored").where(sponsored_company_id: params["company"])
     end
     
-    if params["upfront"].present?
-      u_course_ids = Course.where(upfront: params["upfront"]).map(&:id)
-    end
-    
     course_ids = []
-    if params["intake_year"].present? && params["intake_month"].present?
-      course_ids = Course.where("EXTRACT(YEAR FROM courses.intake) = ? AND EXTRACT(MONTH FROM courses.intake) = ? ", params["intake_year"], params["intake_month"]).map(&:id)
-    elsif params["intake_year"].present?
-      course_ids = Course.where("EXTRACT(YEAR FROM courses.intake) = ? ", params["intake_year"]).map(&:id)
-    elsif params["intake_month"].present?
-      course_ids = Course.where("EXTRACT(MONTH FROM courses.intake) = ? ", params["intake_month"]).map(&:id)
+    if params["upfront"] == "true"
+      course_ids = Course.where(upfront: params["upfront"]).map(&:id)
+    else      
+      if params["intake_year"].present? && params["intake_month"].present?
+        course_ids = Course.where("EXTRACT(YEAR FROM courses.intake) = ? AND EXTRACT(MONTH FROM courses.intake) = ? ", params["intake_year"], params["intake_month"]).map(&:id)
+      elsif params["intake_year"].present?
+        course_ids = Course.where("EXTRACT(YEAR FROM courses.intake) = ? ", params["intake_year"]).map(&:id)
+      elsif params["intake_month"].present?
+        course_ids = Course.where("EXTRACT(MONTH FROM courses.intake) = ? ", params["intake_month"]).map(&:id)
+      end
     end
-    
-    course_ids -= u_course_ids if u_course_ids.present?
     @records = @records.joins(:contacts_courses => :course).where(courses: {id: course_ids}) if !course_ids.empty?
 
-    
-    
-    
-    
-    
-    
     
     ########## BEGIN REVISION-FEATURE #########################
     
