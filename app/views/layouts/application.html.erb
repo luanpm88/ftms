@@ -334,7 +334,7 @@
 			  <% end %>
 			  <ul class="sub-menu">
 				<li><%= link_to 'Course/Stock Registration Payment', payment_list_payment_records_path(tab_page:1), class: "tab_page" %></li>
-				<li><%= link_to 'Defer/Transfer Payment', transfers_path(tab_page:1), class: "tab_page" %></li>
+				<li><%= link_to 'Defer/Transfer Payment', transfers_path(tab_page:1), title: "Defer/Transfer Payment", class: "tab_page" %></li>
 				<li<% if params[:controller] == "payment_records" %> class="active"<% end %>><%= link_to 'Payment Record', payment_records_path(tab_page:1), class: "tab_page" %></li>
 				<li<% if params[:controller] == "bank_accounts" %> class="active"<% end %>>
 					<a title="Bank Account (pending)" href="<%= url_for(bank_accounts_path(tab_page:1, status: "pending")) %>" class="tab_page noti">
@@ -451,7 +451,7 @@
 							<a title="Defer/Transfer Management (approved)" href="<%= url_for(transfers_path(tab_page:1, status: "approved")) %>" class="tab_page noti approved">
 								<span class="badge badge-important pull-right alert-level2"><%= Notification.transfer_approved_count(current_user) %></span>
 							</a>
-							<%= link_to 'Defer/Transfer Management', transfers_path(tab_page:1), class: "tab_page" %>
+							<%= link_to 'Defer/Transfer Management', transfers_path(tab_page:1), title: "Defer/Transfer Management", class: "tab_page" %>
 						</li>
 					</ul>
 			</li>
