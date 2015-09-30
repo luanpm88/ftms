@@ -18,6 +18,9 @@ class Subject < ActiveRecord::Base
   
   pg_search_scope :search,
                   against: [:name, :description],
+                  associated_against: {
+                    course_types: [:short_name]
+                  },
                   using: {
                       tsearch: {
                         dictionary: 'english',

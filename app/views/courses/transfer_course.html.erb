@@ -145,7 +145,7 @@
 			   if($("input[name='transfer[money]']").length) {
 				 to_money = $("input[name='transfer[money]']").val();
 			   }
-			   return to_course != "" || to_hour != "" || to_course != "";
+			   return to_course != "" || to_hour != "" || to_money != "";
 		  }, "Unvalid transfer details. Please check the details below.");
 
 		  $("input[name='transfer[admin_fee]']").rules('add', {

@@ -99,7 +99,10 @@
 				if (box.find(".courses_phrase_item").length) {					
 					var total = 0
 					var money = 0.0
-					var per_hour = parseFloat(box.find(".total_phrase_money").attr("per_hour").replace(/,/g,""))
+					var per_hour = 0
+					if(box.find(".total_phrase_money").length) {
+						parseFloat(box.find(".total_phrase_money").attr("per_hour").replace(/,/g,""))
+					}
 					box.find(".courses_phrase_item").each(function() {
 						if ($(this).prop('checked')) {
 							total += parseInt($(this).attr("hour"))

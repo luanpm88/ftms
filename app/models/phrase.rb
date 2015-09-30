@@ -17,7 +17,7 @@ class Phrase < ActiveRecord::Base
   ########## END REVISION ###############
   
   pg_search_scope :search,
-                  against: [:name, :description],                
+                  against: [:name, :description],                  
                   using: {
                       tsearch: {
                         dictionary: 'english',

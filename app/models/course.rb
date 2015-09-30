@@ -102,10 +102,12 @@ class Course < ActiveRecord::Base
   
   def self.filters(params, user, active=false)
     if active
-      @records = self.active_courses.joins(:course_type,:subject,:contacts)
+      @records = self.active_courses.joins(:course_type,:subject)
     else
-      @records = self.main_courses.joins(:course_type,:subject,:contacts)
+      @records = self.main_courses.joins(:course_type,:subject)
     end
+    
+    @records = @records.includes(:contacts)
     
     
     
@@ -117,7 +119,6 @@ class Course < ActiveRecord::Base
     @records = @records.where("courses.subject_id IN (#{params["subjects"].join(",")})") if params["subjects"].present?
     
     if params["students"].present?
-      @records = @records.includes(:contacts)
       @records = @records.where("contacts.id IN (#{params["students"]})") if params["students"].present?
     end
     
