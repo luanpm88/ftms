@@ -227,7 +227,7 @@ class Course < ActiveRecord::Base
     
     @student = Contact.find(params[:students])
     
-    @courses = self.filters(params, user)
+    @courses = self.filters(params.delete("students"), user)
     @course_ids = @courses.map(&:id)
     
     @all_courses =  @student.active_courses_with_phrases
