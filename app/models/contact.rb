@@ -1358,7 +1358,7 @@ class Contact < ActiveRecord::Base
     
     active_transfers.where.not(from_hour: nil).each do |transfer|
         JSON.parse(transfer.from_hour).each do |row|
-          hours[row[0]] -= row[1].to_f
+          hours[row[0]] = hours[row[0]].nil? ? -row[1].to_f : hours[row[0]] - row[1].to_f
         end
     end
     

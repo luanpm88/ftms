@@ -92,6 +92,8 @@ class ContactsController < ApplicationController
     @contact.user_id = current_user.id
     @contact.sex = "male"
     
+    
+    
     #base
     @contact.update_bases(params[:bases])    
     
@@ -103,6 +105,7 @@ class ContactsController < ApplicationController
           filename = params[:headshot_url].split("/").last
           @contact.image = File.open("public/headshots/"+filename)
     end
+    
 
     respond_to do |format|
       if @contact.save
@@ -115,6 +118,7 @@ class ContactsController < ApplicationController
         format.html { redirect_to params[:tab_page].present? ? {action: "edit", id: @contact.id,tab_page: 1} : contacts_url, notice: 'Contact was successfully created.' }
         format.json { render action: 'show', status: :created, location: @contact }
       else
+        @activity = Activity.new(contact_id: @contact.id)
         format.html { render action: 'new', tab_page: params[:tab_page] }
         format.json { render json: @contact.errors, status: :unprocessable_entity }
       end
@@ -124,6 +128,14 @@ class ContactsController < ApplicationController
   # PATCH/PUT /contacts/1
   # PATCH/PUT /contacts/1.json
   def update
+    @student = @contact
+    if params[:from_date].present? && params[:to_date].present?
+      @from_date = params[:from_date].to_date
+      @to_date =  params[:to_date].to_date.end_of_day
+    else
+      @from_date = nil
+      @to_date =  DateTime.now
+    end
     
     if params[:contact_tag].present?
       @contact_tag = ContactTag.find(params[:contact_tag])
@@ -133,6 +145,11 @@ class ContactsController < ApplicationController
           filename = params[:headshot_url].split("/").last
           @contact.image = File.open("public/headshots/"+filename)
           @contact.save
+    end
+    
+    if params[:avatar_method] == "upload" && !contact_params[:image].present?
+      @contact.remove_image!
+      @contact.save
     end
     
     s_params = contact_params
@@ -154,6 +171,7 @@ class ContactsController < ApplicationController
         format.html { redirect_to params[:tab_page].present? ? {action: "edit",id: @contact.id,tab_page: 1} : contacts_url, notice: 'Contact was successfully updated.' }
         format.json { head :no_content }
       else
+        @activity = Activity.new(contact_id: @contact.id)
         format.html { render action: 'edit', tab_page: params[:tab_page] }
         format.json { render json: @contact.errors, status: :unprocessable_entity }
       end

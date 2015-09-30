@@ -1131,7 +1131,7 @@
 		$('.image-boxes .image-box .delete-but').click(function(e) {
 			img = $(this).parents('.image-box').find("img.new_picture")
 			icon = $(this).parents('.image-box').find(".current_img")
-			$(this).parent().find("input[type='file']").val("")
+			$(this).parents(".image-box").find("input[type='file']").val("")
 			img.addClass("hidden");
 			icon.removeClass("hidden");
 			
@@ -2819,16 +2819,15 @@
 		
 		$('.fancybox').fancybox();
 		
-		changeMailingPreferred($('select[name="contact[preferred_mailing]"]'))
-		changeMailingPreferred($('select[name="course_register[preferred_mailing]"]'))
-		$('select[name="contact[preferred_mailing]"],select[name="course_register[preferred_mailing]"]').change(function() {
+		
+		$('select[name="course_register[preferred_mailing]"]').change(function() {
 			changeMailingPreferred($(this))
-		})
-		
-		
+		})	
 		$('select[name="contact[preferred_mailing]"]').change(function() {
 			changeMailingPreferred($(this))
 		})
+		$('select[name="contact[preferred_mailing]"]').trigger("change")
+		$('select[name="course_register[preferred_mailing]"]').trigger("change")
 		
 		
 		$(document).on("change",".phrase_boxx .main_input",function() {
