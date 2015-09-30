@@ -264,7 +264,8 @@ class PaymentRecord < ActiveRecord::Base
       return course_register.payment_status
     elsif !transfer.nil?
       transfer.payment_status
-    else      
+    else
+      str = []
       if paid?
         str << "paid"
       else
