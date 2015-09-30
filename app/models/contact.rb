@@ -130,7 +130,7 @@ class Contact < ActiveRecord::Base
     self.update_cache_course_type_ids
     self.update_cache_intakes
     self.update_cache_subjects
-    self.update_cache_search
+    self.update_cache_courses
   end
   
   def check_type
@@ -209,8 +209,7 @@ class Contact < ActiveRecord::Base
     @records = @records.where("contacts.referrer_id IN (#{params[:companies]})") if params[:companies].present?
     
     if params[:courses].present?
-      c_ids = Course.find(params[:courses]).active_contacts.map(&:id)
-      @records = @records.where(id: c_ids)
+      @records = @records.where("contacts.cache_courses LIKE ?", "%[#{params[:courses]}]%")
     end
     
     if params[:courses_phrases].present?
@@ -1594,6 +1593,17 @@ class Contact < ActiveRecord::Base
     self.update_attribute(:cache_search, str.join(" "))
   end
   
+  def real_courses
+    arr = []
+    active_courses_with_phrases.each do |row|
+      arr << row[:course]
+    end
+    
+    return arr
+  end
   
+  def update_cache_courses
+    self.update_attribute(:cache_courses, "["+real_courses.map(&:id).join("][")+"]")
+  end
   
 end

@@ -15,12 +15,12 @@
                     
                       <div class="col-md-4">
                         <h4>Program</h4>
-						<%= select_tag 'filter[course_types[]]', options_for_select(CourseType.all.collect{ |u| [u.short_name, u.id] }), class: "modern_select width100", multiple: "multiple" %>
+						<%= select_tag 'filter[course_types[]]', options_for_select(CourseType.active_course_types.collect{ |u| [u.short_name, u.id] }), class: "modern_select width100", multiple: "multiple" %>
                       </div>
                       
                       <div class="col-md-4">
                         <h4>Paper</h4>
-						<%= select_tag 'filter[subjects[]]', options_for_select(Subject.all.collect{ |u| [u.name, u.id] }), class: "modern_select width100", multiple: "multiple" %>
+						<%= select_tag 'filter[subjects[]]', options_for_select(Subject.active_subjects.collect{ |u| [u.name, u.id] }), class: "modern_select width100", multiple: "multiple" %>
                       </div>
                       
 					  <div class="col-md-3">

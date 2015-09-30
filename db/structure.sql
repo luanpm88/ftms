@@ -598,7 +598,8 @@ CREATE TABLE contacts (
     "tmp_StudentID" text,
     annoucing_user_ids text,
     creator_id integer,
-    cache_search text
+    cache_search text,
+    cache_courses text
 );
 
 
@@ -2981,4 +2982,6 @@ INSERT INTO schema_migrations (version) VALUES ('20150930040411');
 INSERT INTO schema_migrations (version) VALUES ('20150930061037');
 
 INSERT INTO schema_migrations (version) VALUES ('20150930065327');
+
+INSERT INTO schema_migrations (version) VALUES ('20150930084316');
 

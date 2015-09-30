@@ -118,9 +118,10 @@ class Course < ActiveRecord::Base
     @records = @records.where("courses.course_type_id IN (#{params["course_types"].join(",")})") if params["course_types"].present?
     @records = @records.where("courses.subject_id IN (#{params["subjects"].join(",")})") if params["subjects"].present?
     
-    if params["students"].present?
-      @records = @records.where("contacts.id IN (#{params["students"]})") if params["students"].present?
-    end
+    #if params["students"].present?
+    #  course_ids = Contact.find(params["students"]).real_courses.map(&:id)
+    #  @records = @records.where(id: course_ids)
+    #end
     
     if params["lecturers"].present?
       @records = @records.where("courses.lecturer_id IN (#{params["lecturers"]})") if params["lecturers"].present?
@@ -385,7 +386,7 @@ class Course < ActiveRecord::Base
   end
   
   def student_count_link
-    student_list_link("["+contacts.count.to_s+"]")
+    student_list_link("["+real_contacts.count.to_s+"]")
   end
   
   def course_link(title=nil, psrc=nil)
@@ -709,6 +710,10 @@ class Course < ActiveRecord::Base
   
   def total_hour
     courses_phrases.sum(:hour)
+  end
+  
+  def real_contacts
+    Contact.main_contacts.where("cache_courses LIKE ?", "%[#{self.id}]%")
   end
   
 end

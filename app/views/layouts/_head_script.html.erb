@@ -1368,7 +1368,7 @@
 					d.is_individual = $(".contact-filter select[name=is_individual]").select2("val");
 					
 					if($(".contact-filter select[name='tags[]']").val()) {
-						d.tags = $(".contact-filter select[name='tags[]']").val()
+						d.tags = $(".contact-filter select[name='tags[]'").val()
 					}
 					
 					if($(".contact-filter select[name='course_types[]']").val()) {
@@ -1412,10 +1412,15 @@
 					}
 					
 					if($(".contact-filter select[name='payment_type']").val()) {
-						d.created_to =  $(".contact-filter select[name='payment_type']").val()
+						d.payment_type =  $(".contact-filter select[name='payment_type']").val()
 					}
+					
 					if($(".contact-filter input[name='company']").val()) {
 						d.company =  $(".contact-filter input[name='company']").val()
+					}
+					
+					if($(".contact-filter select[name='user']").val()) {
+						d.user =  $(".contact-filter select[name='user']").val()
 					}
 				}				
 			},
@@ -1446,7 +1451,7 @@
 					d.is_individual = $(".contact-filter select[name=is_individual]").select2("val");
 					
 					if($(".contact-filter select[name='tags[]']").val()) {
-						d.tags = $(".contact-filter select[name='tags[]']").val()
+						d.tags = $(".contact-filter select[name='tags[]'").val()
 					}
 					
 					if($(".contact-filter select[name='course_types[]']").val()) {
@@ -1466,7 +1471,7 @@
 					}
 					
 					if($(".contact-filter input[name='courses']").val()) {
-						d.courses = $(".contact-filter input[name='courses']").val()
+						d.courses =  $(".contact-filter input[name='courses']").val()
 					}
 					
 					if($(".contact-filter input[name='seminars']").val()) {
@@ -1490,11 +1495,15 @@
 					}
 					
 					if($(".contact-filter select[name='payment_type']").val()) {
-						d.created_to =  $(".contact-filter select[name='payment_type']").val()
+						d.payment_type =  $(".contact-filter select[name='payment_type']").val()
 					}
 					
 					if($(".contact-filter input[name='company']").val()) {
 						d.company =  $(".contact-filter input[name='company']").val()
+					}
+					
+					if($(".contact-filter select[name='user']").val()) {
+						d.user =  $(".contact-filter select[name='user']").val()
 					}
 				}
 			},
