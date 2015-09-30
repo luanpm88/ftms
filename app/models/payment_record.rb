@@ -96,6 +96,11 @@ class PaymentRecord < ActiveRecord::Base
     @records = self.filter(params, user).where(parent_id: nil)
     
     @records = @records.search(params["search"]["value"]) if !params["search"]["value"].empty?
+    #if !params["search"]["value"].empty?
+    #  q = params["search"]["value"].downcase
+    #  @records = @records.joins(:course_register => :contact, :course => :course_types)
+    #                      .where("LOWER(contacts.name) LIKE ? OR course_types.short_name LIKE ?", q, q)
+    #end
     
     if !params["order"].nil?
       case params["order"]["0"]["column"]
