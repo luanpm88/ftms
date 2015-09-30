@@ -170,7 +170,7 @@ class CourseRegister < ActiveRecord::Base
     
     course_ids = nil
     if params["upfront"].present?
-      u_course_ids = Course.where(upfront: true).map(&:id)
+      u_course_ids = Course.where(upfront: params["upfront"]).map(&:id)
     end
     
     if params["upfront"] == "true"
