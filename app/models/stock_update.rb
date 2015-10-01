@@ -112,6 +112,7 @@ class StockUpdate < ActiveRecord::Base
     str << quantity.to_s
     str << created_date.strftime("%d-%b-%Y")
     str << user.name
+    str << user.name.unaccent
     
     self.update_attribute(:cache_search, str.join(" "))
   end

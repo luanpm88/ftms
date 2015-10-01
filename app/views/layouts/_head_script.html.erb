@@ -1,22 +1,36 @@
 <script>
 	
 	function calculateTransferHourFrom() {
+		var money = 0
 		$('.hour_input_group').each(function() {
 			var box = $(this)
 			var total = parseFloat(box.find(".budget_hour").attr("value").replace(/,/g,""))
 			var input = 0
+			var remain = total
+			var hour_rate = 0
 			
-			if (box.find(".input_budget_hour").val() != "") {
-			  var vv = parseFloat(box.find(".input_budget_hour").val().replace(/,/g,""))    
-			  if (vv > total) {
-						  vv = total
-						  box.find(".input_budget_hour").val(ReplaceNumberWithDots(total.toFixed(0)))
-				  }
-			  
-			  var remain = total - vv
-			  box.find(".budget_hour").html(ReplaceNumberWithDots(remain.toFixed(0)))
+			if (box.find(".hour_rate").html() != "") {
+				hour_rate = parseFloat(box.find(".hour_rate").html().replace(/,/g,""))  
 			}
+			if (box.find(".input_budget_hour").val() != "") {
+				var vv = parseFloat(box.find(".input_budget_hour").val().replace(/,/g,""))    
+				if (vv > total) {
+						vv = total
+						box.find(".input_budget_hour").val(ReplaceNumberWithDots(total.toFixed(0)))
+				}
+			  
+				input += vv				
+			} else {
+				box.find(".input_budget_hour").val(0)
+			}
+			
+			remain = total - input
+			
+			box.find(".budget_hour").html(ReplaceNumberWithDots(remain.toFixed(0)))
+			
+			money += hour_rate*input
 		})
+		$(".transfer_hour_money_total").val(ReplaceNumberWithDots(money.toFixed(0)))
 	}
 	
 	function calculateTransferPayForm() {
@@ -121,6 +135,8 @@
 				hour = parseFloat($(".transfer_course_box .total_phrase_hour").html().replace(/,/g,""))
 			}
 			
+			$("input[name='transfer[hour]']").val(hour)			
+			
 			if (hour == "") {
 				$(".to_phrase_list_box_hour_money").each(function() {
 				var box = $(this)
@@ -146,7 +162,7 @@
 			$("input[name='transfer[to_course_hour]']").val(hour)
 			$("input[name='transfer[to_course_money]']").val(money)
 			
-			$("input[name='transfer[hour]']").val(hour)
+			$("input[name='transfer[hour_money]']").val(money)
 			$("input[name='transfer[money]']").val(money)
 	}
 	
@@ -633,6 +649,7 @@
 			if (!$(this).hasClass("hidden") && box.find('input[name="contacts_courses['+number+'][course_id]"]').val() != "") {
 				if (box.find(".price_course").select2("val") != "no_price") {
 					var line_total = 0
+					var list_price = 0
 					var price = 0
 					var price_discount_program = 0
 					var price_discount = 0
@@ -641,8 +658,9 @@
 					var additional_money = 0
 			
 					if(box.find('select[name="contacts_courses['+number+'][price]"]').length) {
-					  price = parseFloat(box.find('select[name="contacts_courses['+number+'][price]"]').val())
+					  price = parseFloat(box.find('select[name="contacts_courses['+number+'][price]"]').val())					  
 					}
+					list_price = price
 					
 					// Use Hour
 					if(box.find('input[name="contacts_courses['+number+'][hour]"]').length && box.find('input[name="contacts_courses['+number+'][hour]"]').val() != "") {
@@ -678,10 +696,15 @@
 							var d_value = parseFloat(text.split("[")[1].split("]")[0].replace(/,/g,""))
 							
 							if(pp_type=="%") {
-							  d_value = (d_value/100)*price
+								if ($(this).find("input.discount_program_type:checked").val() == "list_price") {
+									d_value = (d_value/100)*list_price
+								} else {
+									d_value = (d_value/100)*price
+								}
+								
 							}
 							
-							price_discount_program = price_discount_program + d_value
+							price = price - d_value
 						}					
 					})
 					
@@ -694,7 +717,7 @@
 						}					
 					})
 					
-					line_total = price - price_discount - price_discount_program
+					line_total = price - price_discount // - price_discount_program
 					total_list = total_list + price
 					total_program = total_program + price_discount_program
 					total_discount = total_discount + price_discount

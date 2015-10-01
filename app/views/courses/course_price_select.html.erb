@@ -49,9 +49,9 @@
                                    <div class="col-md-6">
                                         <div class="input-with-icon right">                                       
                                              <div class="radio radio-success" style="">
-                                                  <input class="required" id="discount_program_<%= params[:number].to_s %>_<%= number.to_s %>_true" type="radio" name="contacts_courses[<%= params[:number].to_s %>][discount_programs][<%= number.to_s %>][list_price]" value="true" checked>
+                                                  <input class="required discount_program_type" id="discount_program_<%= params[:number].to_s %>_<%= number.to_s %>_true" type="radio" name="contacts_courses[<%= params[:number].to_s %>][discount_programs][<%= number.to_s %>][discount_program_type]" value="list_price" checked>
                                                   <label for="discount_program_<%= params[:number].to_s %>_<%= number.to_s %>_true">List price</label>
-                                                  <input class="required" id="discount_program_<%= params[:number].to_s %>_<%= number.to_s %>_false" type="radio" name="contacts_courses[<%= params[:number].to_s %>][discount_programs][<%= number.to_s %>][list_price]" value="false">
+                                                  <input class="required discount_program_type" id="discount_program_<%= params[:number].to_s %>_<%= number.to_s %>_false" type="radio" name="contacts_courses[<%= params[:number].to_s %>][discount_programs][<%= number.to_s %>][discount_program_type]" value="reducing_balance">
                                                   <label for="discount_program_<%= params[:number].to_s %>_<%= number.to_s %>_false">Reducing balance</label>
                                              </div>
                                         </div>
@@ -95,54 +95,56 @@
      
 </div>
           
-<div class="row no_price_group column-seperation">
-     <div class="col-md-6">
-          <div class="row">
-               <div class="col-md-8">
-                    <div class="form-group">
-                         <label class="form-label"><label>Hour</label></label>
-                         <div class="input-with-iconz right">                                       
-                              <%= text_field_tag "contacts_courses["+params[:number].to_s+"][hour]", "", class: "form-control price_input input_budget_hour input_budget_hour_"+@course.course_type_id.to_s+"-"+@course.subject_id.to_s, rel: @course.course_type_id.to_s+"-"+@course.subject_id.to_s %>
+<div class="transfer_form">
+     <h5><strong>Transfer Hour/Money</strong></h5>
+     <div class="row no_price_group column-seperation">
+          <div class="col-md-6 transfer_hour_form_<%= @course.course_type_id %>-<%= @course.subject_id %>">
+               <div class="row">
+                    <div class="col-md-8">
+                         <div class="form-group">
+                              <label class="form-label"><label>Hour</label></label>
+                              <div class="input-with-iconz right">                                       
+                                   <%= text_field_tag "contacts_courses["+params[:number].to_s+"][hour]", "", class: "form-control price_input input_budget_hour input_budget_hour_"+@course.course_type_id.to_s+"-"+@course.subject_id.to_s, rel: @course.course_type_id.to_s+"-"+@course.subject_id.to_s %>
+                              </div>
+                         </div>
+                         <div class="form-group">
+                              <label class="form-label"><label>Additional Money</label></label>
+                              <div class="input-with-iconz right">                                       
+                                   <%= text_field_tag "contacts_courses["+params[:number].to_s+"][additional_money]", "", class: "form-control price_input" %>
+                              </div>
                          </div>
                     </div>
-                    <div class="form-group">
-                         <label class="form-label"><label>Additional Money</label></label>
-                         <div class="input-with-iconz right">                                       
-                              <%= text_field_tag "contacts_courses["+params[:number].to_s+"][additional_money]", "", class: "form-control price_input" %>
-                         </div>
-                    </div>
-               </div>
-               <div class="col-md-4">
-                    <div class="form-group">
-                         <label class="form-label"><label>Remain</label></label>
-                         <div class="input-with-iconz text-right">                                       
-                              <strong class="item_budget_hour_<%= @course.course_type_id %>-<%= @course.subject_id %>">0</strong>
-                         </div>
-                    </div>
-               </div>
-          </div>
-     </div>
-     <div class="col-md-6">
-          <div class="row">
-               <div class="col-md-8">
-                    <div class="form-group">
-                         <label class="form-label"><label>Money</label></label>
-                         <div class="input-with-iconz right">                                       
-                              <%= text_field_tag "contacts_courses["+params[:number].to_s+"][money]", "", class: "form-control price_input input_budget_money" %>
-                         </div>
-                    </div>
-               </div>
-               <div class="col-md-4">
-                    <div class="form-group">
-                         <label class="form-label"><label>Remain</label></label>
-                         <div class="input-with-iconz text-right">                                       
-                              <strong class="item_budget_money">0</strong>
+                    <div class="col-md-4">
+                         <div class="form-group">
+                              <label class="form-label"><label>Remain</label></label>
+                              <div class="input-with-iconz text-right">                                       
+                                   <strong class="item_budget_hour_<%= @course.course_type_id %>-<%= @course.subject_id %>">0</strong>
+                              </div>
                          </div>
                     </div>
                </div>
           </div>
-          
+          <div class="col-md-6 transfer_money_form">
+               <div class="row">
+                    <div class="col-md-8">
+                         <div class="form-group">
+                              <label class="form-label"><label>Money</label></label>
+                              <div class="input-with-iconz right">                                       
+                                   <%= text_field_tag "contacts_courses["+params[:number].to_s+"][money]", "", class: "form-control price_input input_budget_money" %>
+                              </div>
+                         </div>
+                    </div>
+                    <div class="col-md-4">
+                         <div class="form-group">
+                              <label class="form-label"><label>Remain</label></label>
+                              <div class="input-with-iconz text-right">                                       
+                                   <strong class="item_budget_money">0</strong>
+                              </div>
+                         </div>
+                    </div>
+               </div>
+               
+          </div>
      </div>
 </div>
-    
     

@@ -1740,7 +1740,8 @@ CREATE TABLE transfers (
     to_course_money numeric,
     cache_payment_status text,
     from_hour text,
-    cache_search text
+    cache_search text,
+    hour_money numeric
 );
 
 
@@ -2990,4 +2991,6 @@ INSERT INTO schema_migrations (version) VALUES ('20150930084316');
 INSERT INTO schema_migrations (version) VALUES ('20150930095837');
 
 INSERT INTO schema_migrations (version) VALUES ('20150930100044');
+
+INSERT INTO schema_migrations (version) VALUES ('20151001021817');
 

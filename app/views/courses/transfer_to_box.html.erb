@@ -17,19 +17,32 @@
 							</div>
 					 </div>
 					 <div class="row transfer_type_box transfer_type_box_hour" style="display:none">
-							  <div class="col-md-12 to_hour_box">
+							  <div class="col-md-6 to_hour_box">
 								   <div class="form-group">
 										 <label class="form-label"><label>Hour</label></label>
 										 <span class="help">(required)</span>
 										 <div class="input-with-iconz right">                                       
 											  <i class=""></i>
 											   <div class="input-with_add_butz">
-												 <%= text_field_tag "transfer[hour]", "", class: "form-control price_input price_discount required" %>
+												 <%= text_field_tag "transfer[hour]", "", class: "form-control price_input required" %>
 											   </div>
 										 </div>
 								   </div>
 								   
 							  </div>
+								   <div class="col-md-6 to_hour_box">
+										  <div class="form-group">
+												<label class="form-label"><label>Equating Money</label></label>
+												<span class="help">(required)</span>
+												<div class="input-with-iconz right">                                       
+													 <i class=""></i>
+													  <div class="input-with_add_butz">
+														<%= text_field_tag "transfer[hour_money]", "", class: "form-control price_input required" %>
+													  </div>
+												</div>
+										  </div>
+										  
+								   </div>
 					 </div>
 					 <div class="row transfer_type_box transfer_type_box_money" style="display:none">
 							  <div class="col-md-12 to_money_box">

@@ -43,10 +43,28 @@ class ContactsCourse < ActiveRecord::Base
   def total
     if price != -1
       list_price = price
+      pricing = price
+      
+      # transfer/defer
       if hour.to_f > 0
-        list_price = additional_money.to_f
+        pricing = additional_money.to_f - money.to_f
       end
-      return list_price - other_discount_amount.to_f - discount_program_amount - money.to_f
+      
+      # discount program
+      all_discount_programs.each do |row|
+        if row["id"].present?
+          dp = DiscountProgram.find(row["id"])
+          if row["discount_program_type"] == "list_price"
+            d_amount = dp.type_name == "percent" ? (dp.rate/100)*list_price : dp.rate
+          else
+            d_amount = dp.type_name == "percent" ? (dp.rate/100)*pricing : dp.rate
+          end
+          
+          pricing -= d_amount
+        end
+      end
+      
+      return pricing - other_discount_amount.to_f
     else     
       return no_price_payment_record_detail.nil? ? 0 : no_price_payment_record_detail.total.to_f
     end

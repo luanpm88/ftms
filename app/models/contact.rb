@@ -131,6 +131,7 @@ class Contact < ActiveRecord::Base
     self.update_cache_intakes
     self.update_cache_subjects
     self.update_cache_courses
+    self.update_cache_search
   end
   
   def check_type
@@ -1386,6 +1387,17 @@ class Contact < ActiveRecord::Base
     return hours
   end
   
+  def recent_hour_rate
+    rates = {}
+    
+    active_received_transfers.where(to_type: "hour").order("created_at").each do |transfer|
+      hour_id = transfer.course.course_type_id.to_s+"-"+transfer.course.subject_id.to_s
+      rates[hour_id] = transfer.hour_money.to_f / transfer.hour.to_f if rates[hour_id].nil?
+    end
+    
+    return rates
+  end
+  
   def budget_hour_sum
     total = 0
     budget_hour.each do |col|
@@ -1580,17 +1592,22 @@ class Contact < ActiveRecord::Base
     return false
   end
   
-  def update_cache_search
-    return false if !self.draft_for.nil?
-    
+  def render_cache_search
     str = []
+    str << display_name.unaccent
     str << mobile.to_s.gsub(/^84/,"")
     str << "0" + mobile.to_s.gsub(/^84/,"")
     str << phone.to_s.gsub(/^84/,"")
     str << "0" + phone.to_s.gsub(/^84/,"")
     str << referrer.name if !referrer.nil?
     
-    self.update_attribute(:cache_search, str.join(" "))
+    return str.join(" ")
+  end
+  
+  def update_cache_search
+    return false if !self.draft_for.nil?
+    
+    self.update_attribute(:cache_search, self.render_cache_search)
   end
   
   def real_courses

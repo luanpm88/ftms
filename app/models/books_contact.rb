@@ -192,7 +192,7 @@ class BooksContact < ActiveRecord::Base
     if !params["search"]["value"].empty?
       @records = @records.includes(:contact, :book => [:course_type, :subject, :stock_type])
       q = "%#{params["search"]["value"].downcase}%"
-      @records = @records.where("LOWER(contacts.name) LIKE ? OR LOWER(books.name) LIKE ? OR LOWER(stock_types.name) LIKE ? OR LOWER(course_types.short_name) LIKE ? OR LOWER(subjects.name) LIKE ?", q,q,q,q,q)
+      @records = @records.where("LOWER(contacts.cache_search) LIKE ? OR LOWER(contacts.name) LIKE ? OR LOWER(books.name) LIKE ? OR LOWER(stock_types.name) LIKE ? OR LOWER(course_types.short_name) LIKE ? OR LOWER(subjects.name) LIKE ?",q,q,q,q,q,q)
     end
     
     if !params["order"].nil?

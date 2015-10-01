@@ -230,6 +230,13 @@ class Transfer < ActiveRecord::Base
     self[:to_course_money] = new.to_s.gsub(/\,/, '')
   end
   
+  def hour=(new)
+    self[:hour] = new.to_s.gsub(/\,/, '')
+  end
+  def hour_money=(new)
+    self[:hour_money] = new.to_s.gsub(/\,/, '')
+  end
+  
   def description
     arr = []
     transfer_details.each do |td|      
@@ -572,7 +579,9 @@ class Transfer < ActiveRecord::Base
     
     str = []
     str << contact.display_name
+    str << contact.display_name.unaccent
     str << to_contact.display_name
+    str << to_contact.display_name.unaccent
     str << diplay_from_course
     str << diplay_to_course
     str << display_hour

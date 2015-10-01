@@ -60,3 +60,4 @@ gem 'unicode_utils'
 gem 'thin'
 gem 'headshot'
 gem 'mdb'
+gem "sixarm_ruby_unaccent", ">= 1.1.1", "< 2"

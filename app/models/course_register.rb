@@ -89,7 +89,7 @@ class CourseRegister < ActiveRecord::Base
           # Discount programs
           dps = []
           row[1]["discount_programs"].each do |r|
-            dps << {id: r[1]["id"], list_price: r[1]["list_price"]} if r[1]["id"].present?
+            dps << {id: r[1]["id"], discount_program_type: r[1]["discount_program_type"]} if r[1]["id"].present?
           end
           cc.discount_programs = dps.to_json
           
@@ -952,6 +952,7 @@ class CourseRegister < ActiveRecord::Base
     
     str = []
     str << contact.display_name
+    str << contact.display_name.unaccent
     str << description
     str << display_delivery_status
     str << total.to_s

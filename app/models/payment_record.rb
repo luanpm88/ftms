@@ -463,6 +463,7 @@ class PaymentRecord < ActiveRecord::Base
     str << description
     str << bank_account_name
     str << contact.display_name
+    str << contact.display_name.unaccent
     str << contact.staff_col
     str << ordered_total.to_s
     str << paid_amount.to_s
