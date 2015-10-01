@@ -269,10 +269,10 @@ class Contact < ActiveRecord::Base
     end
     
     if params["created_from"].present?      
-      @records = @records.where("created_at >= ?", params["created_from"].to_date)
+      @records = @records.where("created_at >= ?", params["created_from"].to_date.beginning_of_day)
     end
     if params["created_to"].present?      
-      @records = @records.where("created_at <= ?", params["created_to"].to_date)
+      @records = @records.where("created_at <= ?", params["created_to"].to_date.end_of_day)
     end
     if params["payment_type"].present?      
       @records = @records.where(payment_type: params["payment_type"])
