@@ -207,7 +207,7 @@ class BooksContact < ActiveRecord::Base
       order = "contacts.name, books.name"
     end
     
-    @records = @records.order(order) if !order.nil?
+    @records = @records.order(order) if !order.nil? && !params["search"].present?
     
     
     ## STATISTICS

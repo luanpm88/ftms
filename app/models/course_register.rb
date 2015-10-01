@@ -222,7 +222,7 @@ class CourseRegister < ActiveRecord::Base
     else
       order = "course_registers.created_at DESC, course_registers.created_at DESC"
     end
-    @records = @records.order(order) if !order.nil?
+    @records = @records.order(order) if !order.nil? && !params["search"].present?
     
     total = @records.count
     @records = @records.limit(params[:length]).offset(params["start"])
@@ -281,7 +281,7 @@ class CourseRegister < ActiveRecord::Base
     else
       order = "course_registers.created_at DESC, course_registers.created_at DESC"
     end
-    @records = @records.order(order) if !order.nil?
+    @records = @records.order(order) if !order.nil? && !params["search"].present?
     
     total = @records.count
     @records = @records.limit(params[:length]).offset(params["start"])
@@ -369,7 +369,7 @@ class CourseRegister < ActiveRecord::Base
     else
       order = "course_registers.created_at DESC, course_registers.created_at DESC"
     end
-    @records = @records.order(order) if !order.nil?
+    @records = @records.order(order) if !order.nil? && !params["search"].present?
     
     total = @records.count
     @records = @records.limit(params[:length]).offset(params["start"])

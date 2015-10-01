@@ -116,7 +116,7 @@ class PaymentRecord < ActiveRecord::Base
     else
       order = "payment_records.payment_date DESC, payment_records.created_at DESC"
     end    
-    @records = @records.order(order) if !order.nil?    
+    @records = @records.order(order) if !order.nil? && !params["search"].present?
     
     total = @records.count
     @records = @records.limit(params[:length]).offset(params["start"])
@@ -341,7 +341,7 @@ class PaymentRecord < ActiveRecord::Base
     else
       order = "contacts_courses.created_at DESC"
     end
-    @records = @records.order(order) if !order.nil?    
+    @records = @records.order(order) if !order.nil? && !params["search"].present? 
     
     total = @records.count
     @records = @records.limit(params[:length]).offset(params["start"])
