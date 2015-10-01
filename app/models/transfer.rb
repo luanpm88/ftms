@@ -620,7 +620,7 @@ class Transfer < ActiveRecord::Base
   end
   
   def remain_money(ct)
-    rate = money/hour
+    rate = hour_money/hour
     sub_money = 0.0
     ct.active_transfers.where("transfers.from_hour LIKE ?", "%{\"#{self.id.to_s}\":%").each do |t|
       hash = JSON.parse(t.from_hour)
