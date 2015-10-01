@@ -473,10 +473,12 @@ class User < ActiveRecord::Base
     courses.each do |c|
       conds << "contacts.cache_courses LIKE '%[#{c.id.to_s}]%'"
     end
-    students = Contact.main_contacts.where(conds.join(" OR "))
+    students = !conds.empty? ? Contact.main_contacts.where(conds.join(" OR ")) : []
                                     
     report = []
     students.each do |student|
+      has_course = false
+      
       row = {}
       row["student"] = student
       row["subjects"] = []
@@ -486,14 +488,16 @@ class User < ActiveRecord::Base
         
         arr = []
         student.active_courses_with_phrases.each do |r|
-          arr << r[:course].name if r[:course].subject.id == subject.id
+          arr << r[:course].name if r[:course].subject.id == subject.id && !r[:course].no_report_contacts.include?(student)
         end
         #ccs = student.active_contacts_courses.where(report: true).includes(:course).where(courses: {subject_id: subject.id})
         s_row["count"] = arr.join("\n") if !arr.empty?
         
         row["subjects"] << s_row
+        
+        has_course = true if !arr.empty?
       end
-      report << row
+      report << row if has_course
     end
                       
     return {data: report, subjects: subjects}
@@ -507,11 +511,16 @@ class User < ActiveRecord::Base
                       
     subjects = Subject.active_subjects.includes(:course_types).where(course_types: {id: course_types})
         
-    students = Contact.main_contacts.includes(:contacts_courses)
-                                    .where(contacts_courses: {course_id: courses.select{|c| c.id}})
+    conds = []
+    courses.each do |c|
+      conds << "contacts.cache_courses LIKE '%[#{c.id.to_s}]%'"
+    end
+    students = !conds.empty? ? Contact.main_contacts.where(conds.join(" OR ")) : []
                                     
     report = []
     students.each do |student|
+      has_course = false
+      
       row = {}
       row["student"] = student
       row["subjects"] = []
@@ -521,14 +530,16 @@ class User < ActiveRecord::Base
         
         arr = []
         student.active_courses_with_phrases.each do |r|
-          arr << r[:course].name if r[:course].subject.id == subject.id
+          arr << r[:course].name if r[:course].subject.id == subject.id && !r[:course].no_report_contacts.include?(student)
         end
         #ccs = student.active_contacts_courses.where(report: true).includes(:course).where(courses: {subject_id: subject.id})
         s_row["count"] = arr.join("\n") if !arr.empty?
         
         row["subjects"] << s_row if s_row["count"].present?
+        
+        has_course = true if !arr.empty?
       end
-      report << row
+      report << row if has_course
     end
                       
     return {data: report, subjects: subjects}

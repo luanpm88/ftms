@@ -8,6 +8,11 @@ class ContactsCourse < ActiveRecord::Base
   has_many :payment_record_details
   
   after_create :update_statuses
+  after_create :enable_report
+  
+  def enable_report
+    self.course.remove_no_report_contact(self.contact)
+  end
   
   def self.all_contacts_courses
     ContactsCourse.all

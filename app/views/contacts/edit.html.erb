@@ -44,7 +44,7 @@
 								<li class="<%= "active" if ["information",nil].include?(params[:tab]) %>"><a href="#information">Information</a></li>
 								
 								<% if !@contact.draft? %>
-										<% if @contact.contact_types.include?(ContactType.student) %>
+										<% if @contact.contact_types.include?(ContactType.student) || true %>
 												<li class="<%= "active" if ["course_registration"].include?(params[:tab]) %>">
 												  <a href="#course_registration">Course/Stock Registration <span class="badge badge-info pull-right alert-level1"><%= @contact.course_register_count if @contact.course_register_count > 0 %></span></a>
 												</li>
@@ -88,7 +88,7 @@
 										<%= render 'form' %>
 								
 								</div>
-								<% if @contact.contact_types.include?(ContactType.student) %>
+								<% if @contact.contact_types.include?(ContactType.student) || true %>
 										<div class="tab-pane <%= "active" if ["course"].include?(params[:tab]) %>" id="course">
 												
 												<%= render "course" %>

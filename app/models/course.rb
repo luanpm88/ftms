@@ -720,4 +720,37 @@ class Course < ActiveRecord::Base
     Contact.main_contacts.where("cache_courses LIKE ?", "%[#{self.id}]%")
   end
   
+  def report_toggle(contact)
+    report = !self.no_report_contacts.include?(contact)
+    
+    class_name = report ? "success" : "none"
+    text = report ? "UCRS: yes" : "UCRS: no"
+    
+    cc_id = self.id.to_s+'-'+contact.id.to_s
+    
+    '<a rel="'+cc_id+'" class="badge badge-'+class_name+' report_toggle report_toggle_'+cc_id+'" href="#rt">'+text+'</a>'
+  end
+  
+  def add_no_report_contact(contact)
+    new_arr = no_report_contacts
+    new_arr << contact if !new_arr.include?(contact)
+    
+    self.update_attribute(:no_report_contact_ids, "["+new_arr.map(&:id).join("][")+"]")
+  end
+  
+  def remove_no_report_contact(contact)
+    new_arr = []
+    no_report_contacts.each do |c|
+      new_arr << c if contact.id != c.id
+    end
+    
+    self.update_attribute(:no_report_contact_ids, "["+new_arr.map(&:id).join("][")+"]")
+  end
+  
+  def no_report_contacts
+    return [] if no_report_contact_ids.nil?
+    ids = self.no_report_contact_ids.split("][").map {|s| s.gsub("[","").gsub("]","") }
+    return Contact.where(id: ids)
+  end
+  
 end

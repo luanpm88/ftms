@@ -1007,7 +1007,8 @@ CREATE TABLE courses (
     for_exam_year integer,
     for_exam_month character varying,
     annoucing_user_ids text,
-    upfront boolean
+    upfront boolean,
+    no_report_contact_ids text
 );
 
 
@@ -2999,4 +3000,6 @@ INSERT INTO schema_migrations (version) VALUES ('20151001021817');
 INSERT INTO schema_migrations (version) VALUES ('20151001035014');
 
 INSERT INTO schema_migrations (version) VALUES ('20151001075300');
+
+INSERT INTO schema_migrations (version) VALUES ('20151001113758');
 

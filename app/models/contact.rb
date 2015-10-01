@@ -1449,6 +1449,8 @@ class Contact < ActiveRecord::Base
   end
   
   def base_id_by_program_id(course_type_id)
+    return "" if bases.nil?
+    
     b_arr = JSON.parse(bases)
     b_arr.each do |item|
       return CourseType.find(course_type_id).short_name+"-"+item["name"] if item["course_type_id"].to_i == course_type_id.to_i
@@ -1587,8 +1589,10 @@ class Contact < ActiveRecord::Base
   end
   
   def display_active_course(course_id)
+    course = Course.find(course_id)
+    
     arr = []
-    arr << "<div class=\"nowrap\"><strong>"+active_course(course_id)[:course].display_name+"</strong></div>"
+    arr << "<div class=\"nowrap\"><strong>"+active_course(course_id)[:course].display_name+"</strong> <span>#{course.report_toggle(self)}</span></div>"
     arr << "<div class=\"courses_phrases_list\">"+Course.render_courses_phrase_list(active_course(course_id)[:courses_phrases])+"</div>" if !active_course(course_id)[:courses_phrases].empty?
     return arr.join("")
   end

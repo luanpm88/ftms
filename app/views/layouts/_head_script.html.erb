@@ -3136,7 +3136,7 @@
 			var id = $(this).attr("rel")
 			var box = $(this).parent()
 			$.ajax({
-				url : '<%= report_toggle_contacts_courses_path %>?id='+id,
+				url : '<%= report_toggle_courses_path %>?cc_id='+id,
 				success:function(data, textStatus, jqXHR)
 				{
 					box.html(data)

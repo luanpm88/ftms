@@ -23,6 +23,8 @@ class Transfer < ActiveRecord::Base
   after_create :update_statuses
   after_update :update_contact_info
   after_create :update_cache_search
+  after_create :enable_report
+  
   
   pg_search_scope :search,
                   against: [:money, :cache_search],
@@ -33,6 +35,10 @@ class Transfer < ActiveRecord::Base
                         prefix: true
                       }
                   }
+                  
+  def enable_report
+    self.to_course.remove_no_report_contact(self.to_contact)
+  end
   
   def update_contact_info
     self.contact.update_info

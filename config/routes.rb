@@ -264,6 +264,8 @@ Hkerp::Application.routes.draw do
       get :transfer_course
       get :course_phrases_list
       get :transfer_to_box
+      
+      get :report_toggle
     end
   end
   

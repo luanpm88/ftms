@@ -247,6 +247,20 @@ class CoursesController < ApplicationController
     render layout: nil
   end
   
+  def report_toggle
+    @course = Course.find(params[:cc_id].split("-")[0])
+    @contact = Contact.find(params[:cc_id].split("-")[1])
+    
+    if @course.no_report_contacts.include?(@contact)
+      @course.remove_no_report_contact(@contact)
+    else
+      @course.add_no_report_contact(@contact)
+    end
+    
+    
+    render layout: nil
+  end
+  
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_course

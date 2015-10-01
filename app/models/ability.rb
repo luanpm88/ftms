@@ -105,6 +105,7 @@ class Ability
       can :course_phrases_form, Course
       can :transfer_course, Course
       can :course_phrases_list, Course
+      can :report_toggle, Course
       
       
       
