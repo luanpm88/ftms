@@ -284,9 +284,9 @@ class Contact < ActiveRecord::Base
       @records = @records.where(account_manager_id: params["user"])
     end
     
-    #if !params[:status].present? || params[:status] != "deleted"
-    #  @records = @records.where("contacts.status NOT LIKE ?","%[deleted]%")
-    #end
+    if !params[:status].present? || params[:status] != "deleted"
+      @records = @records.where("contacts.status NOT LIKE ?","%[deleted]%")
+    end
     
     # Areas filter
     cities_ids = []
