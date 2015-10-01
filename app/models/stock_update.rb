@@ -105,6 +105,7 @@ class StockUpdate < ActiveRecord::Base
   end
   
   def update_cache_search
+    return false if !self.parent_id.nil?
   
     str = []
     str << book.display_name

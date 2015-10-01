@@ -71,6 +71,8 @@ class BooksController < ApplicationController
         @book.update_status("update", current_user)        
         @book.save_draft(current_user)
         
+        @book.update_cache_search
+        
         format.html { redirect_to params[:tab_page].present? ? "/home/close_tab" : @book, notice: 'Book was successfully updated.' }
         format.json { head :no_content }
       else

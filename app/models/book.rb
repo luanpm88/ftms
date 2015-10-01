@@ -25,13 +25,10 @@ class Book < ActiveRecord::Base
   ########## END REVISION ###############
   
   mount_uploader :image, BookUploader
+  after_create :update_cache_search
   
   pg_search_scope :search,
-                against: [:name, :publisher],
-                associated_against: {
-                  course_type: [:short_name],
-                  subject: [:name]
-                },
+                against: [:name, :publisher, :cache_search],
                 using: {
                   tsearch: {
                     dictionary: 'english',
@@ -123,7 +120,7 @@ class Book < ActiveRecord::Base
     
     
     
-    @records = @records.order(order) if !order.nil?
+    @records = @records.order(order) if !order.nil? && !params["search"].present?
     
     total = @records.count
     @records = @records.limit(params[:length]).offset(params["start"])
@@ -188,7 +185,7 @@ class Book < ActiveRecord::Base
       order = "course_types.short_name, subjects.name, books.name"      
     end
     
-    @records = @records.order(order) if !order.nil?
+    @records = @records.order(order) if !order.nil? && !params["search"].present?
     
     total = @records.count
     @records = @records.limit(params[:length]).offset(params["start"])
@@ -268,7 +265,7 @@ class Book < ActiveRecord::Base
     
     
     
-    @records = @records.order(order) if !order.nil?
+    @records = @records.order(order) if !order.nil? && !params["search"].present?
     
     total = @records.count
     @records = @records.limit(params[:length]).offset(params["start"])
@@ -603,6 +600,7 @@ class Book < ActiveRecord::Base
   end
   
   def current
+    return self if drafts.empty?
     return drafts.order("created_at DESC").first
   end
   
@@ -742,6 +740,20 @@ class Book < ActiveRecord::Base
                 .where.not("course_registers.status LIKE ?", "%[deleted]%")
                 .where(book_id: self.id)
                 .where(contact_id: contact.id).count > 0
+  end
+  
+  def update_cache_search
+    return false if !self.parent_id.nil?
+  
+    str = []
+    str << display_name
+    str << stock_type.name
+    str << publisher.to_s
+    str << display_prices
+    str << user.name
+    str << display_statuses
+    
+    self.update_attribute(:cache_search, str.join(" "))
   end
   
   

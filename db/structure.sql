@@ -283,7 +283,8 @@ CREATE TABLE books (
     status text,
     course_type_id integer,
     subject_id integer,
-    stock_type_id integer
+    stock_type_id integer,
+    cache_search text
 );
 
 
@@ -2993,4 +2994,6 @@ INSERT INTO schema_migrations (version) VALUES ('20150930095837');
 INSERT INTO schema_migrations (version) VALUES ('20150930100044');
 
 INSERT INTO schema_migrations (version) VALUES ('20151001021817');
+
+INSERT INTO schema_migrations (version) VALUES ('20151001035014');
 
