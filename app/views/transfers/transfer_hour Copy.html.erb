@@ -6,7 +6,7 @@
                   
                 </div>     
                 
-                <div class="grid-body no-border transfer_hour_from">
+                <div class="grid-body no-border transfer_course_from">
                   <%= form_for(@transfer) do |f| %>
 					
 					<%= hidden_field_tag("tab_page", 1) if params[:tab_page] %>
@@ -32,44 +32,52 @@
 							<div class="form-group transfer_hour_box">
 							  <!--<label class="form-label"><label>Deferred/Tranferred Hour</label></label>-->
 								   <div class="budget_values">
-										<table class="table">
-											 <tr>
-												  <th class="text-center">Date</th>
-												  <th class="text-left">Paper</th>												  
-												  <th class="text-center">Hour</th>
-												  <th class="text-right">Money</th>
-												  <th class="text-right">Used</th>
-											 </tr>
-											 <% @contact.budget_hour.each do |paper| %>
-
-												  <% @contact.recent_hour_transfers(paper[0]).each do |transfer| %>
-													   
-													   <% if transfer.remain_hour(@contact) > 0 %>
-													   
-															<tr class="hour_input_group">
-																 <td class="text-center">
-																	  <%= transfer.created_at.strftime("%d-%b-%Y") %>
-																 </td>
-																 <td class="text-left">
-																	  <%= transfer.course.course_type.short_name+"-"+transfer.course.subject.name %>
-																 </td>															
-																 <td class="text-center input_remain_hour" value="<%= transfer.remain_hour(@contact) %>">
-																	  <%= format_price(transfer.remain_hour(@contact)) %>
-																 </td>
-																 <td class="text-right input_remain_money" value="<%= transfer.remain_money(@contact) %>">
-																	  <%= format_price(transfer.remain_money(@contact)) %>
-																 </td>
-																 <td class="text-right">
-																	  <%= text_field_tag "from_hours["+transfer.id.to_s+"]", 0, style: "width: 100px", class: "pull-right form-control price_input input_hour" %>
-																 </td>
-															</tr>
-													   
-													   <% end %>
-													   
-												  <% end %>
+										<% @contact.budget_hour.each do |val| %>
+										 <hr />
+											 <div class="row column-seperation hour_input_group">
 												  
-											 <% end %>
-										</table>
+												  <div class="col-md-9">
+													   <div class="row">												  
+															<div class="col-md-4">
+																 <div class="form-group">
+																	  <label class="form-label"><label>Paper</label></label>
+																	  <div class="">
+																		   <strong>
+																				<%= CourseType.find(val[0].split("-")[0]).short_name+"-"+Subject.find(val[0].split("-")[1]).name %>
+																		   </strong>
+																	  </div>
+																 </div>
+															</div>
+															<div class="col-md-4">
+																 <div class="form-group">
+																	  <label class="form-label"><label>Recent Rate</label></label>
+																	  <div class="text-right">
+																		   <div style="font-weight: bold" class="hour_rate"><%= format_price(@contact.recent_hour_rate[val[0]]) %></div> (<%= Setting.get("currency_code") %>/hour)
+																	  </div>
+																 </div>																 
+															</div>
+															<div class="col-md-4">
+																 <div class="form-group">
+																	  <label class="form-label"><label>Remain</label></label>
+																	  <div class="text-right">
+																		   <div style="font-weight: bold" class="budget_hour budget_hour_<%= val[0] %>" rel="<%= val[0] %>" value="<%= val[1] %>"><%= val[1] %></div>
+																	  </div>
+																 </div>																 
+															</div>
+													   </div>
+												  </div>
+												  <div class="col-md-3">
+													   <div class="form-group">
+															<label class="form-label"><label>Hour</label></label>
+															<div  class="text-right">
+																 <%= text_field_tag "from_hours["+val[0]+"]", 0, class: "form-control price_input required input_budget_hour input_budget_hour_"+val[0] %>
+															</div>
+													   </div>
+												  </div>
+											 </div>
+											
+											 
+										<% end %>
 									</div>
 	
 							</div>

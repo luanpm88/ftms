@@ -173,11 +173,19 @@ class Transfer < ActiveRecord::Base
       arr << "<br /><div>Hour: <strong>#{contact.active_course(course.id, self.created_at-1.second)[:hour]}</strong> <br /> Money: <strong>#{ApplicationController.helpers.format_price(contact.active_course(course.id, self.created_at-1.second)[:money])}</trong></div>"
       return arr.join("")
     elsif !from_hour.nil?
-      arr = []
+      hours = {}
       JSON.parse(from_hour).each do |r|
+        tr = Transfer.find(r[0])
+        hour_id = tr.course.course_type_id.to_s+"-"+tr.course.subject_id.to_s
+        hours[hour_id] = hours[hour_id].nil? ? r[1] : hours[hour_id] + r[1]
+      end
+      
+      arr = []
+      hours.each do |r|
         arr << CourseType.find(r[0].split("-")[0]).short_name+"-"+Subject.find(r[0].split("-")[1]).name+": "+r[1].to_s+" hours" if r[1].to_f > 0
       end
       return "<strong>"+arr.join("<br />")+"</strong>"
+
     else
       ""
     end
@@ -599,5 +607,29 @@ class Transfer < ActiveRecord::Base
     update_attribute(:cache_search, str.join(" "))
   end
   
+  def remain_hour(ct)
+    sub_hour = 0.0
+    ct.active_transfers.where("transfers.from_hour LIKE ?", "%{\"#{self.id.to_s}\":%").each do |t|
+      hash = JSON.parse(t.from_hour)
+      hash.each do |row|
+        sub_hour += row[1].to_f if row[0].to_s == self.id.to_s
+      end
+    end
+    
+    return hour - sub_hour
+  end
+  
+  def remain_money(ct)
+    rate = money/hour
+    sub_money = 0.0
+    ct.active_transfers.where("transfers.from_hour LIKE ?", "%{\"#{self.id.to_s}\":%").each do |t|
+      hash = JSON.parse(t.from_hour)
+      hash.each do |row|
+        sub_money += rate*row[1].to_f if row[0].to_s == self.id.to_s
+      end
+    end
+    
+    return hour_money - sub_money
+  end
   
 end

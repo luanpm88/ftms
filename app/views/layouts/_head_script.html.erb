@@ -4,31 +4,36 @@
 		var money = 0
 		$('.hour_input_group').each(function() {
 			var box = $(this)
-			var total = parseFloat(box.find(".budget_hour").attr("value").replace(/,/g,""))
-			var input = 0
-			var remain = total
-			var hour_rate = 0
+			var input_remain_hour = 0
+			var input_remain_money = 0
+			var input_hour = 0
 			
-			if (box.find(".hour_rate").html() != "") {
-				hour_rate = parseFloat(box.find(".hour_rate").html().replace(/,/g,""))  
+			if (box.find(".input_remain_hour").attr("value") != "") {
+				input_remain_hour = parseFloat(box.find(".input_remain_hour").attr("value").replace(/,/g,""))  
 			}
-			if (box.find(".input_budget_hour").val() != "") {
-				var vv = parseFloat(box.find(".input_budget_hour").val().replace(/,/g,""))    
-				if (vv > total) {
-						vv = total
-						box.find(".input_budget_hour").val(ReplaceNumberWithDots(total.toFixed(0)))
+			if (box.find(".input_remain_money").attr("value") != "") {
+				input_remain_money = parseFloat(box.find(".input_remain_money").attr("value").replace(/,/g,""))  
+			}
+			if (box.find(".input_hour").val() != "") {
+				var vv = parseFloat(box.find(".input_hour").val().replace(/,/g,""))
+				if(vv > input_remain_hour) {
+					vv = input_remain_hour
+					box.find(".input_hour").val(ReplaceNumberWithDots(vv.toFixed(0)))
 				}
-			  
-				input += vv				
+				input_hour = vv
 			} else {
-				box.find(".input_budget_hour").val(0)
+				box.find(".input_hour").val(0)
 			}
 			
-			remain = total - input
+			var rate = input_remain_money/input_remain_hour
+			var input_new_hour = input_remain_hour - input_hour
+			var input_new_money = input_remain_money - rate*input_hour
 			
-			box.find(".budget_hour").html(ReplaceNumberWithDots(remain.toFixed(0)))
+			box.find(".input_remain_hour").html(ReplaceNumberWithDots(input_new_hour.toFixed(0)))
+			box.find(".input_remain_money").html(ReplaceNumberWithDots(input_new_money.toFixed(0)))
 			
-			money += hour_rate*input
+			money += rate*input_hour
+			
 		})
 		$(".transfer_hour_money_total").val(ReplaceNumberWithDots(money.toFixed(0)))
 	}
@@ -3213,10 +3218,10 @@
 			}
 		})
 		
-		$(document).on("keyup", ".input_budget_hour", function() {
+		$(document).on("keyup", ".transfer_hour_from .input_hour", function() {
 			calculateTransferHourFrom()
 		});
-		$(document).on("change", ".input_budget_hour", function() {
+		$(document).on("change", ".transfer_hour_from .input_hour", function() {
 			calculateTransferHourFrom()
 		});
 	})

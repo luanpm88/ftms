@@ -1380,11 +1380,23 @@ class Contact < ActiveRecord::Base
     
     active_transfers.where.not(from_hour: nil).each do |transfer|
         JSON.parse(transfer.from_hour).each do |row|
-          hours[row[0]] = hours[row[0]].nil? ? -row[1].to_f : hours[row[0]] - row[1].to_f
+          tr = Transfer.find(row[0])
+          hour_id = tr.course.course_type_id.to_s+"-"+tr.course.subject_id.to_s
+          hours[hour_id] = hours[hour_id].nil? ? -row[1].to_f : hours[hour_id] - row[1].to_f
         end
     end
     
     return hours
+  end
+  
+  def recent_hour_transfers(hid)
+    arr = []
+    active_received_transfers.where(to_type: "hour").order("created_at").each do |transfer|
+      hour_id = transfer.course.course_type_id.to_s+"-"+transfer.course.subject_id.to_s
+      arr << transfer if hid == hour_id
+    end
+    
+    return arr
   end
   
   def recent_hour_rate
