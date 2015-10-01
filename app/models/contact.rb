@@ -219,14 +219,14 @@ class Contact < ActiveRecord::Base
     end
     
     if params[:seminars].present?
-       @records = @records.joins(:seminars)
-      @records = @records.where("seminars.id IN (#{params[:seminars]})")
+      @seminar = Seminar.find(params[:seminars])
+      c_ids = @seminar.contacts.map(&:id)
+      @records = @records.where(id: c_ids)
     end
     
-    if params[:tags].present?
-      @records = @records.joins(:tag)
-      @records = @records.where("contact_tags_contacts.contact_tag_id IN (#{params[:tags].join(",")})")
-    end
+    #if params[:tags].present?
+    #  @records = @records.where("contacts.id IN (SELECT contact_id FROM contact_tags_contacts WHERE contact_tags_contacts.contact_tag_id IN (#{params[:tags].join(",")}))")
+    #end
     
     if params["course_types"].present?
       conds = []
