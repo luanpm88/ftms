@@ -37,7 +37,7 @@ class Transfer < ActiveRecord::Base
                   }
                   
   def enable_report
-    self.to_course.remove_no_report_contact(self.to_contact) if !self.to_contact.nil?
+    self.to_course.remove_no_report_contact(self.to_contact) if !self.to_course.nil?
   end
   
   def update_contact_info
