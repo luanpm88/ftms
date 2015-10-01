@@ -468,9 +468,12 @@ class User < ActiveRecord::Base
                       .where(for_exam_month: month)
                       
     subjects = Subject.active_subjects.includes(:course_types).where(course_types: {id: course_types})
-        
-    students = Contact.main_contacts.includes(:contacts_courses)
-                                    .where(contacts_courses: {course_id: courses.select{|c| c.id}})
+    
+    conds = []
+    courses.each do |c|
+      conds << "contacts.cache_courses LIKE '%[#{c.id.to_s}]%'"
+    end
+    students = Contact.main_contacts.where(conds.join(" OR "))
                                     
     report = []
     students.each do |student|
@@ -481,8 +484,12 @@ class User < ActiveRecord::Base
         s_row = {}
         s_row["subject"] = subject
         
-        ccs = student.active_contacts_courses.where(report: true).includes(:course).where(courses: {subject_id: subject.id})
-        s_row["count"] = (ccs.collect {|xx| xx.course.name}).uniq.join("\n") if !ccs.empty?
+        arr = []
+        student.active_courses_with_phrases.each do |r|
+          arr << r[:course].name if r[:course].subject.id == subject.id
+        end
+        #ccs = student.active_contacts_courses.where(report: true).includes(:course).where(courses: {subject_id: subject.id})
+        s_row["count"] = arr.join("\n") if !arr.empty?
         
         row["subjects"] << s_row
       end
@@ -512,8 +519,12 @@ class User < ActiveRecord::Base
         s_row = {}
         s_row["subject"] = subject
         
-        ccs = student.active_contacts_courses.where(report: true).includes(:course).where(courses: {subject_id: subject.id})
-        s_row["count"] = (ccs.collect {|xx| xx.course.name}).uniq.join("\n") if !ccs.empty?
+        arr = []
+        student.active_courses_with_phrases.each do |r|
+          arr << r[:course].name if r[:course].subject.id == subject.id
+        end
+        #ccs = student.active_contacts_courses.where(report: true).includes(:course).where(courses: {subject_id: subject.id})
+        s_row["count"] = arr.join("\n") if !arr.empty?
         
         row["subjects"] << s_row if s_row["count"].present?
       end

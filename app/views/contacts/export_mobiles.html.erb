@@ -1,6 +1,8 @@
 <div class="row">
   <div class="col-md-12">
     <h4>Mobile List (<%= @contacts.map(&:mobile).uniq.count %>)</h4>
-    <%= @contacts.map(&:mobile).uniq.join(";") %>
+    <div style="display: inline-block;max-width: 100%;padding: 10px;border: solid 1px #aaa;word-break: break-all">
+      <%= @contacts.map(&:mobile).uniq.join(";") %>
+    </div>
   </div>
 </div>

@@ -6,6 +6,7 @@ class PaymentRecord < ActiveRecord::Base
   belongs_to :company, class_name: "Contact"
   belongs_to :transfer
   
+  belongs_to :account_manager, class_name: "User"
   
   belongs_to :parent, class_name: "PaymentRecord"
   has_one :previous, class_name: "PaymentRecord", foreign_key: "parent_id"
@@ -267,17 +268,17 @@ class PaymentRecord < ActiveRecord::Base
   
   def payment_status
     if !company.nil?
-      return course_register.payment_status
-    elsif !transfer.nil?
-      transfer.payment_status
-    else
       str = []
       if paid?
         str << "paid"
       else
         str << "receivable"
       end
-      return str
+      return str      
+    elsif !transfer.nil?
+      transfer.payment_status
+    else
+      return course_register.payment_status
     end
   end
   

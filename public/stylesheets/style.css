@@ -8356,7 +8356,11 @@ td .logo {
     background: #aa6708;
 }
 .education_consultant_pending {
-    background: #aa6708;
+    background: #aa6708 none repeat scroll 0 0;
+    line-height: 14px;
+    margin-top: 2px;
+    white-space: normal !important;
+    word-break: break-all;
 }
 .update_pending {
     background: #aa6708;

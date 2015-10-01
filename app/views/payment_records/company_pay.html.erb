@@ -50,7 +50,8 @@
 													<%= select_tag 'payment_record[company_id]', options_for_select(Contact.active_contacts.where(is_individual: false).collect{ |u| [u.name, u.id] }) , {:include_blank => 'None', class: "modern_select width100 required"} %>
 											  <% else %>
 												<div class="text-right">
-												  <strong class="big-infoz"><%= @old_record.company.name %></strong>												  
+												  <strong class="big-infoz"><%= @old_record.company.name %></strong>
+												  <%= hidden_field_tag 'payment_record[company_id]', @old_record.company.id %>
 												</div>
 											  <% end %>
 												

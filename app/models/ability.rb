@@ -295,19 +295,19 @@ class Ability
       can :read, CourseRegister
       can :create, CourseRegister
       can :deliver_stock, CourseRegister do |cr|
-        !cr.statuses.include?("deleted") && cr.books.count > 0 && !cr.delivered?
+        cr.statuses.include?("active") && cr.books.count > 0 && !cr.delivered?
       end
       can :delivery_print, CourseRegister do |cr|
-        !cr.statuses.include?("deleted")
+        cr.statuses.include?("active")
       end
       can :pay_registration, CourseRegister do |cr|
-        !cr.statuses.include?("deleted") && !cr.paid?
+        cr.statuses.include?("active") && !cr.paid?
       end
       can :course_register, Contact do |contact|
         !contact.statuses.include?("deleted") && (contact.contact_types.include?(ContactType.student) || contact.contact_types.include?(ContactType.inquiry))
       end
       can :transfer_course, Contact do |contact|
-        !contact.statuses.include?("deleted") && contact.contact_types.include?(ContactType.student)
+        contact.statuses.include?("active") && contact.contact_types.include?(ContactType.student)
       end
       can :update, CourseRegister do |c|
         c.all_deliveries.empty? && c.all_payment_records.empty?
@@ -345,7 +345,9 @@ class Ability
         !c.statuses.include?("delete_pending") && !c.statuses.include?("deleted")
       end
       
-      can :company_pay, PaymentRecord
+      can :company_pay, PaymentRecord do |pr|
+        !pr.company_id.nil? && !pr.paid?
+      end
       can :do_company_pay, PaymentRecord
       can :print_payment_list, PaymentRecord
       can :company_pay_remain, PaymentRecord do |pr|

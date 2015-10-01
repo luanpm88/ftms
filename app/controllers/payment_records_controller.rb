@@ -180,6 +180,8 @@ class PaymentRecordsController < ApplicationController
     @payment_record.update_company_payment_record_details(params[:payment_record_details]) if params[:payment_record_details].present?
     
     @payment_record.course_register_ids = "["+params[:course_register_ids].join("][")+"]" if !params[:old_record_id].present?
+    
+    @payment_record.account_manager = current_user
 
     respond_to do |format|
       if @payment_record.save
