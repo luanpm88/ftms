@@ -104,7 +104,7 @@ class DiscountProgramsController < ApplicationController
     @discount_program.approve_new(current_user)
     
     respond_to do |format|
-      format.html { redirect_to params[:tab_page].present? ? "/discount_programs/approved" : @discount_program }
+      format.html { render "/discount_programs/approved", layout: nil }
       format.json { render action: 'show', status: :created, location: @discount_program }
     end
   end
@@ -115,7 +115,7 @@ class DiscountProgramsController < ApplicationController
     @discount_program.approve_update(current_user)
     
     respond_to do |format|
-      format.html { redirect_to params[:tab_page].present? ? "/discount_programs/approved" : @discount_program }
+      format.html { render "/discount_programs/approved", layout: nil }
       format.json { render action: 'show', status: :created, location: @discount_program }
     end
   end
@@ -126,7 +126,7 @@ class DiscountProgramsController < ApplicationController
     @discount_program.approve_delete(current_user)
     
     respond_to do |format|
-      format.html { redirect_to params[:tab_page].present? ? "/discount_programs/approved" : @discount_program }
+      format.html { render "/discount_programs/approved", layout: nil }
       format.json { render action: 'show', status: :created, location: @discount_program }
     end
   end

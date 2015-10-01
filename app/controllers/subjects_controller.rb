@@ -107,7 +107,7 @@ class SubjectsController < ApplicationController
     @subject.approve_new(current_user)
     
     respond_to do |format|
-      format.html { redirect_to params[:tab_page].present? ? "/subjects/approved" : @subject }
+      format.html { render "/subjects/approved", layout: nil }
       format.json { render action: 'show', status: :created, location: @subject }
     end
   end
@@ -118,7 +118,7 @@ class SubjectsController < ApplicationController
     @subject.approve_update(current_user)
     
     respond_to do |format|
-      format.html { redirect_to params[:tab_page].present? ? "/subjects/approved" : @subject }
+      format.html { render "/subjects/approved", layout: nil }
       format.json { render action: 'show', status: :created, location: @subject }
     end
   end
@@ -129,7 +129,7 @@ class SubjectsController < ApplicationController
     @subject.approve_delete(current_user)
     
     respond_to do |format|
-      format.html { redirect_to params[:tab_page].present? ? "/subjects/approved" : @subject }
+      format.html { render "/subjects/approved", layout: nil }
       format.json { render action: 'show', status: :created, location: @subject }
     end
   end

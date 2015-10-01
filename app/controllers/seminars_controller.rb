@@ -184,7 +184,7 @@ class SeminarsController < ApplicationController
     @seminar.approve_new(current_user)
     
     respond_to do |format|
-      format.html { redirect_to params[:tab_page].present? ? "/seminars/approved" : @seminar }
+      format.html { render "/seminars/approved", layout: nil }
       format.json { render action: 'show', status: :created, location: @seminar }
     end
   end
@@ -195,7 +195,7 @@ class SeminarsController < ApplicationController
     @seminar.approve_update(current_user)
     
     respond_to do |format|
-      format.html { redirect_to params[:tab_page].present? ? "/seminars/approved" : @seminar }
+      format.html { render "/seminars/approved", layout: nil }
       format.json { render action: 'show', status: :created, location: @seminar }
     end
   end
@@ -206,7 +206,7 @@ class SeminarsController < ApplicationController
     @seminar.approve_delete(current_user)
     
     respond_to do |format|
-      format.html { redirect_to params[:tab_page].present? ? "/seminars/approved" : @seminar }
+      format.html { render "/seminars/approved", layout: nil }
       format.json { render action: 'show', status: :created, location: @seminar }
     end
   end

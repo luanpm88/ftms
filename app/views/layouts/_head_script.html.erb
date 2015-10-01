@@ -1,5 +1,23 @@
 <script>
 	
+	function approve_ajax(input) {		
+		var url = input.attr("href")
+		var table = input.parents("table")
+		
+		$.ajax({
+			url: url,
+			success: function(data, textStatus, jqXHR)
+			{
+				alert(data)
+				if(table.length) {
+					table.dataTable().fnFilter();
+				} else {
+					location.reload(); 
+				}
+			}
+		})
+	}
+	
 	function calculateTransferHourFrom() {
 		var money = 0
 		$('.hour_input_group').each(function() {
@@ -3223,6 +3241,11 @@
 		});
 		$(document).on("change", ".transfer_hour_from .input_hour", function() {
 			calculateTransferHourFrom()
+		});
+		
+		$(document).on("click", ".approve_link", function(e) {
+			e.preventDefault()
+			approve_ajax($(this))
 		});
 	})
 	

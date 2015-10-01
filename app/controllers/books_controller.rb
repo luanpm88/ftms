@@ -165,7 +165,7 @@ class BooksController < ApplicationController
     @book.approve_new(current_user)
     
     respond_to do |format|
-      format.html { redirect_to params[:tab_page].present? ? "/books/approved" : @book }
+      format.html { render "/books/approved", layout: nil }
       format.json { render action: 'show', status: :created, location: @book }
     end
   end
@@ -176,7 +176,7 @@ class BooksController < ApplicationController
     @book.approve_update(current_user)
     
     respond_to do |format|
-      format.html { redirect_to params[:tab_page].present? ? "/books/approved" : @book }
+      format.html { render "/books/approved", layout: nil }
       format.json { render action: 'show', status: :created, location: @book }
     end
   end
@@ -187,7 +187,7 @@ class BooksController < ApplicationController
     @book.approve_delete(current_user)
     
     respond_to do |format|
-      format.html { redirect_to params[:tab_page].present? ? "/books/approved" : @book }
+      format.html { render "/books/approved", layout: nil }
       format.json { render action: 'show', status: :created, location: @book }
     end
   end

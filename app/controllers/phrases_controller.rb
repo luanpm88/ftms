@@ -103,7 +103,7 @@ class PhrasesController < ApplicationController
     @phrase.approve_new(current_user)
     
     respond_to do |format|
-      format.html { redirect_to params[:tab_page].present? ? "/phrases/approved" : @phrase }
+      format.html { render "/phrases/approved", layout: nil }
       format.json { render action: 'show', status: :created, location: @phrase }
     end
   end
@@ -114,7 +114,7 @@ class PhrasesController < ApplicationController
     @phrase.approve_update(current_user)
     
     respond_to do |format|
-      format.html { redirect_to params[:tab_page].present? ? "/phrases/approved" : @phrase }
+      format.html { render "/phrases/approved", layout: nil }
       format.json { render action: 'show', status: :created, location: @phrase }
     end
   end
@@ -125,7 +125,7 @@ class PhrasesController < ApplicationController
     @phrase.approve_delete(current_user)
     
     respond_to do |format|
-      format.html { redirect_to params[:tab_page].present? ? "/phrases/approved" : @phrase }
+      format.html { render "/phrases/approved", layout: nil }
       format.json { render action: 'show', status: :created, location: @phrase }
     end
   end

@@ -98,7 +98,7 @@ class BankAccountsController < ApplicationController
     @bank_account.approve_new(current_user)
     
     respond_to do |format|
-      format.html { redirect_to params[:tab_page].present? ? "/bank_accounts/approved" : @bank_account }
+      format.html { render "/bank_accounts/approved", layout: nil }
       format.json { render action: 'show', status: :created, location: @bank_account }
     end
   end
@@ -109,7 +109,7 @@ class BankAccountsController < ApplicationController
     @bank_account.approve_update(current_user)
     
     respond_to do |format|
-      format.html { redirect_to params[:tab_page].present? ? "/bank_accounts/approved" : @bank_account }
+      format.html { render "/bank_accounts/approved", layout: nil }
       format.json { render action: 'show', status: :created, location: @bank_account }
     end
   end
@@ -120,7 +120,7 @@ class BankAccountsController < ApplicationController
     @bank_account.approve_delete(current_user)
     
     respond_to do |format|
-      format.html { redirect_to params[:tab_page].present? ? "/bank_accounts/approved" : @bank_account }
+      format.html { render "/bank_accounts/approved", layout: nil }
       format.json { render action: 'show', status: :created, location: @bank_account }
     end
   end

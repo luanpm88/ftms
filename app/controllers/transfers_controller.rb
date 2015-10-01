@@ -100,7 +100,7 @@ class TransfersController < ApplicationController
     @transfer.approve_new(current_user)
     
     respond_to do |format|
-      format.html { redirect_to params[:tab_page].present? ? "/transfers/approved" : @transfer }
+      format.html { render "/transfers/approved", layout: nil }
       format.json { render action: 'show', status: :created, location: @transfer }
     end
   end
@@ -111,7 +111,7 @@ class TransfersController < ApplicationController
     @transfer.approve_update(current_user)
     
     respond_to do |format|
-      format.html { redirect_to params[:tab_page].present? ? "/transfers/approved" : @transfer }
+      format.html { render "/transfers/approved", layout: nil }
       format.json { render action: 'show', status: :created, location: @transfer }
     end
   end
@@ -122,7 +122,7 @@ class TransfersController < ApplicationController
     @transfer.approve_delete(current_user)
     
     respond_to do |format|
-      format.html { redirect_to params[:tab_page].present? ? "/transfers/approved" : @transfer }
+      format.html { render "/transfers/approved", layout: nil }
       format.json { render action: 'show', status: :created, location: @transfer }
     end
   end

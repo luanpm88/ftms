@@ -95,7 +95,7 @@ class ContactTagsController < ApplicationController
     @contact_tag.approve_new(current_user)
     
     respond_to do |format|
-      format.html { redirect_to params[:tab_page].present? ? "/contact_tags/approved" : @contact_tag }
+      format.html { render "/contact_tags/approved", layout: nil }
       format.json { render action: 'show', status: :created, location: @contact_tag }
     end
   end
@@ -106,7 +106,7 @@ class ContactTagsController < ApplicationController
     @contact_tag.approve_update(current_user)
     
     respond_to do |format|
-      format.html { redirect_to params[:tab_page].present? ? "/contact_tags/approved" : @contact_tag }
+      format.html { render "/contact_tags/approved", layout: nil }
       format.json { render action: 'show', status: :created, location: @contact_tag }
     end
   end
@@ -117,7 +117,7 @@ class ContactTagsController < ApplicationController
     @contact_tag.approve_delete(current_user)
     
     respond_to do |format|
-      format.html { redirect_to params[:tab_page].present? ? "/contact_tags/approved" : @contact_tag }
+      format.html { render "/contact_tags/approved", layout: nil }
       format.json { render action: 'show', status: :created, location: @contact_tag }
     end
   end

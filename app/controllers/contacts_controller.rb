@@ -382,7 +382,7 @@ class ContactsController < ApplicationController
     @contact.approve_new(current_user)
     
     respond_to do |format|
-      format.html { redirect_to params[:tab_page].present? ? "/contacts/approved" : @contact }
+      format.html { render "/contacts/approved", layout: nil }
       format.json { render action: 'show', status: :created, location: @subject }
     end
   end
@@ -393,7 +393,7 @@ class ContactsController < ApplicationController
     @contact.approve_education_consultant(current_user)    
     
     respond_to do |format|
-      format.html { redirect_to params[:tab_page].present? ? "/contacts/approved" : @contact }
+      format.html { render "/contacts/approved", layout: nil }
       format.json { render action: 'show', status: :created, location: @subject }
     end
   end
@@ -404,7 +404,7 @@ class ContactsController < ApplicationController
     @contact.approve_update(current_user)
     
     respond_to do |format|
-      format.html { redirect_to params[:tab_page].present? ? "/contacts/approved" : @contact }
+      format.html { render "/contacts/approved", layout: nil }
       format.json { render action: 'show', status: :created, location: @subject }
     end
   end
@@ -415,7 +415,7 @@ class ContactsController < ApplicationController
     @contact.approve_delete(current_user)
     
     respond_to do |format|
-      format.html { redirect_to params[:tab_page].present? ? "/contacts/approved" : @contact }
+      format.html { render "/contacts/approved", layout: nil }
       format.json { render action: 'show', status: :created, location: @subject }
     end
   end

@@ -100,7 +100,7 @@ class CourseTypesController < ApplicationController
     @course_type.approve_new(current_user)
     
     respond_to do |format|
-      format.html { redirect_to params[:tab_page].present? ? "/course_types/approved" : @course_type }
+      format.html { render "/course_types/approved", layout: nil }
       format.json { render action: 'show', status: :created, location: @course_type }
     end
   end
@@ -111,7 +111,7 @@ class CourseTypesController < ApplicationController
     @course_type.approve_update(current_user)
     
     respond_to do |format|
-      format.html { redirect_to params[:tab_page].present? ? "/course_types/approved" : @course_type }
+      format.html { render "/course_types/approved", layout: nil }
       format.json { render action: 'show', status: :created, location: @course_type }
     end
   end
@@ -122,7 +122,7 @@ class CourseTypesController < ApplicationController
     @course_type.approve_delete(current_user)
     
     respond_to do |format|
-      format.html { redirect_to params[:tab_page].present? ? "/course_types/approved" : @course_type }
+      format.html { render "/course_types/approved", layout: nil }
       format.json { render action: 'show', status: :created, location: @course_type }
     end
   end

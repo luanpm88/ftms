@@ -7,17 +7,17 @@ module CoursesHelper
       
       group_1 = 0
       if can? :approve_new, item
-        actions += '<li>'+ActionController::Base.helpers.link_to('Approve New', {controller: "courses", action: "approve_new", id: item.id, tab_page: 1}, title: "#{item.display_name}: Approve New", class: "tab_page")+'</li>'
+        actions += '<li>'+ActionController::Base.helpers.link_to('Approve New', {controller: "courses", action: "approve_new", id: item.id, tab_page: 1}, title: "#{item.display_name}: Approve New", class: "approve_link")+'</li>'
         group_1 += 1
       end
      
       if can? :approve_update, item
-        actions += '<li>'+ActionController::Base.helpers.link_to('Approve Update', {controller: "courses", action: "approve_update", id: item.id, tab_page: 1}, title: "#{item.display_name}: Approve Update", class: "tab_page")+'</li>'
+        actions += '<li>'+ActionController::Base.helpers.link_to('Approve Update', {controller: "courses", action: "approve_update", id: item.id, tab_page: 1}, title: "#{item.display_name}: Approve Update", class: "approve_link")+'</li>'
         group_1 += 1
       end
       
       if can? :approve_delete, item
-        actions += '<li>'+ActionController::Base.helpers.link_to('Approve Delete', {controller: "courses", action: "approve_delete", id: item.id, tab_page: 1}, title: "#{item.display_name}: Approve Delete", class: "tab_page")+'</li>'
+        actions += '<li>'+ActionController::Base.helpers.link_to('Approve Delete', {controller: "courses", action: "approve_delete", id: item.id, tab_page: 1}, title: "#{item.display_name}: Approve Delete", class: "approve_link")+'</li>'
         group_1 += 1
       end
       
