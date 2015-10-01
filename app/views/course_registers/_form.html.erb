@@ -19,7 +19,7 @@
 						 <div class="budget_hour budget_hour_<%= val[0] %>" rel="<%= val[0] %>"><%= val[1] %></div>
 						 <% if val[1] <= 0 %>
 							  <style>
-								   .transfer_hour_form_<%= @course.course_type_id %>-<%= @course.subject_id %> {
+								   .transfer_hour_form_<%= val[0] %> {
 										display: none;
 								   }
 							  </style>
