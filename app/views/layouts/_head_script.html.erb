@@ -160,21 +160,29 @@
 			
 			$("input[name='transfer[hour]']").val(hour)			
 			
-			if (hour == "") {
-				$(".to_phrase_list_box_hour_money").each(function() {
+			// to hour
+			var to_hour = 0
+			var to_money = 0
+			$(".to_phrase_list_box_hour_money").each(function() {
 				var box = $(this)
+				var h = 0
+				var m = 0.0
 				if (box.find(".courses_phrase_item").length) {					
-						var h = 0
-						var m = 0.0
-						box.find(".courses_phrase_item").each(function() {
-							if ($(this).prop('checked')) {
-								h += parseInt($(this).attr("hour"))
-								m += parseInt($(this).attr("money"))
-							}
-						})		
-					}
-					hour = h
-				})
+					
+					box.find(".courses_phrase_item").each(function() {
+						if ($(this).prop('checked')) {
+							h += parseInt($(this).attr("hour"))
+							m += parseInt($(this).attr("money"))
+						}
+					})		
+				}
+				to_hour = h
+				to_money = m
+			})
+			$(".to_total_phrase_hour").html(to_hour)
+			
+			if (hour == "") {
+				hour = to_hour
 			}
 			
 			if ($(".transfer_course_box .total_phrase_money").length && $(".transfer_course_box .total_phrase_money").html() != "N/A") {
@@ -235,6 +243,7 @@
 			{
 				box.find(".course_phrases_list").html(data)
 				updatePhraseListBoxHour()
+				format_price($('.transfer_to_box').find('input.price_input'));
 			}
 		})
 		
@@ -259,7 +268,6 @@
 	}
 	
 	function noPriceCheck(input) {
-		alert(input.select2("val"))
 		var box = input.parents(".item_box")
 		if (input.select2("val") == "no_price") {
 			box.find(".no_price_group").hide()

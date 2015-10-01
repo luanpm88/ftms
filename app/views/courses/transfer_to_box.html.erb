@@ -2,9 +2,9 @@
 							<div class="col-md-12 transfer_course_box to_course_box" type="">
 								   <div class="form-group">
 										 <label class="form-label"><label>Course</label></label>
-										 <span class="help"></span>
+										 <span class="help">(required)</span>
 										 <div class="input-with-icon  right">                                       
-											  <i class="">(required)</i>
+											  <i class=""></i>
 											  <div class="input-with_add_but">
 												   <%= link_to '<i class="icon-plus"></i>'.html_safe, new_course_path(tab_page: 1), title: "New Course", :class => 'btn btn-sm btn-small btn-white tab_page' %>
 												   <%= select_tag 'transfer[to_course_id]', options_for_select(Course.active_courses({upfront: !@transfer.course.upfront, course_type_id: @transfer.course.course_type_id, subject_id: @transfer.course.subject_id}).collect{ |u| [u.name, u.id] }), {include_blank: "None", class: "modern_select course_select width100 to_course required"} %>

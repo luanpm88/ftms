@@ -1,5 +1,8 @@
 					<div class="form-group">
-						<label class="form-label"><label>Course Detail</label></label>
+						<label class="form-label"><label>
+							<%= @type == "from" ? "Course Detail" : "Transferred Amount" %>
+						</label>
+						</label>
 						<span class="help"><%= "(required)" if @type == "to" %></span>
 						<div class="input-with-iconz  right">						
 								<div class="form-group <%= @type %>_phrase_list_box_hour_money">
@@ -9,12 +12,12 @@
 												Hour:
 											</h4>
 										</div>
-										<div class="col-md-4">
+										<div class="col-md-3">
 											<h4 style="margin-top: 0">
 												<% if @type == "from" %>
 													<strong hour="<%= @hour %>" class="total_phrase_hour"><%= @hour %></strong>
 												<% else %>
-													<%= text_field_tag "transfer[to_course_hour]", "", class: "price_input price_discount required" %>
+													<%= text_field_tag "transfer[to_course_hour]", "", class: "form-control price_input price_discount required" %>
 												<% end %>
 											</h4>
 										</div>
@@ -26,9 +29,9 @@
 										<div class="col-md-4">
 											<h4 style="margin-top: 0">
 												<% if @type == "from" %>
-													<strong per_hour="<%= @money/@hour if @hour != "N/A" %>" money="<%= @money %>" class="total_phrase_money"><%= format_price(@money) %></strong>
+													<strong per_hour="<%= @money/@hour if @hour != "N/A" %>" money="<%= @money %>" class="total_phrase_money"><%= @money == -1 ? "No Price!" : format_price(@money) %></strong>
 												<% else %>
-													<%= text_field_tag "transfer[to_course_money]", "", class: "price_input price_discount required" %>
+													<%= text_field_tag "transfer[to_course_money]", "", class: "form-control price_input price_discount required" %>
 												<% end %>
 											</h4>
 										</div>										
@@ -37,7 +40,16 @@
 									<div class="input-with-icon right">
 										
 										<% if !@course.upfront && !@course.courses_phrases.empty? %>
-											<label class="form-label"><label>Phrase List</label></label>
+											<label class="form-label"><label>Phrase List
+												<% if @type == "to" %>
+													(<span hour="<%= @course.total_hour %>" class="to_total_phrase_hour"><%= @course.total_hour %></span> hours)
+												<% end %>
+											</label></label>
+											
+											
+												
+											
+											
 											<% group_name = "" %>
 											<div>
 												<% @courses_phrases.each do |courses_phrase| %>													
