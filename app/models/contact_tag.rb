@@ -43,7 +43,11 @@ class ContactTag < ActiveRecord::Base
       else
         @records = @records.where("contact_tags.status LIKE ?","%[#{params[:status]}]%")
       end
-    end    
+    end
+    
+    if !params[:status].present? || params[:status] != "deleted"
+      @records = @records.where("contact_tags.status NOT LIKE ?","%[deleted]%")
+    end
    
     ########## END REVISION-FEATURE #########################
     

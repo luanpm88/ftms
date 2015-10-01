@@ -42,7 +42,11 @@ class Phrase < ActiveRecord::Base
       else
         @records = @records.where("phrases.status LIKE ?","%[#{params[:status]}]%")
       end
-    end    
+    end
+    
+    if !params[:status].present? || params[:status] != "deleted"
+      @records = @records.where("phrases.status NOT LIKE ?","%[deleted]%")
+    end
    
     ########## END REVISION-FEATURE #########################
     

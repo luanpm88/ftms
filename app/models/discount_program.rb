@@ -59,7 +59,11 @@ class DiscountProgram < ActiveRecord::Base
         @records = @records.where("discount_programs.status LIKE ?","%[#{params[:status]}]%")
       end
     end    
-   
+    
+    if !params[:status].present? || params[:status] != "deleted"
+      @records = @records.where("discount_programs.status NOT LIKE ?","%[deleted]%")
+    end
+    
     ########## END REVISION-FEATURE #########################
     
     if params["course_types"].present?

@@ -138,6 +138,10 @@ class Course < ActiveRecord::Base
       else
         @records = @records.where("courses.status LIKE ?","%[#{params[:status]}]%")
       end
+    end
+    
+    if !params[:status].present? || params[:status] != "deleted"
+      @records = @records.where("courses.status NOT LIKE ?","%[deleted]%")
     end    
 
     ########## END REVISION-FEATURE #########################

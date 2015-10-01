@@ -51,7 +51,11 @@ class BankAccount < ActiveRecord::Base
       else
         @records = @records.where("bank_accounts.status LIKE ?","%[#{params[:status]}]%")
       end
-    end    
+    end
+    
+    if !params[:status].present? || params[:status] != "deleted"
+      @records = @records.where("bank_accounts.status NOT LIKE ?","%[deleted]%")
+    end
    
     ########## END REVISION-FEATURE #########################
     
