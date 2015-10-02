@@ -1390,10 +1390,42 @@ class Contact < ActiveRecord::Base
   end
   
   def recent_hour_transfers(hid)
-    arr = []
+    origin = []
     active_received_transfers.where(to_type: "hour").order("created_at").each do |transfer|
       hour_id = transfer.course.course_type_id.to_s+"-"+transfer.course.subject_id.to_s
-      arr << transfer if hid == hour_id
+      origin << transfer if hid == hour_id
+    end
+    
+    # total used
+    used_hours = {}
+
+    active_contacts_courses.joins("LEFT JOIN courses ON courses.id = contacts_courses.course_id").each do |cc|
+      hour_id = cc.course.course_type_id.to_s+"-"+cc.course.subject_id.to_s
+      hours[hour_id] = hours[hour_id].nil? ? cc.hour.to_f : hours[hour_id] + cc.hour.to_f
+    end
+    
+    # calculate used hour
+    arr = []
+    origin.each do |transfer|      
+      hour_id = transfer.course.course_type_id.to_s+"-"+transfer.course.subject_id.to_s
+      
+      row = {}
+      row[:remain_hour] = transfer.remain_hour(self)
+      row[:remain_money] = transfer.remain_money(self)
+      if used_hours[hour_id] > 0
+        if used_hours[hour_id] > row[:remain_hour]
+          row[:remain_hour] = 0
+          row[:remain_money] = 0
+          used_hours[hour_id] -= row[:remain_hour]
+        else
+          rate = row[:remain_money]/row[:remain_hour]
+          row[:remain_hour] -= used_hours[hour_id]
+          row[:remain_money] -= used_hours[hour_id]*rate
+          used_hours[hour_id] = 0
+        end        
+      end
+      
+      arr << row if row[:remain_hour] > 0
     end
     
     return arr
