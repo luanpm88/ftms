@@ -74,7 +74,7 @@ class Course < ActiveRecord::Base
   end
   
   def self.full_text_search(q, params=nil)
-    result = self.main_courses.order("upfront DESC, courses.intake DESC")
+    result = self.active_courses.order("upfront DESC, courses.intake DESC")
     if !params.nil?
       if params[:student_id].present?
         contact = Contact.find(params[:student_id])

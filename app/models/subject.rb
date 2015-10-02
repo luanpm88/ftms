@@ -139,7 +139,7 @@ class Subject < ActiveRecord::Base
   def check_exist
     return false if draft?
     
-    exist = Subject.main_subjects.where("name = ?",
+    exist = Subject.main_subjects.where("subjects.status NOT LIKE ?", "%[deleted]%").where("name = ?",
                           self.name
                         )
     

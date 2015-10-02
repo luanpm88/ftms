@@ -161,7 +161,7 @@ class DiscountProgram < ActiveRecord::Base
   def check_exist
     return false if draft?
     
-    exist = DiscountProgram.main_discount_programs.where("name = ?",
+    exist = DiscountProgram.main_discount_programs.where("discount_programs.status NOT LIKE ?", "%[deleted]%").where("name = ?",
                           self.name
                         )
     

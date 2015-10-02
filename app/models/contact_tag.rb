@@ -105,7 +105,7 @@ class ContactTag < ActiveRecord::Base
   def check_exist
     return false if draft?
     
-    exist = ContactTag.main_contact_tags.where("name = ?",
+    exist = ContactTag.main_contact_tags.where("contact_tags.status NOT LIKE ?", "%[deleted]%").where("name = ?",
                           self.name
                         )
     

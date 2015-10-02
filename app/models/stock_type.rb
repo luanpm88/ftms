@@ -103,7 +103,7 @@ class StockType < ActiveRecord::Base
   def check_exist
     return false if draft?
     
-    exist = StockType.main_stock_types.where("name = ?",
+    exist = StockType.main_stock_types.where("stock_types.status NOT LIKE ?", "%[deleted]%").where("name = ?",
                           self.name
                         )
     

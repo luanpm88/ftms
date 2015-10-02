@@ -471,15 +471,16 @@ class Book < ActiveRecord::Base
   ############### BEGIN REVISION #########################
   
   def check_exist
-    return false if draft?
-    
-    exist = CourseType.main_course_types.where("name = ?",
-                          self.name
-                        )
-    
-    if self.id.nil? && exist.length > 0
-      errors.add(:base, "Book exists")
-    end
+    return false
+    #return false if draft?
+    #
+    #exist = Book.main_books.where("name = ?",
+    #                      self.name
+    #                    )
+    #
+    #if self.id.nil? && exist.length > 0
+    #  errors.add(:base, "Book exists")
+    #end
     
   end
   

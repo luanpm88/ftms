@@ -129,7 +129,7 @@ class CourseType < ActiveRecord::Base
   def check_exist
     return false if draft?
     
-    exist = CourseType.main_course_types.where("short_name = ?",
+    exist = CourseType.main_course_types.where("course_types.status NOT LIKE ?", "%[deleted]%").where("short_name = ?",
                           self.short_name
                         )
     

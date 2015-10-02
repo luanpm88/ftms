@@ -144,7 +144,7 @@ class Phrase < ActiveRecord::Base
   def check_exist
     return false if draft?
     
-    exist = Phrase.main_phrases.where("name = ?",
+    exist = Phrase.main_phrases.where("phrases.status NOT LIKE ?", "%[deleted]%").where("name = ?",
                           self.name
                         )
     

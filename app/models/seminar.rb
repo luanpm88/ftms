@@ -303,7 +303,7 @@ class Seminar < ActiveRecord::Base
                         )
     
     if self.id.nil? && exist.length > 0
-      errors.add(:base, "Course type exists")
+      errors.add(:base, "Seminar exists")
     end
     
   end
