@@ -1401,7 +1401,7 @@ class Contact < ActiveRecord::Base
 
     active_contacts_courses.joins("LEFT JOIN courses ON courses.id = contacts_courses.course_id").each do |cc|
       hour_id = cc.course.course_type_id.to_s+"-"+cc.course.subject_id.to_s
-      hours[hour_id] = hours[hour_id].nil? ? cc.hour.to_f : hours[hour_id] + cc.hour.to_f
+      used_hours[hour_id] = used_hours[hour_id].nil? ? cc.hour.to_f : used_hours[hour_id] + cc.hour.to_f
     end
     
     # calculate used hour
