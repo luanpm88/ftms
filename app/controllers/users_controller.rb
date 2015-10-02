@@ -199,7 +199,7 @@ class UsersController < ApplicationController
         
         @records.each do |pr|
           pr.payment_record_details.each do |prd|
-            if prd.contacts_course.course.course_type_id == ct.id
+            if !prd.contacts_course.nil? && prd.contacts_course.course.course_type_id == ct.id
               total += prd.amount
               group_total += prd.amount
             end
