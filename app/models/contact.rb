@@ -1413,18 +1413,18 @@ class Contact < ActiveRecord::Base
       row[:transfer] = transfer
       row[:remain_hour] = transfer.remain_hour(self)
       row[:remain_money] = transfer.remain_money(self)
-      #if used_hours[hour_id] > 0
-      #  if used_hours[hour_id] > row[:remain_hour]
-      #    row[:remain_hour] = 0
-      #    row[:remain_money] = 0
-      #    used_hours[hour_id] -= row[:remain_hour]
-      #  else
-      #    rate = row[:remain_money]/row[:remain_hour]
-      #    row[:remain_hour] -= used_hours[hour_id]
-      #    row[:remain_money] -= used_hours[hour_id]*rate
-      #    used_hours[hour_id] = 0
-      #  end        
-      #end
+      if used_hours[hour_id] > 0
+        if used_hours[hour_id] > row[:remain_hour]
+          #row[:remain_hour] = 0
+          #row[:remain_money] = 0
+          #used_hours[hour_id] -= row[:remain_hour]
+        else
+          rate = row[:remain_money]/row[:remain_hour]
+          row[:remain_hour] -= used_hours[hour_id]
+          row[:remain_money] -= used_hours[hour_id]*rate
+          used_hours[hour_id] = 0
+        end        
+      end
       
       arr << row if row[:remain_hour] > 0
     end
