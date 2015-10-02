@@ -183,7 +183,7 @@ class Transfer < ActiveRecord::Base
       JSON.parse(from_hour).each do |r|
         tr = Transfer.find(r[0])
         hour_id = tr.course.course_type_id.to_s+"-"+tr.course.subject_id.to_s
-        hours[hour_id] = hours[hour_id].nil? ? r[1] : hours[hour_id] + r[1]
+        hours[hour_id] = hours[hour_id].nil? ? r[1].to_f : hours[hour_id] + r[1].to_f
       end
       
       arr = []
