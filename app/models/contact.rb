@@ -1378,13 +1378,13 @@ class Contact < ActiveRecord::Base
       hours[hour_id] = hours[hour_id].nil? ? -cc.hour.to_f : hours[hour_id] - cc.hour.to_f
     end
     
-    active_transfers.where.not(from_hour: nil).each do |transfer|
-        JSON.parse(transfer.from_hour).each do |row|
-          tr = Transfer.find(row[0])
-          hour_id = tr.course.course_type_id.to_s+"-"+tr.course.subject_id.to_s
-          hours[hour_id] = hours[hour_id].nil? ? -row[1].to_f : hours[hour_id] - row[1].to_f
-        end
-    end
+    #active_transfers.where.not(from_hour: nil).each do |transfer|
+    #    JSON.parse(transfer.from_hour).each do |row|
+    #      tr = Transfer.find(row[0])
+    #      hour_id = tr.course.course_type_id.to_s+"-"+tr.course.subject_id.to_s
+    #      hours[hour_id] = hours[hour_id].nil? ? -row[1].to_f : hours[hour_id] - row[1].to_f
+    #    end
+    #end
     
     return hours
   end
