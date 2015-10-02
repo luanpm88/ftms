@@ -48,7 +48,7 @@
 													   
 															<tr class="hour_input_group">
 																 <td class="text-center">
-																	  <%= transfer.id %> <%= transfer.created_at.strftime("%d-%b-%Y") %>
+																	  <%= transfer.id.to_s+"/"+paper[0] %> <%= transfer.created_at.strftime("%d-%b-%Y") %>
 																 </td>
 																 <td class="text-left">
 																	  <%= transfer.course.course_type.short_name+"-"+transfer.course.subject.name %>
