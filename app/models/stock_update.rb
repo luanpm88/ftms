@@ -110,7 +110,7 @@ class StockUpdate < ActiveRecord::Base
     str << book.display_name
     str << type_name
     str << quantity.to_s
-    str << created_date.strftime("%d-%b-%Y")
+    str << created_at.strftime("%d-%b-%Y")
     str << user.name
     str << user.name.unaccent
     
