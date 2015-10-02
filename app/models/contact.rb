@@ -1373,18 +1373,18 @@ class Contact < ActiveRecord::Base
       hour_id = transfer.course.course_type_id.to_s+"-"+transfer.course.subject_id.to_s
       hours[hour_id] = hours[hour_id].nil? ? transfer.hour.to_f :  hours[hour_id] + transfer.hour.to_f
     end
-    active_contacts_courses.joins("LEFT JOIN courses ON courses.id = contacts_courses.course_id").each do |cc|
-      hour_id = cc.course.course_type_id.to_s+"-"+cc.course.subject_id.to_s
-      hours[hour_id] = hours[hour_id].nil? ? -cc.hour.to_f : hours[hour_id] - cc.hour.to_f
-    end
-    
-    #active_transfers.where.not(from_hour: nil).each do |transfer|
-    #    JSON.parse(transfer.from_hour).each do |row|
-    #      tr = Transfer.find(row[0])
-    #      hour_id = tr.course.course_type_id.to_s+"-"+tr.course.subject_id.to_s
-    #      hours[hour_id] = hours[hour_id].nil? ? -row[1].to_f : hours[hour_id] - row[1].to_f
-    #    end
+    #active_contacts_courses.joins("LEFT JOIN courses ON courses.id = contacts_courses.course_id").each do |cc|
+    #  hour_id = cc.course.course_type_id.to_s+"-"+cc.course.subject_id.to_s
+    #  hours[hour_id] = hours[hour_id].nil? ? -cc.hour.to_f : hours[hour_id] - cc.hour.to_f
     #end
+    
+    active_transfers.where.not(from_hour: nil).each do |transfer|
+        JSON.parse(transfer.from_hour).each do |row|
+          tr = Transfer.find(row[0])
+          hour_id = tr.course.course_type_id.to_s+"-"+tr.course.subject_id.to_s
+          hours[hour_id] = hours[hour_id].nil? ? -row[1].to_f : hours[hour_id] - row[1].to_f
+        end
+    end
     
     return hours
   end
