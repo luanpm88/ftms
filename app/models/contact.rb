@@ -1415,9 +1415,9 @@ class Contact < ActiveRecord::Base
       row[:remain_money] = transfer.remain_money(self)
       if used_hours[hour_id] > 0
         if used_hours[hour_id] > row[:remain_hour]
-          #row[:remain_hour] = 0
-          #row[:remain_money] = 0
-          #used_hours[hour_id] -= row[:remain_hour]
+          used_hours[hour_id] -= row[:remain_hour]
+          row[:remain_hour] = 0
+          row[:remain_money] = 0
         else
           rate = row[:remain_money]/row[:remain_hour]
           row[:remain_hour] -= used_hours[hour_id]
