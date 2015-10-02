@@ -90,7 +90,7 @@ class Course < ActiveRecord::Base
   def course_exist
     return false if draft?
     
-    exist = Course.main_courses.where("upfront = ? AND course_type_id = ? AND subject_id = ? AND EXTRACT(YEAR FROM courses.intake) = ? AND EXTRACT(MONTH FROM courses.intake) = ?",
+    exist = Course.main_courses.where("courses.status NOT LIKE ?", "%[deleted]%").where("upfront = ? AND course_type_id = ? AND subject_id = ? AND EXTRACT(YEAR FROM courses.intake) = ? AND EXTRACT(MONTH FROM courses.intake) = ?",
                           self.upfront, self.course_type_id, self.subject_id, self.intake.year, self.intake.month
                         )
     

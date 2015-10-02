@@ -298,7 +298,7 @@ class Seminar < ActiveRecord::Base
   def check_exist
     return false if draft?
     
-    exist = Seminar.main_seminars.where("name = ?",
+    exist = Seminar.main_seminars.where("courses.status NOT LIKE ?", "%[deleted]%").where("name = ?",
                           self.name
                         )
     
