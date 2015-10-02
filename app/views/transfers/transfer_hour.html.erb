@@ -42,29 +42,29 @@
 											 </tr>
 											 <% @contact.budget_hour.each do |paper| %>
 
-												  <% @contact.recent_hour_transfers(paper[0]).each do |transfer| %>
+												  <% @contact.recent_hour_transfers(paper[0]).each do |row| %>
 													   
-													   <% if transfer.remain_hour(@contact) > 0 %>
+
 													   
 															<tr class="hour_input_group">
 																 <td class="text-center">
-																	  <%= transfer.id.to_s+"/"+paper[0] %> <%= transfer.created_at.strftime("%d-%b-%Y") %>
+																	  <%= row[:transfer].id.to_s+"/"+paper[0] %> <%= row[:transfer].created_at.strftime("%d-%b-%Y") %>
 																 </td>
 																 <td class="text-left">
-																	  <%= transfer.course.course_type.short_name+"-"+transfer.course.subject.name %>
+																	  <%= row[:transfer].course.course_type.short_name+"-"+row[:transfer].course.subject.name %>
 																 </td>															
-																 <td class="text-center input_remain_hour" value="<%= transfer.remain_hour(@contact) %>">
-																	  <%= format_price(transfer.remain_hour(@contact)) %>
+																 <td class="text-center input_remain_hour" value="<%= row[:remain_hour] %>">
+																	  <%= format_price(row[:remain_hour]) %>
 																 </td>
-																 <td class="text-right input_remain_money" value="<%= transfer.remain_money(@contact) %>">
-																	  <%= format_price(transfer.remain_money(@contact)) %>
+																 <td class="text-right input_remain_money" value="<%= row[:remain_money] %>">
+																	  <%= format_price(row[:remain_money]) %>
 																 </td>
 																 <td class="text-right">
-																	  <%= text_field_tag "from_hours["+transfer.id.to_s+"]", 0, style: "width: 100px", class: "pull-right form-control price_input input_hour" %>
+																	  <%= text_field_tag "from_hours["+row[:transfer].id.to_s+"]", 0, style: "width: 100px", class: "pull-right form-control price_input input_hour" %>
 																 </td>
 															</tr>
 													   
-													   <% end %>
+
 													   
 												  <% end %>
 												  

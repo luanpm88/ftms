@@ -1410,6 +1410,7 @@ class Contact < ActiveRecord::Base
       hour_id = transfer.course.course_type_id.to_s+"-"+transfer.course.subject_id.to_s
       
       row = {}
+      row[:transfer] = transfer
       row[:remain_hour] = transfer.remain_hour(self)
       row[:remain_money] = transfer.remain_money(self)
       if used_hours[hour_id] > 0
