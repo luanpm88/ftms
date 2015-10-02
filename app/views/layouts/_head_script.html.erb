@@ -9,7 +9,7 @@
 			success: function(data, textStatus, jqXHR)
 			{
 				alert(data)
-				if(table.length) {
+				if(table.length && $(".contact_detail_tabs_page").length == 0) {
 					table.dataTable().fnFilter();
 				} else {
 					location.reload(); 

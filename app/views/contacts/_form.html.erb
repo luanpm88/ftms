@@ -249,7 +249,7 @@
 													  <span class="help"></span>
 													  <div class="input-with-icon  right">
 														   <select name="contact_tag" class="modern_select width100">
-																<% ContactTag.all.each do |ctag| %>
+																<% ContactTag.active_contact_tags.each do |ctag| %>
 																	 <option <%= 'selected="selected"' if !@contact.contact_tag.nil? && ctag.id == @contact.contact_tag.id %> value="<%= ctag.id %>"><%= ctag.name %></option>															
 																<% end %>
 														   </select>
