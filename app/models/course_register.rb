@@ -141,7 +141,9 @@ class CourseRegister < ActiveRecord::Base
       cond << "courses.id IN (#{course_ids.join(",")})" if !course_ids.empty?
       cond << "books.id IN (#{book_ids.join(",")})" if !book_ids.empty?
       @records = @records.includes(:books_contacts, :contacts_courses)
-                          #.where(cond.join(" OR ")) if !cond.empty?
+                          .joins("LEFT JOIN books ON books.id=books_contacts.id")
+                          .joins("LEFT JOIN courses ON courses.id=contacts_courses.id")
+                          .where(cond.join(" OR ")) if !cond.empty?
     end
     
     if params["subjects"].present?
