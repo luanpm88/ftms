@@ -140,7 +140,7 @@ class CourseRegister < ActiveRecord::Base
       cond = []
       cond << "courses.id IN (#{course_ids.join(",")})" if !course_ids.empty?
       cond << "books.id IN (#{book_ids.join(",")})" if !book_ids.empty?
-      @records = @records.joins(:contacts_courses => :course, :books_contacts => :book)
+      @records = @records.joins(:contacts_courses => :course).joins(:books_contacts => :book)
                           .where(cond.join(" OR ")) if !cond.empty?
     end
     
