@@ -223,7 +223,7 @@ class PaymentRecordsController < ApplicationController
         @course_registers = CourseRegister.where(id: params[:ids])
       end
       
-      @course_registers = @course_registers.includes(:contact).order("contacts.name, contact_id")
+      @course_registers = @course_registers.includes(:contact).order("contacts.name, course_registers.contact_id")
       
       paper_ids = []
       
