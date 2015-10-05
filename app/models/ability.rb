@@ -320,6 +320,9 @@ class Ability
       can :export_student_course, CourseRegister
       can :add_stocks, CourseRegister
       can :do_add_stocks, CourseRegister
+      can :delivery_print, CourseRegister do |cr|
+        !cr.delivered?
+      end
     end
     
     if user.has_role? "education_consultant"

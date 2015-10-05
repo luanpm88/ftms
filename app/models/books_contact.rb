@@ -166,20 +166,22 @@ class BooksContact < ActiveRecord::Base
       @records = @records.includes(:course_register => :contacts_courses).where(contacts_courses: {course_id: params[:courses].split(",")})
     end
     
-    if params["upfront"].present?
+    if params["upfront"] == "true"
       @records = @records.where(upfront: params["upfront"])
-    end
+    else
+      if params["upfront"] == "false"
+        @records = @records.where(upfront: params["upfront"])
+      end
 
+      if params["intake_year"].present? && params["intake_month"].present?
+        @records = @records.where("EXTRACT(YEAR FROM books_contacts.intake) = ? AND EXTRACT(MONTH FROM books_contacts.intake) = ? ", params["intake_year"], params["intake_month"])
+      elsif params["intake_year"].present?
+        @records = @records.where("EXTRACT(YEAR FROM books_contacts.intake) = ? ", params["intake_year"])
+      elsif params["intake_month"].present?
+        @records = @records.where("EXTRACT(MONTH FROM books_contacts.intake) = ? ", params["intake_month"])
+      end
+    end
     
-    course_ids = nil
-    if params["intake_year"].present? && params["intake_month"].present?
-      course_ids = Course.where("EXTRACT(YEAR FROM courses.intake) = ? AND EXTRACT(MONTH FROM courses.intake) = ? ", params["intake_year"], params["intake_month"]).map(&:id)
-    elsif params["intake_year"].present?
-      course_ids = Course.where("EXTRACT(YEAR FROM courses.intake) = ? ", params["intake_year"]).map(&:id)
-    elsif params["intake_month"].present?
-      course_ids = Course.where("EXTRACT(MONTH FROM courses.intake) = ? ", params["intake_month"]).map(&:id)
-    end    
-    @records = @records.joins(:contacts_courses => :course).where(courses: {id: course_ids}) if !course_ids.nil?
     
     return @records
   end
@@ -231,7 +233,7 @@ class BooksContact < ActiveRecord::Base
       item = [
               "<div class=\"checkbox check-default\"><input name=\"ids[]\" id=\"checkbox#{item.id}\" type=\"checkbox\" value=\"#{item.id}\"><label for=\"checkbox#{item.id}\"></label></div>",
               item.contact.contact_link,
-              item.book.display_name,
+              item.display_intake+item.book.display_name,
               '<div class="text-center">'+ item.quantity.to_s+"</div>",
               '<div class="text-center">'+ item.display_upfront+"</div>",
               '<div class="text-center">'+ item.display_delivery_status+"</div>",
@@ -295,6 +297,10 @@ class BooksContact < ActiveRecord::Base
       return "<div class=\"nowrap check-radio\">"+ActionController::Base.helpers.link_to("<i class=\"#{delivered?.to_s} icon-check#{delivered? ? "" : "-empty"}\"></i>".html_safe, {controller: "deliveries", action: "new", course_register_id: self.course_register_id, tab_page: 1}, title: "Deliver Stock: #{self.contact.display_name}", title: 'Materials Delivery', class: "tab_page")+"</div>"
     end
 
+  end
+  
+  def display_intake
+    upfront ? "Upfront-" : (intake.nil? ? "" : intake.strftime("%b-%Y")+"-")
   end
   
 end

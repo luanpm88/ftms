@@ -12,7 +12,7 @@
                                                     <%= book.cover_link %>                                                    
                                                   </div>
                                               </div>
-                                              <div class="col-md-3">
+                                              <div class="col-md-2">
                                                   <div class="">
                                                     <strong><%= book.display_name %></strong>
                                                     <%= hidden_field_tag "books_contacts["+number.to_s+"][book_id]", book.id %>
@@ -30,7 +30,28 @@
                                                         </div>
                                                    </div>
                                               </div>
-
+											  <div class="col-md-2 intake_box">
+												<div class="form-group" style="margin-bottom: 5px;">
+													  <label class="form-label">Upfront?</label>
+													  <span class="help"></span>
+													  <div class="input-with-icon right">                                       
+														   <div class="radio radio-success" style="padding: 5px">
+																<input class="upfront_radio required" id="<%= number %>_upfront_true" type="radio" name="books_contacts[<%= number.to_s %>][upfront]" value="true">
+																<label for="<%= number %>_upfront_true">Yes</label>
+																<input checked="checked" class="upfront_radio required" id="<%= number %>_upfront_false" type="radio" name="books_contacts[<%= number.to_s %>][upfront]" value="false">
+																<label for="<%= number %>_upfront_false">No</label>
+														   </div>
+													  </div>
+												 </div>
+												 <div class="intake_group">
+													 <h4>Intake</h4>
+													 <div class="date_select_filter">
+														 <div class="input-with-icon date-group-my right">                                       
+														 <%= date_select("books_contacts["+number.to_s+"]", :intake, default: 3.days.from_now, use_short_month: true, discard_day: true) %>
+														 </div>
+													 </div>
+												 </div>
+											  </div>
                                               <div class="col-md-2">
                                                     <div class="form-group">
                                                       <label class="form-label"><label>Price</label></label>
@@ -70,7 +91,7 @@
                                                           </div>
                                                     </div>
                                                </div>
-                                               <div class="col-md-2">
+                                               <div class="col-md-1">
                                                     <div class="form-group no_price_group">
                                                           <label class="form-label"><label>Total</label></label>
                                                           <span class="help"></span>

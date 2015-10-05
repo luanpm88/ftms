@@ -222,6 +222,21 @@ class UsersController < ApplicationController
         end
         
         
+        ## company sales
+        @records = PaymentRecord.where(status: 1)
+                              .where(account_manager_id: u.id)
+                              .where("payment_records.payment_date >= ? AND payment_records.payment_date <= ? ", @from_date.beginning_of_day, @to_date.end_of_day)
+        @records.each do |pr|
+          pr.payment_record_details.each do |prd|
+            if prd.course_type_id == ct.id
+              total += prd.amount
+              group_total += prd.amount
+            end
+          end
+        end
+        
+        
+        
         # receivable
         receivable = 0
         contacts_courses = ContactsCourse.includes(:course_register, :course => :course_type)

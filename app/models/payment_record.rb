@@ -134,7 +134,7 @@ class PaymentRecord < ActiveRecord::Base
               '<div class="text-right">'+item.paid_on+"</div>",
               '<div class="text-center">'+item.bank_account_name+"</div>",
               '<div class="text-right">'+ApplicationController.helpers.format_price(item.remain)+"</div>",
-              '<div class="text-center">'+item.contact.staff_col+"</div>",
+              '<div class="text-center">'+item.staff_col+"</div>",
               ""
               #'<div class="text-right">'+ApplicationController.helpers.format_price(item.amount)+"</div>",
               #'<div class="text-center">'+item.payment_date.strftime("%d-%b-%Y")+"</div>",
@@ -157,6 +157,14 @@ class PaymentRecord < ActiveRecord::Base
     
     return {result: result, items: @records, actions_col: actions_col}
     
+  end
+  
+  def staff_col
+    if !company.nil?
+      account_manager.staff_col
+    else
+      contact.staff_col
+    end    
   end
   
   def paid_on

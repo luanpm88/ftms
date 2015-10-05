@@ -193,6 +193,7 @@ Hkerp::Application.routes.draw do
       
       get :add_stocks
       post :do_add_stocks
+      get :delivery_print
     end
   end
   resources :course_types_subjects

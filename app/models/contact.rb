@@ -1627,6 +1627,7 @@ class Contact < ActiveRecord::Base
     arr = []
     arr << "<div class=\"nowrap\"><strong>"+active_course(course_id)[:course].display_name+"</strong> <span>#{course.report_toggle(self)}</span></div>"
     arr << "<div class=\"courses_phrases_list\">"+Course.render_courses_phrase_list(active_course(course_id)[:courses_phrases])+"</div>" if !active_course(course_id)[:courses_phrases].empty?
+    arr << "<br /><div>Hour: <strong>#{self.active_course(course_id)[:hour]}</strong> <br /> Money: <strong>#{ApplicationController.helpers.format_price(self.active_course(course_id)[:money])}</trong></div>"
     return arr.join("")
   end
   

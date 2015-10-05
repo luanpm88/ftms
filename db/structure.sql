@@ -40,7 +40,8 @@ CREATE TABLE activities (
     note text,
     created_at timestamp without time zone NOT NULL,
     updated_at timestamp without time zone NOT NULL,
-    deleted integer DEFAULT 0
+    deleted integer DEFAULT 0,
+    item_code character varying
 );
 
 
@@ -306,7 +307,8 @@ CREATE TABLE books_contacts (
     quantity integer,
     cache_delivery_status text,
     upfront boolean DEFAULT false,
-    cache_search text
+    cache_search text,
+    intake timestamp without time zone
 );
 
 
@@ -1744,7 +1746,8 @@ CREATE TABLE transfers (
     cache_payment_status text,
     from_hour text,
     cache_search text,
-    hour_money numeric
+    hour_money numeric,
+    note text
 );
 
 
@@ -3002,4 +3005,10 @@ INSERT INTO schema_migrations (version) VALUES ('20151001035014');
 INSERT INTO schema_migrations (version) VALUES ('20151001075300');
 
 INSERT INTO schema_migrations (version) VALUES ('20151001113758');
+
+INSERT INTO schema_migrations (version) VALUES ('20151005034319');
+
+INSERT INTO schema_migrations (version) VALUES ('20151005042458');
+
+INSERT INTO schema_migrations (version) VALUES ('20151005080450');
 

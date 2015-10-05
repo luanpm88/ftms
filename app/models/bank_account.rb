@@ -121,7 +121,7 @@ class BankAccount < ActiveRecord::Base
   def check_exist
     return false if draft?
     
-    exist = BankAccount.main_bank_accounts.where("name = ?",
+    exist = BankAccount.main_bank_accounts.where("bank_accounts.status NOT LIKE ?", "%[deleted]%").where("name = ?",
                           self.name
                         )
     

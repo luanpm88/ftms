@@ -180,8 +180,6 @@ class PaymentRecordsController < ApplicationController
     @payment_record.update_company_payment_record_details(params[:payment_record_details]) if params[:payment_record_details].present?
     
     @payment_record.course_register_ids = "["+params[:course_register_ids].join("][")+"]" if !params[:old_record_id].present?
-    
-    @payment_record.account_manager = current_user
 
     respond_to do |format|
       if @payment_record.save
@@ -322,6 +320,6 @@ class PaymentRecordsController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def payment_record_params
-      params.require(:payment_record).permit(:transfer_id, :company_id, :bank_account_id, :payment_date, :course_register_id, :amount, :debt_date, :user_id, :note)
+      params.require(:payment_record).permit(:account_manager_id, :transfer_id, :company_id, :bank_account_id, :payment_date, :course_register_id, :amount, :debt_date, :user_id, :note)
     end
 end

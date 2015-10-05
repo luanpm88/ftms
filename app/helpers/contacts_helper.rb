@@ -38,7 +38,7 @@ module ContactsHelper
       end
       
       if can? :transfer_hour, item
-        actions += '<li>'+ActionController::Base.helpers.link_to('Transfer Hour', {controller: "transfers", action: "transfer_hour", contact_id: item.id, tab_page: 1}, title: "#{item.display_name}: Transfer Hour", class: "tab_page")+'</li>'
+        actions += '<li>'+ActionController::Base.helpers.link_to('Defer/Transfer Hour', {controller: "transfers", action: "transfer_hour", contact_id: item.id, tab_page: 1}, title: "#{item.display_name}: Transfer Hour", class: "tab_page")+'</li>'
         group_2 += 1
       end
       
