@@ -135,7 +135,7 @@ class CourseRegister < ActiveRecord::Base
     
     if params["course_types"].present?
       cc_ids = ContactsCourse.includes(:course).where(courses: {course_type_id: params["course_types"]}).map(&:id)
-      bc_ids = BooksContact.includes(:book).where(book: {course_type_id: params["course_types"]}).map(&:id)
+      bc_ids = BooksContact.includes(:book).where(books: {course_type_id: params["course_types"]}).map(&:id)
       
       cond = []
       cond << "contacts_courses.id IN (#{cc_ids.join(",")})" if !cc_ids.empty?
