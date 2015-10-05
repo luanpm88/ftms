@@ -208,7 +208,7 @@ class PaymentRecordsController < ApplicationController
   end
   
   def print_payment_list
-    zz
+    
     if params[:ids].present?
       if !params[:check_all_page].nil?
         params[:intake_year] = params["filter"]["intake(1i)"] if params["filter"].present?
