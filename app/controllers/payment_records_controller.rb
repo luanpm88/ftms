@@ -240,7 +240,10 @@ class PaymentRecordsController < ApplicationController
           row[:papers][cc.course.subject_id] = "X"          
           paper_ids << cc.course.subject_id
           
-          @list << row
+          if (params[:course_types].present? && params[:course_types].include?(cc.course.to_s))
+          else
+            @list << row
+          end
         end
       end
       
