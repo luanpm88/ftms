@@ -146,12 +146,14 @@ class CourseRegister < ActiveRecord::Base
     end
     
     if params["subjects"].present?
-      course_ids = Course.where(subject_id: params["subjects"]).map(&:id)
-      book_ids = Book.where(subject_id: params["subjects"]).map(&:id)
+      cc_ids = ContactsCourse.includes(:course).where(courses: {subject_id: params["subjects"]}).map(&:id)
+      bc_ids = BooksContact.includes(:book).where(books: {subject_id: params["subjects"]}).map(&:id)
+      
       cond = []
-      cond << "courses.id IN (#{course_ids.join(",")})" if !course_ids.empty?
-      cond << "books.id IN (#{book_ids.join(",")})" if !book_ids.empty?
-      @records = @records.joins(:contacts_courses => :course, :books_contacts => :book)
+      cond << "contacts_courses.id IN (#{cc_ids.join(",")})" if !cc_ids.empty?
+      cond << "books_contacts.id IN (#{bc_ids.join(",")})" if !bc_ids.empty?
+      @records = @records.joins("LEFT JOIN contacts_courses ON course_registers.id=contacts_courses.course_register_id")
+                          .joins("LEFT JOIN books_contacts ON course_registers.id=books_contacts.course_register_id")
                           .where(cond.join(" OR ")) if !cond.empty?
     end
     
