@@ -292,9 +292,9 @@ class CourseRegister < ActiveRecord::Base
       end
       order += " "+params["order"]["0"]["dir"]
     else
-      order = "course_registers.created_at DESC, course_registers.created_at DESC"
+      order = "course_registers.created_at DESC"
     end
-    @records = @records.order(order) if !order.nil? && !params["search"].present?
+    @records = @records.order(order) if !order.nil? && !params["search"]["value"].present?
     
     total = @records.count
     @records = @records.limit(params[:length]).offset(params["start"])
