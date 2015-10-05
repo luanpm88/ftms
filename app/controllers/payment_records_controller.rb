@@ -240,7 +240,7 @@ class PaymentRecordsController < ApplicationController
           row[:papers][cc.course.subject_id] = "X"          
           paper_ids << cc.course.subject_id
           
-          if (params[:course_types].present? && !params[:course_types].include?(cc.course.course_type_id.to_s))
+          if (params[:course_types].present? && !params[:course_types].include?(cc.course.course_type_id.to_s)) || (params[:subjects].present? && !params[:subjects].include?(cc.course.subject_id.to_s))
           else
             @list << row
           end
@@ -258,7 +258,10 @@ class PaymentRecordsController < ApplicationController
           row[:papers][bc.book.subject_id] = "X"          
           paper_ids << bc.book.subject_id
           
-          @list << row
+          if (params[:course_types].present? && !params[:course_types].include?(bc.book.course_type_id.to_s)) || (params[:subjects].present? && !params[:subjects].include?(bc.book.subject_id.to_s))
+          else
+            @list << row
+          end
         end
       end
 
