@@ -159,7 +159,7 @@ class CourseRegister < ActiveRecord::Base
     end
     
     if params["payment_statuses"].present?
-      @records = @records.where("cache_payment_status LIKE ?", "%"+params["payment_statuses"]+"%")
+      @records = @records.where("course_registers.cache_payment_status LIKE ?", "%"+params["payment_statuses"]+"%")
     end
     
     if params["company"].present?
