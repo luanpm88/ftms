@@ -66,7 +66,7 @@ class StockUpdate < ActiveRecord::Base
       order = "stock_updates.created_date"
     end
     
-    @records = @records.order(order) if !order.nil? && !params["search"].present?
+    @records = @records.order(order) if !order.nil? && !params["search"]["value"].present?
     
     total = @records.count
     @records = @records.limit(params[:length]).offset(params["start"])
