@@ -881,7 +881,7 @@ class Contact < ActiveRecord::Base
   
   def active_all_transfers
     Transfer.where("transfers.parent_id IS NULL AND transfers.status IS NOT NULL AND transfers.status LIKE ?", "%[active]%")
-            .where("contact_id = ? OR to_contact_id = ?", self.id, self.id)
+            .where("transfers.contact_id = ? OR transfers.to_contact_id = ?", self.id, self.id)
             .order("created_at ASC")
   end
   
