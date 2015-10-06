@@ -566,7 +566,7 @@ class Ability
       can :do_company_pay, PaymentRecord
       can :print_payment_list, PaymentRecord
       can :company_pay_remain, PaymentRecord do |pr|
-        !pr.paid?
+        !pr.company.nil? && !pr.paid?
       end
       
       can :datatable, Activity
