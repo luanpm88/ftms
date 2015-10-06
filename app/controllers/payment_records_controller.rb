@@ -193,10 +193,10 @@ class PaymentRecordsController < ApplicationController
           @payment_record.contact.activities.create(user_id: current_user.id, note: params[:note_log]) if params[:note_log].present?
         end
         
+               
         
-        
-        
-        format.html { redirect_to params[:tab_page].present? ? "/home/close_tab" : @payment_record, notice: 'Payment record was successfully created.' }
+        @tab = {url: {controller: "payment_records", action: "index", tab_page: 1, tab: "course_registration"}}
+        format.html { render "/home/close_tab", layout: nil }
         format.json { render action: 'show', status: :created, location: @payment_record }
       else
         format.html { render action: 'new', tab_page: params[:tab_page] }

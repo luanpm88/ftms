@@ -90,7 +90,6 @@ class ContactsController < ApplicationController
     
     @contact = Contact.new(s_params)
     @contact.user_id = current_user.id
-    @contact.sex = "male"
     
     
     

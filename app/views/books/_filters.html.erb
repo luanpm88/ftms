@@ -17,7 +17,7 @@
 						</div>
                       </div>
 						
-					  <div class="col-md-3 student-book-filter">
+					  <div class="col-md-3 student-book-filter hidden">
 						  <h4>Student</h4>                        
 						  <div class="lecturers-filter-box">
 							  <input style="width:100%;margin-bottom: 5px;" name="student" data="<%= contacts_path(is_individual: true, contact_type_id: ContactType.student.id,format: "json") %>" class="select2-ajax-contacts" value="<%= @contact.id if !@contact.nil? %>" text="<%= @contact.display_name if !@contact.nil? %>" />

@@ -28,6 +28,13 @@ class PaymentRecord < ActiveRecord::Base
   after_save :update_course_register_statuses
   after_create :update_statuses
   after_create :update_cache_search
+  before_destroy :update_last_company_record
+  
+  def update_last_company_record
+    if !company.nil?
+      self.previous.update_attribute(:parent_id, nil)
+    end
+  end
   
   def update_course_register_statuses
     if !course_register.nil?

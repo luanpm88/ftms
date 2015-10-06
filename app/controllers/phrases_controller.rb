@@ -37,8 +37,8 @@ class PhrasesController < ApplicationController
   def create    
     s_params = phrase_params
     s_params[:subject_ids] = phrase_params[:subject_ids][0].split(",") if phrase_params[:subject_ids].present?
-
-    @phrase = Phrase.new(phrase_params)
+    
+    @phrase = Phrase.new(s_params)
     @phrase.user = current_user
 
     respond_to do |format|
@@ -60,6 +60,7 @@ class PhrasesController < ApplicationController
   def update
     s_params = phrase_params
     s_params[:subject_ids] = phrase_params[:subject_ids][0].split(",") if phrase_params[:subject_ids].present?
+    
     respond_to do |format|
       if @phrase.update(s_params)
         @phrase.update_status("update", current_user)        
