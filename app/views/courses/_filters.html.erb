@@ -23,7 +23,7 @@
 						<div class="col-md-2">
 						  <h4>Paper</h4>
 						  <div class="subjects-filter-box">
-							<%= select_tag 'filter[subjects[]]', options_for_select(Subject.all.collect{ |u| [u.name, u.id] }), class: "modern_select width100", multiple: "multiple" %>
+							<%= select_tag 'filter[subjects[]]', options_for_select(Subject.active_subjects.collect{ |u| [u.name, u.id] }), class: "modern_select width100", multiple: "multiple" %>
 						  </div>
 						</div>
 						<div class="col-md-3">

@@ -32,7 +32,7 @@ class PaymentRecord < ActiveRecord::Base
   
   def update_last_company_record
     if !company.nil?
-      self.previous.update_attribute(:parent_id, nil)
+      self.previous.update_attribute(:parent_id, nil) if !self.previous.nil?
     end
   end
   
@@ -299,6 +299,9 @@ class PaymentRecord < ActiveRecord::Base
   
   def update_statuses
     self.update_attribute(:cache_payment_status, self.payment_status.join(","))
+    course_registers.each do |cr|
+      cr.update_statuses
+    end
   end
   
   def self.datatable_payment_list(params, user)
@@ -400,6 +403,7 @@ class PaymentRecord < ActiveRecord::Base
   
   def trash
     self.update_attribute(:status, 0)
+    self.previous.update_attribute(:parent_id, nil) if !self.previous.nil?
   end
   
   def update_payment_record_details(params)

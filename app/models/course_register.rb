@@ -959,7 +959,7 @@ class CourseRegister < ActiveRecord::Base
   end
   
   def company_payment_records(date=nil)
-    records = PaymentRecord.where("course_register_ids LIKE ?", "%#{self.id}%")
+    records = PaymentRecord.where(status: 1).where("course_register_ids LIKE ?", "%#{self.id}%")
     if date.present?
       records = records.where("payment_date <= ?", date)
     end
