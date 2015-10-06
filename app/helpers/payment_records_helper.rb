@@ -35,9 +35,8 @@ module PaymentRecordsHelper
       
       #group_1 = 0
       
-      if can? :pay_registration, item.course_register
-        actions += '<li>'+ActionController::Base.helpers.link_to('Pay', {controller: "payment_records", action: "new", course_register_id: item.course_register.id, tab_page: 1}, psrc: course_registers_path(tab_page: 1), title: "Pay: #{item.contact.display_name}", class: "tab_page")+'</li>'
-        #group_1 += 1
+      if can? :company_pay_remain, item
+        actions += '<li>'+ActionController::Base.helpers.link_to("Pay", {controller: "payment_records", action: "company_pay", id: item.id, tab_page: 1}, title: "Pay", class: "tab_page")+'</li>'        
       end
       
       #actions += '<li class="divider"></li>' if group_1 > 0
