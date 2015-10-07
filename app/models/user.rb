@@ -281,7 +281,7 @@ class User < ActiveRecord::Base
   
   def self.restore_system(params)
     bk_dir = Setting.get("backup_dir")
-    database = Setting.get("backup_database")
+    database = YAML.load_file('config/database.yml')["production"]["database"]
     
     `mkdir tmp` if !File.directory?("tmp")
     `mkdir tmp/backup` if !File.directory?("tmp/backup")

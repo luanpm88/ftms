@@ -92,6 +92,8 @@ class UsersController < ApplicationController
   end
   
   def backup
+    @database = YAML.load_file('config/database.yml')["production"]["database"]
+    
     if params[:backup]
       User.backup_system(params)
     end
