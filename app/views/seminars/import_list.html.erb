@@ -35,7 +35,12 @@
 												<th class="text-center">Present?</th>
 												<th class="text-center">Status</th>
 												<th class="text-right" width="1%">Actions</th>
-												<th class="text-center" width="1%"></th>
+												<th class="text-left" width="1%">
+														<div class="checkbox check-default">
+																<input id="checkbox_all" type="checkbox" value="all" class="checkall">
+																<label for="checkbox_all"></label>
+														</div>
+												</th>
 										</tr>
 										<% @list[:list].each_with_index do |row,index| %>
 												<tr class="raw_rol row_<%= row[:status] %> seminar_import_row seminar_group seminar_group_<%= index %>">

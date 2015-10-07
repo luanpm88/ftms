@@ -80,10 +80,10 @@
 								</div>
 							</div>-->
 							
-							<!--<div class="col-md-2 personal-box">
+							<div class="col-md-2 personal-box">
 								<h4>Tag</h4>
 								<%= select_tag 'tags[]', options_for_select(ContactTag.active_contact_tags.collect{ |u| [u.name, u.id] }), class: "modern_select width100", multiple: "multiple" %>
-							</div>-->
+							</div>
 							
 							<div class="col-md-3 seminar-contact-filter personal-box">
 								<h4>Seminar</h4>							
@@ -144,7 +144,7 @@
 								<div class="">
 									<div class="input-with-icon  right">                                       
 									<i class=""></i>
-									<input style="width:100%;margin-bottom: 5px;" name="company" data="<%= contacts_path(is_individual: false, format: "json") %>" class="select2-ajax-contacts" value="<%= @company.id if !@company.nil? %>" text="<%= @company.name if !@company.nil? %>" data-placeholder="All"/>
+									<input style="width:100%;margin-bottom: 5px;" name="company" data="<%= contacts_path(is_individual: false, format: "json") %>" class="select2-ajax-companies" value="<%= @company.id if !@company.nil? %>" text="<%= @company.name if !@company.nil? %>" data-placeholder="All"/>
 									</div>
 								</div>
 							</div>

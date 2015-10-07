@@ -224,9 +224,13 @@ class Contact < ActiveRecord::Base
       @records = @records.where(id: c_ids)
     end
     
-    #if params[:tags].present?
-    #  @records = @records.where("contacts.id IN (SELECT contact_id FROM contact_tags_contacts WHERE contact_tags_contacts.contact_tag_id IN (#{params[:tags].join(",")}))")
-    #end
+    if params[:tags].present?
+      cond = []
+      params[:tags].each do |t|
+        cond << "contacts.cache_search LIKE '%[tag:#{ContactTag.find(t).name}]%'"
+      end
+      @records = @records.where(cond.join(" OR "))
+    end
     
     if params["course_types"].present?
       conds = []
@@ -950,6 +954,11 @@ class Contact < ActiveRecord::Base
     json.to_json
   end
   
+  def json_encode_contact_tag_ids_names
+    json = contact_tags.map {|t| {id: t.id.to_s, text: t.name}}
+    json.to_json
+  end
+  
   def json_encode_lecturer_course_type_ids_names
     json = lecturer_course_types.map {|t| {id: t.id.to_s, text: t.short_name}}
     json.to_json
@@ -1645,6 +1654,7 @@ class Contact < ActiveRecord::Base
   def render_cache_search
     str = []
     str << display_name.unaccent
+    str << "[tag:"+(contact_tags.map {|ct| ct.name}).join("][tag:")+"]"
     str << mobile.to_s.gsub(/^84/,"")
     str << "0" + mobile.to_s.gsub(/^84/,"")
     str << phone.to_s.gsub(/^84/,"")

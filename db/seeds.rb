@@ -41,8 +41,6 @@ user.add_role Role.where(name: "education_consultant").first
 user = User.where(:email => "sales_admin@ftmsglobal.edu.vn").first
 user.add_role Role.where(name: "sales_admin").first
 
-ct = ContactTag.create(name: "No Tag", description: "No Tag", status: "[active]")
-ct.save_draft(User.first)
 ct = ContactTag.create(name: "Follow Up", description: "Likely to study", status: "[active]")
 ct.save_draft(User.first)
 ct = ContactTag.create(name: "Potential", description: "Not sure whether to study", status: "[active]")

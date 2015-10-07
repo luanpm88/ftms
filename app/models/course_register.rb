@@ -140,7 +140,7 @@ class CourseRegister < ActiveRecord::Base
       cc_ids = ContactsCourse.includes(:course).where(courses: {course_type_id: params["course_types"]}).map(&:id)
       bc_ids = BooksContact.includes(:book).where(books: {course_type_id: params["course_types"]}).map(&:id)
       
-      cond = []
+      cond = ["1=0"]
       cond << "ccs.id IN (#{cc_ids.join(",")})" if !cc_ids.empty?
       cond << "bcs.id IN (#{bc_ids.join(",")})" if !bc_ids.empty?
       @records = @records.joins("LEFT JOIN contacts_courses ccs ON course_registers.id=ccs.course_register_id")
@@ -152,7 +152,7 @@ class CourseRegister < ActiveRecord::Base
       cc_ids = ContactsCourse.includes(:course).where(courses: {subject_id: params["subjects"]}).map(&:id)
       bc_ids = BooksContact.includes(:book).where(books: {subject_id: params["subjects"]}).map(&:id)
       
-      cond = []
+      cond = ["1=0"]
       cond << "ccs.id IN (#{cc_ids.join(",")})" if !cc_ids.empty?
       cond << "bcs.id IN (#{bc_ids.join(",")})" if !bc_ids.empty?
       @records = @records.joins("LEFT JOIN contacts_courses ccs ON course_registers.id=ccs.course_register_id")
