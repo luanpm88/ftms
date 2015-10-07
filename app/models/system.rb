@@ -27,6 +27,7 @@ class System < ActiveRecord::Base
     dir = Time.now.strftime("%Y_%m_%d_%H%M%S")
     dir += "_db" if !params[:database].nil?
     dir += "_source" if !params[:file].nil?
+    dir += "_#{params[:environment]}" if !params[:environment].nil?
     
     
     
