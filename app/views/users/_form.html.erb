@@ -144,7 +144,7 @@
 																<% Role.all.each do |role| %>
 																  <div class="row-fluid">
 																	<div class="checkbox check-info">
-																	  <%= check_box_tag 'user[role_ids][]', role.id, @user.roles.include?(role), :id => "role_#{role.id}" %>
+																	  <%= check_box_tag 'user[role_ids][]', role.id, @user.roles.include?(role) || (@user.id.nil? && role.name == "user"), :id => "role_#{role.id}" %>
 																	  <%= f.label role.name, :for => "role_#{role.id}" %>
 																	</div>
 																  </div>
