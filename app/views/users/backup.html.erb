@@ -95,7 +95,7 @@
                         
                               <table class="table">
                                 <% @files.each do |file| %>
-                                  <% filename = file.gsub("backup/","") %>
+                                  <% filename = file %>
                                   <tr>
                                     <td><%= filename %></td>
                                     <td align="right">

@@ -96,7 +96,7 @@ class UsersController < ApplicationController
       User.backup_system(params)
     end
     
-    @files = Dir.glob("backup/*").sort{|a,b| b <=> a}
+    @files = (Dir.glob("/media/sdb1/ftms-backup/*").map{|f| f.gsub("/media/sdb1/ftms-backup/","")}).sort{|a,b| b <=> a}
     
     render layout: "content" if params[:tab_page].present?
     # render layout = nil
@@ -110,11 +110,11 @@ class UsersController < ApplicationController
   end
   
   def download_backup
-    send_file "backup/"+params[:filename].gsub("backup/",""), :type=>"application/zip"
+    send_file "/media/sdb1/ftms-backup/"+params[:filename].gsub("/media/sdb1/ftms-backup/",""), :type=>"application/zip"
   end
   
   def delete_backup
-    `rm #{"backup/"+params[:filename].gsub("backup/","")}`
+    `rm #{"/media/sdb1/ftms-backup/"+params[:filename].gsub("/media/sdb1/ftms-backup/","")}`
     respond_to do |format|
       format.html { redirect_to backup_users_path(tab_page: params[:tab_page]) }
       format.json { head :no_content }
