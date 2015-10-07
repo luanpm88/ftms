@@ -17,3 +17,5 @@
 /uploads
 /backup
 /config/database.yml
+/ftms_crontab.log
+
