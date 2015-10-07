@@ -1,0 +1,47 @@
+<table class="table table-striped no-more-tables no-filter">
+    <thead>
+        <tr>
+            <th class="text-center">Paid</th>
+            <th class="text-center">Countfor</th>
+            <th class="text-center">InvoiceDetailName</th>
+            <th class="text-left">InvoiceDetailPrice</th>
+            <th class="text-left">InvoiceDetailPriceDiscount</th>
+            <th class="text-center">InvoiceDetailType</th>
+            <th class="text-center">InvoiceDiscount</th>
+            <th class="text-left">InvoiceExchange</th>
+        </tr>
+    </thead>
+    <tbody>
+        <% invoice_list.each do |item| %>
+            <% item.old_invoice_details.each do |oid| %>
+                <tr>
+                    <td class="text-center">
+                        <%= item.paid %>
+                    </td>
+                    <td class="text-center">
+                        <%= item.count_for %>
+                    </td>
+                    <td class="text-center">
+                        <%= oid.invoice_detail_name %>
+                    </td>
+                    
+                    <td class="text-left">
+                        <%= format_price(oid.invoice_detail_price) %>
+                    </td>
+                    <td class="text-left">
+                        <%= format_price(oid.invoice_detail_price_discount) %>
+                    </td>
+                    <td class="text-center">
+                        <%= oid.invoice_detail_type %>
+                    </td>
+                    <td class="text-center">
+                        <%= format_price(oid.invoice_discount) %>
+                    </td>
+                    <td class="text-left">
+                        <%= oid.invoice_exchange %>
+                    </td>
+                </tr>
+            <% end %>
+        <% end %>
+    </tbody>
+</table>

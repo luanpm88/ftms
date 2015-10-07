@@ -1,0 +1,17 @@
+<table class="table table-striped no-more-tables no-filter">
+    <thead>
+        <tr>
+            <th class="text-left" width="1%">TagName</th>
+        </tr>
+    </thead>
+
+    <tbody>
+        <% tag_list.each do |item| %>
+            <tr>
+                <td class="text-left" width="1%">
+                    <%= item.tag_name %>
+                </td>
+            </tr>
+            <% end %>
+    </tbody>
+</table>

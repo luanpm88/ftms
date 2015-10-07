@@ -1,0 +1,26 @@
+<table class="table table-striped no-more-tables no-filter">
+    <thead>
+        <tr>
+            <th class="text-left" width="1%">DeliveryID</th>
+            <th class="text-center">StudentName</th>
+            <th class="text-center">SubjectID</th>
+            <th class="text-center">BookType</th>
+            <th class="text-center">BookVol</th>
+            <th class="text-right" width="1%">DeliveryYes</th>
+        </tr>
+    </thead>
+    <tbody>
+        <% book_list.each do |item| %>
+
+            <tr>
+                <td class="text-left" width="1%"><%= item.delivery_id %></td>
+                <td class="text-center"><%= item.student_id %></td>
+                <td class="text-center"><%= item.subject_id %></td>
+                <td class="text-center"><%= item.book_type %></td>
+                <td class="text-center"><%= item.book_vol %></td>
+                <td class="text-right" width="1%"><%= item.delivery_yes %></td>
+            </tr>
+
+        <% end %>
+    </tbody>
+</table>

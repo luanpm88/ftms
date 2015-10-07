@@ -1,103 +1,163 @@
-                                      <div class="activity-filter">
-										<%= form_for(@activity) do |f| %>
-                                          <%= f.hidden_field :contact_id %>
-                                            <h4><strong>New Activity</strong></h4>
-                                            <div class="grid simple ">
-                                              <div class="grid-body no-border filters course-filter">  
-                                                <div class="row order-filters">
-                                                  <div class="col-md-6">
-                                                    <div class="form-group">
-                                                        
-                                                        <div class="input-with-iconx right">                                       
-                                                                <i class=""></i>
-                                                                <%= f.text_area :note, :class => "form-control required", pattern: ".{3,}", required: "reauired", title: "3 characters minimum" %>
-                                                        </div>
-                                                    </div>
-                                                  </div>
-                                                  <div class="col-md-4">
-                                                    <div class="form-group">                                                        
-                                                        <a href="#" class="submit btn btn-success btn-cons"><i class="icon-ok"></i> Add</a>
-                                                    </div>
-                                                  </div>
-                                                </div>
-                                                
-                                              </div>
-                                            </div>
-										  <% end %>
-										</div>
-									  
-									  <div class="grid simple ">
-										<div class="grid-body no-border filters activity-filter">
-										<div class="row order-filters">                                          
-											<div class="col-md-2">
-												  <h4>From Date</h4>
-												  <div class="date_select_filter">
-												  <div class="input-with-icon  right">
-													  <div class="input-append success date col-md-10 no-padding">
-														  <%= text_field_tag :from_date, @from_date.nil? ? "" : @from_date.strftime("%d-%b-%Y"), :class => "datetime form-control" %>
-														  <span class="add-on"><span class="arrow"></span><i class="icon-th"></i></span>
-													  </div>
-													  <br style="clear: both" />
-													  
-												  </div>
-												  </div>
-											  </div>
-											  <div class="col-md-2">
-												  <h4>To Date</h4>
-												  <div class="date_select_filter">
-												  <div class="input-with-icon  right">
-													  <div class="input-append success date col-md-10 no-padding">
-														  <%= text_field_tag :to_date, @to_date.strftime("%d-%b-%Y"), :class => "datetime form-control" %>
-														  <span class="add-on"><span class="arrow"></span><i class="icon-th"></i></span>
-													  </div>
-													  <br style="clear: both" />
-												  </div>
-												  </div>
-										  </div>		
-										  
-										  <div class="col-md-3">
-											  <h4>Education Consultant</h4>
-											  <div class="">
-												  <%= select_tag 'user', options_for_select(User.main_users.collect{ |u| [u.name, u.id] }) , {:include_blank => 'All', class: "modern_select width100"} %>
-											  </div>
-										  </div>
-											
-											<div class="col-md-3 activity-filter">
-												<h4>Status</h4>							
-												<%= select_tag 'status', options_for_select(Activity.status_options, params[:status]), class: "modern_select width100" %>
-											</div>
-											  
-										</div>
-										</div>		    
-									  </div>
-                                        
-										
-                                        <div class="row">
-											<div class="col-md-12">
-												
-												<div class="grid simple ">
-													<div class="grid-title no-border">
-														<h4>Activity  <span class="semi-bold">Log</span></h4>
-														
-													</div>
-													<div class="grid-body no-border">
-														 
-															<table class="table table-striped no-more-tables datatable-activities no-filter">
-                                                                    <thead>
-                                                                        <tr>                                                
-                                                                            <th width="100%">Note</th>
-                                                                            <th class="text-center" width="1%">Created At</th>
-																			<th class="text-center" width="1%">Contact</th>
-                                                                            <th class="text-center" width="1%">Staff</th>
-																			<th class="text-center" width="1%">Status</th>
-                                                                            <th class="text-right" width="1%">Actions</th>
-                                                                        </tr>
-                                                                    </thead>                                        
-                                                                </table>
-                                                            
-													</div>
-												</div>
-									
-											</div>
-									
-										</div>
+<div class="activity-filter">
+    <%= form_for(@activity) do |f| %>
+        <%= f.hidden_field :contact_id %>
+            <h4><strong>New Activity</strong></h4>
+            <div class="grid simple ">
+                <div class="grid-body no-border filters course-filter">
+                    <div class="row order-filters">
+                        <div class="col-md-6">
+                            <div class="form-group">
+
+                                <div class="input-with-iconx right">
+                                    <i class=""></i>
+                                    <%= f.text_area :note, :class => "form-control required", pattern: ".{3,}", required: "reauired", title: "3 characters minimum" %>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <a href="#" class="submit btn btn-success btn-cons"><i class="icon-ok"></i> Add</a>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+            <% end %>
+</div>
+
+<div class="grid simple ">
+    <div class="grid-body no-border filters activity-filter">
+        <div class="row order-filters">
+            <div class="col-md-2">
+                <h4>From Date</h4>
+                <div class="date_select_filter">
+                    <div class="input-with-icon  right">
+                        <div class="input-append success date col-md-10 no-padding">
+                            <%= text_field_tag :from_date, @from_date.nil? ? "" : @from_date.strftime("%d-%b-%Y"), :class => "datetime form-control" %>
+                                <span class="add-on"><span class="arrow"></span><i class="icon-th"></i></span>
+                        </div>
+                        <br style="clear: both" />
+
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-2">
+                <h4>To Date</h4>
+                <div class="date_select_filter">
+                    <div class="input-with-icon  right">
+                        <div class="input-append success date col-md-10 no-padding">
+                            <%= text_field_tag :to_date, @to_date.strftime("%d-%b-%Y"), :class => "datetime form-control" %>
+                                <span class="add-on"><span class="arrow"></span><i class="icon-th"></i></span>
+                        </div>
+                        <br style="clear: both" />
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-3">
+                <h4>Education Consultant</h4>
+                <div class="">
+                    <%= select_tag 'user', options_for_select(User.main_users.collect{ |u| [u.name, u.id] }) , {:include_blank => 'All', class: "modern_select width100"} %>
+                </div>
+            </div>
+
+            <div class="col-md-3 activity-filter">
+                <h4>Status</h4>
+                <%= select_tag 'status', options_for_select(Activity.status_options, params[:status]), class: "modern_select width100" %>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
+<div class="row">
+    <div class="col-md-12">
+
+        <div class="grid simple ">
+            <div class="grid-title no-border">
+                <h4>Activity  <span class="semi-bold">Log</span></h4>
+
+            </div>
+            <div class="grid-body no-border">
+
+                <table class="table table-striped no-more-tables datatable-activities no-filter">
+                    <thead>
+                        <tr>
+                            <th width="100%">Note</th>
+                            <th class="text-center" width="1%">Created At</th>
+                            <th class="text-center" width="1%">Contact</th>
+                            <th class="text-center" width="1%">Staff</th>
+                            <th class="text-center" width="1%">Status</th>
+                            <th class="text-right" width="1%">Actions</th>
+                        </tr>
+                    </thead>
+                </table>
+
+            </div>
+        </div>
+
+    </div>
+
+</div>
+
+<div class="row">
+    <div class="col-md-4">
+
+        <div class="grid simple ">
+            <h4><span class="semi-bold">Old Tag List</span></h4>
+            <div class="grid-body no-border">
+                <p><span class="semi-bold"><%= @contact.old_student.student_name + " - " + @contact.old_student.student_id + " - " + @contact.old_student.old_consultant.consultant_name %></span></p>
+                <div class="table-box">
+                    <%= render 'tag_list', tag_list: @contact.old_tags %>
+                </div>
+            </div>
+        </div>
+
+        <% @contact.related_contacts.each do |c| %>
+
+            <div class="grid simple ">
+                <h4><span class="semi-bold">Related Tag List</span></h4>
+                <div class="grid-body no-border">
+                    <p><span class="semi-bold"><%= c.old_student.student_name + " - " + c.old_student.student_id + " - " + c.old_student.old_consultant.consultant_name %></span></p>
+                    <div class="table-box">
+                        <%= render 'tag_list', tag_list: c.old_tags %>
+                    </div>
+                </div>
+            </div>
+
+        <% end %>
+    </div>
+
+    <div class="col-md-8">
+
+        <div class="grid simple ">
+            <h4><span class="semi-bold">Old Remark List</span></h4>
+            
+            <div class="grid-body no-border">
+                <p><span class="semi-bold"><%= @contact.old_student.student_name + " - " + @contact.old_student.student_id + " - " + @contact.old_student.old_consultant.consultant_name %></span></p>
+                <div class="table-box">
+                    <%= render 'remark_list', remark_list: @contact.old_note_details %>
+                </div>
+            </div>
+        </div>
+
+        <% @contact.related_contacts.each do |c| %>
+
+            <div class="grid simple ">
+                <h4><span class="semi-bold">Related Remark List</span></h4>
+                
+                <div class="grid-body no-border">
+                    <p><span class="semi-bold"><%= c.old_student.student_name + " - " + c.old_student.student_id + " - " + c.old_student.old_consultant.consultant_name %></span></p>
+                    <div class="table-box">
+                        <%= render 'remark_list', remark_list: c.old_note_details %>
+                    </div>
+                </div>
+            </div>
+
+        <% end %>
+
+    </div> 
+
+</div>

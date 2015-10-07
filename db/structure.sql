@@ -601,7 +601,8 @@ CREATE TABLE contacts (
     annoucing_user_ids text,
     creator_id integer,
     cache_search text,
-    cache_courses text
+    cache_courses text,
+    related_id integer
 );
 
 
@@ -1250,6 +1251,634 @@ ALTER SEQUENCE notifications_id_seq OWNED BY notifications.id;
 
 
 --
+-- Name: old_book_data; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE TABLE old_book_data (
+    id integer NOT NULL,
+    book_data_id text,
+    book_data_name text,
+    book_data_array text,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL
+);
+
+
+--
+-- Name: old_book_data_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE old_book_data_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: old_book_data_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE old_book_data_id_seq OWNED BY old_book_data.id;
+
+
+--
+-- Name: old_books; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE TABLE old_books (
+    id integer NOT NULL,
+    book_id text,
+    subject_id text,
+    book_type text,
+    book_vol text,
+    amount text,
+    delivered text,
+    need_delivery text,
+    in_stock text,
+    need_ordering text,
+    remark text,
+    remark1 text,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL
+);
+
+
+--
+-- Name: old_books_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE old_books_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: old_books_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE old_books_id_seq OWNED BY old_books.id;
+
+
+--
+-- Name: old_companies; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE TABLE old_companies (
+    id integer NOT NULL,
+    company_id text,
+    company_name text,
+    company_address text,
+    company_manager text,
+    company_off_phone text,
+    company_fax text,
+    company_manager_hphone text,
+    company_email text,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL
+);
+
+
+--
+-- Name: old_companies_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE old_companies_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: old_companies_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE old_companies_id_seq OWNED BY old_companies.id;
+
+
+--
+-- Name: old_consultants; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE TABLE old_consultants (
+    id integer NOT NULL,
+    consultant_id text,
+    consultant_name text,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL
+);
+
+
+--
+-- Name: old_consultants_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE old_consultants_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: old_consultants_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE old_consultants_id_seq OWNED BY old_consultants.id;
+
+
+--
+-- Name: old_course_types; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE TABLE old_course_types (
+    id integer NOT NULL,
+    course_type_id text,
+    course_type_name text,
+    course_type_short_name text,
+    course_discount text,
+    course_discount_value text,
+    course_inquiry text,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL
+);
+
+
+--
+-- Name: old_course_types_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE old_course_types_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: old_course_types_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE old_course_types_id_seq OWNED BY old_course_types.id;
+
+
+--
+-- Name: old_courses; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE TABLE old_courses (
+    id integer NOT NULL,
+    course_id text,
+    course_name text,
+    "order" text,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL
+);
+
+
+--
+-- Name: old_courses_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE old_courses_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: old_courses_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE old_courses_id_seq OWNED BY old_courses.id;
+
+
+--
+-- Name: old_cus_details; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE TABLE old_cus_details (
+    id integer NOT NULL,
+    cus_id text,
+    cus_name text,
+    cus_title text,
+    cus_com_name text,
+    cus_com_add text,
+    cus_com_tel text,
+    cus_home_add text,
+    cus_home_tel text,
+    cus_cell text,
+    cus_email text,
+    consultant_id text,
+    care_rate text,
+    cus_type text,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL
+);
+
+
+--
+-- Name: old_cus_details_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE old_cus_details_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: old_cus_details_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE old_cus_details_id_seq OWNED BY old_cus_details.id;
+
+
+--
+-- Name: old_deliveries; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE TABLE old_deliveries (
+    id integer NOT NULL,
+    delivery_id text,
+    student_id text,
+    subject_id text,
+    book_type text,
+    book_vol text,
+    delivery_yes text,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL
+);
+
+
+--
+-- Name: old_deliveries_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE old_deliveries_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: old_deliveries_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE old_deliveries_id_seq OWNED BY old_deliveries.id;
+
+
+--
+-- Name: old_invoice_details; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE TABLE old_invoice_details (
+    id integer NOT NULL,
+    invoice_detail_id text,
+    invoice_id text,
+    invoice_detail_name text,
+    invoice_detail_price text,
+    invoice_detail_price_discount text,
+    invoice_detail_type text,
+    invoice_discount text,
+    invoice_exchange text,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL
+);
+
+
+--
+-- Name: old_invoice_details_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE old_invoice_details_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: old_invoice_details_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE old_invoice_details_id_seq OWNED BY old_invoice_details.id;
+
+
+--
+-- Name: old_invoices; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE TABLE old_invoices (
+    id integer NOT NULL,
+    invoice_id text,
+    student_id text,
+    paid text,
+    count_for text,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL
+);
+
+
+--
+-- Name: old_invoices_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE old_invoices_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: old_invoices_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE old_invoices_id_seq OWNED BY old_invoices.id;
+
+
+--
+-- Name: old_link_students; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE TABLE old_link_students (
+    id integer NOT NULL,
+    link_student_id text,
+    subject_id text,
+    student_id text,
+    subject_array text,
+    company_id text,
+    paid text,
+    count_for text,
+    defferal text,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL
+);
+
+
+--
+-- Name: old_link_students_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE old_link_students_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: old_link_students_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE old_link_students_id_seq OWNED BY old_link_students.id;
+
+
+--
+-- Name: old_note_details; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE TABLE old_note_details (
+    id integer NOT NULL,
+    note_id text,
+    student_id text,
+    cus_id text,
+    note_date timestamp without time zone,
+    note_detail text,
+    priority text,
+    staff text,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL
+);
+
+
+--
+-- Name: old_note_details_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE old_note_details_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: old_note_details_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE old_note_details_id_seq OWNED BY old_note_details.id;
+
+
+--
+-- Name: old_students; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE TABLE old_students (
+    id integer NOT NULL,
+    student_id text,
+    consultant_id text,
+    student_name text,
+    student_title text,
+    student_birth timestamp without time zone,
+    student_acca_no text,
+    student_company text,
+    student_vat_code text,
+    student_office text,
+    student_location text,
+    student_home_add text,
+    student_preffer_mailing text,
+    student_email_1 text,
+    student_email_2 text,
+    student_off_phone text,
+    student_hand_phone text,
+    student_fax text,
+    student_type text,
+    student_tags text,
+    student_home_phone text,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL
+);
+
+
+--
+-- Name: old_students_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE old_students_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: old_students_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE old_students_id_seq OWNED BY old_students.id;
+
+
+--
+-- Name: old_subjects; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE TABLE old_subjects (
+    id integer NOT NULL,
+    subject_id text,
+    course_id text,
+    subject_name text,
+    subject_lecturer text,
+    start_date text,
+    end_date text,
+    belong_to text,
+    subject_phrase text,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL
+);
+
+
+--
+-- Name: old_subjects_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE old_subjects_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: old_subjects_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE old_subjects_id_seq OWNED BY old_subjects.id;
+
+
+--
+-- Name: old_tags; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE TABLE old_tags (
+    id integer NOT NULL,
+    tag_id text,
+    student_id text,
+    tag_name text,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL
+);
+
+
+--
+-- Name: old_tags_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE old_tags_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: old_tags_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE old_tags_id_seq OWNED BY old_tags.id;
+
+
+--
+-- Name: old_user_levels; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE TABLE old_user_levels (
+    id integer NOT NULL,
+    user_permission_id text,
+    user_name text,
+    user_role text,
+    consultant_id text,
+    in_charge text,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL
+);
+
+
+--
+-- Name: old_user_levels_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE old_user_levels_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: old_user_levels_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE old_user_levels_id_seq OWNED BY old_user_levels.id;
+
+
+--
+-- Name: old_user_roles; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE TABLE old_user_roles (
+    id integer NOT NULL,
+    user_role_id text,
+    user_role text,
+    user_role_detail text,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL
+);
+
+
+--
+-- Name: old_user_roles_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE old_user_roles_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: old_user_roles_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE old_user_roles_id_seq OWNED BY old_user_roles.id;
+
+
+--
 -- Name: parent_contacts; Type: TABLE; Schema: public; Owner: -; Tablespace: 
 --
 
@@ -1683,6 +2312,39 @@ ALTER SEQUENCE subjects_id_seq OWNED BY subjects.id;
 
 
 --
+-- Name: tags; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE TABLE tags (
+    id integer NOT NULL,
+    tag_id text,
+    student_id text,
+    tag_name text,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL
+);
+
+
+--
+-- Name: tags_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE tags_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: tags_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE tags_id_seq OWNED BY tags.id;
+
+
+--
 -- Name: transfer_details; Type: TABLE; Schema: public; Owner: -; Tablespace: 
 --
 
@@ -2049,6 +2711,125 @@ ALTER TABLE ONLY notifications ALTER COLUMN id SET DEFAULT nextval('notification
 -- Name: id; Type: DEFAULT; Schema: public; Owner: -
 --
 
+ALTER TABLE ONLY old_book_data ALTER COLUMN id SET DEFAULT nextval('old_book_data_id_seq'::regclass);
+
+
+--
+-- Name: id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY old_books ALTER COLUMN id SET DEFAULT nextval('old_books_id_seq'::regclass);
+
+
+--
+-- Name: id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY old_companies ALTER COLUMN id SET DEFAULT nextval('old_companies_id_seq'::regclass);
+
+
+--
+-- Name: id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY old_consultants ALTER COLUMN id SET DEFAULT nextval('old_consultants_id_seq'::regclass);
+
+
+--
+-- Name: id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY old_course_types ALTER COLUMN id SET DEFAULT nextval('old_course_types_id_seq'::regclass);
+
+
+--
+-- Name: id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY old_courses ALTER COLUMN id SET DEFAULT nextval('old_courses_id_seq'::regclass);
+
+
+--
+-- Name: id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY old_cus_details ALTER COLUMN id SET DEFAULT nextval('old_cus_details_id_seq'::regclass);
+
+
+--
+-- Name: id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY old_deliveries ALTER COLUMN id SET DEFAULT nextval('old_deliveries_id_seq'::regclass);
+
+
+--
+-- Name: id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY old_invoice_details ALTER COLUMN id SET DEFAULT nextval('old_invoice_details_id_seq'::regclass);
+
+
+--
+-- Name: id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY old_invoices ALTER COLUMN id SET DEFAULT nextval('old_invoices_id_seq'::regclass);
+
+
+--
+-- Name: id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY old_link_students ALTER COLUMN id SET DEFAULT nextval('old_link_students_id_seq'::regclass);
+
+
+--
+-- Name: id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY old_note_details ALTER COLUMN id SET DEFAULT nextval('old_note_details_id_seq'::regclass);
+
+
+--
+-- Name: id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY old_students ALTER COLUMN id SET DEFAULT nextval('old_students_id_seq'::regclass);
+
+
+--
+-- Name: id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY old_subjects ALTER COLUMN id SET DEFAULT nextval('old_subjects_id_seq'::regclass);
+
+
+--
+-- Name: id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY old_tags ALTER COLUMN id SET DEFAULT nextval('old_tags_id_seq'::regclass);
+
+
+--
+-- Name: id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY old_user_levels ALTER COLUMN id SET DEFAULT nextval('old_user_levels_id_seq'::regclass);
+
+
+--
+-- Name: id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY old_user_roles ALTER COLUMN id SET DEFAULT nextval('old_user_roles_id_seq'::regclass);
+
+
+--
+-- Name: id; Type: DEFAULT; Schema: public; Owner: -
+--
+
 ALTER TABLE ONLY parent_contacts ALTER COLUMN id SET DEFAULT nextval('parent_contacts_id_seq'::regclass);
 
 
@@ -2127,6 +2908,13 @@ ALTER TABLE ONLY stock_updates ALTER COLUMN id SET DEFAULT nextval('stock_update
 --
 
 ALTER TABLE ONLY subjects ALTER COLUMN id SET DEFAULT nextval('subjects_id_seq'::regclass);
+
+
+--
+-- Name: id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY tags ALTER COLUMN id SET DEFAULT nextval('tags_id_seq'::regclass);
 
 
 --
@@ -2415,6 +3203,142 @@ ALTER TABLE ONLY notifications
 
 
 --
+-- Name: old_book_data_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+--
+
+ALTER TABLE ONLY old_book_data
+    ADD CONSTRAINT old_book_data_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: old_books_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+--
+
+ALTER TABLE ONLY old_books
+    ADD CONSTRAINT old_books_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: old_companies_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+--
+
+ALTER TABLE ONLY old_companies
+    ADD CONSTRAINT old_companies_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: old_consultants_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+--
+
+ALTER TABLE ONLY old_consultants
+    ADD CONSTRAINT old_consultants_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: old_course_types_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+--
+
+ALTER TABLE ONLY old_course_types
+    ADD CONSTRAINT old_course_types_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: old_courses_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+--
+
+ALTER TABLE ONLY old_courses
+    ADD CONSTRAINT old_courses_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: old_cus_details_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+--
+
+ALTER TABLE ONLY old_cus_details
+    ADD CONSTRAINT old_cus_details_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: old_deliveries_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+--
+
+ALTER TABLE ONLY old_deliveries
+    ADD CONSTRAINT old_deliveries_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: old_invoice_details_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+--
+
+ALTER TABLE ONLY old_invoice_details
+    ADD CONSTRAINT old_invoice_details_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: old_invoices_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+--
+
+ALTER TABLE ONLY old_invoices
+    ADD CONSTRAINT old_invoices_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: old_link_students_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+--
+
+ALTER TABLE ONLY old_link_students
+    ADD CONSTRAINT old_link_students_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: old_note_details_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+--
+
+ALTER TABLE ONLY old_note_details
+    ADD CONSTRAINT old_note_details_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: old_students_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+--
+
+ALTER TABLE ONLY old_students
+    ADD CONSTRAINT old_students_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: old_subjects_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+--
+
+ALTER TABLE ONLY old_subjects
+    ADD CONSTRAINT old_subjects_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: old_tags_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+--
+
+ALTER TABLE ONLY old_tags
+    ADD CONSTRAINT old_tags_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: old_user_levels_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+--
+
+ALTER TABLE ONLY old_user_levels
+    ADD CONSTRAINT old_user_levels_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: old_user_roles_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+--
+
+ALTER TABLE ONLY old_user_roles
+    ADD CONSTRAINT old_user_roles_pkey PRIMARY KEY (id);
+
+
+--
 -- Name: parent_contacts_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
 --
 
@@ -2508,6 +3432,14 @@ ALTER TABLE ONLY stock_updates
 
 ALTER TABLE ONLY subjects
     ADD CONSTRAINT subjects_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: tags_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+--
+
+ALTER TABLE ONLY tags
+    ADD CONSTRAINT tags_pkey PRIMARY KEY (id);
 
 
 --
@@ -3002,4 +3934,40 @@ INSERT INTO schema_migrations (version) VALUES ('20151001035014');
 INSERT INTO schema_migrations (version) VALUES ('20151001075300');
 
 INSERT INTO schema_migrations (version) VALUES ('20151001113758');
+
+INSERT INTO schema_migrations (version) VALUES ('20151004104447');
+
+INSERT INTO schema_migrations (version) VALUES ('20151005014731');
+
+INSERT INTO schema_migrations (version) VALUES ('20151005020645');
+
+INSERT INTO schema_migrations (version) VALUES ('20151005022402');
+
+INSERT INTO schema_migrations (version) VALUES ('20151005032041');
+
+INSERT INTO schema_migrations (version) VALUES ('20151005032057');
+
+INSERT INTO schema_migrations (version) VALUES ('20151005032113');
+
+INSERT INTO schema_migrations (version) VALUES ('20151005032127');
+
+INSERT INTO schema_migrations (version) VALUES ('20151005032210');
+
+INSERT INTO schema_migrations (version) VALUES ('20151005032220');
+
+INSERT INTO schema_migrations (version) VALUES ('20151005032234');
+
+INSERT INTO schema_migrations (version) VALUES ('20151005032242');
+
+INSERT INTO schema_migrations (version) VALUES ('20151005032249');
+
+INSERT INTO schema_migrations (version) VALUES ('20151005032300');
+
+INSERT INTO schema_migrations (version) VALUES ('20151005032311');
+
+INSERT INTO schema_migrations (version) VALUES ('20151005032319');
+
+INSERT INTO schema_migrations (version) VALUES ('20151005032729');
+
+INSERT INTO schema_migrations (version) VALUES ('20151007063852');
 

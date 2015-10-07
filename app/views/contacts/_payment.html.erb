@@ -1,40 +1,79 @@
-                                        <%= render "payment_records/filter" %>
-										
-										<style>
-												.student-payment-filter {
-														position: absolute;
-														top: -90000px;
-												}
-										</style>
-                
-										<div class="row">
-											<div class="col-md-12">
-												
-												<div class="grid simple ">
-													<div class="grid-titlex no-border">
-														<h4>Payments <span class="semi-bold">List</span></h4>														
-													</div>
-													<div class="grid-body no-border">
-														 
-															<table class="table table-striped no-more-tables datatable-payment-records no-filter">
-                                                                    <thead>
-                                                                        <tr>                                                
-                                                                            <th>Student</th>
-																				<th class="text-left">Description</th>
-																				<th class="text-right">Payable Amount</th>
-																				<th class="text-right">Paid Amount</th>
-																				<th class="text-center">Paid On</th>                                                
-																				<th class="text-center">At Bank</th>
-																				<th class="text-right">Receivable</th>											
-																				<th class="text-center" width="1%">Education Consultant</th>
-																				<th class="text-right" width="1%">Actions</th>
-                                                                        </tr>
-                                                                    </thead>                                        
-                                                                </table>
-                                                            
-													</div>
-												</div>
-									
-											</div>
-									
-										</div>
+<%= render "payment_records/filter" %>
+
+    <style>
+        .student-payment-filter {
+            position: absolute;
+            top: -90000px;
+        }
+    </style>
+
+    <div class="row">
+        <div class="col-md-12">
+
+            <div class="grid simple ">
+                <div class="grid-titlex no-border">
+                    <h4>Payments <span class="semi-bold">List</span></h4>
+                </div>
+                <div class="grid-body no-border">
+
+                    <table class="table table-striped no-more-tables datatable-payment-records no-filter">
+                        <thead>
+                            <tr>
+                                <th>Student</th>
+                                <th class="text-left">Description</th>
+                                <th class="text-right">Payable Amount</th>
+                                <th class="text-right">Paid Amount</th>
+                                <th class="text-center">Paid On</th>
+                                <th class="text-center">At Bank</th>
+                                <th class="text-right">Receivable</th>
+                                <th class="text-center" width="1%">Education Consultant</th>
+                                <th class="text-right" width="1%">Actions</th>
+                            </tr>
+                        </thead>
+                    </table>
+
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+    <div class="row">
+        <div class="col-md-12">
+
+            <div class="grid simple ">
+                <div class="grid-titlex no-border">
+                    <h4>Payment List</h4>
+                </div>
+                <div class="grid-body no-border">
+                    <p><span class="semi-bold"><%= @contact.old_student.student_name + " - " + @contact.old_student.student_id + " - " + @contact.old_student.old_consultant.consultant_name  %></span></p>
+                    <div class="table-box">
+                        <%= render 'invoice_list', invoice_list: @contact.old_invoice %>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <% @contact.related_contacts.each do |c| %>
+        <div class="row">
+            <div class="col-md-12">
+
+                <div class="grid simple ">
+                    <div class="grid-titlex no-border">
+                        <h4>Relates Payment List</span></h4>
+                    </div>
+
+                    <div class="grid-body no-border">
+                        <p><span class="semi-bold"><%= c.old_student.student_name + " - " + c.old_student.student_id + " - " + c.old_student.old_consultant.consultant_name  %></span></p>
+                        <div class="table-box">
+                            <%= render 'invoice_list', invoice_list: c.old_invoice %>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    <% end %>
