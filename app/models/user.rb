@@ -280,7 +280,8 @@ class User < ActiveRecord::Base
   end
   
   def self.restore_system(params)
-    bk_dir = "media/sdb1/ftms-backup"
+    bk_dir = Setting.get("backup_dir")
+    database = Setting.get("backup_database")
     
     `mkdir tmp` if !File.directory?("tmp")
     `mkdir tmp/backup` if !File.directory?("tmp/backup")
@@ -296,17 +297,17 @@ class User < ActiveRecord::Base
     File.open(path, "wb") { |f| f.write(file_upload['datafile'].read) }
     
     # CHECK PACKAGE
-    `rm -rf tmp/backup/#{bk_dir.split("/")[0]} && unzip #{path} -d tmp/backup/`
+    `rm -rf tmp/backup#{bk_dir} && unzip #{path} -d tmp/backup/`
     
-    if File.directory?("tmp/backup/#{bk_dir}/#{name.gsub(".zip","")}/uploads") && params[:file].present?
-      `rm -rf uploads && mkdir uploads && cp -a tmp/backup/#{bk_dir}/#{name.gsub(".zip","")}/uploads/. uploads/`
+    if File.directory?("tmp/backup#{bk_dir}/#{name.gsub(".zip","")}/uploads") && params[:file].present?
+      `rm -rf uploads && mkdir uploads && cp -a tmp/backup#{bk_dir}/#{name.gsub(".zip","")}/uploads/. uploads/`
     end
     
-    if File.exist?("tmp/backup/#{bk_dir}/#{name.gsub(".zip","")}/data.dump") && params[:database].present? && params[:environment].present?
-      `rake mytask:drop_all_table && rake db:migrate && psql ftms_#{params[:environment]} < tmp/backup/#{bk_dir}/#{name.gsub(".zip","")}/data.dump`
+    if File.exist?("tmp/backup#{bk_dir}/#{name.gsub(".zip","")}/data.dump") && params[:database].present?
+      `rake mytask:drop_all_table && rake db:migrate && psql #{database} < tmp/backup#{bk_dir}/#{name.gsub(".zip","")}/data.dump`
     end
     
-    `rm -rf tmp/backup/#{bk_dir.split("/")[0]} && rm #{path}`
+    `rm -rf tmp/backup#{bk_dir} && rm #{path}`
     
   end
   

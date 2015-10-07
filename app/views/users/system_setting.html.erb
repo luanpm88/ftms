@@ -1,0 +1,58 @@
+<h1>System Setting</h1>
+
+       <div class="row">
+            <div class="col-md-12">
+              <div class="grid simple">
+                <div class="grid-title no-border">
+                  <h4>Setting <span class="semi-bold">List</span></h4>
+                  
+                </div>     
+                
+                
+                
+                
+                <div class="grid-body no-border">
+
+                    
+                 
+                  
+                  
+                  <%= form_for("") do |f| %>
+					
+					<% if params[:tab_page] %>
+						 <%= hidden_field_tag "tab_page", 1 %>
+					<% end %>
+					
+					<div class="row column-seperation">
+                      
+                      <% Setting.order(:name).each do |setting| %>
+						<div class="col-md-4">
+							  <div class="form-group">
+								   <label class="form-label"><%= setting.name.gsub("_"," ").titleize %></label>
+								   <span class="help">(required)</span>
+								   <div class="right">                                       
+									  <%= text_field_tag "settings["+setting.name+"]", setting.value, class: "form-control required" %>
+								   </div>
+							   </div>
+						</div>
+                      <% end %>                        
+					</div>
+						 
+					<div class="form-actions">  
+						 <div class="pull-right">
+						 <button type="submit" class="btn btn-success btn-cons"><i class="icon-ok"></i> Save</button>
+                            <%= link_to 'Cancel', users_path, :class => "btn btn-white btn-cons cancel-but" %>
+                        </div>
+					</div>
+							  
+				  <% end %>
+			   </div>
+			 </div>
+            </div>
+			
+      </div>
+
+
+
+
+

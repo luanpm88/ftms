@@ -14,28 +14,29 @@ class System < ActiveRecord::Base
   end
   
   def self.backup(params)
-    bk_dir = "/media/sdb1/ftms-backup"
+    bk_dir = Setting.get("backup_dir")
+    database = Setting.get("backup_database")
+    revision_max = Setting.get("backup_revision_count").strip.to_i
     
     # remove over 100 backup old
     @files = Dir.glob("#{bk_dir}/*").sort{|a,b| b <=> a}
     @files.each_with_index do |f,index|
-      if index > 10
+      if index > revision_max
         `rm -rf #{f}`
       end      
     end
     
     dir = Time.now.strftime("%Y_%m_%d_%H%M%S")
+    dir += "_#{database}"
     dir += "_db" if !params[:database].nil?
-    dir += "_source" if !params[:file].nil?
-    dir += "_#{params[:environment]}" if !params[:environment].nil?
-    
+    dir += "_source" if !params[:file].nil? 
     
     
     #`mkdir backup` if !File.directory?("backup")
     #`mkdir #{bk_dir}/#{dir}`
     
     backup_cmd = "mkdir #{bk_dir}/#{dir} && "
-    backup_cmd += "pg_dump -a ftms_#{params[:environment]} >> #{bk_dir}/#{dir}/data.dump && " if params[:database].present? && params[:environment].present?
+    backup_cmd += "pg_dump -a #{database} >> #{bk_dir}/#{dir}/data.dump && " if params[:database].present?
     backup_cmd += "cp -a uploads #{bk_dir}/#{dir}/ && " if !params[:file].nil? && File.directory?("uploads")
     backup_cmd += "zip -r #{bk_dir}/#{dir}.zip #{bk_dir}/#{dir} && "
     backup_cmd += "rm -rf #{bk_dir}/#{dir}"

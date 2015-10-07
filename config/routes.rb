@@ -348,6 +348,9 @@ Hkerp::Application.routes.draw do
         
         get :import_from_old_system
         post :import_from_old_system
+        
+        get :system_setting
+        post :system_setting
       end
     end
   end
