@@ -8493,3 +8493,7 @@ h5.list_title {
 	width: 100%; 
 	overflow:auto;
 }
+
+.color_dark td {
+	background-color: #efefef;
+}

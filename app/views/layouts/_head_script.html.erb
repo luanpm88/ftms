@@ -1403,6 +1403,23 @@
 			"aLengthMenu": [[10, 25, 50, 75, 100], [10, 25, 50, 75, 100]],
 			"iDisplayLength": 25
 	    });
+
+		
+		//Datatable merge contacts
+	    $('.datatable-merge-contacts').dataTable( {
+			"processing": true,
+			"serverSide": true,
+			"ajax": {
+				"url": "<%= merge_contacts_datatable_contacts_path %>",
+				"data": function ( d ) {
+					
+				}
+			},
+			"columnDefs": [ { "targets": [0,2,3,4,5,7,9], "orderable": false } ],
+			"order": [],
+			"aLengthMenu": [[10, 25, 50, 75, 100], [10, 25, 50, 75, 100]],
+			"iDisplayLength": 25
+	    });
 		
 		//Datatable contacts
 	    $('.datatable-seminar-students').dataTable( {
@@ -3255,6 +3272,10 @@
 			e.preventDefault()
 			approve_ajax($(this))
 		});
+
+		if($(".datatable-merge-contacts").length) {
+			setInterval('$(".datatable-merge-contacts .row-color-true").each(function() {$(this).parents("tr").addClass("color_dark")})', 500)
+		}
 	})
 	
 
