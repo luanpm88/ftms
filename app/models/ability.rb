@@ -80,9 +80,10 @@ class Ability
       can :add_course, Contact do |c|
         !c.statuses.include?("deleted")
       end      
-      can :update, Contact do |c|
-        !c.statuses.include?("deleted")
-      end
+      can :update, Contact
+      #do |c|
+        #!c.statuses.include?("deleted")
+      #end
       can :delete, Contact do |c|
         !c.statuses.include?("delete_pending")
       end

@@ -679,7 +679,7 @@
 											</div>
 									  
 								  </div>
-									<% if !@contact.draft? %>
+									<% if !@contact.draft? && !@contact.statuses.include?("deleted") %>
 										  <div class="form-actions">  
 											<div class="pull-right">
 												 <% if !@contact.statuses.include?("deleted") %>

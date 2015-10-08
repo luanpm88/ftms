@@ -1824,7 +1824,7 @@ class Contact < ActiveRecord::Base
 
   def self.find_related_contacts
     Contact.update_all(related_id: nil)
-    Contact.main_contacts.each do |c|
+    Contact.main_contacts.where("contacts.status NOT LIKE ?","%[deleted]%").each do |c|
       c = Contact.find(c.id)
       if c.related_id.nil?
         cs = c.find_related_contacts

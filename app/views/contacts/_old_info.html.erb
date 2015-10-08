@@ -1,12 +1,13 @@
 <% if @contact.old_student.present? %>
 	<h3><span class="semi-bold"><%= @contact.old_student.student_name + " - " + @contact.old_student.student_id + " - " + @contact.old_student.old_consultant.consultant_name %></span></h3>
 	<%= render "old_info_group", old_student: @contact.old_student %>
+	<% @contact.related_contacts.each do |c| %>
+		<h3><span class="semi-bold"><%= c.old_student.student_name + " - " + c.old_student.student_id + " - " + c.old_student.old_consultant.consultant_name %></span></h3>
+		<%= render "old_info_group", old_student: @contact.old_student %>
+	<% end %>
 <% end %>
 
 
-<% @contact.related_contacts.each do |c| %>
-	<h3><span class="semi-bold"><%= c.old_student.student_name + " - " + c.old_student.student_id + " - " + c.old_student.old_consultant.consultant_name %></span></h3>
-	<%= render "old_info_group", old_student: @contact.old_student %>
-<% end %>
+
 
 
