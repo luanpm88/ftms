@@ -1807,10 +1807,12 @@ class Contact < ActiveRecord::Base
         contact.contact_type_id = item.student_type.to_s
         #contact. = item.student_tags
         #contact. = item.student_home_phone
+        
+        contact.account_manager = User.where(:email => "manager@ftmsglobal.edu.vn").first
 
         contact.save
         
-        contact.add_status("active")
+        contact.add_status("education_consultant_pending")
         contact.save_draft(User.first)
 
         puts item
