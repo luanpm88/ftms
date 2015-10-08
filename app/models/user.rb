@@ -553,6 +553,8 @@ class User < ActiveRecord::Base
     OldUserLevel.import_old_user_level(database)
     OldUserRole.import_old_user_role(database)
     
+    Contact.import_contact_from_old_student
+    
     return true
   end
 

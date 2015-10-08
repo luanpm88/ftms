@@ -149,7 +149,7 @@
 																	  <label class="form-label"><%= f.label :course_price %></label>
 																	  <span class="help"></span>
 																	  <div>
-																		   <%= text_field_tag "course_prices["+number.to_s+"][amount]", "", class: "width100 price_input"+(number == num ? " required" : "") %>
+																		   <%= text_field_tag "course_prices["+number.to_s+"][amount]", "", class: "width100 price_input"+(number == 0 ? " required" : "") %>
 																	  </div>
 																 </div>
 															</div>
