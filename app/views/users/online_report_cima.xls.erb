@@ -10,6 +10,8 @@
         <Cell><Data ss:Type="String">Reg Number *</Data></Cell>
         <Cell><Data ss:Type="String">Student Name</Data></Cell>
         <Cell><Data ss:Type="String">Date of Birth</Data></Cell>
+        <Cell><Data ss:Type="String">Company</Data></Cell>
+        <Cell><Data ss:Type="String">EC</Data></Cell>
         
         <% @report[:subjects].each_with_index do |s,index| %>
           <Cell><Data ss:Type="String"><%= s.name %></Data></Cell>        
@@ -22,6 +24,8 @@
           <Cell><Data ss:Type="String"><%= row["student"].base_ids_by_program_id(params[:course_types]) %></Data></Cell>
           <Cell><Data ss:Type="String"><%= row["student"].name %></Data></Cell>
           <Cell><Data ss:Type="String"><%= row["student"].birthday.strftime("%d/%m/%Y") if !row["student"].birthday.nil? %></Data></Cell>
+          <Cell><Data ss:Type="String"><%= row["student"].referrer.name if !row["student"].referrer.nil? %></Data></Cell>
+          <Cell><Data ss:Type="String"><%= row["student"].account_manager.name if !row["student"].account_manager.nil? %></Data></Cell>
           <% row["subjects"].each do |s| %>
             <Cell><Data ss:Type="String"><%= s["count"] %></Data></Cell>        
             <Cell><Data ss:Type="String">PT</Data></Cell>
