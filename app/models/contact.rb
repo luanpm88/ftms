@@ -1785,6 +1785,7 @@ class Contact < ActiveRecord::Base
 
   def self.import_contact_from_old_student
       ##STUDENT
+      Contact.where.not(tmp_StudentID: nil).destroy_all
       OldStudent.all.each do |item|
         contact = Contact.new
         contact.tmp_StudentID = item.student_id.to_s
@@ -1808,11 +1809,11 @@ class Contact < ActiveRecord::Base
         #contact. = item.student_tags
         #contact. = item.student_home_phone
         
-        contact.account_manager = User.where(:email => "manager@ftmsglobal.edu.vn").first
+        contact.account_manager = User.where(:tmp_ConsultantID => item.consultant_id).first
 
         contact.save
         
-        contact.add_status("education_consultant_pending")
+        contact.add_status("active")
         contact.save_draft(User.first)
         contact.update_info
 

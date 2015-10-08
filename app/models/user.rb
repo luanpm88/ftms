@@ -553,11 +553,31 @@ class User < ActiveRecord::Base
     OldUserLevel.import_old_user_level(database)
     OldUserRole.import_old_user_role(database)
     
+    # import consultant
+    self.import_from_old_consultant
+    
+    # import contact
     Contact.import_contact_from_old_student
     
     return true
   end
 
-  
+  def self.import_from_old_consultant
+    ### USER
+    User.where.not(tmp_ConsultantID: nil).destroy_all
+    OldConsultant.all.each_with_index do |row,index|
+      item = User.new(:email => "unknown#{index}@ftmsglobal.edu.vn", :password => "aA456321@", :password_confirmation => "aA456321@")
+      item.tmp_ConsultantID = row.consultant_id
+      #item.first_name = row[:ConsultantName].split(" ").last
+      #item.last_name = row[:ConsultantName].split(" ")
+      item.name = row.consultant_name.strip
+    
+      item.roles << Role.where(name: "user").first
+      # item.roles << Role.where(name: "education_consultant").first
+      
+      item.save      
+
+    end
+  end
   
 end
