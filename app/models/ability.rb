@@ -290,7 +290,7 @@ class Ability
         !c.statuses.include?("delete_pending") && !c.statuses.include?("deleted")
       end
       can :delete, Transfer do |c|
-        !c.statuses.include?("delete_pending") && !c.statuses.include?("deleted")
+        c.can_delete? && !c.statuses.include?("delete_pending") && !c.statuses.include?("deleted")
       end
       can :field_history, Transfer
       can :transfer_hour, Contact do |c|

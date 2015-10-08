@@ -147,7 +147,7 @@ class ContactsController < ApplicationController
           @contact.save
     end
     
-    if params[:avatar_method] == "upload" && !contact_params[:image].present?
+    if params[:avatar_method] == "upload" && params[:remove_avatar].present?
       @contact.remove_image!
       @contact.save
     end

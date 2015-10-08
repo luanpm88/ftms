@@ -113,12 +113,14 @@
 																	  
 																	  
 																	  
+																	  
 																	  <div class="tab-content" style="margin-bottom: 0;">
 																		   
 																		   <div class="tab-pane active" id="upload">
 																							   <ul id="sortable" class="image-boxes">
 																									
 																									<li class="image-box size2x ui-state-default">
+																									  <%= hidden_field_tag "remove_avatar", "", class: "destroy_tag" %>
 																										 <div class="img-actions">
 																											  <i class="icon-minus-sign delete-but<% if !@contact.image.present? %> hidden<% end %>"></i>
 																										 </div>

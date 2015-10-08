@@ -39,7 +39,7 @@
 
     </div>
     
-    <% if @contact.old_student.present? %>
+    <% if @contact.old_student.present? && !@contact.old_invoice.empty? %>
         <div class="row">
             <div class="col-md-12">
     

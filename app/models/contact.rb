@@ -88,10 +88,14 @@ class Contact < ActiveRecord::Base
 
   has_many :old_deliverys, primary_key: 'tmp_StudentID', foreign_key: 'student_id'
 
-  has_many :related_contacts, class_name: "Contact", primary_key: 'id', foreign_key: 'related_id'
+  # has_many :related_contacts, class_name: "Contact", primary_key: 'id', foreign_key: 'related_id'
   
   after_validation :update_cache
   before_validation :check_type
+  
+  def related_contacts
+    Contact.main_contacts.where(related_id: self.id)
+  end
   
   def active_books
     books.includes(:books_contacts).joins("LEFT JOIN course_registers ON course_registers.id = books_contacts.course_register_id")

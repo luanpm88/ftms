@@ -698,4 +698,23 @@ class Transfer < ActiveRecord::Base
     return from_message
   end
   
+  def can_delete?
+    if !course.nil?
+      if self.to_type == "course"
+        Transfer.main_transfers.where("transfers.status NOT LIKE ?","%[deleted]%").where("transfers.created_at > ?", self.created_at).where(course_id: self.to_course_id).where(contact: self.to_contact).count == 0
+      elsif self.to_type == "hour"
+        hour_id = self.course.course_type_id.to_s+"-"+self.course.subject_id.to_s
+        self.to_contact.budget_hour[hour_id] > self.hour && false
+      elsif self.to_type == "money"
+        self.to_contact.budget_money > self.money && false
+      else
+        false
+      end        
+    elsif !from_hour.nil?
+      self.to_contact.budget_money > self.money && false
+    else
+      false
+    end    
+  end
+  
 end
