@@ -201,9 +201,9 @@ class Contact < ActiveRecord::Base
   def exist_contacts
     exist = []    
     if is_individual
-      exist += Contact.where("(LOWER(name) = ? AND LOWER(email) = ?) OR (LOWER(name) = ? AND LOWER(mobile) = ?)", name.downcase, email.downcase, name.downcase, mobile.downcase) if mobile.present? && name.present? && email.present?
+      exist += Contact.main_contacts.where("contacts.status NOT LIKE ?","%[deleted]%").where("(LOWER(name) = ? AND LOWER(email) = ?) OR (LOWER(name) = ? AND LOWER(mobile) = ?)", name.downcase, email.downcase, name.downcase, mobile.downcase) if mobile.present? && name.present? && email.present?
     else
-      exist += Contact.where("LOWER(name) = ?", name.downcase) if name.present?
+      exist += Contact.main_contacts.where("contacts.status NOT LIKE ?","%[deleted]%").where("LOWER(name) = ?", name.downcase) if name.present?
     end
     
     cs = []
@@ -1814,7 +1814,7 @@ class Contact < ActiveRecord::Base
         contact.save
         
         contact.add_status("active")
-        contact.save_draft(User.first)
+        contact.save_draft(User.where(:email => "manager@ftmsglobal.edu.vn").first)
         contact.update_info
 
         puts item
