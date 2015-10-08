@@ -35,25 +35,26 @@
         </div>
 
     </div>
-
-    <div class="row">
-        <div class="col-md-12">
-            <div class="grid simple ">
-                <div class="grid-title no-border">
-                    <h4>Old Course List</span></h4>
-                </div>
-
-                <div class="grid-body no-border">
-                    <p><span class="semi-bold"><%= @contact.old_student.student_name + " - " + @contact.old_student.student_id + " - " + @contact.old_student.old_consultant.consultant_name %></span></p>
-
-                    <div class="table-box">
-                        <%= render 'course_list', course_list: @contact.old_link_students %>
+    
+    <% if @contact.old_student.present? %>
+        <div class="row">
+            <div class="col-md-12">
+                <div class="grid simple ">
+                    <div class="grid-title no-border">
+                        <h4>Old Course List</span></h4>
+                    </div>
+    
+                    <div class="grid-body no-border">
+                        <p><span class="semi-bold"><%= @contact.old_student.student_name + " - " + @contact.old_student.student_id + " - " + @contact.old_student.old_consultant.consultant_name %></span></p>
+    
+                        <div class="table-box">
+                            <%= render 'course_list', course_list: @contact.old_link_students %>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
-
+    <% end %>
 
 
     <% @contact.related_contacts.each do |c| %>

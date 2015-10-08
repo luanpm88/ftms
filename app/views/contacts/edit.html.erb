@@ -78,14 +78,14 @@
 														<span class="badge badge-info pull-right alert-level1"><%= @contact.activity_count if @contact.activity_count > 0 %></span>
 												</a>
 										</li>
-
-										<li class="<%= "active" if ["old_info"].include?(params[:tab]) %>">
-												<a href="#old_info">
-														Old Information
-														
-												</a>
-										</li>
-								
+										<% if @contact.old_student.present? %>
+												<li class="<%= "active" if ["old_info"].include?(params[:tab]) %>">
+														<a href="#old_info">
+																Old Information
+																
+														</a>
+												</li>
+										<% end %>
 								<% end %>
 						 </ul>
 						 <div class="tools"> <a href="javascript:;" class="collapse"></a> <a href="#grid-config" data-toggle="modal" class="config"></a> <a href="javascript:;" class="reload"></a> <a href="javascript:;" class="remove"></a> </div>
@@ -171,10 +171,12 @@
 								<div class="tab-pane <%= "active" if ["activity"].include?(params[:tab]) %>" id="activity">
 										<%= render "activity" %>
 								</div>
-
-								<div class="tab-pane <%= "active" if ["old_info"].include?(params[:tab]) %>" id="old_info">
-										<%= render "old_info" %>
-								</div>
+								
+								<% if @contact.old_student.present? %>
+										<div class="tab-pane <%= "active" if ["old_info"].include?(params[:tab]) %>" id="old_info">
+												<%= render "old_info" %>
+										</div>
+								<% end %>
 						 </div>
 								  
 					</div>
