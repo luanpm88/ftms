@@ -186,7 +186,8 @@ class ContactsController < ApplicationController
       if @contact.delete
         @contact.save_draft(current_user)
         
-        format.html { redirect_to params[:tab_page].present? ? {action: "edit",id: @contact.id,tab_page: 1} : contacts_url, notice: 'Contact was successfully updated.' }
+        @tab = {url: {controller: "contacts", action: "index", tab_page: 1}, title: "Contact Management"}
+        format.html { render "/home/close_tab", layout: nil }
         format.json { head :no_content }
       else
         format.html { render action: 'edit', tab_page: params[:tab_page] }
