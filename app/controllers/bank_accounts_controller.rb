@@ -120,7 +120,7 @@ class BankAccountsController < ApplicationController
     @bank_account.approve_delete(current_user)
     
     respond_to do |format|
-      format.html { render "/bank_accounts/approved", layout: nil }
+      format.html { render "/bank_accounts/deleted", layout: nil }
       format.json { render action: 'show', status: :created, location: @bank_account }
     end
   end
@@ -141,7 +141,7 @@ class BankAccountsController < ApplicationController
       if @bank_account.delete
         @bank_account.save_draft(current_user)
         
-        format.html { redirect_to "/home/close_tab" }
+        format.html { render "/bank_accounts/deleted", layout: nil }
         format.json { head :no_content }
       else
         format.html { render action: 'edit', tab_page: params[:tab_page] }

@@ -35,7 +35,7 @@ module BooksHelper
       end
       
       if can? :delete, item
-        actions += '<li>'+ActionController::Base.helpers.link_to('Delete', {controller: "books", action: "delete", id: item.id, tab_page: 1}, title: "#{item.name}: Delete", class: "tab_page")+'</li>'        
+        actions += '<li>'+ActionController::Base.helpers.link_to('Delete', {controller: "books", action: "delete", id: item.id, tab_page: 1}, title: "#{item.name}: Delete", class: "approve_link")+'</li>'        
       end
       
       actions += '</ul></div></div>'

@@ -117,7 +117,7 @@ class ContactTagsController < ApplicationController
     @contact_tag.approve_delete(current_user)
     
     respond_to do |format|
-      format.html { render "/contact_tags/approved", layout: nil }
+      format.html { render "/contact_tags/deleted", layout: nil }
       format.json { render action: 'show', status: :created, location: @contact_tag }
     end
   end
@@ -138,7 +138,7 @@ class ContactTagsController < ApplicationController
       if @contact_tag.delete
         @contact_tag.save_draft(current_user)
         
-        format.html { redirect_to "/home/close_tab" }
+        format.html { render "/contact_tags/deleted", layout: nil }
         format.json { head :no_content }
       else
         format.html { render action: 'edit', tab_page: params[:tab_page] }

@@ -142,7 +142,7 @@ class TransfersController < ApplicationController
       if @transfer.delete
         @transfer.save_draft(current_user)
         
-        format.html { redirect_to "/home/close_tab" }
+        format.html { render "/transfers/deleted", layout: nil }
         format.json { head :no_content }
       else
         format.html { render action: 'edit', tab_page: params[:tab_page] }

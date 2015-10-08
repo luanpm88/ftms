@@ -171,7 +171,7 @@ class CoursesController < ApplicationController
     @course.approve_delete(current_user)
     
     respond_to do |format|
-      format.html { render "/courses/approved", layout: nil }
+      format.html { render "/courses/deleted", layout: nil }
       format.json { render action: 'show', status: :created, location: @course }
     end
   end
@@ -192,7 +192,7 @@ class CoursesController < ApplicationController
       if @course.delete
         @course.save_draft(current_user)
         
-        format.html { redirect_to "/home/close_tab" }
+        format.html { render "/courses/deleted", layout: nil }
         format.json { head :no_content }
       else
         format.html { render action: 'edit', tab_page: params[:tab_page] }

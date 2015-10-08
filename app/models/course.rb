@@ -43,13 +43,18 @@ class Course < ActiveRecord::Base
                       }
                   }
   
+  def main_transfers
+    transfers.where("transfers.parent_id IS NULL AND transfers.status IS NOT NULL AND transfers.status NOT LIKE ?", "%[deleted]%").where("course_id = ? OR transfer_for = ?", self.id, self.id)
+            .uniq
+  end
+  
   def active_transfers
-    transfers.where("transfers.parent_id IS NULL AND transfers.status IS NOT NULL AND transfers.status LIKE ?", "%[active]%").where("contact_id = ? OR transfer_for = ?", self.id, self.id)
+    transfers.where("transfers.parent_id IS NULL AND transfers.status IS NOT NULL AND transfers.status LIKE ?", "%[active]%").where("course_id = ? OR transfer_for = ?", self.id, self.id)
             .uniq
   end
   
   def active_received_transfers
-    received_transfers.where("transfers.parent_id IS NULL AND transfers.status IS NOT NULL AND transfers.status LIKE ?", "%[active]%").where("contact_id = ? OR transfer_for = ?", self.id, self.id)
+    received_transfers.where("transfers.parent_id IS NULL AND transfers.status IS NOT NULL AND transfers.status LIKE ?", "%[active]%").where("course_id = ? OR transfer_for = ?", self.id, self.id)
             .uniq
   end
   

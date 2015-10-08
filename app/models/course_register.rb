@@ -985,4 +985,13 @@ class CourseRegister < ActiveRecord::Base
     self.update_attribute(:cache_search, str.join(" "))
   end
   
+  def has_course_transferred?
+    course_ids = contact.active_courses_with_phrases.map {|r| r[:course].id}
+    contacts_courses.each do |cc|
+      return true if !course_ids.include?(cc.course.id)
+    end
+    
+    return false
+  end
+  
 end

@@ -53,7 +53,7 @@ module TransfersHelper
       #end
       
       if can? :delete, item
-        actions += '<li>'+ActionController::Base.helpers.link_to('Delete', {controller: "transfers", action: "delete", id: item.id, tab_page: 1}, title: "Transfer: Delete", class: "tab_page")+'</li>'        
+        actions += '<li>'+ActionController::Base.helpers.link_to('Delete', {controller: "transfers", action: "delete", id: item.id, tab_page: 1}, title: "Transfer: Delete", class: "approve_link")+'</li>'        
       end
       
       actions += '</ul></div></div>'

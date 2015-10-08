@@ -119,7 +119,7 @@ class StockTypesController < ApplicationController
     @stock_type.approve_delete(current_user)
     
     respond_to do |format|
-      format.html { render "/stock_types/approved", layout: nil }
+      format.html { render "/stock_types/deleted", layout: nil }
       format.json { render action: 'show', status: :created, location: @stock_type }
     end
   end
@@ -140,7 +140,7 @@ class StockTypesController < ApplicationController
       if @stock_type.delete
         @stock_type.save_draft(current_user)
         
-        format.html { redirect_to "/home/close_tab" }
+        format.html { render "/stock_types/deleted", layout: nil }
         format.json { head :no_content }
       else
         format.html { render action: 'edit', tab_page: params[:tab_page] }

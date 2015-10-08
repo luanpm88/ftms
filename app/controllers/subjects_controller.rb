@@ -129,7 +129,7 @@ class SubjectsController < ApplicationController
     @subject.approve_delete(current_user)
     
     respond_to do |format|
-      format.html { render "/subjects/approved", layout: nil }
+      format.html { render "/subjects/deleted", layout: nil }
       format.json { render action: 'show', status: :created, location: @subject }
     end
   end
@@ -150,7 +150,7 @@ class SubjectsController < ApplicationController
       if @subject.delete
         @subject.save_draft(current_user)
         
-        format.html { redirect_to "/home/close_tab" }
+        format.html { render "/subjects/deleted", layout: nil }
         format.json { head :no_content }
       else
         format.html { render action: 'edit', tab_page: params[:tab_page] }

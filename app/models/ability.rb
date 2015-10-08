@@ -324,7 +324,7 @@ class Ability
         c.all_deliveries.empty? && c.all_payment_records.empty?
       end
       can :delete, CourseRegister do |c|
-        c.all_deliveries.empty? && c.all_payment_records.empty? && !c.statuses.include?("delete_pending") && !c.statuses.include?("deleted")
+        !c.has_course_transferred? && c.all_deliveries.empty? && c.all_payment_records.empty? && !c.statuses.include?("delete_pending") && !c.statuses.include?("deleted")
       end
       can :field_history, CourseRegister
       can :export_student_course, CourseRegister

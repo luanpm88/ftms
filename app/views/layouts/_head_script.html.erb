@@ -1,5 +1,10 @@
 <script>
 	
+	function modernAlert(sms) {
+		$("#mainModal .modal-message").html(sms)
+		$('#mainModalButton').trigger("click")
+	}
+	
 	function approve_ajax(input) {		
 		var url = input.attr("href")
 		var table = input.parents("table")
@@ -8,12 +13,12 @@
 			url: url,
 			success: function(data, textStatus, jqXHR)
 			{
-				alert(data)
 				if(table.length && $(".contact_detail_tabs_page").length == 0) {
 					table.dataTable().fnFilter();
 				} else {
 					location.reload(); 
 				}
+				window.parent.modernAlert(data)
 			}
 		})
 	}

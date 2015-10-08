@@ -49,7 +49,7 @@ module ContactsHelper
       #end
       
       if can? :delete, item
-        actions += '<li>'+ActionController::Base.helpers.link_to('Delete', {controller: "contacts", action: "delete", id: item.id, tab_page: 1, tab: "activity"}, title: "#{item.display_name}: Delete", class: "tab_page")+'</li>'        
+        actions += '<li>'+ActionController::Base.helpers.link_to('Delete', {controller: "contacts", action: "delete", id: item.id, tab_page: 1, tab: "activity"}, title: "#{item.display_name}: Delete", class: "approve_link")+'</li>'        
       end
       
       actions += '</ul></div></div>'

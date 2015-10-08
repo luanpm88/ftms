@@ -186,8 +186,7 @@ class ContactsController < ApplicationController
       if @contact.delete
         @contact.save_draft(current_user)
         
-        @tab = {url: {controller: "contacts", action: "index", tab_page: 1}, title: "Contact Management"}
-        format.html { render "/home/close_tab", layout: nil }
+        format.html { render "/contacts/deleted", layout: nil }
         format.json { head :no_content }
       else
         format.html { render action: 'edit', tab_page: params[:tab_page] }
@@ -442,7 +441,7 @@ class ContactsController < ApplicationController
     @contact.approve_delete(current_user)
     
     respond_to do |format|
-      format.html { render "/contacts/approved", layout: nil }
+      format.html { render "/contacts/deleted", layout: nil }
       format.json { render action: 'show', status: :created, location: @subject }
     end
   end

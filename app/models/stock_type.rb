@@ -40,7 +40,11 @@ class StockType < ActiveRecord::Base
       else
         @records = @records.where("stock_types.status LIKE ?","%[#{params[:status]}]%")
       end
-    end    
+    end
+    
+    if !params[:status].present? || params[:status] != "deleted"
+      @records = @records.where("stock_types.status NOT LIKE ?","%[deleted]%")
+    end
    
     ########## END REVISION-FEATURE #########################
     

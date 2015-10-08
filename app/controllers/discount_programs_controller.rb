@@ -126,7 +126,7 @@ class DiscountProgramsController < ApplicationController
     @discount_program.approve_delete(current_user)
     
     respond_to do |format|
-      format.html { render "/discount_programs/approved", layout: nil }
+      format.html { render "/discount_programs/deleted", layout: nil }
       format.json { render action: 'show', status: :created, location: @discount_program }
     end
   end
@@ -147,7 +147,7 @@ class DiscountProgramsController < ApplicationController
       if @discount_program.delete
         @discount_program.save_draft(current_user)
         
-        format.html { redirect_to "/home/close_tab" }
+        format.html { render "/discount_programs/deleted", layout: nil }
         format.json { head :no_content }
       else
         format.html { render action: 'edit', tab_page: params[:tab_page] }
