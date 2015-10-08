@@ -679,10 +679,10 @@
 											</div>
 									  
 								  </div>
-									<% if !@contact.draft? && !@contact.statuses.include?("deleted") %>
+									<% if !@contact.draft? %>
 										  <div class="form-actions">  
 											<div class="pull-right">
-												 <% if !@contact.statuses.include?("deleted") %>
+												 <% if !@contact.statuses.include?("deleted") && !@contact.statuses.include?("delete_pending") %>
 													   <button type="submit" class="btn btn-success btn-cons"><i class="icon-ok"></i> Save</button>
 												<% end %>
 												 <%= link_to 'Cancel', contacts_path, :class => "btn btn-white btn-cons cancel-but" %>

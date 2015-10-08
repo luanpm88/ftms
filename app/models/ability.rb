@@ -128,9 +128,10 @@ class Ability
       can :datatable, StockType
       can :read, StockType
       can :create, StockType
-      can :update, StockType do |c|
-        !c.statuses.include?("delete_pending") && !c.statuses.include?("deleted")
-      end
+      can :update, StockType
+      #do |c|
+      #  !c.statuses.include?("delete_pending") && !c.statuses.include?("deleted")
+      #end
       can :delete, StockType do |ct|
         !ct.statuses.include?("delete_pending") && !ct.statuses.include?("deleted")
       end
@@ -143,9 +144,10 @@ class Ability
       can :read, Subject
       can :create, Subject
       can :ajax_select_box, Subject
-      can :update, Subject do |c|
-        !c.statuses.include?("delete_pending") && !c.statuses.include?("deleted")
-      end
+      can :update, Subject
+      #do |c|
+      #  !c.statuses.include?("delete_pending") && !c.statuses.include?("deleted")
+      #end
       can :delete, Subject do |ct|
         !ct.statuses.include?("delete_pending") && !ct.statuses.include?("deleted")
       end
@@ -159,9 +161,10 @@ class Ability
       can :stock_select, Book
       can :volumn_checkboxs, Book
       can :stock_price_form, Book      
-      can :update, Book do |c|
-        !c.statuses.include?("delete_pending") && !c.statuses.include?("deleted")
-      end
+      can :update, Book
+      #do |c|
+      #  !c.statuses.include?("delete_pending") && !c.statuses.include?("deleted")
+      #end
       can :delete, Book do |c|
         !c.statuses.include?("delete_pending") && !c.statuses.include?("deleted")
       end
@@ -184,9 +187,10 @@ class Ability
       can :datatable, ContactTag
       can :read, ContactTag
       can :create, ContactTag
-      can :update, ContactTag do |c|
-        !c.statuses.include?("delete_pending") && !c.statuses.include?("deleted")
-      end
+      can :update, ContactTag
+      #do |c|
+      #  !c.statuses.include?("delete_pending") && !c.statuses.include?("deleted")
+      #end
       can :delete, ContactTag do |c|
         !c.statuses.include?("delete_pending") && !c.statuses.include?("deleted")
       end
@@ -203,9 +207,10 @@ class Ability
       can :seminar_features, Seminar
       can :import_list, Seminar
       can :do_import_list, Seminar
-      can :update, Seminar do |c|
-        !c.statuses.include?("delete_pending") && !c.statuses.include?("deleted")
-      end
+      can :update, Seminar
+      #do |c|
+      #  !c.statuses.include?("delete_pending") && !c.statuses.include?("deleted")
+      #end
       can :delete, Seminar do |c|
         !c.statuses.include?("delete_pending") && !c.statuses.include?("deleted")
       end
@@ -217,9 +222,10 @@ class Ability
       can :read, Phrase
       can :create, Phrase
       can :update, Phrase
-      can :update, Phrase do |c|
-        !c.statuses.include?("delete_pending") && !c.statuses.include?("deleted")
-      end
+      can :update, Phrase
+      #do |c|
+      #  !c.statuses.include?("delete_pending") && !c.statuses.include?("deleted")
+      #end
       can :delete, Phrase do |c|
         !c.statuses.include?("delete_pending") && !c.statuses.include?("deleted")
       end
@@ -229,9 +235,10 @@ class Ability
       can :datatable, DiscountProgram
       can :read, DiscountProgram
       can :create, DiscountProgram
-      can :update, DiscountProgram do |c|
-        !c.statuses.include?("delete_pending") && !c.statuses.include?("deleted")
-      end
+      can :update, DiscountProgram
+      #do |c|
+      #  !c.statuses.include?("delete_pending") && !c.statuses.include?("deleted")
+      #end
       can :delete, DiscountProgram do |c|
         !c.statuses.include?("delete_pending") && !c.statuses.include?("deleted")
       end

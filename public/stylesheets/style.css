@@ -8497,3 +8497,9 @@ h5.list_title {
 .color_dark td {
 	background-color: #efefef;
 }
+#portrait-chat-toggler {
+    display: none !important;
+}
+#header_inbox_bar {
+    display: none !important;
+}

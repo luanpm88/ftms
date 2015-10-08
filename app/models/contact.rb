@@ -1521,7 +1521,7 @@ class Contact < ActiveRecord::Base
       row[:transfer] = transfer
       row[:remain_hour] = transfer.remain_hour(self)
       row[:remain_money] = transfer.remain_money(self)
-      if used_hours[hour_id] > 0
+      if !used_hours[hour_id].nil? && used_hours[hour_id] > 0
         if used_hours[hour_id] > row[:remain_hour]
           used_hours[hour_id] -= row[:remain_hour]
           row[:remain_hour] = 0

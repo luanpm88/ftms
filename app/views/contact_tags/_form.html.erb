@@ -67,8 +67,10 @@
 						 
 					<div class="form-actions">  
 						 <div class="pull-right">
-						 <button type="submit" class="btn btn-success btn-cons"><i class="icon-ok"></i> Save</button>
-						  <%= link_to 'Cancel', users_path, :class => "btn btn-white btn-cons cancel-but" %>
+							  <% if !@contact_tag.statuses.include?("deleted") && !@contact_tag.statuses.include?("delete_pending") %>
+								   <button type="submit" class="btn btn-success btn-cons"><i class="icon-ok"></i> Save</button>
+							  <% end %>
+							  <%= link_to 'Cancel', users_path, :class => "btn btn-white btn-cons cancel-but" %>
 					   </div>
 					</div>
 							  
