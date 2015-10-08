@@ -1,0 +1,60 @@
+<?xml version="1.0"?>
+<Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet"
+  xmlns:o="urn:schemas-microsoft-com:office:office"
+  xmlns:x="urn:schemas-microsoft-com:office:excel"
+  xmlns:ss="urn:schemas-microsoft-com:office:spreadsheet"
+  xmlns:html="http://www.w3.org/TR/REC-html40">
+  <Worksheet ss:Name="Sheet1">
+    <Table>
+      <Row>
+        <Cell><Data ss:Type="String">Consultant</Data></Cell>
+        <Cell><Data ss:Type="String">Program</Data></Cell>
+        <Cell><Data ss:Type="String">Note Log</Data></Cell>
+        <Cell><Data ss:Type="String">Sales</Data></Cell>
+        <Cell><Data ss:Type="String">Receivable</Data></Cell>
+        <Cell><Data ss:Type="String">Paper</Data></Cell>
+        <Cell><Data ss:Type="String">New Inquiry</Data></Cell>
+        <Cell><Data ss:Type="String">New Student</Data></Cell>
+      </Row>
+      
+      <Row>
+        <Cell><Data ss:Type="String"></Data></Cell>
+        <Cell><Data ss:Type="String"></Data></Cell>
+        <Cell><Data ss:Type="String">All Total:</Data></Cell>
+        <Cell><Data ss:Type="String"><%= format_price(@all_total[:group_total]) %></Data></Cell>
+        <Cell><Data ss:Type="String"><%= format_price(@all_total[:receivable_total]) %></Data></Cell>
+        <Cell><Data ss:Type="String"><%= @all_total[:paper_total] %></Data></Cell>
+        <Cell><Data ss:Type="String"><%= @all_total[:inquiry_total] %></Data></Cell>
+        <Cell><Data ss:Type="String"><%= @all_total[:student_total] %></Data></Cell>
+      </Row>
+      
+      <% @result.each do |u| %>
+        <Row>
+          <Cell><Data ss:Type="String"><%= u[:user].name %></Data></Cell>
+          <Cell><Data ss:Type="String">All</Data></Cell>
+          <Cell><Data ss:Type="String"><%= u[:note] %></Data></Cell>
+          <Cell><Data ss:Type="String"><%= format_price(u[:total]) %></Data></Cell>
+          <Cell><Data ss:Type="String"><%= format_price(u[:receivable]) %></Data></Cell>
+          <Cell><Data ss:Type="String"><%= u[:paper] %></Data></Cell>
+          <Cell><Data ss:Type="String"><%= u[:inquiry] %></Data></Cell>
+          <Cell><Data ss:Type="String"><%= u[:student] %></Data></Cell>
+        </Row>
+        
+        <% u[:statistics].each do |row| %>
+          <Row>
+            <Cell><Data ss:Type="String"><%= u[:user].name %></Data></Cell>
+            <Cell><Data ss:Type="String"><%= row[:course_type].short_name %></Data></Cell>
+            <Cell><Data ss:Type="String"></Data></Cell>
+            <Cell><Data ss:Type="String"><%= format_price(u[:total]) %></Data></Cell>
+            <Cell><Data ss:Type="String"><%= format_price(u[:receivable]) %></Data></Cell>
+            <Cell><Data ss:Type="String"><%= u[:paper] %></Data></Cell>
+            <Cell><Data ss:Type="String"><%= u[:inquiry] %></Data></Cell>
+            <Cell><Data ss:Type="String"><%= u[:student] %></Data></Cell>
+          </Row>
+        <% end %>
+        
+      <% end %>
+
+    </Table>
+  </Worksheet>
+</Workbook>

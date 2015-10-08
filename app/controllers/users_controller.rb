@@ -178,6 +178,7 @@ class UsersController < ApplicationController
     current_id = nil
     
     @result = []
+    @all_total = {group_total: 0, inquiry_total: 0, student_total: 0, paper_total: 0, receivable_total: 0}
     @users.each do |u|
       row = {statistics: []}
       group_total = 0.0
@@ -322,13 +323,21 @@ class UsersController < ApplicationController
       row[:course_type] = nil
       row[:total] = group_total
       row[:receivable] = receivable_total
-      
-      
       @result << row
+      
+      # all_total = {group_total: 0, inquiry_total: 0, student_total: 0, paper_total: 0, receivable_total: 0}
+      @all_total[:group_total] += group_total
+      @all_total[:inquiry_total] += inquiry_total
+      @all_total[:student_total] += student_total
+      @all_total[:paper_total] += paper_total
+      @all_total[:receivable_total] += receivable_total
+      
     end
-    
-    if params[:pdf].present?
-      render  :pdf => "sales_statistics_"+Time.now.strftime("%d_%b_%Y"),
+    respond_to do |format|
+        format.html 
+        format.xls {render "users/statistics.xls.erb"}
+        format.pdf {
+          render  :pdf => "sales_statistics_"+Time.now.strftime("%d_%b_%Y"),
             :template => 'users/statistics.pdf.erb',
             :layout => nil,
             :orientation => 'Landscape',
@@ -342,8 +351,8 @@ class UsersController < ApplicationController
                           :left   => 0,
                           :right  => 0},
             }
+        }
     end
-    
     
   end
   

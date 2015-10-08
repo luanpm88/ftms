@@ -51,7 +51,7 @@
 
 <div class="page">
   <div class="logo">
-    <img src="<%= params[:pdf].present? ? "file://"+File.join(Rails.root, 'public', 'img', 'FTMSGlobalNew_transparent.png') : url_for("/img/FTMSGlobalNew_transparent.png") %>" class="login-logo" />
+    <img src="<%= params[:format] == "pdf" ? "file://"+File.join(Rails.root, 'public', 'img', 'FTMSGlobalNew_transparent.png') : url_for("/img/FTMSGlobalNew_transparent.png") %>" class="login-logo" />
   </div>
   
   <div class="heading">
@@ -61,6 +61,7 @@
   
   
           <table width="100%" cellpadding="10" class="list" cellpadding="0" cellspacing="0">
+								
                               <thead>
                                   <tr>                                                
                                       <th>Consultant</th>
@@ -74,6 +75,14 @@
 									  <th class="text-center">New Student</th>									  
                                   </tr>
                               </thead>
+							  <tr class="total_row" style="background: #efefef">
+										<td colspan="3" class="text-right">All Total:</td>
+										<td class="text-right"><strong class=" paid"><%= format_price(@all_total[:group_total]) %></strong></td>
+										<td class="text-right"><strong class=" paid"><%= format_price(@all_total[:receivable_total]) %></strong></td>
+										<td class="text-center"><strong class=" paid"><%= @all_total[:paper_total] %></strong></td>
+										<td class="text-center"><strong class=" paid"><%= @all_total[:inquiry_total] %></strong></td>
+										<td class="text-center"><strong class=" paid"><%= @all_total[:student_total] %></strong></td>
+								</tr>
 								<% @result.each do |u| %>										
 										<tr class="total_row">
 												<td>
@@ -131,6 +140,7 @@
 												</tr>
 										<% end %>
 								<% end %>
+								
                           </table>
   
  
