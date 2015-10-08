@@ -292,6 +292,23 @@ class ContactsController < ApplicationController
     
     render json: result[:result]
   end
+
+  def merge_contacts_datatable
+    
+    result = Contact.merge_contacts_datatable(params, current_user)
+    
+    result[:items].each_with_index do |item, index|
+      actions = render_contacts_actions(item)
+      
+      result[:result]["data"][index][result[:actions_col]] = actions
+    end
+    
+    render json: result[:result]
+  end
+
+  def merge_contacts
+    Contact.find_related_contacts
+  end
   
   def course_students
     result = Contact.course_students(params, current_user)

@@ -75,6 +75,20 @@ class Contact < ActiveRecord::Base
   has_many :payment_records
   
   has_many :activities, :dependent => :destroy
+
+  belongs_to :old_student, foreign_key: 'tmp_StudentID', primary_key: 'student_id'
+
+  has_many :old_link_students, primary_key: 'tmp_StudentID', foreign_key: 'student_id'
+
+  has_many :old_tags, primary_key: 'tmp_StudentID', foreign_key: 'student_id'
+
+  has_many :old_note_details, primary_key: 'tmp_StudentID', foreign_key: 'student_id'
+
+  has_many :old_invoice, primary_key: 'tmp_StudentID', foreign_key: 'student_id'
+
+  has_many :old_deliverys, primary_key: 'tmp_StudentID', foreign_key: 'student_id'
+
+  has_many :related_contacts, class_name: "Contact", primary_key: 'id', foreign_key: 'related_id'
   
   after_validation :update_cache
   before_validation :check_type
@@ -374,6 +388,91 @@ class Contact < ActiveRecord::Base
     result["data"] = data
     
     return {result: result, items: @records, actions_col: actions_col}
+  end
+
+  def self.merge_contacts_datatable(params, user)
+    ActionView::Base.send(:include, Rails.application.routes.url_helpers)
+    link_helper = ActionController::Base.helpers
+    
+    @records = self.filters(params, user)
+    @records = @records.where(related_id: 0)
+    
+    if !params["order"].nil?
+      case params["order"]["0"]["column"]
+      when "1"
+        order = "contacts.name"
+      when "6"
+        order = "contacts.created_at"
+      when "8"
+        @records = @records.includes(:current_revision)
+        order = "current_revisions_contacts.created_at"
+      else
+        order = "contacts.name"
+      end
+      order += " "+params["order"]["0"]["dir"]
+    else
+      order = "contacts.name"
+    end
+    @records = @records.order(order) if !order.nil? && !params["search"].present?
+    
+    total = @records.count
+    @records = @records.limit(params[:length]).offset(params["start"])
+    data = []
+    
+    actions_col = 9
+    arr = []
+    @records.each_with_index do |item,index|
+      ############### BEGIN REVISION #########################
+      # update approved status
+      if params[:status].present? && params[:status] == "approved"
+        item.remove_annoucing_users([user])
+      end
+      ############### END REVISION #########################
+      
+      row = [
+              "<div class=\"row-color-#{(index%2 == 0).to_s} checkbox check-default\"><input name=\"ids[]\" id=\"checkbox#{item.id}\" type=\"checkbox\" value=\"#{item.id}\"><label for=\"checkbox#{item.id}\"></label></div>",
+              
+              '<div class="text-left"><strong>'+item.contact_link+"</strong></div>"+'<div class="text-left">'+item.html_info_line.html_safe+item.referrer_link+"</div>"+item.picture_link,              
+              '<div class="text-right">'+item.contact_type_name+"</div>",
+              '<div class="text-left">'+item.course_types_name_col+"</div>",
+              '<div class="text-center">'+item.course_count_link+"</div>",
+              '<div class="text-center contact_tag_box" rel="'+item.id.to_s+'">'+ContactsController.helpers.render_contact_tags_selecter(item)+"</div>",
+              '<div class="text-center">'+item.created_at.strftime("%d-%b-%Y")+"</div>",
+              '<div class="text-center">'+item.account_manager_col+"</div>",
+              '<div class="text-center">'+item.display_statuses+"</div>",
+              '',
+            ]
+      data << row
+
+      item.related_contacts.each do |child|
+        row = [
+                "<div class=\"row-color-#{(index%2 == 0).to_s} checkbox check-default\"><input name=\"ids[]\" id=\"checkbox#{child.id}\" type=\"checkbox\" value=\"#{child.id}\"><label for=\"checkbox#{child.id}\"></label></div>",
+                
+                '<div class="text-left"><strong>'+child.contact_link+"</strong></div>"+'<div class="text-left">'+child.html_info_line.html_safe+child.referrer_link+"</div>"+child.picture_link,              
+                '<div class="text-right">'+child.contact_type_name+"</div>",
+                '<div class="text-left">'+child.course_types_name_col+"</div>",
+                '<div class="text-center">'+child.course_count_link+"</div>",
+                '<div class="text-center contact_tag_box" rel="'+child.id.to_s+'">'+ContactsController.helpers.render_contact_tags_selecter(child)+"</div>",
+                '<div class="text-center">'+child.created_at.strftime("%d-%b-%Y")+"</div>",
+                '<div class="text-center">'+child.account_manager_col+"</div>",
+                '<div class="text-center">'+child.display_statuses+"</div>",
+                '',
+              ]
+        total += 1
+        arr << child
+        data << row
+      end
+      arr << item
+    end
+    
+    result = {
+              "drawn" => params[:drawn],
+              "recordsTotal" => total,
+              "recordsFiltered" => total
+    }
+    result["data"] = data
+    
+    return {result: result, items: arr , actions_col: actions_col}
   end
   
   def account_manager_col
@@ -1654,6 +1753,7 @@ class Contact < ActiveRecord::Base
   def render_cache_search
     str = []
     str << display_name.unaccent
+    str << "[search_name: "+name.unaccent.downcase+" ]"
     str << "[tag:"+(contact_tags.map {|ct| ct.name}).join("][tag:")+"]"
     str << mobile.to_s.gsub(/^84/,"")
     str << "0" + mobile.to_s.gsub(/^84/,"")
@@ -1682,5 +1782,71 @@ class Contact < ActiveRecord::Base
   def update_cache_courses
     self.update_attribute(:cache_courses, "["+real_courses.map(&:id).join("][")+"]")
   end
-  
+
+  def self.import_contact_from_old_student
+      ##STUDENT
+      OldStudent.all.each do |item|
+        contact = Contact.new
+        contact.tmp_StudentID = item.student_id.to_s
+        contact.name = item.student_name.to_s
+        #contact. = item.consultant_id
+        contact.sex = item.student_title == "2" ? "female" : (item.student_title == "1" ? "male" : nil)
+        contact.birthday = item.student_birth
+        #contact. = item.student_acca_no
+        #contact. = item.student_company 
+        contact.tax_code = item.student_vat_code.to_s
+        #contact. = item.student_office
+        #contact. = item.student_location
+        contact.address = item.student_home_add.to_s
+        contact.preferred_mailing = item.student_preffer_mailing.to_s
+        contact.email = item.student_email_1.to_s
+        contact.email_2 = item.student_email_2.to_s
+        #contact. = item.student_off_phone
+        contact.mobile = item.student_hand_phone.to_s
+        contact.fax = item.student_fax.to_s
+        contact.contact_type_id = item.student_type.to_s
+        #contact. = item.student_tags
+        #contact. = item.student_home_phone
+
+        contact.save
+        
+        contact.add_status("active")
+        contact.save_draft(User.first)
+
+        puts item
+      end
+
+  end
+
+  def self.find_related_contacts
+    Contact.update_all(related_id: nil)
+    Contact.main_contacts.each do |c|
+      c = Contact.find(c.id)
+      if c.related_id.nil?
+        cs = c.find_related_contacts
+        if cs.count > 0
+          c.related_id = 0
+          c.save
+          cs.each do |child|
+            child.related_id = c.id
+            child.save
+          end
+        end
+      end 
+    end
+  end
+
+  def find_related_contacts
+    cond_name = "LOWER(contacts.cache_search) LIKE '%[search_name: #{name.unaccent.downcase} ]%'"
+    cond_other = []
+    cond_other << "LOWER(contacts.email) LIKE '%#{self.email.to_s.strip.downcase}%'" if self.email.present?
+    cond_other << "LOWER(contacts.mobile) LIKE '%#{self.mobile.to_s.strip.downcase}%'" if self.mobile.present?
+    
+    return [] if cond_other.empty?
+    
+    cond_other = "("+cond_other.join(" OR ")+")"
+    return Contact.main_contacts.where.not(id: self.id).where(cond_name+" AND "+cond_other)
+
+  end
+
 end

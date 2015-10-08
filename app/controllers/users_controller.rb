@@ -358,7 +358,7 @@ class UsersController < ApplicationController
   
   def import_from_old_system
     if params[:import]
-      @result = User.import_from_old_sustem(params['upload']['datafile'])
+      @result = User.import_from_old_system(params['upload']['datafile'])
     end
   end
   

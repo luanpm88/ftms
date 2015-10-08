@@ -341,7 +341,6 @@ class User < ActiveRecord::Base
     result = {contacts: [], course_types: [], subjects: [], subjects_tmp: [], users: []}
     
     #### STUDENT
-    #Contact.destroy_all
     #database[:Student].each do |row|
     #  contact = Contact.new
     #  contact.tmp_StudentID = row[:StudentID]
@@ -528,5 +527,35 @@ class User < ActiveRecord::Base
                       
     return {data: report, subjects: subjects}
   end
+
+  def self.import_from_old_system(file)
+    dir = "tmp"
+    file_name =  file.original_filename
+    file_path = File.join(dir, file_name)
+    File.open(file_path, "wb") { |f| f.write(file.read) }
+    
+    database = Mdb.open(file_path)
+    
+    OldBook.import_old_book(database)
+    OldBookDatum.import_old_book_data(database)
+    OldCompany.import_old_company(database)
+    OldConsultant.import_old_consultant(database)
+    OldCourse.import_old_course(database)
+    OldCourseType.import_old_course_type(database)
+    OldDelivery.import_old_delivery(database)
+    OldInvoice.import_old_invoice(database)
+    OldInvoiceDetail.import_old_invoice_detail(database)
+    OldLinkStudent.import_old_link_student(database)
+    OldNoteDetail.import_old_note_detail(database)
+    OldStudent.import_old_student(database)
+    OldSubject.import_old_subject(database)
+    OldTag.import_old_tag(database)
+    OldUserLevel.import_old_user_level(database)
+    OldUserRole.import_old_user_role(database)
+    
+    return true
+  end
+
+  
   
 end

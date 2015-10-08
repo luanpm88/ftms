@@ -1,0 +1,40 @@
+<table class="table table-striped no-more-tables no-filter">
+    <thead>
+        <tr>
+            <th class="text-left" width="1%">ID</th>
+            <th class="text-left">SubjectID</th>
+            <th class="text-center">SubjectArray</th>
+            <th class="text-center">CompanyName</th>
+            <th class="text-center">Paid</th>
+            <th class="text-center">Countfor</th>
+            <th class="text-right" width="1%">Defferal</th>
+        </tr>
+    </thead>
+    <tbody>
+        <% course_list.each do |item| %>
+            <tr>
+                <td class="text-left" width="1%">
+                    <%= item.id %>
+                </td>
+                <td class="text-left nowrap">
+                    <%= item.subject_id %>
+                </td>
+                <td class="text-center">
+                    <%= item.subject_array %>
+                </td>
+                <td class="text-center">
+                    <%= item.old_company.company_name if !item.old_company.nil? %>
+                </td>
+                <td class="text-center">
+                    <%= item.paid %>
+                </td>
+                <td class="text-center">
+                    <%= item.count_for %>
+                </td>
+                <td class="text-right" width="1%">
+                    <%= item.defferal %>
+                </td>
+            </tr>
+            <% end %>
+    </tbody>
+</table>

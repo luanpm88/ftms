@@ -1,0 +1,72 @@
+<ul class="breadcrumb">
+    <li>
+        <p>YOU ARE HERE</p>
+    </li>
+    <li>
+        <%= link_to 'Contacts', contacts_url, :class => "active" %>
+    </li>
+</ul>
+<div class="page-title">
+    <i class="icon-group"></i>
+    <h3>Contact - <span class="semi-bold"> Management</span></h3>
+</div>
+
+<%= form_tag("", {class: "listing_form", method: "post", target: "_blank"}) do |f| %>
+
+    <div class="row">
+        <div class="col-md-12">
+            <h3>Listing  <span class="semi-bold">Contacts</span></h3>
+            <div class="listing_box_actions">
+                <div class="btn-group listing_actions"> <a href="#" data-toggle="dropdown" class="btn btn-white dropdown-toggle btn-demo-space"> List Actions (<span class="listing_checked_count">0</span>)<span class="caret"></span> </a>
+                    <ul class="dropdown-menu">
+                        <li><a href="#" rel="<%= export_list_contacts_path(format: " xls ") %>">Export List (Excel)</a></li>
+                        <li><a href="#" rel="<%= export_mobiles_contacts_path %>">Export Mobiles</a></li>
+                        <li><a href="#" rel="<%= export_emails_contacts_path %>">Export Emails</a></li>
+                        <li><a href="#" rel="<%= add_stocks_course_registers_path(tab_page: 1) %>" type="tab" title="Add Stock">Add Stock</a></li>
+                    </ul>
+                </div>
+                <div class="checkbox check-default check_all_page_but" style="display: inline-block">
+                    <input name="check_all_page" id="checkbox_all_page" type="checkbox" value="all_page" class="check_all_page">
+                    <label for="checkbox_all_page">Select All Pages</label>
+                </div>
+            </div>
+            <div class="grid simple">
+
+                <div class="grid-body no-border">
+
+
+                    <table class="table no-more-tables datatable-merge-contacts no-filter">
+                        <thead>
+                            <tr>
+                                <th>
+                                    <div class="checkbox check-default">
+                                        <input id="checkbox_all" type="checkbox" value="all" class="checkall">
+                                        <label for="checkbox_all"></label>
+                                    </div>
+                                </th>
+                                <!--<th width="1%" class="text-center">Avatar</th>-->
+                                <th class="text-left">Name/Info</th>
+                                <th class="text-right">Type</th>
+                                <th class="text-left">Program</th>
+                                <th class="text-center">
+                                    <span class="personal-box">Course</span>
+                                    <span class="company-box">Student</span>
+                                </th>
+                                <!--<th class="text-left">Company</th>-->
+                                <th class="text-center">Tag</th>
+                                <th class="text-center">Created on</th>
+                                <th class="text-center">Education Consultant</th>
+                                <th class="text-center">Status</th>
+                                <th class="text-right">Actions</th>
+                            </tr>
+                        </thead>
+                        </tbody>
+                    </table>
+
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <% end %>

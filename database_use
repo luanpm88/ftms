@@ -1,0 +1,32 @@
+	Tags(tag_id student_id tag_name)
+	
+	UserRole(user_role_id user_role user_role_detail)
+	
+	UserLevel(user_permission_id user_name user_role consultant_id in_charge)
+
+	Subject(subject_id course_id subject_name subject_lecturer start_date end_date belong_to subject_phrase)
+
+	Student(student_id consultant_id student_name student_title student_birth student_acca_no student_company student_vat_code student_office student_location student_home_add student_preffer_mailing student_email_1 student_email_2 student_off_phone student_hand_phone student_fax student_type student_tags student_home_phone)
+	
+	NoteDetail(note_id student_id cus_id note_date note_detail priority staff)
+
+	LinkStudent(id subject_id student_id subject_array company_id paid count_for defferal)	
+
+	InvoiceDetail(invoice_detail_id invoice_id invoice_detail_name invoice_detail_price invoice_detail_price_discount invoice_detail_type invoice_discount invoice_exchange)	
+
+	Invoice(invoice_id student_id paid count_for)	
+	
+	Delivery(delivery_id student_id subject_id book_type book_vol delivery_yes)	
+
+	CourseType(course_type_id course_type_name course_type_short_name course_discount course_discount_value course_inquiry)
+
+	Course(course_id course_name order)		
+
+	Consultant(consultant_id consultant_name)	
+	
+	Companies(company_id company_name company_address company_manager company_off_phone company_fax company_manager_hphone company_email)
+
+	BookData(book_data_id book_data_name book_data_array)	
+
+	Book(book_id subject_id book_type book_vol amount delivered need_delivery in_stock need_ordering remark ramark1)
+

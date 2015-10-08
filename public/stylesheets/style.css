@@ -8484,3 +8484,16 @@ h5.list_title {
     padding: 0;
     border: none;
 }
+.table-box {
+	border: 1px solid #aaa;
+	margin: 10px 0;
+	padding: 10px;
+	text-align: left;
+	max-height: 300px; 
+	width: 100%; 
+	overflow:auto;
+}
+
+.color_dark td {
+	background-color: #efefef;
+}

@@ -78,6 +78,13 @@
 														<span class="badge badge-info pull-right alert-level1"><%= @contact.activity_count if @contact.activity_count > 0 %></span>
 												</a>
 										</li>
+
+										<li class="<%= "active" if ["old_info"].include?(params[:tab]) %>">
+												<a href="#old_info">
+														Old Information
+														
+												</a>
+										</li>
 								
 								<% end %>
 						 </ul>
@@ -141,46 +148,7 @@
 										</div>
 										<div class="tab-pane <%= "active" if ["book"].include?(params[:tab]) %>" id="book">
 										
-												<%= render "books/filters" %>
-												
-												<style>
-														.student-book-filter {
-																position: absolute;
-																top: -90000px;
-														}
-												</style>
-						
-												<div class="row">
-													<div class="col-md-12">
-														
-														<div class="grid simple ">
-															<div class="grid-title no-border">
-																<h4>Listing  <span class="semi-bold">Books</span></h4>
-																
-															</div>
-															<div class="grid-body no-border">
-																 
-																	<table class="table table-striped no-more-tables datatable-student-books no-filter">
-																		<thead>
-																			<tr>                                                
-																				<th width="1%">Cover</th>																				
-																				<!--<th class="text-center">Program</th>
-																				<th class="text-center">Paper</th>-->
-																				<th>Name</th>
-																				<th>Publisher</th>
-																				<th class="text-center">Quantity</th>
-																				<th class="text-center">Created on</th>
-																				<th class="text-center">Delivery</th>
-																				<th class="text-center" width="1%">Staff</th>
-																				<th class="text-right" width="1%">Actions</th>
-																			</tr>
-																		</thead>                                        
-																	</table>
-															</div>
-														</div>									
-													</div>
-											
-												</div>
+												<%= render "book" %>
 										
 										</div>
 					
@@ -202,6 +170,10 @@
 		
 								<div class="tab-pane <%= "active" if ["activity"].include?(params[:tab]) %>" id="activity">
 										<%= render "activity" %>
+								</div>
+
+								<div class="tab-pane <%= "active" if ["old_info"].include?(params[:tab]) %>" id="old_info">
+										<%= render "old_info" %>
 								</div>
 						 </div>
 								  

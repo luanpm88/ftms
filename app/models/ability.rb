@@ -88,6 +88,8 @@ class Ability
       end
       can :export_mobiles, Contact
       can :export_emails, Contact
+      can :merge_contacts, Contact
+      can :merge_contacts_datatable, Contact
       
       can :datatable, Course
       can :read, Course

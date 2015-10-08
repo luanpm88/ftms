@@ -1,0 +1,29 @@
+<table class="table table-striped no-more-tables no-filter">
+    <thead>
+        <tr>
+            <th class="text-center" width="1%">NoteDate</th>
+            <th class="text-left" width="1%">NoteDetail</th>
+            <th class="text-center" width="1%">Priority</th>
+            <th class="text-center" width="1%">Staff</th>
+        </tr>
+    </thead>
+
+    <tbody>
+        <% remark_list.each do |item| %>
+            <tr>
+                <td class="text-center" width="1%">
+                    <%= item.note_date.strftime("%d-%b-%Y") %>
+                </td>
+                <td class="text-left" width="1%">
+                    <%= item.note_detail %>
+                </td>
+                <td class="text-center" width="1%">
+                    <%= item.priority %>
+                </td>
+                <td class="text-center" width="1%">
+                    <%= item.staff %>
+                </td>
+            </tr>
+            <% end %>
+    </tbody>
+</table>

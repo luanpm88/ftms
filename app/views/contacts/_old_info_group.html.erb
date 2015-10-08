@@ -1,0 +1,87 @@
+<div class="row column-seperation">
+	<div class="col-md-6">
+		<table class="table table-striped no-more-tables no-filter">
+			<tr>
+				<td><span class="semi-bold">StudentID</span></td>
+				<td><%= old_student.student_id %></td>
+			</tr>
+			<tr>
+				<td><span class="semi-bold">ConsultantName</span></td>
+				<td><%= old_student.old_consultant.consultant_name %></td>
+			</tr>
+			<tr>
+				<td><span class="semi-bold">StudentTitle</span></td>
+				<td><%= old_student.student_title == "2" ? "Female" : (old_student.student_title == "1" ? "Male" : "") %></td>
+			</tr>
+			<tr>
+				<td><span class="semi-bold">StudentBirth</span></td>
+				<td><%= old_student.student_birth %></td>
+			</tr>
+			<tr>
+				<td><span class="semi-bold">StudentACCANo</span></td>
+				<td><%= old_student.student_acca_no %></td>
+			</tr>
+			<tr>
+				<td><span class="semi-bold">StudentCompany</span></td>
+				<td><%= old_student.student_company %></td>
+			</tr>
+			<tr>
+				<td><span class="semi-bold">StudentVatCode</span></td>
+				<td><%= old_student.student_vat_code %></td>
+			</tr>
+			<tr>
+				<td><span class="semi-bold">StudentOffice</span></td>
+				<td><%= old_student.student_office %></td>
+			</tr>
+			<tr>
+				<td><span class="semi-bold">StudentLocation</span></td>
+				<td><%= old_student.student_location %></td>
+			</tr>
+			<tr>
+				<td><span class="semi-bold">StudentHomeAdd</span></td>
+				<td><%= old_student.student_home_add %></td>
+			</tr>
+		</table>
+	</div>
+
+	<div class="col-md-6">
+		<table class="table table-striped no-more-tables no-filter">
+			<tr>
+				<td><span class="semi-bold">StudentPrefferMailing</span></td>
+				<td><%= old_student.student_preffer_mailing %></td>
+			</tr>
+			<tr>
+				<td><span class="semi-bold">StudentEmail1</span></td>
+				<td><%= old_student.student_email_1 %></td>
+			</tr>
+			<tr>
+				<td><span class="semi-bold">StudentEmail2</span></td>
+				<td><%= old_student.student_email_2 %></td>
+			</tr>
+			<tr>
+				<td><span class="semi-bold">StudentOffPhone</span></td>
+				<td><%= old_student.student_off_phone %></td>
+			</tr>
+			<tr>
+				<td><span class="semi-bold">StudentHandPhone</span></td>
+				<td><%= old_student.student_hand_phone %></td>
+			</tr>
+			<tr>
+				<td><span class="semi-bold">StudentFax</span></td>
+				<td><%= old_student.student_fax %></td>
+			</tr>
+			<tr>
+				<td><span class="semi-bold">StudentType</span></td>
+				<td><%= old_student.student_type %></td>
+			</tr>
+			<tr>
+				<td><span class="semi-bold">StudentTags</span></td>
+				<td><%= old_student.student_tags %></td>
+			</tr>
+			<tr>
+				<td><span class="semi-bold">StudentHandPhone</span></td>
+				<td><%= old_student.student_hand_phone %></td>
+			</tr>
+		</table>
+	</div>
+</div>

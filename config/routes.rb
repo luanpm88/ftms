@@ -406,8 +406,12 @@ Hkerp::Application.routes.draw do
       
       post :export_mobiles
       post :export_emails
+
+      get :merge_contacts
+      get :merge_contacts_datatable
     end
   end
+
 
   get 'admin' => 'admin#index'
   
