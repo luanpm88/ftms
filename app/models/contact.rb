@@ -1814,6 +1814,7 @@ class Contact < ActiveRecord::Base
         
         contact.add_status("education_consultant_pending")
         contact.save_draft(User.first)
+        contact.update_info
 
         puts item
       end
