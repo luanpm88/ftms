@@ -81,7 +81,7 @@ class Ability
         !c.statuses.include?("deleted")
       end      
       can :update, Contact do |c|
-        !c.statuses.include?("delete_pending") && !c.statuses.include?("deleted")
+        !c.statuses.include?("deleted")
       end
       can :delete, Contact do |c|
         !c.statuses.include?("delete_pending")
