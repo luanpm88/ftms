@@ -140,7 +140,7 @@ class Transfer < ActiveRecord::Base
               '<div class="text-right">'+item.display_money+"</div>",
               '<div class="text-right"><label class="col_label top0">Total:</label>'+ApplicationController.helpers.format_price(item.total)+"<label class=\"col_label top0\">Paid:</label>"+ApplicationController.helpers.format_price(item.paid)+"<label class=\"col_label top0\">Receivable:</label>"+ApplicationController.helpers.format_price(item.remain)+"</div>",
               #'<div class="text-right">'+ApplicationController.helpers.format_price(item.admin_fee.to_f)+"</div>",              
-              '<div class="text-center">'+item.created_at.strftime("%d-%b-%Y <br/> %I:%M %p").html_safe+"</div>",
+              '<div class="text-center">'+item.created_at.strftime("%d-%b-%Y <br/> %I:%M %p").html_safe+"<br /><br />"+item.user.staff_col+"</div>",
               '<div class="text-center">'+item.display_statuses+"<br /><br />"+item.display_payment_status+"</div>",
               ""
             ]
@@ -177,7 +177,10 @@ class Transfer < ActiveRecord::Base
       arr << "<div class=\"nowrap\"><strong>"+course.display_name+"</strong></div>"
       arr << "<div class=\"courses_phrases_list\">"+Course.render_courses_phrase_list(courses_phrases)+"</div>" if courses_phrases
       arr << "<br /><div>Hour: <strong>#{contact.active_course(course.id, self.created_at-1.second)[:hour]}</strong> <br /> Money: <strong>#{ApplicationController.helpers.format_price(contact.active_course(course.id, self.created_at-1.second)[:money])}</trong></div>"
+      
+      arr << "<br /><div style=\"font-weight: normal\">Note: #{note}</div>" if note.present?
       return arr.join("")
+    
     elsif !from_hour.nil?
       hours = {}
       JSON.parse(from_hour).each do |r|
@@ -188,9 +191,11 @@ class Transfer < ActiveRecord::Base
       
       arr = []
       hours.each do |r|
-        arr << CourseType.find(r[0].split("-")[0]).short_name+"-"+Subject.find(r[0].split("-")[1]).name+": "+r[1].to_s+" hours" if r[1].to_f > 0
-      end
-      return "<strong>"+arr.join("<br />")+"</strong>"
+        arr << "<strong>"+CourseType.find(r[0].split("-")[0]).short_name+"-"+Subject.find(r[0].split("-")[1]).name+": "+r[1].to_s+" hours</strong>" if r[1].to_f > 0
+      end      
+      arr << "<br /><div>Note: #{note}</div>" if note.present?
+      
+      return arr.join("<br />")
 
     else
       ""
@@ -363,13 +368,24 @@ class Transfer < ActiveRecord::Base
       # Annoucing users
       add_annoucing_users([self.current.user])
       
+      # remote note log
+      note_logs.each do |a|
+        a.delete
+      end      
+      
       self.save_draft(user)
     end
   end
   
+  def note_logs
+    Activity.where(item_code: "transfer_#{self.id.to_s}")
+  end
+  
   def check_statuses
     if !statuses.include?("deleted") && !statuses.include?("delete_pending") && !statuses.include?("update_pending") && !statuses.include?("new_pending")
-      add_status("active")     
+      add_status("active")
+      
+      self.send_note_log
     else
       delete_status("active")
     end    
@@ -636,6 +652,50 @@ class Transfer < ActiveRecord::Base
     end
     
     return hour_money - sub_money
+  end
+  
+  def send_note_log
+    from_item = ""
+    if !from_hour.nil?
+      hours = {}
+      JSON.parse(from_hour).each do |r|
+        tr = Transfer.find(r[0])
+        hour_id = tr.course.course_type_id.to_s+"-"+tr.course.subject_id.to_s
+        hours[hour_id] = hours[hour_id].nil? ? r[1].to_f : hours[hour_id] + r[1].to_f
+      end
+      
+      arr = []
+      hours.each do |r|
+        arr << CourseType.find(r[0].split("-")[0]).short_name+"-"+Subject.find(r[0].split("-")[1]).name+": "+r[1].to_s+" hours" if r[1].to_f > 0
+      end
+      from_item = "<strong>"+arr.join("; ")+"</strong>"
+    else
+      from_item = course.name
+    end
+    
+    to_item = ""
+    if !from_hour.nil? || to_type == "money"
+      to_item = ApplicationController.helpers.format_price(money)+" "+Setting.get("currency_code")
+    elsif to_type == "course"
+      to_item = to_course.name
+    elsif to_type == "hour"
+      to_item = hour.to_s+" hours"   
+    end
+    
+    # for transferrer
+    from_message = "Deferred/Transferred <strong>#{from_item}</strong> into <strong>#{to_item}</strong>"
+    from_message += " to <strong>#{to_contact.display_name}<strong>" if to_contact != contact
+    
+    contact.activities.create(user_id: user.id, note: from_message, item_code: "transfer_#{self.id.to_s}")
+    
+    # for receiver
+    if to_contact != contact
+      to_message = "Received <strong>#{to_item}</strong> from <strong>#{contact.display_name}</strong> by deferring <strong>#{from_item}</strong>"
+      
+      to_contact.activities.create(user_id: user.id, note: to_message, item_code: "transfer_#{self.id.to_s}")
+    end
+    
+    return from_message
   end
   
 end

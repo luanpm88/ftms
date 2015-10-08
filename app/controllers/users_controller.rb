@@ -92,11 +92,13 @@ class UsersController < ApplicationController
   end
   
   def backup
+    @database = YAML.load_file('config/database.yml')["production"]["database"]
+    
     if params[:backup]
       User.backup_system(params)
     end
     
-    @files = Dir.glob("backup/*").sort{|a,b| b <=> a}
+    @files = (Dir.glob("/media/sdb1/ftms-backup/*").map{|f| f.gsub("/media/sdb1/ftms-backup/","")}).sort{|a,b| b <=> a}
     
     render layout: "content" if params[:tab_page].present?
     # render layout = nil
@@ -110,11 +112,11 @@ class UsersController < ApplicationController
   end
   
   def download_backup
-    send_file "backup/"+params[:filename].gsub("backup/",""), :type=>"application/zip"
+    send_file "/media/sdb1/ftms-backup/"+params[:filename].gsub("/media/sdb1/ftms-backup/",""), :type=>"application/zip"
   end
   
   def delete_backup
-    `rm #{"backup/"+params[:filename].gsub("backup/","")}`
+    `rm #{"/media/sdb1/ftms-backup/"+params[:filename].gsub("/media/sdb1/ftms-backup/","")}`
     respond_to do |format|
       format.html { redirect_to backup_users_path(tab_page: params[:tab_page]) }
       format.json { head :no_content }
@@ -220,6 +222,21 @@ class UsersController < ApplicationController
             end
           end
         end
+        
+        
+        ## company sales
+        @records = PaymentRecord.where(status: 1)
+                              .where(account_manager_id: u.id)
+                              .where("payment_records.payment_date >= ? AND payment_records.payment_date <= ? ", @from_date.beginning_of_day, @to_date.end_of_day)
+        @records.each do |pr|
+          pr.payment_record_details.each do |prd|
+            if prd.course_type_id == ct.id
+              total += prd.amount
+              group_total += prd.amount
+            end
+          end
+        end
+        
         
         
         # receivable
@@ -352,6 +369,14 @@ class UsersController < ApplicationController
           format.html
           format.xls {render "users/online_report_acca"}
         end
+      end
+    end    
+  end
+  
+  def system_setting
+    if params[:settings].present?
+      params[:settings].each do |row|
+        Setting.set(row[0], row[1])
       end
     end    
   end

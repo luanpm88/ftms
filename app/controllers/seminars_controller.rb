@@ -138,28 +138,32 @@ class SeminarsController < ApplicationController
   
   def do_import_list
     # save row new data
-    params[:rows].each do |row|
-      if row[1]["check"].present? && row[1]["check"] == "true"        
-        contact = Contact.new(is_individual: true, name: row[1]["name"], email: row[1]["email"], mobile: row[1]["mobile"])
-        contact.account_manager = current_user
-        contact.save
-        
-        contact.add_status("new_pending")
-        contact.add_status("education_consultant_pending")
-        contact.save_draft(User.first)
-        
-        @seminar.add_contacts([contact])
-        contact.set_present_in_seminar(@seminar, row[1]["present"])
+    if params[:rows].present?
+      params[:rows].each do |row|
+        if row[1]["check"].present? && row[1]["check"] == "true"        
+          contact = Contact.new(is_individual: true, name: row[1]["name"], email: row[1]["email"], mobile: row[1]["mobile"])
+          contact.account_manager = current_user
+          contact.save
+          
+          contact.add_status("new_pending")
+          contact.add_status("education_consultant_pending")
+          contact.save_draft(User.first)
+          
+          @seminar.add_contacts([contact])
+          contact.set_present_in_seminar(@seminar, row[1]["present"])
+        end
       end
     end
     
     # save row new data
-    params[:contacts].each do |row|
-      if row[1]["check"].present? && row[1]["check"] == "true"  && row[1]["id"].present?
-        contact = Contact.find(row[1]["id"])
-        @seminar.add_contacts([contact]) if !contact.seminars.include?(@seminar)
-        
-        contact.set_present_in_seminar(@seminar, row[1]["present"])
+    if params[:contacts].present?
+      params[:contacts].each do |row|
+        if row[1]["check"].present? && row[1]["check"] == "true"  && row[1]["id"].present?
+          contact = Contact.find(row[1]["id"])
+          @seminar.add_contacts([contact]) if !contact.seminars.include?(@seminar)
+          
+          contact.set_present_in_seminar(@seminar, row[1]["present"])
+        end
       end
     end
     

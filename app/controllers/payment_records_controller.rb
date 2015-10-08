@@ -180,8 +180,6 @@ class PaymentRecordsController < ApplicationController
     @payment_record.update_company_payment_record_details(params[:payment_record_details]) if params[:payment_record_details].present?
     
     @payment_record.course_register_ids = "["+params[:course_register_ids].join("][")+"]" if !params[:old_record_id].present?
-    
-    @payment_record.account_manager = current_user
 
     respond_to do |format|
       if @payment_record.save
@@ -195,10 +193,10 @@ class PaymentRecordsController < ApplicationController
           @payment_record.contact.activities.create(user_id: current_user.id, note: params[:note_log]) if params[:note_log].present?
         end
         
+               
         
-        
-        
-        format.html { redirect_to params[:tab_page].present? ? "/home/close_tab" : @payment_record, notice: 'Payment record was successfully created.' }
+        @tab = {url: {controller: "payment_records", action: "index", tab_page: 1, tab: "course_registration"}}
+        format.html { render "/home/close_tab", layout: nil }
         format.json { render action: 'show', status: :created, location: @payment_record }
       else
         format.html { render action: 'new', tab_page: params[:tab_page] }
@@ -208,6 +206,7 @@ class PaymentRecordsController < ApplicationController
   end
   
   def print_payment_list
+    
     if params[:ids].present?
       if !params[:check_all_page].nil?
         params[:intake_year] = params["filter"]["intake(1i)"] if params["filter"].present?
@@ -222,7 +221,7 @@ class PaymentRecordsController < ApplicationController
         @course_registers = CourseRegister.where(id: params[:ids])
       end
       
-      @course_registers = @course_registers.includes(:contact).order("contacts.name, contact_id")
+      @course_registers = @course_registers.includes(:contact).order("contacts.name, course_registers.contact_id")
       
       paper_ids = []
       
@@ -239,7 +238,10 @@ class PaymentRecordsController < ApplicationController
           row[:papers][cc.course.subject_id] = "X"          
           paper_ids << cc.course.subject_id
           
-          @list << row
+          if (params[:course_types].present? && !params[:course_types].include?(cc.course.course_type_id.to_s)) || (params[:subjects].present? && !params[:subjects].include?(cc.course.subject_id.to_s))
+          else
+            @list << row
+          end
         end
       end
       
@@ -254,7 +256,10 @@ class PaymentRecordsController < ApplicationController
           row[:papers][bc.book.subject_id] = "X"          
           paper_ids << bc.book.subject_id
           
-          @list << row
+          if (params[:course_types].present? && !params[:course_types].include?(bc.book.course_type_id.to_s)) || (params[:subjects].present? && !params[:subjects].include?(bc.book.subject_id.to_s))
+          else
+            @list << row
+          end
         end
       end
 
@@ -315,6 +320,6 @@ class PaymentRecordsController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def payment_record_params
-      params.require(:payment_record).permit(:transfer_id, :company_id, :bank_account_id, :payment_date, :course_register_id, :amount, :debt_date, :user_id, :note)
+      params.require(:payment_record).permit(:account_manager_id, :transfer_id, :company_id, :bank_account_id, :payment_date, :course_register_id, :amount, :debt_date, :user_id, :note)
     end
 end

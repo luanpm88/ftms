@@ -222,6 +222,8 @@ class BooksController < ApplicationController
   def stock_form_list
     records = []
     
+    @intake = Time.now.beginning_of_month
+    
     if params[:stock_type_id].present? || params[:subject_id].present? || params[:subject_id].present?
       records = Book.active_books.order("name")
       records = records.where(stock_type_id: params[:stock_type_id]) if params[:stock_type_id].present?

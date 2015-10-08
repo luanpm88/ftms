@@ -41,12 +41,8 @@ module CourseRegistersHelper
        
       group_2 = 0
       if can? :delivery_print, item
-        item.all_deliveries.each do |d|
-          if can? :print, d
-            actions += '<li>'+ActionController::Base.helpers.link_to("<i class=\"icon icon-print\"></i> Deliery [#{d.delivery_date.strftime("%d-%b-%Y")}]".html_safe, {controller: "deliveries", action: "show", id: d.id, tab_page: 1}, title: "#{item.contact.display_name}: Deliery [#{d.delivery_date.strftime("%d-%b-%Y")}]", class: "tab_page")+'</li>'
+            actions += '<li>'+ActionController::Base.helpers.link_to("<i class=\"icon icon-print\"></i> Deliery [#{item.created_at.strftime("%d-%b-%Y")}]".html_safe, {controller: "course_registers", action: "delivery_print", id: item.id}, title: "Deliery [#{item.created_at.strftime("%d-%b-%Y")}]", target: "_blank")+'</li>'
             group_2 += 1
-          end
-        end
       end
       
       actions += '<li class="divider"></li>' if group_2 > 0

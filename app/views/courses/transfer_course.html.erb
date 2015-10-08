@@ -2,7 +2,7 @@
             <div class="col-md-12">
               <div class="grid simple">
                 <div class="grid-titles no-border">
-                  <h4>Transfer <span class="semi-bold">Course</span></h4>
+                  <h4>Defer/Transfer <span class="semi-bold">Course</span></h4>
                   
                 </div>     
                 
@@ -92,10 +92,8 @@
 					
 					<div class="row">
 						 <div class="col-md-6">
-							  <h3>Admin Fee</h3>
-							  <div class="form-group">
-                                    <label class="form-label"><label>Amount</label></label>
-                                    <span class="help">(required)</span>
+							  <h3>Admin Fee <span style="font-size: 16px; color: #888">(required)</span></h3>
+							  <div class="form-group">                                    
                                     <div class="input-with-iconz right">                                       
                                          <i class=""></i>
                                           <div class="input-with_add_butz">
@@ -104,6 +102,17 @@
                                     </div>
 							  </div>
 							  
+						 </div>
+						 <div class="col-md-6">
+							  <h3>Note</h3>
+							  <div class="form-group">
+								   <span class="help"></span>
+								   
+								   <div class="input-with-icon  right">                                       
+										   <i class=""></i>
+										   <%= f.text_area :note, :class => "form-control", style: "height: 160px" %>
+								   </div>
+							  </div>
 						 </div>
 					</div>
 					

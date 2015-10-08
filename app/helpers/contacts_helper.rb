@@ -38,7 +38,7 @@ module ContactsHelper
       end
       
       if can? :transfer_hour, item
-        actions += '<li>'+ActionController::Base.helpers.link_to('Transfer Hour', {controller: "transfers", action: "transfer_hour", contact_id: item.id, tab_page: 1}, title: "#{item.display_name}: Transfer Hour", class: "tab_page")+'</li>'
+        actions += '<li>'+ActionController::Base.helpers.link_to('Defer/Transfer Hour', {controller: "transfers", action: "transfer_hour", contact_id: item.id, tab_page: 1}, title: "#{item.display_name}: Transfer Hour", class: "tab_page")+'</li>'
         group_2 += 1
       end
       
@@ -58,15 +58,29 @@ module ContactsHelper
   end
   
   def render_contact_tags_selecter(item)
-    actions = '<div class="" rel="'+item.id.to_s+'"><div class="btn-group actions">
-                    <button class="btn btn-mini btn-white btn-demo-space dropdown-toggle tag_button '+item.contact_tag.name.downcase.gsub(" ","_")+'" data-toggle="dropdown" title="'+item.contact_tag.description+'">'+item.contact_tag.name+' <span class="caret"></span></button>'
+      actions = "<div class=\"contact_tag_box\" rel=\""+item.id.to_s+"\">"
+    
+      actions += '<div class="" rel="'+item.id.to_s+'"><div class="btn-group actions">
+                    <button class="btn btn-mini btn-white btn-demo-space dropdown-toggle tag_button " data-toggle="dropdown" title="">Tags ('+item.contact_tags.count.to_s+') <span class="caret"></span></button>'
       actions += '<ul class="dropdown-menu">'      
       
-      ContactTag.active_contact_tags.each do |tag|
-        actions += '<li rel="'+item.id.to_s+'" tag_id="'+tag.id.to_s+'" class="contact_tag_item '+tag.name.downcase.gsub(" ","_")+'">'+ActionController::Base.helpers.link_to(tag.name, "#", title: tag.description)+'</li>'        
+      item.contact_tags.each do |tag|
+        actions += '<li type="remove" rel="'+item.id.to_s+'" tag_id="'+tag.id.to_s+'" class="contact_tag_item '+tag.name.downcase.gsub(" ","_")+'">'+ActionController::Base.helpers.link_to((tag.name+" <i class=\"icon-minus\"></i>").html_safe, "#", title: "Remove Tag: "+tag.description)+' </li>'        
       end
       
       actions += '</ul></div></div>'
+      
+      actions += '<div class="" rel="'+item.id.to_s+'"><div class="btn-group actions">
+                    <button class="btn btn-mini btn-white btn-demo-space dropdown-toggle tag_button " data-toggle="dropdown" title="">Add Tag <i class="icon-plus"></i> <span class="caret"></span></button>'
+      actions += '<ul class="dropdown-menu">'      
+      
+      ContactTag.active_contact_tags.each do |tag|
+        if !item.contact_tags.include?(tag)
+          actions += '<li type="add" rel="'+item.id.to_s+'" tag_id="'+tag.id.to_s+'" class="contact_tag_item '+tag.name.downcase.gsub(" ","_")+'">'+ActionController::Base.helpers.link_to((tag.name+" <i class=\"icon-plus\"></i>").html_safe, "#", title: "Add Tag: "+tag.description)+'</li>'        
+        end
+      end
+      
+      actions += '</ul></div></div></div>'
       
       return actions.html_safe
   end

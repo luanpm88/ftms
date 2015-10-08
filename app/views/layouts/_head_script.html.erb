@@ -338,6 +338,7 @@
 				});
 				
 				format_price($('.stock_box_list').find('input.price_input'));
+				$('.stock_box_list').find('select').select2()
 			}
 		});
 	}
@@ -351,14 +352,15 @@
 		}
 	}
 	
-	function checkCourseUpfront() {
-		var val = $("input[name='course[upfront]']:checked").val()
+	function checkUpfrontButton(input) {
+		var val = input.parents(".intake_box").find("input.upfront_radio:checked").val()
 		if (val == "true") {
-			$(".intake_group").hide()
+			input.parents(".intake_box").find(".intake_group").hide()
 		} else {
-			$(".intake_group").show()
+			input.parents(".intake_box").find(".intake_group").show()
 		}
 	}
+
 	
 	function calculatePhraseHour() {
 		var count = 0
@@ -1014,13 +1016,12 @@
 		});
 	}
 	
-	function updateContactTag(c_id, t_id) {
+	function updateContactTag(c_id, t_id, type) {
 		$.ajax({
-			url : '<%= update_tag_contacts_path %>?id='+c_id+'&tag_id='+t_id,
+			url : '<%= update_tag_contacts_path %>?id='+c_id+'&tag_id='+t_id+'&type='+type,
 			type: "GET",
 			success:function(data, textStatus, jqXHR)
-			{
-				
+			{				
 				$('.contact_tag_box[rel="'+c_id+'"]').html(data);
 			}
 		});
@@ -2108,6 +2109,12 @@
 					
 					d.delivery_statuses = $(".delivery-filter select[name='delivery_statuses']").val()
 					d.upfront = $(".delivery-filter input[name='upfront']:checked").val()
+					if($(".delivery-filter select[name='filter[intake(2i)]']").val()) {
+						d.intake_month =  $(".delivery-filter select[name='filter[intake(2i)]']").val()
+					}					
+					if($(".delivery-filter select[name='filter[intake(1i)]']").val()) {
+						d.intake_year =  $(".delivery-filter select[name='filter[intake(1i)]']").val()
+					}
 				}
 			},
 			"columnDefs": [ { "targets": [0,2,3,4,5,6,7], "orderable": false } ],
@@ -2174,7 +2181,7 @@
 					}
 					
 					d.payment_statuses = $(".payment-list-filter select[name='payment_statuses']").val()
-					d.upfront = $(".payment-list-filter input[name='course[upfront]']:checked").val()
+					d.upfront = $(".payment-list-filter input[name='upfront']:checked").val()
 				}
 			},
 			"columnDefs": [ { "targets": [0,1,2,3,4,5,6,7,8], "orderable": false } ],
@@ -2770,7 +2777,7 @@
 		});
 		
 		$(document).on("click",".contact_tag_item",function() {
-			updateContactTag($(this).attr("rel"), $(this).attr("tag_id"))
+			updateContactTag($(this).attr("rel"), $(this).attr("tag_id"), $(this).attr("type"))
 		})
 		
 		ajaxQuickContactInfo($('input[name="contact[referrer_id]"]').val(),$('.selected_company_info'))
@@ -3181,11 +3188,6 @@
 			$("."+$(this).attr("rel")).toggle()
 		});
 		
-		checkCourseUpfront()
-		$("input[name='course[upfront]']").change(function() {
-			checkCourseUpfront()
-		})
-		
 		checkCourseRegisterSponsoredCompany()
 		$("select[name='course_register[payment_type]']").change(function() {
 			checkCourseRegisterSponsoredCompany()
@@ -3195,7 +3197,7 @@
 			updateStockFormList($(".stock_form_filter select[name='stock_type_id']").select2("val"),$(".stock_form_filter input[name='program_id']").val(),$(".stock_form_filter input[name='subject_id']").val())
 		})
 		
-		$(".import_export_form_filter input, .import_export_form_filter select").change(function() {
+		$(".import_export_form_filter select[name=stock_type_id], .import_export_form_filter input[name=program_id], .import_export_form_filter input[name=subject_id]").change(function() {
 			updateImportExportList($(".import_export_form_filter select[name='stock_type_id']").select2("val"),$(".import_export_form_filter input[name='program_id']").val(),$(".import_export_form_filter input[name='subject_id']").val())
 		})
 		
@@ -3276,6 +3278,10 @@
 		if($(".datatable-merge-contacts").length) {
 			setInterval('$(".datatable-merge-contacts .row-color-true").each(function() {$(this).parents("tr").addClass("color_dark")})', 500)
 		}
+		
+		$(document).on("change", "input.upfront_radio", function(e) {
+			checkUpfrontButton($(this))
+		});
 	})
 	
 

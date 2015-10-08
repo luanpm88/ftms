@@ -117,13 +117,13 @@
 								   <div class="col-md-6">
 											 <div class="form-group">
 												  <label class="form-label"><label>Stock Type</label></label>
-												  <span class="help"></span>
+												  <span class="help">(required)</span>
 												  <%= render "field_history", drafts: @book.field_history("stock_type_id"), type: "stock_type_id" %>
 												  <div class="input-with-icon date-group right">                                       
 													   <i class=""></i>
 													   <div class="input-with_add_but">
 															  <%= link_to '<i class="icon-plus"></i>'.html_safe, new_stock_type_path(tab_page: 1), title: "New Stock Type", :class => 'btn btn-sm btn-small btn-white add-agent-button tab_page' %>
-															  <input style="width:100%;margin-bottom: 5px;" name="book[stock_type_id]" data="<%= stock_types_path(format: "json") %>" class="select2-ajax-stock-types" value="<%= @book.stock_type.id if !@book.stock_type.nil? %>" text="<%= @book.stock_type.name if !@book.stock_type.nil? %>" /> 
+															  <input style="width:100%;margin-bottom: 5px;" name="book[stock_type_id]" data="<%= stock_types_path(format: "json") %>" class="select2-ajax-stock-types required" value="<%= @book.stock_type.id if !@book.stock_type.nil? %>" text="<%= @book.stock_type.name if !@book.stock_type.nil? %>" /> 
 													   </div>
 												  </div>
 											 </div>

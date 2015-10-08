@@ -126,6 +126,9 @@ class CourseRegister < ActiveRecord::Base
           cc.discount_program_id = row[1]["discount_program_id"]
           cc.discount = row[1]["discount"]
         end
+        
+        cc.upfront = row[1]["upfront"]
+        cc.intake = Date.new row[1]["intake(1i)"].to_i, row[1]["intake(2i)"].to_i
       end
     end
   end
@@ -134,15 +137,27 @@ class CourseRegister < ActiveRecord::Base
     @records = self.main_course_registers
     
     if params["course_types"].present?
-      course_ids = Course.where(course_type_id: params["course_types"]).map(&:id)
-      @records = @records.joins(:contacts_courses => :course)
-                          .where(courses: {id: course_ids})
+      cc_ids = ContactsCourse.includes(:course).where(courses: {course_type_id: params["course_types"]}).map(&:id)
+      bc_ids = BooksContact.includes(:book).where(books: {course_type_id: params["course_types"]}).map(&:id)
+      
+      cond = ["1=0"]
+      cond << "ccs.id IN (#{cc_ids.join(",")})" if !cc_ids.empty?
+      cond << "bcs.id IN (#{bc_ids.join(",")})" if !bc_ids.empty?
+      @records = @records.joins("LEFT JOIN contacts_courses ccs ON course_registers.id=ccs.course_register_id")
+                          .joins("LEFT JOIN books_contacts bcs ON course_registers.id=bcs.course_register_id")
+                          .where(cond.join(" OR ")) if !cond.empty?
     end
     
     if params["subjects"].present?
-      course_ids = Course.where(subject_id: params["subjects"]).map(&:id)
-      @records = @records.joins(:contacts_courses => :course)
-                          .where(courses: {id: course_ids})
+      cc_ids = ContactsCourse.includes(:course).where(courses: {subject_id: params["subjects"]}).map(&:id)
+      bc_ids = BooksContact.includes(:book).where(books: {subject_id: params["subjects"]}).map(&:id)
+      
+      cond = ["1=0"]
+      cond << "ccs.id IN (#{cc_ids.join(",")})" if !cc_ids.empty?
+      cond << "bcs.id IN (#{bc_ids.join(",")})" if !bc_ids.empty?
+      @records = @records.joins("LEFT JOIN contacts_courses ccs ON course_registers.id=ccs.course_register_id")
+                          .joins("LEFT JOIN books_contacts bcs ON course_registers.id=bcs.course_register_id")
+                          .where(cond.join(" OR ")) if !cond.empty?
     end
     
     if params["student"].present?
@@ -159,7 +174,7 @@ class CourseRegister < ActiveRecord::Base
     end
     
     if params["payment_statuses"].present?
-      @records = @records.where("cache_payment_status LIKE ?", "%"+params["payment_statuses"]+"%")
+      @records = @records.where("course_registers.cache_payment_status LIKE ?", "%"+params["payment_statuses"]+"%")
     end
     
     if params["company"].present?
@@ -226,7 +241,7 @@ class CourseRegister < ActiveRecord::Base
     else
       order = "course_registers.created_at DESC, course_registers.created_at DESC"
     end
-    @records = @records.order(order) if !order.nil? && !params["search"].present?
+    @records = @records.order(order) if !order.nil? && !params["search"]["value"].present?
     
     total = @records.count
     @records = @records.limit(params[:length]).offset(params["start"])
@@ -283,9 +298,9 @@ class CourseRegister < ActiveRecord::Base
       end
       order += " "+params["order"]["0"]["dir"]
     else
-      order = "course_registers.created_at DESC, course_registers.created_at DESC"
+      order = "course_registers.created_at DESC"
     end
-    @records = @records.order(order) if !order.nil? && !params["search"].present?
+    @records = @records.order(order) if !order.nil? && !params["search"]["value"].present?
     
     total = @records.count
     @records = @records.limit(params[:length]).offset(params["start"])
@@ -373,7 +388,7 @@ class CourseRegister < ActiveRecord::Base
     else
       order = "course_registers.created_at DESC, course_registers.created_at DESC"
     end
-    @records = @records.order(order) if !order.nil? && !params["search"].present?
+    @records = @records.order(order) if !order.nil? && !params["search"]["value"].present?
     
     total = @records.count
     @records = @records.limit(params[:length]).offset(params["start"])
@@ -944,7 +959,7 @@ class CourseRegister < ActiveRecord::Base
   end
   
   def company_payment_records(date=nil)
-    records = PaymentRecord.where("course_register_ids LIKE ?", "%#{self.id}%")
+    records = PaymentRecord.where(status: 1).where("course_register_ids LIKE ?", "%#{self.id}%")
     if date.present?
       records = records.where("payment_date <= ?", date)
     end

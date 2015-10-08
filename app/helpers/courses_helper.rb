@@ -50,7 +50,7 @@ module CoursesHelper
       group_1 = 0      
 
       if can? :transfer_course, item
-        actions += '<li>'+ActionController::Base.helpers.link_to('Transfer', {controller: "courses", action: "transfer_course", contact_id: contact_id, id: item.id, tab_page: 1}, title: "#{Contact.find(contact_id).name}: Transfer [#{item.display_name}]", class: "tab_page")+'</li>'
+        actions += '<li>'+ActionController::Base.helpers.link_to('Defer/Transfer', {controller: "courses", action: "transfer_course", contact_id: contact_id, id: item.id, tab_page: 1}, title: "#{Contact.find(contact_id).name}: Defer/Transfer [#{item.display_name}]", class: "tab_page")+'</li>'
         group_1 += 1
       end
       

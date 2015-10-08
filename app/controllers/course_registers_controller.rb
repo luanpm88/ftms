@@ -3,7 +3,7 @@ class CourseRegistersController < ApplicationController
   
   load_and_authorize_resource
   
-  before_action :set_course_register, only: [:delete, :show, :edit, :update, :destroy]
+  before_action :set_course_register, only: [:delivery_print, :delete, :show, :edit, :update, :destroy]
   
   # GET /course_registers
   # GET /course_registers.json
@@ -21,6 +21,8 @@ class CourseRegistersController < ApplicationController
   def new
     @course_register = CourseRegister.new
     @contact = !params[:contact_id].present? ? Contact.new : Contact.find(params[:contact_id])
+    
+    
     
     @course_register.created_date = Time.now.strftime("%d-%b-%Y")
     @course_register.debt_date = Time.now.strftime("%d-%b-%Y")
@@ -227,6 +229,48 @@ class CourseRegistersController < ApplicationController
         format.html { redirect_to params[:tab_page].present? ? "/home/close_tab" : @course_register, notice: 'Course register was successfully created.' }
         format.json { render action: 'show', status: :created, location: @course_register }
     end
+  end
+  
+  def delivery_print
+    @books_contacts = @course_register.books_contacts
+    
+    @list = []
+    row = nil
+    @books_contacts.each_with_index do |bc,index|
+      if row.nil? || row[:contact] != bc.contact || row[:address] != bc.course_register.display_mailing_address
+        @list << row if !row.nil?
+        
+        row = {}
+        row[:contact] = bc.contact
+        row[:address] = bc.course_register.display_mailing_address
+        row[:address_title] = bc.course_register.display_mailing_title
+        row[:list] = !bc.delivered? ? {bc.contact_id.to_s+"_"+bc.book_id.to_s => bc} : {}
+      else
+        if !bc.delivered?
+          if row[:list][bc.contact_id.to_s+"_"+bc.book_id.to_s].nil?
+            row[:list][bc.contact_id.to_s+"_"+bc.book_id.to_s] = bc
+          else
+            row[:list][bc.contact_id.to_s+"_"+bc.book_id.to_s].quantity += bc.quantity
+          end         
+        end
+      end
+      
+      @list << row if @books_contacts.count == index+1
+    end
+    
+    render  :pdf => "delivery_"+@course_register.created_at.strftime("%d_%b_%Y"),
+            :template => 'books/delivery_note.pdf.erb',
+            :layout => nil,
+            :footer => {
+               :center => "",
+               :left => "",
+               :right => "",
+               :page_size => "A4",
+               :margin  => {:top    => 0, # default 10 (mm)
+                          :bottom => 0,
+                          :left   => 0,
+                          :right  => 0},
+            }
   end
 
   private

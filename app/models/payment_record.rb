@@ -28,6 +28,13 @@ class PaymentRecord < ActiveRecord::Base
   after_save :update_course_register_statuses
   after_create :update_statuses
   after_create :update_cache_search
+  before_destroy :update_last_company_record
+  
+  def update_last_company_record
+    if !company.nil?
+      self.previous.update_attribute(:parent_id, nil) if !self.previous.nil?
+    end
+  end
   
   def update_course_register_statuses
     if !course_register.nil?
@@ -117,7 +124,7 @@ class PaymentRecord < ActiveRecord::Base
     else
       order = "payment_records.payment_date DESC, payment_records.created_at DESC"
     end    
-    @records = @records.order(order) if !order.nil? && !params["search"].present?
+    @records = @records.order(order) if !order.nil? && !params["search"]["value"].present?
     
     total = @records.count
     @records = @records.limit(params[:length]).offset(params["start"])
@@ -134,7 +141,7 @@ class PaymentRecord < ActiveRecord::Base
               '<div class="text-right">'+item.paid_on+"</div>",
               '<div class="text-center">'+item.bank_account_name+"</div>",
               '<div class="text-right">'+ApplicationController.helpers.format_price(item.remain)+"</div>",
-              '<div class="text-center">'+item.contact.staff_col+"</div>",
+              '<div class="text-center">'+item.staff_col+"</div>",
               ""
               #'<div class="text-right">'+ApplicationController.helpers.format_price(item.amount)+"</div>",
               #'<div class="text-center">'+item.payment_date.strftime("%d-%b-%Y")+"</div>",
@@ -157,6 +164,14 @@ class PaymentRecord < ActiveRecord::Base
     
     return {result: result, items: @records, actions_col: actions_col}
     
+  end
+  
+  def staff_col
+    if !company.nil?
+      account_manager.staff_col
+    else
+      contact.staff_col
+    end    
   end
   
   def paid_on
@@ -284,6 +299,9 @@ class PaymentRecord < ActiveRecord::Base
   
   def update_statuses
     self.update_attribute(:cache_payment_status, self.payment_status.join(","))
+    course_registers.each do |cr|
+      cr.update_statuses
+    end
   end
   
   def self.datatable_payment_list(params, user)
@@ -342,7 +360,7 @@ class PaymentRecord < ActiveRecord::Base
     else
       order = "contacts_courses.created_at DESC"
     end
-    @records = @records.order(order) if !order.nil? && !params["search"].present? 
+    @records = @records.order(order) if !order.nil? && !params["search"]["value"].present? 
     
     total = @records.count
     @records = @records.limit(params[:length]).offset(params["start"])
@@ -385,6 +403,7 @@ class PaymentRecord < ActiveRecord::Base
   
   def trash
     self.update_attribute(:status, 0)
+    self.previous.update_attribute(:parent_id, nil) if !self.previous.nil?
   end
   
   def update_payment_record_details(params)

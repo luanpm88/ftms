@@ -14,6 +14,7 @@ User.create(name: "Super Admin", :email => "admin@ftmsglobal.edu.vn", :password 
 User.create(name: "Manager", :email => "manager@ftmsglobal.edu.vn", :password => "aA456321@", :password_confirmation => "aA456321@",:first_name => "System",:last_name => "Manager")
 User.create(name: "Education Consultant", :email => "education_consultant@ftmsglobal.edu.vn", :password => "aA456321@", :password_confirmation => "aA456321@",:first_name => "",:last_name => "")
 User.create(name: "Sales Admin", :email => "sales_admin@ftmsglobal.edu.vn", :password => "aA456321@", :password_confirmation => "aA456321@",:first_name => "",:last_name => "")
+User.create(name: "Accountant", :email => "accountant@ftmsglobal.edu.vn", :password => "aA456321@", :password_confirmation => "aA456321@",:first_name => "",:last_name => "")
 
 Role.create(name: "admin")
 Role.create(name: "user")
@@ -41,13 +42,12 @@ user.add_role Role.where(name: "education_consultant").first
 user = User.where(:email => "sales_admin@ftmsglobal.edu.vn").first
 user.add_role Role.where(name: "sales_admin").first
 
-ct = ContactTag.create(name: "No Tag", description: "No Tag", status: "[active]")
-ct.save_draft(User.first)
-ct = ContactTag.create(name: "Follow Up", description: "Likely to study", status: "[active]")
-ct.save_draft(User.first)
-ct = ContactTag.create(name: "Potential", description: "Not sure whether to study", status: "[active]")
-ct.save_draft(User.first)
-ct = ContactTag.create(name: "No More Follow Up", description: "Not want to study any more", status: "[active]")
-ct.save_draft(User.first)
+user = User.where(:email => "accountant@ftmsglobal.edu.vn").first
+user.add_role Role.where(name: "accountant").first
 
+# All settings
 Setting.create(name: "currency_code", value: "VNĐ")
+Setting.create(name: "backup_database", value: "ftms_production")
+Setting.create(name: "backup_dir", value: "/media/sdb1/ftms-backup")
+# Setting.create(name: "backup_cron_time", value: "* */12 * * *")
+Setting.create(name: "backup_revision_count", value: "100")

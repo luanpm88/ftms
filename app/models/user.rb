@@ -180,26 +180,7 @@ class User < ActiveRecord::Base
   end
   
   def self.backup_system(params)
-    dir = Time.now.strftime("%Y_%m_%d_%H%M%S")
-    dir += "_db" if !params[:database].nil?
-    dir += "_source" if !params[:file].nil?
-    
-    `mkdir backup` if !File.directory?("backup")
-    `mkdir backup/#{dir}`
-    
-    backup_cmd = ""
-    backup_cmd += "pg_dump -a ftms_#{params[:environment]} >> backup/#{dir}/data.dump && " if params[:database].present? && params[:environment].present?
-    backup_cmd += "cp -a uploads backup/#{dir}/ && " if !params[:file].nil?
-    backup_cmd += "zip -r backup/#{dir}.zip backup/#{dir} && "
-    backup_cmd += "rm -rf backup/#{dir}"
-    
-    `#{backup_cmd} &`
-    
-    if !File.directory?(dir)
-      `rm -rf backup/#{dir}`
-    end
-    
-    
+    System.backup(params)
   end
 
                 
@@ -299,6 +280,9 @@ class User < ActiveRecord::Base
   end
   
   def self.restore_system(params)
+    bk_dir = Setting.get("backup_dir")
+    database = YAML.load_file('config/database.yml')["production"]["database"]
+    
     `mkdir tmp` if !File.directory?("tmp")
     `mkdir tmp/backup` if !File.directory?("tmp/backup")
     
@@ -313,17 +297,17 @@ class User < ActiveRecord::Base
     File.open(path, "wb") { |f| f.write(file_upload['datafile'].read) }
     
     # CHECK PACKAGE
-    `rm -rf tmp/backup/backup && unzip #{path} -d tmp/backup/`
+    `rm -rf tmp/backup#{bk_dir} && unzip #{path} -d tmp/backup/`
     
-    if File.directory?("tmp/backup/backup/#{name.gsub(".zip","")}/uploads") && params[:file].present?
-      `rm -rf uploads && mkdir uploads && cp -a tmp/backup/backup/#{name.gsub(".zip","")}/uploads/. uploads/`
+    if File.directory?("tmp/backup#{bk_dir}/#{name.gsub(".zip","")}/uploads") && params[:file].present?
+      `rm -rf uploads && mkdir uploads && cp -a tmp/backup#{bk_dir}/#{name.gsub(".zip","")}/uploads/. uploads/`
     end
     
-    if File.exist?("tmp/backup/backup/#{name.gsub(".zip","")}/data.dump") && params[:database].present? && params[:environment].present?
-      `rake mytask:drop_all_table && rake db:migrate && psql ftms_#{params[:environment]} < tmp/backup/backup/#{name.gsub(".zip","")}/data.dump`
+    if File.exist?("tmp/backup#{bk_dir}/#{name.gsub(".zip","")}/data.dump") && params[:database].present?
+      `rake mytask:drop_all_table && rake db:migrate && psql #{database} < tmp/backup#{bk_dir}/#{name.gsub(".zip","")}/data.dump`
     end
     
-    `rm -rf tmp/backup/backup && rm #{path}`
+    `rm -rf tmp/backup#{bk_dir} && rm #{path}`
     
   end
   
@@ -487,7 +471,7 @@ class User < ActiveRecord::Base
         
         arr = []
         student.active_courses_with_phrases.each do |r|
-          arr << r[:course].name if r[:course].subject.id == subject.id && !r[:course].no_report_contacts.include?(student)
+          arr << r[:course].name if !r[:course].upfront && course_types.include?(r[:course].course_type_id.to_s) && r[:course].subject.id == subject.id && !r[:course].no_report_contacts.include?(student)
         end
         #ccs = student.active_contacts_courses.where(report: true).includes(:course).where(courses: {subject_id: subject.id})
         s_row["count"] = arr.join("\n") if !arr.empty?
@@ -529,7 +513,7 @@ class User < ActiveRecord::Base
         
         arr = []
         student.active_courses_with_phrases.each do |r|
-          arr << r[:course].name if r[:course].subject.id == subject.id && !r[:course].no_report_contacts.include?(student)
+          arr << r[:course].name if !r[:course].upfront && course_types.include?(r[:course].course_type_id.to_s) && r[:course].subject.id == subject.id && !r[:course].no_report_contacts.include?(student)
         end
         #ccs = student.active_contacts_courses.where(report: true).includes(:course).where(courses: {subject_id: subject.id})
         s_row["count"] = arr.join("\n") if !arr.empty?

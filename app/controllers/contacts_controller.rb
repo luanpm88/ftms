@@ -90,7 +90,6 @@ class ContactsController < ApplicationController
     
     @contact = Contact.new(s_params)
     @contact.user_id = current_user.id
-    @contact.sex = "male"
     
     
     
@@ -109,9 +108,9 @@ class ContactsController < ApplicationController
 
     respond_to do |format|
       if @contact.save
-        if params[:contact_tag].present?
-          @contact.update_tag(@contact_tag, current_user)
-        end        
+        #if params[:contact_tag].present?
+        #  @contact.update_tag(@contact_tag, current_user)
+        #end        
         @contact.update_status("create", current_user)        
         @contact.save_draft(current_user)
         @contact.update_info
@@ -138,9 +137,9 @@ class ContactsController < ApplicationController
       @to_date =  DateTime.now
     end
     
-    if params[:contact_tag].present?
-      @contact_tag = ContactTag.find(params[:contact_tag])
-    end
+    #if params[:contact_tag].present?
+    #  @contact_tag = ContactTag.find(params[:contact_tag])
+    #end
     
     if params[:avatar_method] == "camera" && params[:headshot_url].present?
           filename = params[:headshot_url].split("/").last
@@ -162,9 +161,9 @@ class ContactsController < ApplicationController
     
     respond_to do |format|
       if @contact.update(s_params)
-        if params[:contact_tag].present?
-          @contact.update_tag(@contact_tag, current_user)
-        end        
+        #if params[:contact_tag].present?
+        #  @contact.update_tag(@contact_tag, current_user)
+        #end        
         @contact.update_status("update", current_user)
         
         @contact.save_draft(current_user)
@@ -341,7 +340,17 @@ class ContactsController < ApplicationController
   
   def update_tag
     contact_tag = ContactTag.find(params[:tag_id])
-    @contact.update_tag(contact_tag, current_user)
+    if params[:type] == "add"
+      @contact.contact_tags << contact_tag if !@contact.contact_tags.include?(contact_tag)
+    else
+      n_tags = []
+      @contact.contact_tags.each do |tag|
+        n_tags << tag if contact_tag != tag
+      end
+      @contact.update_attribute(:contact_tag_ids, n_tags.map(&:id))
+    end
+    @contact.save
+    @contact.update_cache_search
     
     render layout: nil
   end
@@ -491,6 +500,6 @@ class ContactsController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def contact_params
-      params.require(:contact).permit(:bases, :mailing_address, :preferred_mailing, :account_manager_id, :base_id, :base_password, :invoice_required, :invoice_info_id, :payment_type, :preferred_mailing, :birthday, :sex, :referrer_id, :is_individual, :mobile_2, :email_2, :first_name, :last_name, :image, :city_id, :website, :name, :phone, :mobile, :fax, :email, :address, :tax_code, :note, :account_number, :bank, :contact_type_id, :parent_ids => [], :agent_ids => [], :company_ids => [], :contact_type_ids => [], :course_type_ids => [], :lecturer_course_type_ids => [])
+      params.require(:contact).permit(:bases, :mailing_address, :preferred_mailing, :account_manager_id, :base_id, :base_password, :invoice_required, :invoice_info_id, :payment_type, :preferred_mailing, :birthday, :sex, :referrer_id, :is_individual, :mobile_2, :email_2, :first_name, :last_name, :image, :city_id, :website, :name, :phone, :mobile, :fax, :email, :address, :tax_code, :note, :account_number, :bank, :contact_type_id, :parent_ids => [], :agent_ids => [], :company_ids => [], :contact_type_ids => [], :course_type_ids => [], :lecturer_course_type_ids => [], :contact_tag_ids => [])
     end
 end

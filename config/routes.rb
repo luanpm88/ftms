@@ -193,6 +193,7 @@ Hkerp::Application.routes.draw do
       
       get :add_stocks
       post :do_add_stocks
+      get :delivery_print
     end
   end
   resources :course_types_subjects
@@ -347,6 +348,9 @@ Hkerp::Application.routes.draw do
         
         get :import_from_old_system
         post :import_from_old_system
+        
+        get :system_setting
+        post :system_setting
       end
     end
   end

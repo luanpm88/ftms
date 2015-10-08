@@ -248,11 +248,11 @@
 													  <label class="form-label">Tag</label>
 													  <span class="help"></span>
 													  <div class="input-with-icon  right">
-														   <select name="contact_tag" class="modern_select width100">
-																<% ContactTag.active_contact_tags.each do |ctag| %>
-																	 <option <%= 'selected="selected"' if !@contact.contact_tag.nil? && ctag.id == @contact.contact_tag.id %> value="<%= ctag.id %>"><%= ctag.name %></option>															
-																<% end %>
-														   </select>
+															<div class="input-with_add_but">
+																  <%= link_to '<i class="icon-plus"></i>'.html_safe, new_contact_tag_path(tab_page: 1), title: "New Tag", :class => 'btn btn-sm btn-small btn-white tab_page' %>
+																  <%= select_tag 'contact[contact_tag_ids][]', options_for_select(ContactTag.active_contact_tags.collect{ |u| [u.name, u.id] }), class: "modern_select select2-contact-tags width100", multiple: "multiple",  values: @contact.json_encode_contact_tag_ids_names %>
+																  
+															</div>
 													  </div>
 												 </div>
 													  
@@ -277,7 +277,7 @@
 																	 <%= render "field_history", drafts: @contact.field_history("sex"), type: "sex" %>
 																	 <div class="input-with-icon right">                                       
 																		  <div class="radio radio-success" style="padding: 5px">
-																			   <input class="required" id="male" type="radio" name="contact[sex]" value="male" <% if @contact.sex == "male" %>checked="checked"<% end %>>
+																			   <input class="required" id="male" type="radio" name="contact[sex]" value="male" <% if @contact.sex != "female" %>checked="checked"<% end %>>
 																			   <label for="male">Male</label>
 																			   <input class="required" id="female" type="radio" name="contact[sex]" value="female" <% if @contact.sex == "female" %>checked="checked"<% end %>>
 																			   <label for="female">Female</label>
@@ -694,6 +694,10 @@
 <script>
 	 $(document).ready(function() {
 		  $('.select2-ajax-course-types').each(function() {
+				  vs = JSON.parse($(this).attr('values'))
+				  $(this).select2('data', vs)
+		  });
+		  $('.select2-contact-tags').each(function() {
 				  vs = JSON.parse($(this).attr('values'))
 				  $(this).select2('data', vs)
 		  });

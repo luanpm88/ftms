@@ -238,9 +238,13 @@ class Contact < ActiveRecord::Base
       @records = @records.where(id: c_ids)
     end
     
-    #if params[:tags].present?
-    #  @records = @records.where("contacts.id IN (SELECT contact_id FROM contact_tags_contacts WHERE contact_tags_contacts.contact_tag_id IN (#{params[:tags].join(",")}))")
-    #end
+    if params[:tags].present?
+      cond = []
+      params[:tags].each do |t|
+        cond << "contacts.cache_search LIKE '%[tag:#{ContactTag.find(t).name}]%'"
+      end
+      @records = @records.where(cond.join(" OR "))
+    end
     
     if params["course_types"].present?
       conds = []
@@ -344,7 +348,7 @@ class Contact < ActiveRecord::Base
     else
       order = "contacts.name"
     end
-    @records = @records.order(order) if !order.nil? && !params["search"].present?
+    @records = @records.order(order) if !order.nil? && !params["search"]["value"].present?
     
     total = @records.count
     @records = @records.limit(params[:length]).offset(params["start"])
@@ -501,7 +505,7 @@ class Contact < ActiveRecord::Base
     else
       order = "contacts.name"
     end
-    @records = @records.order(order) if !order.nil? && !params["search"].present?
+    @records = @records.order(order) if !order.nil? && !params["search"]["value"].present?
     
     total = @records.count
     @records = @records.limit(params[:length]).offset(params["start"])
@@ -554,7 +558,7 @@ class Contact < ActiveRecord::Base
     else
       order = "contacts.name"
     end
-    @records = @records.order(order) if !order.nil? && !params["search"].present?
+    @records = @records.order(order) if !order.nil? && !params["search"]["value"].present?
     
     total = @records.count
     @records = @records.limit(params[:length]).offset(params["start"])
@@ -980,7 +984,7 @@ class Contact < ActiveRecord::Base
   
   def active_all_transfers
     Transfer.where("transfers.parent_id IS NULL AND transfers.status IS NOT NULL AND transfers.status LIKE ?", "%[active]%")
-            .where("contact_id = ? OR to_contact_id = ?", self.id, self.id)
+            .where("transfers.contact_id = ? OR transfers.to_contact_id = ?", self.id, self.id)
             .order("created_at ASC")
   end
   
@@ -1046,6 +1050,11 @@ class Contact < ActiveRecord::Base
   
   def json_encode_course_type_ids_names
     json = course_types.map {|t| {id: t.id.to_s, text: t.short_name}}
+    json.to_json
+  end
+  
+  def json_encode_contact_tag_ids_names
+    json = contact_tags.map {|t| {id: t.id.to_s, text: t.name}}
     json.to_json
   end
   
@@ -1726,6 +1735,7 @@ class Contact < ActiveRecord::Base
     arr = []
     arr << "<div class=\"nowrap\"><strong>"+active_course(course_id)[:course].display_name+"</strong> <span>#{course.report_toggle(self)}</span></div>"
     arr << "<div class=\"courses_phrases_list\">"+Course.render_courses_phrase_list(active_course(course_id)[:courses_phrases])+"</div>" if !active_course(course_id)[:courses_phrases].empty?
+    arr << "<br /><div>Hour: <strong>#{self.active_course(course_id)[:hour]}</strong> <br /> Money: <strong>#{ApplicationController.helpers.format_price(self.active_course(course_id)[:money])}</trong></div>"
     return arr.join("")
   end
   
@@ -1744,6 +1754,7 @@ class Contact < ActiveRecord::Base
     str = []
     str << display_name.unaccent
     str << "[search_name: "+name.unaccent.downcase+" ]"
+    str << "[tag:"+(contact_tags.map {|ct| ct.name}).join("][tag:")+"]"
     str << mobile.to_s.gsub(/^84/,"")
     str << "0" + mobile.to_s.gsub(/^84/,"")
     str << phone.to_s.gsub(/^84/,"")

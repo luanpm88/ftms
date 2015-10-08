@@ -124,7 +124,7 @@ class Book < ActiveRecord::Base
     
     
     
-    @records = @records.order(order) if !order.nil? && !params["search"].present?
+    @records = @records.order(order) if !order.nil? && !params["search"]["value"].present?
     
     total = @records.count
     @records = @records.limit(params[:length]).offset(params["start"])
@@ -189,7 +189,7 @@ class Book < ActiveRecord::Base
       order = "course_types.short_name, subjects.name, books.name"      
     end
     
-    @records = @records.order(order) if !order.nil? && !params["search"].present?
+    @records = @records.order(order) if !order.nil? && !params["search"]["value"].present?
     
     total = @records.count
     @records = @records.limit(params[:length]).offset(params["start"])
@@ -269,7 +269,7 @@ class Book < ActiveRecord::Base
     
     
     
-    @records = @records.order(order) if !order.nil? && !params["search"].present?
+    @records = @records.order(order) if !order.nil? && !params["search"]["value"].present?
     
     total = @records.count
     @records = @records.limit(params[:length]).offset(params["start"])

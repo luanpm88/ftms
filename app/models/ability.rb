@@ -322,6 +322,9 @@ class Ability
       can :export_student_course, CourseRegister
       can :add_stocks, CourseRegister
       can :do_add_stocks, CourseRegister
+      can :delivery_print, CourseRegister do |cr|
+        !cr.delivered?
+      end
     end
     
     if user.has_role? "education_consultant"
@@ -354,7 +357,7 @@ class Ability
       can :do_company_pay, PaymentRecord
       can :print_payment_list, PaymentRecord
       can :company_pay_remain, PaymentRecord do |pr|
-        !pr.paid?
+        !pr.company.nil? && !pr.paid?
       end
       can :pay_transfer, PaymentRecord
       
@@ -565,7 +568,7 @@ class Ability
       can :do_company_pay, PaymentRecord
       can :print_payment_list, PaymentRecord
       can :company_pay_remain, PaymentRecord do |pr|
-        !pr.paid?
+        !pr.company.nil? && !pr.paid?
       end
       
       can :datatable, Activity

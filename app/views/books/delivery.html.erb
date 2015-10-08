@@ -51,20 +51,28 @@
 									  </div>
 									  
 									  
-									  <div class="col-md-3">
+									  <div class="col-md-3 intake_box">
 										<h4>Upfront?</h4>
 										<div class="form-group" style="margin-bottom: 5px;">								 
 											 <div class="input-with-icon right">                                       
 												  <div class="radio radio-success" style="padding: 5px">
-														<input class="required" id="upfront_all" type="radio" name="upfront" value="" checked="checked">
+														<input class="upfront_radio required" id="upfront_all" type="radio" name="upfront" value="" checked="checked">
 													   <label for="upfront_all">All</label>
-													   <input class="required" id="upfront_true" type="radio" name="upfront" value="true">
+													   <input class="upfront_radio required" id="upfront_true" type="radio" name="upfront" value="true">
 													   <label for="upfront_true">Yes</label>
-													   <input class="required" id="upfront_false" type="radio" name="upfront" value="false">
+													   <input class="upfront_radio required" id="upfront_false" type="radio" name="upfront" value="false">
 													   <label for="upfront_false">No</label>
 												  </div>
 											 </div>
 										</div>
+										<div class="intake_group">
+												<h4>Intake</h4>
+												<div class="date_select_filter">
+													<div class="input-with-icon date-group-my right">                                       
+													<%= date_select(:filter, :intake, {include_blank: true, use_short_month: true}) %>
+													</div>
+												</div>
+											</div>
 									</div>	
 									  
 										<div class="col-md-2">

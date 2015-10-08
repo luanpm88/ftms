@@ -255,6 +255,7 @@ class CourseType < ActiveRecord::Base
   end
   
   def current
+    return self if drafts.empty?
     return drafts.order("created_at DESC").first
   end
   

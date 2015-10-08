@@ -97,7 +97,7 @@ class StockTypesController < ApplicationController
     @stock_type.approve_new(current_user)
     
     respond_to do |format|
-      format.html { redirect_to params[:tab_page].present? ? "/stock_types/approved" : @stock_type }
+      format.html { render "/stock_types/approved", layout: nil }
       format.json { render action: 'show', status: :created, location: @stock_type }
     end
   end
@@ -108,7 +108,7 @@ class StockTypesController < ApplicationController
     @stock_type.approve_update(current_user)
     
     respond_to do |format|
-      format.html { redirect_to params[:tab_page].present? ? "/stock_types/approved" : @stock_type }
+      format.html { render "/stock_types/approved", layout: nil }
       format.json { render action: 'show', status: :created, location: @stock_type }
     end
   end
@@ -119,7 +119,7 @@ class StockTypesController < ApplicationController
     @stock_type.approve_delete(current_user)
     
     respond_to do |format|
-      format.html { redirect_to params[:tab_page].present? ? "/stock_types/approved" : @stock_type }
+      format.html { render "/stock_types/approved", layout: nil }
       format.json { render action: 'show', status: :created, location: @stock_type }
     end
   end
