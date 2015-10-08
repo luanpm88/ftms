@@ -15,7 +15,8 @@ class System < ActiveRecord::Base
   
   def self.backup(params)
     bk_dir = Setting.get("backup_dir")
-    database = YAML.load_file('config/database.yml')["production"]["database"]
+    root_dir = params[:dir].present? ? params[:dir] : ""
+    database = YAML.load_file(root_dir+'config/database.yml')["production"]["database"]
     revision_max = Setting.get("backup_revision_count").strip.to_i
     
     # remove over 100 backup old

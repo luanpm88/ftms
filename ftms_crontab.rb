@@ -3,7 +3,10 @@ require 'yaml'
 DIR = File.expand_path(File.dirname(__FILE__))
 
 # Change the following to reflect your database settings
+# config = YAML.load_file(DIR+'/config/database.yml')["production"]
 config = YAML.load_file(DIR+'/config/database.yml')["production"]
+
+puts DIR+'/config/database.yml'
 
 ActiveRecord::Base.establish_connection(
   adapter: config["adapter"],
@@ -18,7 +21,7 @@ ActiveRecord::Base.establish_connection(
 require DIR+'/app/models/system.rb'
 require DIR+'/app/models/setting.rb'
 
-System.backup({database: true, file: true})
+System.backup({database: true, file: true, dir: DIR+"/"})
 
 
 
