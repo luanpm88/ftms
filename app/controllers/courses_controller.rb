@@ -38,6 +38,7 @@ class CoursesController < ApplicationController
   def edit
     @types = [ContactType.student.id.to_s]
     @individual_statuses = ["true"]
+    @course.intake = Time.now.to_date if @course.upfront
   end
 
   # POST /courses

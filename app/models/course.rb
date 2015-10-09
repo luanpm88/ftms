@@ -405,12 +405,14 @@ class Course < ActiveRecord::Base
   
   def update_courses_phrases(params)
     courses_phrases.destroy_all
-    params.each do |row|
-      if row[1]["phrase_id"].present?
-        courses_phrases.create(phrase_id: row[1]["phrase_id"],
-                        start_at: row[1]["start_at"],
-                        hour: row[1]["hour"]
-                    )
+    if !self.upfront
+      params.each do |row|
+        if row[1]["phrase_id"].present?
+          courses_phrases.create(phrase_id: row[1]["phrase_id"],
+                          start_at: row[1]["start_at"],
+                          hour: row[1]["hour"]
+                      )
+        end
       end
     end
   end
