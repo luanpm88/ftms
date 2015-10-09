@@ -1,4 +1,4 @@
-                <div class="grid simple payment-record-filter student-payment-filter">
+                <div class="grid simple payment-record-filter">
                   <div class="grid-body no-border filters">
                     <div class="row order-filters">
 					  <div class="col-md-2">
@@ -28,7 +28,7 @@
 					  </div>
 						
 						<% if current_user.has_role?("manager") || current_user.has_role?("admin") || current_user.has_role?("accountant") %>
-						  <div class="col-md-2 student-course-filter">
+						  <div class="col-md-2">
 							  <h4>Consultant</h4>
 							  <div class="">
 								  <input style="width:100%;margin-bottom: 5px;" name="account_manager" data="<%= users_path %>" class="select2-ajax-users multiple" />
@@ -56,14 +56,14 @@
 					</div>
 					<div class="row">
 						
-                        <div class="col-md-3 student-course-filter">
+                        <div class="col-md-3 student-payment-filter">
 							<h4>Student</h4>
 							<div class="students-filter-box">
 								<input style="width:100%;margin-bottom: 5px;" name="filter[students[]]" data="<%= contacts_path(is_individual: true, contact_type_id: ContactType.student.id,format: "json") %>" class="select2-ajax-students multiple" value="<%= @student.id if !@student.nil? %>" text="<%= @student.display_name if !@student.nil? %>" />
 							</div>
 						</div>
 						
-						<div class="col-md-3 student-course-filter">
+						<div class="col-md-3">
 							<h4>Company</h4>
 							<div class="">
 								<input style="width:100%;margin-bottom: 5px;" name="company" data="<%= contacts_path(is_individual: false, format: "json") %>" class="select2-ajax-companies" />
@@ -86,7 +86,7 @@
 							</div>
 						</div>
 						
-						<div class="col-md-3 student-book-filter">
+						<div class="col-md-3">
 						  <h4>Status</h4>							
 						  <%= select_tag 'status', options_for_select(PaymentRecord.status_options, params[:status]), class: "modern_select width100" %>
 						</div>

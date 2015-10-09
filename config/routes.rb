@@ -12,6 +12,8 @@ Hkerp::Application.routes.draw do
       get :approved
       get :field_history
       
+      get :undo_delete
+      
       ####################
     end
   end
@@ -30,6 +32,8 @@ Hkerp::Application.routes.draw do
       
       get :approved
       get :field_history
+      
+      get :undo_delete
       
       ####################
       
@@ -140,6 +144,8 @@ Hkerp::Application.routes.draw do
       get :field_history
       
       ####################
+      
+      get :undo_delete
     end
   end
   resources :contacts_course_types
@@ -165,6 +171,7 @@ Hkerp::Application.routes.draw do
       
       get :approved
       get :field_history
+      get :undo_delete
       
       ####################
       
@@ -196,6 +203,8 @@ Hkerp::Application.routes.draw do
       get :add_stocks
       post :do_add_stocks
       get :delivery_print
+      
+      get :undo_delete
     end
   end
   resources :course_types_subjects
@@ -244,7 +253,7 @@ Hkerp::Application.routes.draw do
       post :deliver_all
       post :delivery_counting
       get :stock_statistics
-      
+      get :undo_delete
     end
   end
   
@@ -287,6 +296,8 @@ Hkerp::Application.routes.draw do
       get :field_history
       
       ####################
+      
+      get :undo_delete
     end
   end
   
@@ -304,6 +315,8 @@ Hkerp::Application.routes.draw do
       get :field_history
       
       ####################
+      
+      get :undo_delete
     end
   end
   
@@ -411,6 +424,8 @@ Hkerp::Application.routes.draw do
 
       get :merge_contacts
       get :merge_contacts_datatable
+      
+      get :undo_delete
     end
   end
 

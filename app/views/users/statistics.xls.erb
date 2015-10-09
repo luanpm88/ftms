@@ -45,11 +45,11 @@
             <Cell><Data ss:Type="String"><%= u[:user].name %></Data></Cell>
             <Cell><Data ss:Type="String"><%= row[:course_type].short_name %></Data></Cell>
             <Cell><Data ss:Type="String"></Data></Cell>
-            <Cell><Data ss:Type="String"><%= format_price(u[:total]) %></Data></Cell>
-            <Cell><Data ss:Type="String"><%= format_price(u[:receivable]) %></Data></Cell>
-            <Cell><Data ss:Type="String"><%= u[:paper] %></Data></Cell>
-            <Cell><Data ss:Type="String"><%= u[:inquiry] %></Data></Cell>
-            <Cell><Data ss:Type="String"><%= u[:student] %></Data></Cell>
+            <Cell><Data ss:Type="String"><%= format_price(row[:total]) %></Data></Cell>
+            <Cell><Data ss:Type="String"><%= format_price(row[:receivable]) %></Data></Cell>
+            <Cell><Data ss:Type="String"><%= row[:paper] %></Data></Cell>
+            <Cell><Data ss:Type="String"><%= row[:inquiry] %></Data></Cell>
+            <Cell><Data ss:Type="String"><%= row[:student] %></Data></Cell>
           </Row>
         <% end %>
         

@@ -131,6 +131,17 @@ class PhrasesController < ApplicationController
     end
   end
   
+  def undo_delete
+    authorize! :undo_delete, @phrase
+    
+    @phrase.undo_delete(current_user)
+    
+    respond_to do |format|
+      format.html { render "/phrases/undo_delete", layout: nil }
+      format.json { render action: 'show', status: :created, location: @phrase }
+    end
+  end
+  
   def approved
     render layout: "content"
   end

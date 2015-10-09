@@ -377,6 +377,23 @@ class Transfer < ActiveRecord::Base
     end
   end
   
+  def undo_delete(user)
+    if statuses.include?("delete_pending")  || statuses.include?("deleted")
+      recent = older
+      while recent.statuses.include?("delete_pending") || recent.statuses.include?("deleted")
+        recent = recent.older
+      end
+      self.update_attribute(:status, recent.status)
+
+      self.check_statuses
+      
+      # Annoucing users
+      add_annoucing_users([self.current.user])
+      
+      self.save_draft(user)
+    end
+  end
+  
   def note_logs
     Activity.where(item_code: "transfer_#{self.id.to_s}")
   end
@@ -384,6 +401,9 @@ class Transfer < ActiveRecord::Base
   def check_statuses
     if !statuses.include?("deleted") && !statuses.include?("delete_pending") && !statuses.include?("update_pending") && !statuses.include?("new_pending")
       add_status("active")
+      
+      contact.update_info
+      to_contact.update_info
       
       self.send_note_log
     else
@@ -581,6 +601,8 @@ class Transfer < ActiveRecord::Base
   end
   
   def payment_status
+    return [] if !statuses.include?("active")
+    
     str = []
     if paid?
       str << "fully_paid"
@@ -699,6 +721,8 @@ class Transfer < ActiveRecord::Base
   end
   
   def can_delete?
+    return true if !statuses.include?("active")
+    
     if !course.nil?
       if self.to_type == "course"
         Transfer.main_transfers.where("transfers.status NOT LIKE ?","%[deleted]%").where("transfers.created_at > ?", self.created_at).where(course_id: self.to_course_id).where(contact: self.to_contact).count == 0

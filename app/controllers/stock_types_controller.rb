@@ -124,6 +124,17 @@ class StockTypesController < ApplicationController
     end
   end
   
+  def undo_delete
+    authorize! :undo_delete, @stock_type
+    
+    @stock_type.undo_delete(current_user)
+    
+    respond_to do |format|
+      format.html { render "/stock_types/undo_delete", layout: nil }
+      format.json { render action: 'show', status: :created, location: @stock_type }
+    end
+  end
+  
   def approved
     render layout: "content"
   end

@@ -206,8 +206,13 @@ class BankAccount < ActiveRecord::Base
   end
   
   def undo_delete(user)
-    if statuses.include?("delete_pending")
-      self.update_attribute(:status, older.status)
+    if statuses.include?("delete_pending")  || statuses.include?("deleted")
+      recent = older
+      while recent.statuses.include?("delete_pending") || recent.statuses.include?("deleted")
+        recent = recent.older
+      end
+      self.update_attribute(:status, recent.status)
+
       self.check_statuses
       
       # Annoucing users

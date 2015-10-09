@@ -228,6 +228,23 @@ class Phrase < ActiveRecord::Base
     end
   end
   
+  def undo_delete(user)
+    if statuses.include?("delete_pending")  || statuses.include?("deleted")
+      recent = older
+      while recent.statuses.include?("delete_pending") || recent.statuses.include?("deleted")
+        recent = recent.older
+      end
+      self.update_attribute(:status, recent.status)
+
+      self.check_statuses
+      
+      # Annoucing users
+      add_annoucing_users([self.current.user])
+      
+      self.save_draft(user)
+    end
+  end
+  
   def check_statuses
     if !statuses.include?("deleted") && !statuses.include?("delete_pending") && !statuses.include?("update_pending") && !statuses.include?("new_pending")
       add_status("active")     

@@ -390,7 +390,7 @@ class Course < ActiveRecord::Base
   end
   
   def student_list_link(title=nil)
-    title = title.nil? ? "Student List (#{contacts.count.to_s})" : title
+    title = title.nil? ? "Student List (#{real_contacts.count.to_s})" : title
     ActionController::Base.helpers.link_to(title, {controller: "courses", action: "edit", id: id, tab_page: 1, tab: "student"}, title: "#{display_name}: Student List", class: "tab_page")
   end
   

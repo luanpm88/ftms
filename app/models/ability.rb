@@ -313,7 +313,7 @@ class Ability
         cr.statuses.include?("active") && cr.books.count > 0 && !cr.delivered?
       end
       can :delivery_print, CourseRegister do |cr|
-        cr.statuses.include?("active")
+        cr.statuses.include?("active") && cr.books_contacts.count > 0 && !cr.delivered?
       end
       can :pay_registration, CourseRegister do |cr|
         cr.statuses.include?("active") && !cr.paid?
@@ -406,7 +406,10 @@ class Ability
       end
       can :approve_delete, StockType do |c|
         c.statuses.include?("delete_pending")
-      end   
+      end
+      can :undo_delete, StockType do |c|
+        c.statuses.include?("delete_pending")
+      end
       
       
       ## COURSE TYPE
@@ -419,7 +422,10 @@ class Ability
       end
       can :approve_delete, Subject do |c|
         c.statuses.include?("delete_pending")
-      end   
+      end
+      can :undo_delete, Subject do |c|
+        c.statuses.include?("delete_pending")
+      end
       
       
       can :approved, Course      
@@ -445,7 +451,10 @@ class Ability
       end
       can :approve_delete, CourseType do |c|
         c.statuses.include?("delete_pending")
-      end   
+      end
+      can :undo_delete, CourseType do |c|
+        c.statuses.include?("delete_pending")
+      end
       
       
       can :approved, Contact
@@ -463,6 +472,9 @@ class Ability
       can :approve_delete, Contact do |c|
         c.statuses.include?("delete_pending")
       end
+      can :undo_delete, Contact do |c|
+        c.statuses.include?("delete_pending")
+      end
       
       
       ## BOOK
@@ -474,6 +486,9 @@ class Ability
         c.statuses.include?("update_pending")
       end
       can :approve_delete, Book do |c|
+        c.statuses.include?("delete_pending")
+      end
+      can :undo_delete, Book do |c|
         c.statuses.include?("delete_pending")
       end
       
@@ -502,7 +517,10 @@ class Ability
       end
       can :approve_delete, CourseRegister do |c|
         c.statuses.include?("delete_pending")
-      end   
+      end
+      can :undo_delete, CourseRegister do |c|
+        c.statuses.include?("delete_pending")
+      end
       
       
       ## PHRASES
@@ -515,7 +533,10 @@ class Ability
       end
       can :approve_delete, Phrase do |c|
         c.statuses.include?("delete_pending")
-      end   
+      end
+      can :undo_delete, Phrase do |c|
+        c.statuses.include?("delete_pending")
+      end
       
       
       
@@ -544,6 +565,10 @@ class Ability
       can :approve_delete, Seminar do |c|
         c.statuses.include?("delete_pending")
       end
+      can :undo_delete, Seminar do |c|
+        c.statuses.include?("delete_pending")
+      end
+      
       
       
       ## BANK ACCOUNT
@@ -558,7 +583,7 @@ class Ability
         c.statuses.include?("delete_pending")
       end
       can :undo_delete, BankAccount do |c|
-        c.statuses.include?("delete_pending") || c.statuses.include?("deleted")
+        c.statuses.include?("delete_pending")
       end
       
       
@@ -607,7 +632,11 @@ class Ability
       end
       can :approve_delete, Transfer do |c|
         c.statuses.include?("delete_pending")
+      end      
+      can :undo_delete, Transfer do |c|
+        c.statuses.include?("delete_pending")
       end
+      
       
       can :report_toggle, ContactsCourse
     end

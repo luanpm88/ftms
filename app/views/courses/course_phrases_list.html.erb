@@ -42,7 +42,7 @@
 										<% if !@course.upfront && !@course.courses_phrases.empty? %>
 											<label class="form-label"><label>Phrase List
 												<% if @type == "to" %>
-													(<span hour="<%= @course.total_hour %>" class="to_total_phrase_hour"><%= @course.total_hour %></span> hours)
+													(</strong><span hour="<%= @course.total_hour %>" class="to_total_phrase_hour"><%= @course.total_hour %></span> hours</strong>)
 												<% end %>
 											</label></label>
 											

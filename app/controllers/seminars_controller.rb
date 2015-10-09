@@ -215,6 +215,17 @@ class SeminarsController < ApplicationController
     end
   end
   
+  def undo_delete
+    authorize! :undo_delete, @seminar
+    
+    @seminar.undo_delete(current_user)
+    
+    respond_to do |format|
+      format.html { render "/seminars/undo_delete", layout: nil }
+      format.json { render action: 'show', status: :created, location: @seminar }
+    end
+  end
+  
   def approved
     render layout: "content"
   end

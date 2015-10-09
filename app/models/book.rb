@@ -94,7 +94,6 @@ class Book < ActiveRecord::Base
     if params[:stock_types].present?
       @records = @records.where(stock_type_id: params[:stock_types])
     end
-    
         
     return @records
   end
@@ -549,6 +548,23 @@ class Book < ActiveRecord::Base
   def approve_delete(user)
     if statuses.include?("delete_pending")
       self.set_statuses(["deleted"])
+      self.check_statuses
+      
+      # Annoucing users
+      add_annoucing_users([self.current.user])
+      
+      self.save_draft(user)
+    end
+  end
+  
+  def undo_delete(user)
+    if statuses.include?("delete_pending")  || statuses.include?("deleted")
+      recent = older
+      while recent.statuses.include?("delete_pending") || recent.statuses.include?("deleted")
+        recent = recent.older
+      end
+      self.update_attribute(:status, recent.status)
+
       self.check_statuses
       
       # Annoucing users

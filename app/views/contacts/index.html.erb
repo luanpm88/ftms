@@ -32,8 +32,10 @@
 								<input name="check_all_page" id="checkbox_all_page" type="checkbox" value="all_page" class="check_all_page">
 								<label for="checkbox_all_page">Select All Pages</label>
 							</div>
+							
+							<%= link_to 'Merge Contacts', merge_contacts_contacts_path(tab_page: 1),title: "Find Related Contacts", :class => 'btn btn-white btn-cons tab_page pull-right' %>
 							<%= link_to 'New Contact', new_contact_path(tab_page: 1),title: "New Contact", psrc: contacts_url(tab_page: 1), :class => 'btn btn-primary btn-cons tab_page pull-right' %>
-							<%= link_to 'Merge Contacts', merge_contacts_contacts_path(tab_page: 1),title: "Merge Contacts", :class => 'btn btn-primary btn-cons tab_page pull-right' %>
+							
 						</div>
                         <div class="grid simple">
                             

@@ -127,6 +127,17 @@ class CourseTypesController < ApplicationController
     end
   end
   
+  def undo_delete
+    authorize! :undo_delete, @course_type
+    
+    @course_type.undo_delete(current_user)
+    
+    respond_to do |format|
+      format.html { render "/course_types/undo_delete", layout: nil }
+      format.json { render action: 'show', status: :created, location: @course_type }
+    end
+  end
+  
   def approved
     render layout: "content"
   end

@@ -192,6 +192,17 @@ class BooksController < ApplicationController
     end
   end
   
+  def undo_delete
+    authorize! :undo_delete, @book
+    
+    @book.undo_delete(current_user)
+    
+    respond_to do |format|
+      format.html { render "/books/undo_delete", layout: nil }
+      format.json { render action: 'show', status: :created, location: @book }
+    end
+  end
+  
   def approved
     render layout: "content"
   end

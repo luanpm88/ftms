@@ -51,7 +51,10 @@ class PaymentRecordsController < ApplicationController
           @payment_record.course_register.contact.activities.create(user_id: current_user.id, note: params[:note_log]) if params[:note_log].present?
         end
         
-        format.html { redirect_to params[:tab_page].present? ? "/home/close_tab" : @payment_record, notice: 'Payment record was successfully created.' }
+        #if !transfer.nil?
+          @tab = {url: {controller: "contacts", action: "edit", id: @payment_record.course_register.contact.id, tab_page: 1, tab: "course_registration"}, title: @payment_record.course_register.contact.display_name}
+        #end
+        format.html { render "/home/close_tab", layout: nil }
         format.json { render action: 'show', status: :created, location: @payment_record }
       else
         format.html { render action: 'new', tab_page: params[:tab_page] }
@@ -148,20 +151,33 @@ class PaymentRecordsController < ApplicationController
           @course_registers = CourseRegister.where(id: params[:ids])
         end
       end
+      arr = []
+      @course_registers.each do |cr|
+        arr << cr if !cr.paid?
+      end
+      @course_registers = arr
     else
       @course_registers = @old_record.course_registers
     end
     
-      
+    
     
     course_type_ids = []
     @course_type_count= {}
+    @stock_count = {}
+    @display_count = {}
     @course_registers.each do |cr|        
       cr.contacts_courses.each do |cc|
         course_type_ids << cc.course.course_type_id
         @course_type_count[cc.course.course_type_id] = @course_type_count[cc.course.course_type_id].nil? ? 1 : @course_type_count[cc.course.course_type_id]+1
       end
+      cr.books_contacts.each do |bc|
+        course_type_ids << bc.book.course_type_id
+        @stock_count[bc.book.course_type_id] = @stock_count[bc.book.course_type_id].nil? ? 1 : @stock_count[bc.book.course_type_id]+1
+      end
     end
+    
+    
     
     @course_types = CourseType.where(id: course_type_ids).order("short_name")
     
@@ -303,7 +319,8 @@ class PaymentRecordsController < ApplicationController
           @payment_record.transfer.contact.activities.create(user_id: current_user.id, note: params[:note_log]) if params[:note_log].present?
         end
         
-        format.html { redirect_to params[:tab_page].present? ? "/home/close_tab" : @payment_record, notice: 'Payment record was successfully created.' }
+        @tab = {url: {controller: "contacts", action: "edit", id: @payment_record.transfer.contact.id, tab_page: 1, tab: "transfer"}, title: @payment_record.transfer.contact.display_name}
+        format.html { render "/home/close_tab", layout: nil }
         format.json { render action: 'show', status: :created, location: @payment_record }
       else
         format.html { render action: 'new', tab_page: params[:tab_page] }

@@ -2242,6 +2242,29 @@
 	    });
 		
 		//ajax select2 for contacts
+	    $('.select2-ajax-transfer-contacts').select2({
+			placeholder: "Search for a contact",
+			minimumInputLength: 1,
+			allowClear: true,
+			multiple: $('.select2-ajax-transfer-contacts').hasClass("multiple"),
+			ajax: {
+			  url: $('.select2-ajax-transfer-contacts').attr("data"),
+			  dataType: 'json',
+			  data: function (term, page) { // page is the one-based page number tracked by Select2
+				return {
+				  q: term, //search term				  
+				};
+			  },
+			  results: function (data, page) {
+				return {results: data};
+			  }
+			},
+			initSelection: function (element, callback) {				      
+			  callback({ id: element.val(), text: element.attr('text') });
+			}
+	    });
+		
+		//ajax select2 for contacts
 	    $('.select2-ajax-companies').select2({
 			placeholder: "Search for a company",
 			minimumInputLength: 1,

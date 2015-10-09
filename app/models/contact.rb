@@ -94,7 +94,7 @@ class Contact < ActiveRecord::Base
   before_validation :check_type
   
   def related_contacts
-    Contact.main_contacts.where(related_id: self.id)
+    Contact.main_contacts.where.not("contacts.status LIKE ?", "%[deleted]%").where(related_id: self.id)
   end
   
   def active_books
@@ -978,6 +978,18 @@ class Contact < ActiveRecord::Base
     active_course_registers.count
   end
   
+  def pending_transfers
+    transfers.where("transfers.parent_id IS NULL AND transfers.status IS NOT NULL AND transfers.status LIKE ?", "%_pending]%")
+  end
+  
+  def pending_received_transfers
+    received_transfers.where("transfers.parent_id IS NULL AND transfers.status IS NOT NULL AND transfers.status LIKE ?", "%_pending]%")
+  end
+  
+  def pending_transfer_count
+    pending_transfers.count + pending_received_transfers.count
+  end
+  
   def active_transfers
     transfers.where("transfers.parent_id IS NULL AND transfers.status IS NOT NULL AND transfers.status LIKE ?", "%[active]%")
   end
@@ -1272,6 +1284,23 @@ class Contact < ActiveRecord::Base
   def approve_delete(user)
     if statuses.include?("delete_pending")
       self.set_statuses(["deleted"])
+      self.check_statuses
+      
+      # Annoucing users
+      add_annoucing_users([self.current.user])
+      
+      self.save_draft(user)
+    end
+  end
+  
+  def undo_delete(user)
+    if statuses.include?("delete_pending")  || statuses.include?("deleted")
+      recent = older
+      while recent.statuses.include?("delete_pending") || recent.statuses.include?("deleted")
+        recent = recent.older
+      end
+      self.update_attribute(:status, recent.status)
+
       self.check_statuses
       
       # Annoucing users
@@ -1853,7 +1882,7 @@ class Contact < ActiveRecord::Base
     return [] if cond_other.empty?
     
     cond_other = "("+cond_other.join(" OR ")+")"
-    return Contact.main_contacts.where.not(id: self.id).where(cond_name+" AND "+cond_other)
+    return Contact.main_contacts.where("contacts.status NOT LIKE ?","%[deleted]%").where.not(id: self.id).where(cond_name+" AND "+cond_other)
 
   end
 

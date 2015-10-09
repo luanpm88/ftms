@@ -31,20 +31,20 @@
 									<div class="col-md-2">
 										<h4>Transferred From</h4>
 										<div class="">
-											<input style="width:100%;margin-bottom: 5px;" name="from_contact" data="<%= contacts_path(is_individual: true) %>" class="select2-ajax-contacts" />
+											<input style="width:100%;margin-bottom: 5px;" name="from_contact" data="<%= contacts_path(is_individual: true, format: "json") %>" class="select2-ajax-transfer-contacts" />
 										</div>
 									</div>									
 									<div class="col-md-2">
 										<h4>Transferred To</h4>
 										<div class="">
-											<input style="width:100%;margin-bottom: 5px;" name="to_contact" data="<%= contacts_path(is_individual: true) %>" class="select2-ajax-contacts" />
+											<input style="width:100%;margin-bottom: 5px;" name="to_contact" data="<%= contacts_path(is_individual: true, format: "json") %>" class="select2-ajax-transfer-contacts" />
 										</div>
 									</div>
 									
 									<div class="col-md-2 student-transfer-filter">
 										<h4>Related Contact</h4>
 										<div class="">
-											<input style="width:100%;margin-bottom: 5px;" name="contact" data="<%= contacts_path(is_individual: true) %>" class="select2-ajax-contacts" value="<%= @contact.id if !@contact.nil? %>" text="<%= @contact.display_name if !@contact.nil? %>" />
+											<input style="width:100%;margin-bottom: 5px;" name="contact" data="<%= contacts_path(is_individual: true, format: "json") %>" class="select2-ajax-transfer-contacts" value="<%= @contact.id if !@contact.nil? %>" text="<%= @contact.display_name if !@contact.nil? %>" />
 										</div>
 									</div>
 									<div class="col-md-2">

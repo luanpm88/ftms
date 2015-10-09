@@ -153,11 +153,11 @@
 											  <div class="input-with-iconx">
 												<% @course_types.each do |ct| %>
 													<div class="row">
-													  <div class="col-md-3">
-														<%= ct.short_name %><br />(<%= @course_type_count[ct.id] %>)
+													  <div class="col-md-12">
+														<strong><%= ct.short_name %></strong>: <%= (@course_type_count[ct.id].to_s + " courses") if @course_type_count[ct.id].to_f > 0 %>
+														<%= (@stock_count[ct.id].to_s + " stocks") if @stock_count[ct.id].to_f > 0 %>
 														<%= hidden_field_tag "payment_record_details["+ct.id.to_s+"][course_type_id]", ct.id %>
-													  </div>
-													  <div class="col-md-9">
+														<br />
 														<%= text_field_tag "payment_record_details["+ct.id.to_s+"][amount]", "", :class => "form-control price_input required company_payment_detail_paid" %>
 													  </div>	
 													</div>

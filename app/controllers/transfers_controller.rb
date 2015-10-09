@@ -127,6 +127,17 @@ class TransfersController < ApplicationController
     end
   end
   
+  def undo_delete
+    authorize! :undo_delete, @transfer
+    
+    @transfer.undo_delete(current_user)
+    
+    respond_to do |format|
+      format.html { render "/transfers/undo_delete", layout: nil }
+      format.json { render action: 'show', status: :created, location: @transfer }
+    end
+  end
+  
   def approved
     render layout: "content"
   end

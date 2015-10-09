@@ -102,10 +102,7 @@ class DeliveriesController < ApplicationController
   def trash
     @delivery.trash
     
-    respond_to do |format|
-      format.html { redirect_to params[:tab_page].present? ? "/home/close_tab" : deliveries_path, notice: 'Delivery was successfully updated.' }
-      format.json { head :no_content }
-    end
+    render "/seminars/undo_delete", layout: nil
   end
   
   
