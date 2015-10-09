@@ -54,7 +54,7 @@ class PaymentRecord < ActiveRecord::Base
   end
   
   def self.filter(params, user)
-     @records = self.where(status: 1)
+     @records = self.all
      
     if params["students"].present?
       @records = @records.joins("LEFT JOIN course_registers ON course_registers.id = payment_records.course_register_id")
@@ -89,6 +89,10 @@ class PaymentRecord < ActiveRecord::Base
     
     if params["receivable"].present?
       @records = @records.where("cache_payment_status LIKE ?", "%#{params["receivable"]}%")
+    end
+    
+    if params["status"].present?
+      @records = @records.where(status: params["status"])
     end
     
     # role
@@ -131,7 +135,7 @@ class PaymentRecord < ActiveRecord::Base
     
     data = []
     
-    actions_col = 8
+    actions_col = 9
     @records.each do |item|
       item = [
               item.contact.display_name,
@@ -142,6 +146,7 @@ class PaymentRecord < ActiveRecord::Base
               '<div class="text-center">'+item.bank_account_name+"</div>",
               '<div class="text-right">'+ApplicationController.helpers.format_price(item.remain)+"</div>",
               '<div class="text-center">'+item.staff_col+"</div>",
+              '<div class="text-center">'+item.display_statuses+"</div>",
               ""
               #'<div class="text-right">'+ApplicationController.helpers.format_price(item.amount)+"</div>",
               #'<div class="text-center">'+item.payment_date.strftime("%d-%b-%Y")+"</div>",
@@ -489,6 +494,20 @@ class PaymentRecord < ActiveRecord::Base
     str << remain.to_s
     
     update_attribute(:cache_search, str.join(" "))
+  end
+  
+  def self.status_options
+    [
+      ["Active","1"],
+      ["Deleted","0"],
+      ["All",""]      
+    ]
+  end
+  
+  def display_statuses
+    s = status == 1 ? "active" : "deleted"
+    result = ["<span title=\"\" class=\"badge user-role badge-info contact-status #{s}\">#{s}</span>"]
+    result.join(" ").html_safe
   end
   
 end

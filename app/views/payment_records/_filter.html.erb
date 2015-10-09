@@ -84,7 +84,12 @@
 									  </div>
 								 </div>
 							</div>
-						</div>	
+						</div>
+						
+						<div class="col-md-3 student-book-filter">
+						  <h4>Status</h4>							
+						  <%= select_tag 'status', options_for_select(PaymentRecord.status_options, params[:status]), class: "modern_select width100" %>
+						</div>
                         
                         
                     </div>

@@ -256,7 +256,9 @@ class Ability
       can :create, Delivery
       can :print, Delivery
       can :delivery_list, Delivery
-      can :trash, Delivery
+      can :trash, Delivery do |d|
+        d.user == user
+      end
       
       
       can :read, DeliveryDetail
@@ -272,7 +274,9 @@ class Ability
       can :read, PaymentRecord
       can :create, PaymentRecord
       can :print, PaymentRecord
-      can :trash, PaymentRecord
+      can :trash, PaymentRecord do |pr|
+        pr.user == user
+      end
       can :payment_list, PaymentRecord
       can :datatable_payment_list, PaymentRecord
       
@@ -347,6 +351,18 @@ class Ability
       can :approve_delete, Contact do |c|
         c.statuses.include?("delete_pending") && c.account_manager  == user && c.current.user.lower?("education_consultant")
       end
+      
+      ## COURSE REGISTER
+      can :approved, CourseRegister
+      can :approve_new, CourseRegister do |c|
+        c.statuses.include?("new_pending") && c.current.user.lower?("education_consultant")
+      end
+      can :approve_update, CourseRegister do |c|
+        c.statuses.include?("update_pending") && c.current.user.lower?("education_consultant")
+      end
+      can :approve_delete, CourseRegister do |c|
+        c.statuses.include?("delete_pending") && c.current.user.lower?("education_consultant")
+      end   
 
     end
     
@@ -377,14 +393,6 @@ class Ability
     end
     
     if user.has_role? "manager"
-      can :create, BankAccount
-      can :update, BankAccount do |c|
-        c.course_registers.empty? && c.payment_records.empty?
-      end
-      can :delete, BankAccount do |c|
-        !c.statuses.include?("delete_pending") && !c.statuses.include?("deleted")
-      end
-      
       can :statistic, User
       can :online_report, User
       
@@ -548,6 +556,9 @@ class Ability
       end
       can :approve_delete, BankAccount do |c|
         c.statuses.include?("delete_pending")
+      end
+      can :undo_delete, BankAccount do |c|
+        c.statuses.include?("delete_pending") || c.statuses.include?("deleted")
       end
       
       

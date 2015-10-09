@@ -3,7 +3,7 @@
 <div class="page_outer">
 	  <div>
           <%= link_to("<i class=\"icon icon-print\"></i> Print".html_safe, {controller: "payment_records", action: "print", id: @payment_record.id}, class: "btn btn-primary", target: "_blank") %>
-		  <%= link_to("<i class=\"icon icon-trash\"></i> Trash".html_safe, {controller: "payment_records", action: "trash", id: @payment_record.id, tab_page: 1}, class: "btn btn-warning") %>
+		  <%= link_to("<i class=\"icon icon-trash\"></i> Trash".html_safe, {controller: "payment_records", action: "trash", id: @payment_record.id, tab_page: 1}, class: "btn btn-warning")  if can? :trash, @payment_record %>
 	  </div>      
 	  <br style="clear: both" />
       <%= render "show" %>	  

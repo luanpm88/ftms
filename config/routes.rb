@@ -97,6 +97,8 @@ Hkerp::Application.routes.draw do
       get :field_history
       
       ####################
+      
+      get :undo_delete
     end
   end
   resources :course_prices
