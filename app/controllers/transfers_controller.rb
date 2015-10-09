@@ -181,7 +181,13 @@ class TransfersController < ApplicationController
     @transfer.transfer_date = Time.now
     @transfer.transferred_contact = @transfer.contact
     
-    render layout: "content"
+    if @contact.pending_transfer_count > 0
+      @tab = {url: {controller: "contacts", action: "edit", id: @contact.id, tab_page: 1, tab: "transfer"}, title: @contact.display_name}
+      flash[:alert] = 'Error: Previous transfer(s) must be approved first.!'
+      render "/home/close_tab", layout: nil
+    else
+      render layout: "content"
+    end   
   end
   
   def do_transfer_hour
