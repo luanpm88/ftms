@@ -125,6 +125,17 @@ class BankAccountsController < ApplicationController
     end
   end
   
+  def undo_delete
+    authorize! :undo_delete, @bank_account
+    
+    @bank_account.undo_delete(current_user)
+    
+    respond_to do |format|
+      format.html { render "/bank_accounts/undo_delete", layout: nil }
+      format.json { render action: 'show', status: :created, location: @bank_account }
+    end
+  end
+  
   def approved
     render layout: "content"
   end

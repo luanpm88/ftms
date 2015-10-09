@@ -205,6 +205,18 @@ class BankAccount < ActiveRecord::Base
     end
   end
   
+  def undo_delete(user)
+    if statuses.include?("delete_pending")
+      self.update_attribute(:status, older.status)
+      self.check_statuses
+      
+      # Annoucing users
+      add_annoucing_users([self.current.user])
+      
+      self.save_draft(user)
+    end
+  end
+  
   def check_statuses
     if !statuses.include?("deleted") && !statuses.include?("delete_pending") && !statuses.include?("update_pending") && !statuses.include?("new_pending")
       add_status("active")     
