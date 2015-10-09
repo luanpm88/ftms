@@ -121,6 +121,8 @@ Hkerp::Application.routes.draw do
       get :approved
       get :field_history
       
+      get :undo_delete
+      
       ####################
     end
   end
@@ -278,6 +280,7 @@ Hkerp::Application.routes.draw do
       get :transfer_to_box
       
       get :report_toggle
+      get :undo_delete
     end
   end
   

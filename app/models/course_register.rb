@@ -248,7 +248,7 @@ class CourseRegister < ActiveRecord::Base
     
     data = []
     
-    actions_col = 9
+    actions_col = 8
     @records.each do |item|
       ############### BEGIN REVISION #########################
       # update approved status
@@ -259,10 +259,9 @@ class CourseRegister < ActiveRecord::Base
       item = [
               "<div class=\"checkbox check-default\"><input name=\"ids[]\" id=\"checkbox#{item.id}\" type=\"checkbox\" value=\"#{item.id}\"><label for=\"checkbox#{item.id}\"></label></div>",
               item.contact.contact_link,
-              item.description,
-              '<div class="text-center">'+item.display_delivery_status+"</div>",
+              item.description,              #'<div class="text-center">'+item.display_delivery_status+"</div>",
               '<div class="text-right"><label class="col_label top0">Total:</label>'+ApplicationController.helpers.format_price(item.total)+"<label class=\"col_label top0\">Paid:</label>"+ApplicationController.helpers.format_price(item.paid_amount)+"<label class=\"col_label top0\">Receivable:</label>"+ApplicationController.helpers.format_price(item.remain_amount)+"</div>",
-              '<div class="text-center">'+item.display_payment_status+item.display_payment+"</div>",
+              '<div class="text-center">'+item.display_payment_status+item.display_payment+item.display_delivery_status+"</div>",
               '<div class="text-center">'+item.created_at.strftime("%d-%b-%Y")+"</div>",
               '<div class="text-center">'+item.contact.account_manager.staff_col+"</div>",
               '<div class="text-center">'+item.display_statuses+"</div>",
@@ -322,7 +321,7 @@ class CourseRegister < ActiveRecord::Base
               '<div class="text-right">'+ApplicationController.helpers.format_price(item.total)+"</div>",
               '<div class="text-right">'+ApplicationController.helpers.format_price(item.paid_amount)+"</div>",
               '<div class="text-right">'+ApplicationController.helpers.format_price(item.remain_amount)+"</div>",
-              '<div class="text-center">'+item.display_payment_status+item.display_payment+"</div>",
+              '<div class="text-center">'+item.display_payment_status+item.display_payment+item.display_delivery_status+"</div>",
               '<div class="text-center">'+item.contact.account_manager.staff_col+"</div>",
               ""
               #"<div class=\"checkbox check-default\"><input name=\"ids[]\" id=\"checkbox#{item.id}\" type=\"checkbox\" value=\"#{item.id}\"><label for=\"checkbox#{item.id}\"></label></div>",
@@ -395,14 +394,13 @@ class CourseRegister < ActiveRecord::Base
     
     data = []
     
-    actions_col = 8
+    actions_col = 7
     @records.each do |item|
       item = [
               item.contact.contact_link,
-              item.description,
-              '<div class="text-center">'+item.display_delivery_status+"</div>",
+              item.description, # '<div class="text-center">'+item.display_delivery_status+"</div>",              
               '<div class="text-right"><label class="col_label top0">Total:</label>'+ApplicationController.helpers.format_price(item.total)+"<label class=\"col_label top0\">Paid:</label>"+ApplicationController.helpers.format_price(item.paid_amount)+"<label class=\"col_label top0\">Remain:</label>"+ApplicationController.helpers.format_price(item.remain_amount)+"</div>",
-              '<div class="text-center">'+item.display_payment_status+item.display_payment+"</div>",
+              '<div class="text-center">'+item.display_payment_status+item.display_payment+item.display_delivery_status+"</div>",
               '<div class="text-center">'+item.created_at.strftime("%d-%b-%Y")+"</div>",
               '<div class="text-center">'+item.contact.account_manager.staff_col+"</div>",
               '<div class="text-center">'+item.display_statuses+"</div>",
@@ -453,8 +451,7 @@ class CourseRegister < ActiveRecord::Base
   def book_list
     arr = []
     books.each do |row|
-      arr << "<div><strong>#{row[:books_contact].quantity} - "+row[:book].display_name+" <br /><span>"+row[:books_contact].display_upfront+"</span></strong></div><br />"
-      #arr << row[:volumns].map(&:name).join(", ")
+      arr << "<div><strong><span class=\"badge badge-success\">#{row[:books_contact].quantity}</span> "+row[:book].display_name+"</strong> <div class=\"nowrap\"><span>"+row[:books_contact].display_upfront+"</span> | <span>"+row[:books_contact].display_delivery_status+"</span><div></div><br />"
     end
     
     return arr.join("")
@@ -530,13 +527,8 @@ class CourseRegister < ActiveRecord::Base
   
   def display_delivery_status    
     return "" if books.count == 0
-    
-    if delivered?
-      return "<a class=\"check-radio ajax-check-radioz\" href=\"#c\"><i class=\"#{delivered?.to_s} icon-check#{delivered? ? "" : "-empty"}\"></i></a>"
-    else
-      return "<div class=\"nowrap check-radio\">"+ActionController::Base.helpers.link_to("<i class=\"#{delivered?.to_s} icon-check#{delivered? ? "" : "-empty"}\"></i>".html_safe, {controller: "deliveries", action: "new", course_register_id: self.id, tab_page: 1}, title: "Deliver Stock: #{self.contact.display_name}", title: 'Materials Delivery', class: "tab_page")+"</div>"
-    end
-
+    s = delivered? ? "delivered" : "not_delivered"
+    "<div class=\"#{s} text-center\">#{s}</div>"
   end
   
   def delivery_info

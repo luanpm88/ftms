@@ -49,13 +49,13 @@
 							  
 							  <div class="form-group">
                                     <label class="form-label"><%= f.label :paper %></label>
-                                    <span class="help"></span>
+                                    <span class="help">(required)</span>
 									<%= render "field_history", drafts: @phrase.field_history("subject"), type: "subject" %>
                                     <div class="input-with-icon  right">                                       
                                            <i class=""></i>
                                            <div class="input-with_add_but">
                                                   <%= link_to '<i class="icon-plus"></i>'.html_safe, new_subject_path(tab_page: 1), title: "New Paper", :class => 'btn btn-sm btn-small btn-white add-agent-button tab_page' %>
-                                                  <input style="width:100%;margin-bottom: 5px;" name="phrase[subject_ids][]" data="<%= subjects_path(format: "json") %>" class="select2-ajax-subjects multiple" values="<%= @phrase.json_encode_subjects_ids_names %>" /> 
+                                                  <input style="width:100%;margin-bottom: 5px;" name="phrase[subject_ids][]" data="<%= subjects_path(format: "json") %>" class="select2-ajax-subjects multiple required" values="<%= @phrase.json_encode_subjects_ids_names %>" /> 
                                            </div>
                                                                                      
                                      

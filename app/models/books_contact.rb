@@ -303,4 +303,13 @@ class BooksContact < ActiveRecord::Base
     upfront ? "Upfront-" : (intake.nil? ? "" : intake.strftime("%b-%Y")+"-")
   end
   
+  def display_delivery_status    
+    if delivered?
+      return "<a class=\"check-radio ajax-check-radioz\" href=\"#c\"><i class=\"#{delivered?.to_s} icon-check#{delivered? ? "" : "-empty"}\"></i></a> delivered?"
+    else
+      return "<div class=\"nowrap check-radio\">"+ActionController::Base.helpers.link_to("<i class=\"#{delivered?.to_s} icon-check#{delivered? ? "" : "-empty"}\"></i>".html_safe, {controller: "deliveries", action: "new", course_register_id: self.course_register_id, tab_page: 1}, title: "Deliver Stock: #{self.contact.display_name}", title: 'Materials Delivery', class: "tab_page")+" delivered?</div>"
+    end
+
+  end
+  
 end

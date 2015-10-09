@@ -131,6 +131,17 @@ class DiscountProgramsController < ApplicationController
     end
   end
   
+  def undo_delete
+    authorize! :undo_delete, @discount_program
+    
+    @discount_program.undo_delete(current_user)
+    
+    respond_to do |format|
+      format.html { render "/discount_programs/undo_delete", layout: nil }
+      format.json { render action: 'show', status: :created, location: @discount_program }
+    end
+  end
+  
   def approved
     render layout: "content"
   end

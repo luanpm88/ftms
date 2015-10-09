@@ -439,6 +439,9 @@ class Ability
         c.statuses.include?("delete_pending")
       end
       can :transfer_to_box, Course
+      can :undo_delete, Course do |c|
+        c.statuses.include?("delete_pending")
+      end
       
       
       ## COURSE TYPE
@@ -550,7 +553,10 @@ class Ability
       end
       can :approve_delete, DiscountProgram do |c|
         c.statuses.include?("delete_pending")
-      end   
+      end
+      can :undo_delete, DiscountProgram do |c|
+        c.statuses.include?("delete_pending")
+      end
       
       
       
