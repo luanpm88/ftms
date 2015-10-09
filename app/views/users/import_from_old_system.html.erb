@@ -44,7 +44,7 @@
                        <div class="grid-body no-border">
 							
                         
-                                          <%= form_tag("", multipart: true) do |f| %>
+                                          <%= form_tag("", multipart: true, class: "import_old_data_form") do |f| %>
 												
 												<% if params[:tab_page] %>
 													<%= hidden_field_tag "tab_page", 1 %>
@@ -83,3 +83,13 @@
                   
                   
                 </div>
+<script>
+	 $(document).ready(function() {
+		  $( ".import_old_data_form" ).submit(function( event ) {
+			   if( $("input[name='upload[datafile]']").val() != "" ) {
+				 $(this).find("input[type=submit]").val("Importing... Please wait.!")
+				 $(this).find("input[type=submit]").addClass("btn-warning")
+			   }
+		  });
+	 });
+</script>

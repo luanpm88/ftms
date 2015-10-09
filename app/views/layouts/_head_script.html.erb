@@ -3310,6 +3310,10 @@
 			setInterval('$(".datatable-merge-contacts .row-color-true").each(function() {$(this).parents("tr").addClass("color_dark")})', 500)
 		}
 		
+		
+		if($("input.upfront_radio").length) {
+			checkUpfrontButton($("input.upfront_radio:checked"))
+		}
 		$(document).on("change", "input.upfront_radio", function(e) {
 			checkUpfrontButton($(this))
 		});
