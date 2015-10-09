@@ -33,6 +33,7 @@
 												<% if params[:tab_page] %>
 													<%= hidden_field_tag "tab_page", 1 %>
 												<% end %>
+												<%= hidden_field_tag "restore", 1 %>
 												
                                                       <!--<div class="form-group">
 															<label class="form-label">Environment</label>
@@ -46,7 +47,14 @@
 																</select>
 															</div>
 														  </div>-->
-									
+														
+														<div class="form-group">
+															<label class="form-label">Database</label>
+															<span class="help">(required)</span>
+															<div class="input-with-iconz  text-right">                                       
+																<strong class="big-info"><%= @database %></strong>
+															</div>
+														  </div>
 													   <div class="form-group">
                                                             <div class="input-with-icon  right">
 																<label class="form-label">Items</label>
@@ -96,3 +104,16 @@
                   
                   
                 </div>
+
+
+<script>
+	 $(document).ready(function() {
+		  $( "form#restore_sys" ).submit(function( event ) {
+			   if( $("input[name='upload[datafile]']").val() != "" ) {
+				 $(this).find("input[type=submit]").val("Restoring System... Please wait.!")
+				 $(this).find("input[type=submit]").addClass("btn-warning")
+				 $(this).find("input[type=submit]").attr("disabled", "disabled")
+			   }
+		  });
+	 });
+</script>

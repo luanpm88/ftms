@@ -105,6 +105,8 @@ class UsersController < ApplicationController
   end
   
   def restore
+    @database = YAML.load_file('config/database.yml')["production"]["database"]
+    
     if params[:restore]
       User.restore_system(params)
     end
