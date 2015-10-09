@@ -89,6 +89,7 @@
 			   if( $("input[name='upload[datafile]']").val() != "" ) {
 				 $(this).find("input[type=submit]").val("Importing... Please wait.!")
 				 $(this).find("input[type=submit]").addClass("btn-warning")
+				 $(this).find("input[type=submit]").attr("disabled", "disabled")
 			   }
 		  });
 	 });
