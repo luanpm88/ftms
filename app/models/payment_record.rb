@@ -57,9 +57,9 @@ class PaymentRecord < ActiveRecord::Base
      @records = self.all
      
     if params["students"].present?
-      @records = @records.joins("LEFT JOIN course_registers ON course_registers.id = payment_records.course_register_id")
+      @records = @records.joins("LEFT JOIN course_registers crs ON crs.id = payment_records.course_register_id")
                           .joins("LEFT JOIN transfers ON transfers.id = payment_records.transfer_id")
-      @records = @records.where("course_registers.contact_id IN (?) OR payment_records.company_id IN (?)  OR transfers.contact_id IN (?)", params["students"], params["students"], params["students"])
+      @records = @records.where("crs.contact_id IN (?) OR payment_records.company_id IN (?)  OR transfers.contact_id IN (?)", params["students"], params["students"], params["students"])
     end
     
     if params["company"].present?
