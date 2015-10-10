@@ -78,7 +78,7 @@ class Phrase < ActiveRecord::Base
       subject_ids = Subject.joins(:course_types).where(course_types: {id: params["course_types"]}).map(&:id)
       
       @records = @records.joins(:subjects)
-      @records = @records.where("subjects.id IN (#{subject_ids.join(",")})")
+      @records = @records.where("subjects.id IN (#{subject_ids.join(",")})") if !subject_ids.empty?
     end
     
     total = @records.count
