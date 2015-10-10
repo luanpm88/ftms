@@ -97,7 +97,7 @@ class Contact < ActiveRecord::Base
   def related_contacts
     if related_id == 0
       Contact.main_contacts.where.not("contacts.status LIKE ?", "%[deleted]%").where(related_id: self.id)
-    elsif related_id > 0
+    elsif related_id.to_f > 0
       c = Contact.find(related_id)
       ids = c.child_contacts.where.not(id: self.id).map(&:id)
       ids << c.id

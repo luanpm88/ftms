@@ -279,7 +279,7 @@
 																	 <%= render "field_history", drafts: @contact.field_history("sex"), type: "sex" %>
 																	 <div class="input-with-icon right">                                       
 																		  <div class="radio radio-success" style="padding: 5px">
-																			   <input class="required" id="male" type="radio" name="contact[sex]" value="male" <% if @contact.sex != "female" %>checked="checked"<% end %>>
+																			   <input class="required" id="male" type="radio" name="contact[sex]" value="male" <% if @contact.id.nil? || @contact.sex == "male" %>checked="checked"<% end %>>
 																			   <label for="male">Male</label>
 																			   <input class="required" id="female" type="radio" name="contact[sex]" value="female" <% if @contact.sex == "female" %>checked="checked"<% end %>>
 																			   <label for="female">Female</label>
