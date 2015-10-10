@@ -145,7 +145,7 @@
                             <div class="grid-body no-border">
                                 <p><span class="semi-bold"><%= c.old_student.student_name + " - " + c.old_student.student_id + " - " + c.old_student.old_consultant.consultant_name %></span></p>
                                 <div class="table-box">
-                                    <%= render 'tag_list', tag_list: c.old_tags %>
+                                    <%= render 'tag_list', tag_list: c.old_tags.order("created_at DESC") %>
                                 </div>
                             </div>
                         </div>
@@ -158,7 +158,7 @@
                             <div class="grid-body no-border">
                                 <p><span class="semi-bold"><%= c.old_student.student_name + " - " + c.old_student.student_id + " - " + c.old_student.old_consultant.consultant_name %></span></p>
                                 <div class="table-box">
-                                    <%= render 'remark_list', remark_list: c.old_note_details %>
+                                    <%= render 'remark_list', remark_list: c.old_note_details.order("note_date DESC") %>
                                 </div>
                             </div>
                         </div>
