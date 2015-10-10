@@ -964,7 +964,7 @@ class Contact < ActiveRecord::Base
   end
   
   def display_name(params=nil)
-    sirname = sex == "female" ? "[Ms]" : "[Mr]"
+    sirname = sex == "female" ? "[Ms]" : (sex == "male" ? "[Mr]" : "[?]")
     result = is_individual ? (sirname+" "+name).html_safe.mb_chars.titleize : name
     result = result
     
