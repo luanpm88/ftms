@@ -89,12 +89,22 @@ class Contact < ActiveRecord::Base
   has_many :old_deliverys, primary_key: 'tmp_StudentID', foreign_key: 'student_id'
 
   # has_many :related_contacts, class_name: "Contact", primary_key: 'id', foreign_key: 'related_id'
+  has_many :child_contacts, class_name: "Contact", primary_key: 'id', foreign_key: 'related_id'
   
   after_validation :update_cache
   before_validation :check_type
   
   def related_contacts
-    Contact.main_contacts.where.not("contacts.status LIKE ?", "%[deleted]%").where(related_id: self.id)
+    if related_id == 0
+      Contact.main_contacts.where.not("contacts.status LIKE ?", "%[deleted]%").where(related_id: self.id)
+    elsif related_id > 0
+      c = Contact.find(related_id)
+      ids = c.child_contacts.where.not(id: self.id).map(&:id)
+      ids << c.id
+      Contact.where(id: ids)
+    else
+      []
+    end   
   end
   
   def active_books
