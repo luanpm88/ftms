@@ -126,7 +126,7 @@
                 <div class="grid-body no-border">
                     <p><span class="semi-bold"><%= @contact.old_student.student_name + " - " + @contact.old_student.student_id + " - " + @contact.old_student.old_consultant.consultant_name %></span></p>
                     <div class="table-box">
-                        <%= render 'remark_list', remark_list: @contact.old_note_details.order("old_tags.created_at DESC") %>
+                        <%= render 'remark_list', remark_list: @contact.old_note_details.order("old_note_details.note_date DESC")  %>
                     </div>
                 </div>
             </div>
