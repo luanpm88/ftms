@@ -84,6 +84,7 @@ Hkerp::Application.routes.draw do
     collection do
       get :datatable
       get :check_upfront
+      get :remove
     end
   end
   resources :book_prices

@@ -109,12 +109,12 @@
 												  <% if !bc.delivered? %>
 													   <tr class="delivery_line_item">
 														 <td>
-														   <div><strong><%= bc.book.name %></strong></div>
+														   <div><strong><%= bc.book.display_name %></strong></div>
 														 </td>
 														 <td class="text-center">
 														   <%= bc.quantity %>
 														 </td>
-														 <%= bc.max_delivery %>
+														 
 														 <td class="text-center">
 														   <span class="to-be-delivered" rel="<%= bc.remain %>"><%= bc.remain - bc.max_delivery %></span>
 														 </td>

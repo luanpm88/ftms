@@ -8256,6 +8256,7 @@ td .logo {
 .check-radio {
     font-size: 18px;
     color: #333;
+    display: inline;
 }
 .check-radio i.true {
     color: #3c763d;

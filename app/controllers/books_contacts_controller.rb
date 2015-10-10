@@ -1,7 +1,8 @@
 class BooksContactsController < ApplicationController
+  load_and_authorize_resource
   include BooksContactsHelper
   
-  before_action :set_books_contact, only: [:check_upfront, :show, :edit, :update, :destroy]
+  before_action :set_books_contact, only: [:remove, :check_upfront, :show, :edit, :update, :destroy]
 
   # GET /books_contacts
   # GET /books_contacts.json
@@ -79,6 +80,15 @@ class BooksContactsController < ApplicationController
     @books_contact.update_attribute(:upfront, params[:value])
     
     render layout: nil
+  end
+  
+  def remove
+    @books_contact.delivery_details.destroy_all
+    
+    respond_to do |format|
+      format.html { render "/books_contacts/deleted", layout: nil }
+      format.json { render action: 'show', status: :created, location: @contact }
+    end
   end
 
   private

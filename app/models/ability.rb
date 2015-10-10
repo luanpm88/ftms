@@ -645,6 +645,8 @@ class Ability
       
       
       can :report_toggle, ContactsCourse
+      
+      can :remove, BooksContact
     end
   end
 end

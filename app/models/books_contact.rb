@@ -91,9 +91,17 @@ class BooksContact < ActiveRecord::Base
     end
   end
   
-  def delivered_count
+  def deliveries
     course_register.all_deliveries.joins(:delivery_details)
-                              .where(delivery_details: {book_id: self.book_id}).sum("delivery_details.quantity")
+                              .where(delivery_details: {book_id: self.book_id})
+  end
+  
+  def delivery_details
+    DeliveryDetail.where(delivery_id: deliveries.map(&:id)).where(book_id: self.book_id)
+  end
+  
+  def delivered_count
+    return delivery_details.sum(:quantity)
   end
   
   def delivered?
@@ -234,7 +242,7 @@ class BooksContact < ActiveRecord::Base
               "<div class=\"checkbox check-default\"><input name=\"ids[]\" id=\"checkbox#{item.id}\" type=\"checkbox\" value=\"#{item.id}\"><label for=\"checkbox#{item.id}\"></label></div>",
               item.contact.contact_link,
               item.display_intake+item.book.display_name,
-              '<div class="text-center">'+ item.quantity.to_s+"</div>",
+              '<div class="text-center">'+ item.delivered_count.to_s + "/" + item.quantity.to_s+"</div>",
               '<div class="text-center">'+ item.display_upfront+"</div>",
               '<div class="text-center">'+ item.display_delivery_status+"</div>",
               '<div class="text-center">'+ item.course_register.course_register_link+"</div>", 
@@ -290,14 +298,14 @@ class BooksContact < ActiveRecord::Base
     ApplicationController.helpers.check_ajax_button(upfront, url, "upfront?")    
   end
   
-  def display_delivery_status    
-    if delivered?
-      return "<a class=\"check-radio ajax-check-radioz\" href=\"#c\"><i class=\"#{delivered?.to_s} icon-check#{delivered? ? "" : "-empty"}\"></i></a>"
-    else
-      return "<div class=\"nowrap check-radio\">"+ActionController::Base.helpers.link_to("<i class=\"#{delivered?.to_s} icon-check#{delivered? ? "" : "-empty"}\"></i>".html_safe, {controller: "deliveries", action: "new", course_register_id: self.course_register_id, tab_page: 1}, title: "Deliver Stock: #{self.contact.display_name}", title: 'Materials Delivery', class: "tab_page")+"</div>"
-    end
-
-  end
+  #def display_delivery_status    
+  #  if delivered?
+  #    return "<a class=\"check-radio ajax-check-radioz\" href=\"#c\"><i class=\"#{delivered?.to_s} icon-check#{delivered? ? "" : "-empty"}\"></i></a>"
+  #  else
+  #    return "<div class=\"nowrap check-radio\">"+ActionController::Base.helpers.link_to("<i class=\"#{delivered?.to_s} icon-check#{delivered? ? "" : "-empty"}\"></i>".html_safe, {controller: "deliveries", action: "new", course_register_id: self.course_register_id, tab_page: 1}, title: "Deliver Stock: #{self.contact.display_name}", title: 'Materials Delivery', class: "tab_page")+"</div>"
+  #  end
+  #
+  #end
   
   def display_intake
     upfront ? "Upfront-" : (intake.nil? ? "" : intake.strftime("%b-%Y")+"-")
@@ -305,9 +313,9 @@ class BooksContact < ActiveRecord::Base
   
   def display_delivery_status    
     if delivered?
-      return "<a class=\"check-radio ajax-check-radioz\" href=\"#c\"><i class=\"#{delivered?.to_s} icon-check#{delivered? ? "" : "-empty"}\"></i></a> delivered?"
+      return "<div class=\"nowrap check-radio\">"+ActionController::Base.helpers.link_to("<i class=\"#{delivered?.to_s} icon-check#{delivered? ? "" : "-empty"}\"></i>".html_safe, {controller: "books_contacts", action: "remove", id: self.id, tab_page: 1}, title: "Deliver Stock: #{self.contact.display_name}", title: 'Remove Delivery', class: "approve_link")+"</div> (#{delivered_count.to_s}/#{quantity.to_s}) delivered?"
     else
-      return "<div class=\"nowrap check-radio\">"+ActionController::Base.helpers.link_to("<i class=\"#{delivered?.to_s} icon-check#{delivered? ? "" : "-empty"}\"></i>".html_safe, {controller: "deliveries", action: "new", course_register_id: self.course_register_id, tab_page: 1}, title: "Deliver Stock: #{self.contact.display_name}", title: 'Materials Delivery', class: "tab_page")+" delivered?</div>"
+      return "<div class=\"nowrap check-radio\">"+ActionController::Base.helpers.link_to("<i class=\"#{delivered?.to_s} icon-check#{delivered? ? "" : "-empty"}\"></i>".html_safe, {controller: "deliveries", action: "new", course_register_id: self.course_register_id, tab_page: 1}, title: "Deliver Stock: #{self.contact.display_name}", title: 'Materials Delivery', class: "tab_page")+"</div> (#{delivered_count.to_s}/#{quantity.to_s}) delivered?"
     end
 
   end

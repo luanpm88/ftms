@@ -38,7 +38,11 @@ class ApplicationController < ActionController::Base
   #  @headshot_photo = HeadshotPhoto.new
   #  @headshot_photo.image = File.new(file_path)
   #  @headshot_photo.save
-  #end 
+  #end
+  
+  rescue_from CanCan::AccessDenied do |exception|
+    render "/home/access_denied.html.erb", :layout => "content"
+  end
   
   protected
   
