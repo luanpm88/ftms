@@ -22,6 +22,7 @@ Role.create(name: "manager")
 Role.create(name: "sales_admin")
 Role.create(name: "education_consultant")
 Role.create(name: "accountant")
+Role.create(name: "storage_manager")
 
 
 # Default role for user

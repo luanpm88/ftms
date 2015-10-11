@@ -172,8 +172,7 @@ class Ability
       can :stock_form_list, Book
       can :delivery, Book
       can :import_export, Book
-      can :delivery_note, Book
-      can :deliver_all, Book
+      can :delivery_note, Book      
       can :delivery_counting, Book
       can :stock_statistics, Book
       can :statistics, Book
@@ -364,6 +363,10 @@ class Ability
         c.statuses.include?("delete_pending") && c.current.user.lower?("education_consultant")
       end   
 
+    end
+    
+    if user.has_role?("storage_manager") || user.has_role?("manager")
+      can :deliver_all, Book
     end
     
     if user.has_role?("accountant") || user.has_role?("manager")

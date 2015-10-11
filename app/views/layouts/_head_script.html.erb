@@ -2864,7 +2864,7 @@
 							data: form.serialize(),
 							success: function(data, textStatus, jqXHR)
 							{
-								alert(data)
+								window.parent.modernAlert(data)
 								window.parent.$(".tab-pane.active .main-frame")[0].contentWindow.reloadDatatable()
 							}
 					})
@@ -2873,7 +2873,7 @@
 					$(".listing_form").submit()
 				}
 			} else {
-				alert("Need to choose contact(s) first!")
+				window.parent.modernAlert("<span class='chase_for_payment'>Need to choose contact(s) first!</span>")
 			}
 			getDeliveryCounting()
 		})
