@@ -1371,6 +1371,7 @@ class Contact < ActiveRecord::Base
     new_contact.contact_types = self.contact_types
     new_contact.course_types = self.course_types
     new_contact.lecturer_course_types = self.lecturer_course_types
+    new_contact.contact_tags = self.contact_tags
     
     new_contact.save
     
