@@ -775,7 +775,7 @@ class CourseRegister < ActiveRecord::Base
         recent = recent.older
       end
       
-      return false if recent.statuses.include?("active") && !recent.is_valid?
+      return false if !recent.is_valid?
       
       self.update_attribute(:status, recent.status)
 
