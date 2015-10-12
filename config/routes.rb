@@ -346,6 +346,10 @@ Hkerp::Application.routes.draw do
 
   get 'home/index'
   get 'home/close_tab'
+  
+  resources :old_tags
+  
+  resources :old_link_students
 
   resources :roles
 

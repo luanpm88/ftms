@@ -1402,6 +1402,14 @@
 					if($(".contact-filter select[name='user']").val()) {
 						d.user =  $(".contact-filter select[name='user']").val()
 					}
+					
+					if($(".contact-filter input[name='old_tag']").val()) {
+						d.old_tag =  $(".contact-filter input[name='old_tag']").val()
+					}
+					
+					if($(".contact-filter input[name='old_course']").val()) {
+						d.old_course =  $(".contact-filter input[name='old_course']").val()
+					}
 				}
 			},
 			"columnDefs": [ { "targets": [0,2,3,4,5,7,9], "orderable": false } ],
@@ -1499,6 +1507,14 @@
 					if($(".contact-filter select[name='user']").val()) {
 						d.user =  $(".contact-filter select[name='user']").val()
 					}
+					
+					if($(".contact-filter input[name='old_tag']").val()) {
+						d.old_tag =  $(".contact-filter input[name='old_tag']").val()
+					}
+					
+					if($(".contact-filter input[name='old_course']").val()) {
+						d.old_course =  $(".contact-filter input[name='old_course']").val()
+					}
 				}				
 			},
 			"columnDefs": [ { "targets": [0,1,3,4,5,6,7,8], "orderable": false } ],
@@ -1581,6 +1597,14 @@
 					
 					if($(".contact-filter select[name='user']").val()) {
 						d.user =  $(".contact-filter select[name='user']").val()
+					}
+					
+					if($(".contact-filter input[name='old_tag']").val()) {
+						d.old_tag =  $(".contact-filter input[name='old_tag']").val()
+					}
+					
+					if($(".contact-filter input[name='old_course']").val()) {
+						d.old_course =  $(".contact-filter input[name='old_course']").val()
 					}
 				}
 			},
@@ -2579,6 +2603,52 @@
 			multiple: $('.select2-ajax-bank-accounts').hasClass("multiple"),
 			ajax: {
 			  url: $('.select2-ajax-bank-accounts').attr("data"),
+			  dataType: 'json',
+			  data: function (term, page) { // page is the one-based page number tracked by Select2
+				return {
+				  q: term, //search term				  
+				};
+			  },
+			  results: function (data, page) {
+				return {results: data};
+			  }
+			},
+			initSelection: function (element, callback) {				      
+			  callback({ id: element.val(), text: element.attr('text') });
+			}
+	    });
+		
+		//ajax select2 for contacts
+	    $('.select2-ajax-old-tags').select2({
+			placeholder: "Search for a tag",
+			minimumInputLength: 1,
+			allowClear: true,
+			multiple: $('.select2-ajax-old-tags').hasClass("multiple"),
+			ajax: {
+			  url: $('.select2-ajax-old-tags').attr("data"),
+			  dataType: 'json',
+			  data: function (term, page) { // page is the one-based page number tracked by Select2
+				return {
+				  q: term, //search term				  
+				};
+			  },
+			  results: function (data, page) {
+				return {results: data};
+			  }
+			},
+			initSelection: function (element, callback) {				      
+			  callback({ id: element.val(), text: element.attr('text') });
+			}
+	    });
+		
+		//ajax select2 for contacts
+	    $('.select2-ajax-old-link-students').select2({
+			placeholder: "Search for a tag",
+			minimumInputLength: 1,
+			allowClear: true,
+			multiple: $('.select2-ajax-old-link-students').hasClass("multiple"),
+			ajax: {
+			  url: $('.select2-ajax-old-link-students').attr("data"),
 			  dataType: 'json',
 			  data: function (term, page) { // page is the one-based page number tracked by Select2
 				return {

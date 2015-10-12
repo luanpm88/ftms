@@ -316,6 +316,14 @@ class Contact < ActiveRecord::Base
       @records = @records.where(account_manager_id: params["user"])
     end
     
+    if params["old_tag"].present?      
+      @records = @records.includes(:old_tags).where(old_tags: {tag_name: params["old_tag"].split(",")})
+    end
+    
+    if params["old_course"].present?      
+      @records = @records.includes(:old_link_students).where(old_link_students: {subject_id: params["old_course"].split(",")})
+    end
+    
     if !params[:status].present? || params[:status] != "deleted"
       @records = @records.where("contacts.status NOT LIKE ?","%[deleted]%")
     end

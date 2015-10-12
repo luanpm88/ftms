@@ -10,5 +10,7 @@ class OldCourse < ActiveRecord::Base
 			course.save
 		end
 	end
+	
+	
 
 end
