@@ -103,6 +103,7 @@ class Transfer < ActiveRecord::Base
     if !params["order"].nil?
       case params["order"]["0"]["column"]
       when "7"
+        order = "transfers.created_at"
       else
         order = "transfers.created_at"
       end
