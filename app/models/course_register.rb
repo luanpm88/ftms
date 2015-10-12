@@ -717,8 +717,16 @@ class CourseRegister < ActiveRecord::Base
     result.join(" ").html_safe
   end
   
+  def is_valid?
+    contacts_courses.each do |cc|
+      return false if contact.learned_courses.include?(cc.course)
+    end
+    return true
+  end
   
   def approve_new(user)
+    return false if !is_valid?
+    
     if statuses.include?("new_pending")          
       self.delete_status("new_pending")      
       self.check_statuses
@@ -728,9 +736,13 @@ class CourseRegister < ActiveRecord::Base
       
       self.save_draft(user)
     end
+    
+    return true
   end
   
   def approve_update(user)
+    return false if !is_valid?
+    
     if statuses.include?("update_pending")
       self.delete_status("update_pending")
       self.check_statuses
@@ -740,6 +752,8 @@ class CourseRegister < ActiveRecord::Base
       
       self.save_draft(user) 
     end
+    
+    return true
   end
   
   def approve_delete(user)
@@ -760,6 +774,9 @@ class CourseRegister < ActiveRecord::Base
       while recent.statuses.include?("delete_pending") || recent.statuses.include?("deleted")
         recent = recent.older
       end
+      
+      return false if recent.statuses.include?("active") && !recent.is_valid?
+      
       self.update_attribute(:status, recent.status)
 
       self.check_statuses
@@ -768,7 +785,9 @@ class CourseRegister < ActiveRecord::Base
       add_annoucing_users([self.current.user])
       
       self.save_draft(user)
+      
     end
+    return true
   end
   
   def check_statuses

@@ -118,12 +118,18 @@ class CourseRegistersController < ApplicationController
   def approve_new
     authorize! :approve_new, @course_register
     
-    @course_register.approve_new(current_user)
-    
     respond_to do |format|
-      format.html { render "/course_registers/approved", layout: nil }
-      format.json { render action: 'show', status: :created, location: @course_register }
+      if @course_register.approve_new(current_user)      
+        format.html { render "/course_registers/approved", layout: nil }
+        format.json { render action: 'show', status: :created, location: @course_register }
+      else
+        format.html { render "/course_registers/not_valid", layout: nil }
+        format.json { render action: 'show', status: :created, location: @course_register }
+      end
+      
     end
+    
+    
   end
   
   def approve_update
@@ -132,8 +138,14 @@ class CourseRegistersController < ApplicationController
     @course_register.approve_update(current_user)
     
     respond_to do |format|
-      format.html { render "/course_registers/approved", layout: nil }
-      format.json { render action: 'show', status: :created, location: @course_register }
+      if @course_register.approve_update(current_user)      
+        format.html { render "/course_registers/approved", layout: nil }
+        format.json { render action: 'show', status: :created, location: @course_register }
+      else
+        format.html { render "/course_registers/not_valid", layout: nil }
+        format.json { render action: 'show', status: :created, location: @course_register }
+      end
+      
     end
   end
   
@@ -154,8 +166,14 @@ class CourseRegistersController < ApplicationController
     @course_register.undo_delete(current_user)
     
     respond_to do |format|
-      format.html { render "/course_registers/undo_delete", layout: nil }
-      format.json { render action: 'show', status: :created, location: @course_register }
+      if @course_register.undo_delete(current_user)      
+        format.html { render "/course_registers/approved", layout: nil }
+        format.json { render action: 'show', status: :created, location: @course_register }
+      else
+        format.html { render "/course_registers/not_valid", layout: nil }
+        format.json { render action: 'show', status: :created, location: @course_register }
+      end
+      
     end
   end
   
