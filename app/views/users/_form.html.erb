@@ -36,6 +36,8 @@
 						 <%= hidden_field_tag "tab_page", 1 %>
 					<% end %>
 					
+					
+					
 					<div class="row column-seperation">
 						 <div class="col-md-6">
 							  <div class="form-group">
@@ -48,6 +50,7 @@
 										<ul id="sortable" class="image-boxes">
 											 
 											 <li class="image-box ui-state-default">
+												  <%= hidden_field_tag "remove_avatar", "", class: "destroy_tag" %>
 												  <div class="img-actions">
 													   <i class="icon-minus-sign delete-but<% if !@user.image.present? %> hidden<% end %>"></i>
 												  </div>

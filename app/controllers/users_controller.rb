@@ -69,6 +69,11 @@ class UsersController < ApplicationController
       new_params.delete("password_confirmation")
     end
     
+    if params[:remove_avatar].present?
+      @user.remove_image!
+      @user.save
+    end
+    
     respond_to do |format|
       if @user.update(new_params)
         format.html { redirect_to params[:tab_page].present? ? "/home/close_tab" : users_path, notice: 'User was successfully updated.' }

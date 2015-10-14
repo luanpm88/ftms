@@ -47,6 +47,7 @@
 															<ul id="sortable" class="image-boxes">
 																				 
 																	<li class="image-box ui-state-default">
+																		<%= hidden_field_tag "user[remove_image]", "", class: "destroy_tag" %>
 																			<div class="img-actions">
 																					<i class="icon-minus-sign delete-but<% if !@user.image.present? %> hidden<% end %>"></i>
 																			</div>
