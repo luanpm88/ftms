@@ -131,6 +131,8 @@ class Contact < ActiveRecord::Base
   
   def self.format_mobile(string)
     result = string.gsub(/\D/, '')
+    return "" if result.to_s.length < 5 # check valid number
+    
     if (result =~ /84/i) != 0
       if result[0] == "0"
         result[0] = ""        
@@ -1895,13 +1897,14 @@ class Contact < ActiveRecord::Base
   def find_related_contacts
     cond_name = "LOWER(contacts.cache_search) LIKE '%[search_name: #{name.unaccent.downcase} ]%'"
     cond_other = []
-    cond_other << "LOWER(contacts.email) LIKE '%#{self.email.to_s.strip.downcase}%'" if self.email.strip.present?
-    cond_other << "LOWER(contacts.mobile) LIKE '%#{self.mobile.to_s.strip.downcase}%'" if self.mobile.strip.present?
-    
+    cond_other << "LOWER(contacts.email) LIKE '%#{self.email.to_s.strip.downcase}%'" if self.email.to_s.strip.present? && self.email.to_s.length > 6
+    cond_other << "LOWER(contacts.mobile) LIKE '%#{self.mobile.to_s.strip.downcase}%'" if self.mobile.to_s.strip.present? && self.mobile.to_s.length > 6
+     
     return [] if cond_other.empty?
     
     cond_other = "("+cond_other.join(" OR ")+")"
-    return Contact.main_contacts.where("contacts.status NOT LIKE ?","%[deleted]%").where.not(id: self.id).where(cond_name+" AND "+cond_other)
+    return Contact.main_contacts.where("contacts.status NOT LIKE ?","%[deleted]%").where.not(id: self.id)
+                                .where(cond_name+" AND "+cond_other)
 
   end
 
