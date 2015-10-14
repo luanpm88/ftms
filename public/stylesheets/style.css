@@ -8504,3 +8504,8 @@ h5.list_title {
 #header_inbox_bar {
     display: none !important;
 }
+.topdoc {
+    display: inline-block;
+    font-size: 20px;
+    margin: 13px;
+}

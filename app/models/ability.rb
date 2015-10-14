@@ -45,6 +45,8 @@ class Ability
     end
     
     if user.has_role? "user"
+      can :user_guide, User
+      
       can :read, OldTag
       can :read, OldLinkStudent
       

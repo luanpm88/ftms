@@ -392,6 +392,10 @@ class UsersController < ApplicationController
     end    
   end
   
+  def user_guide
+    send_file "ftms_user_guide.pdf"
+  end
+  
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_user

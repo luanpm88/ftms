@@ -387,6 +387,8 @@ Hkerp::Application.routes.draw do
       
       get :online_report
       post :online_report
+      
+      get :user_guide
     end
   end
   
