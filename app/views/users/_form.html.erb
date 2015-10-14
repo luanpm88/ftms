@@ -141,14 +141,16 @@
 								<span class="help"></span>
 								<div class="input-with-icon  right">                                       
 									<i class=""></i>
-																<% Role.all.each do |role| %>
-																  <div class="row-fluid">
-																	<div class="checkbox check-info">
-																	  <%= check_box_tag 'user[role_ids][]', role.id, @user.roles.include?(role) || (@user.id.nil? && role.name == "user"), :id => "role_#{role.id}" %>
-																	  <%= f.label role.name, :for => "role_#{role.id}" %>
-																	</div>
-																  </div>
-																<% end %>
+								   <% Role.all.each do |role| %>
+										<% if current_user.has_role?("admin") || (current_user.has_role?("manager") && !["admin","manager"].include?(role.name)) %>
+											 <div class="row-fluid">
+											   <div class="checkbox check-info">
+												 <%= check_box_tag 'user[role_ids][]', role.id, @user.roles.include?(role) || (@user.id.nil? && role.name == "user"), :id => "role_#{role.id}" %>
+												 <%= f.label role.name, :for => "role_#{role.id}" %>
+											   </div>
+											 </div>
+										<% end %>
+								   <% end %>
 								</div>
 							  </div>
 						 </div>

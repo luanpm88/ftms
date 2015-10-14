@@ -45,7 +45,9 @@ class Ability
     end
     
     if user.has_role? "user"
-      can :user_guide, User
+      can :user_guide, User      
+      can :statistic, User
+      can :online_report, User
       
       can :read, OldTag
       can :read, OldLinkStudent
@@ -55,7 +57,8 @@ class Ability
       
       can :read_notification, Notification
       
-      can :read, User     
+      can :read, User
+      can :datatable, User
      
       can :read, City
       can :read, State
@@ -401,8 +404,7 @@ class Ability
     end
     
     if user.has_role? "manager"
-      can :statistic, User
-      can :online_report, User
+      can :manage, User
       
       ## STOCK TYPE
       can :approved, StockType

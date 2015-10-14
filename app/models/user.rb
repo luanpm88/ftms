@@ -20,6 +20,8 @@ class User < ActiveRecord::Base
   has_many :students, class_name: "Contact", :foreign_key => "account_manager_id"
   has_many :activities
   
+  belongs_to :user, class_name: "User"
+  
   #validates :first_name, presence: true
   #validates :last_name, presence: true
   validates :email, :presence => true, :uniqueness => true
@@ -212,13 +214,14 @@ class User < ActiveRecord::Base
     @records = @records.limit(params[:length]).offset(params["start"])
     data = []
     
-    actions_col = 4
+    actions_col = 5
     @records.each do |item|
       item = [
               link_helper.link_to("<img class=\"avatar-big\" width='60' src='#{item.avatar(:square)}' />".html_safe, {controller: "users", action: "show", id: item.id}, class: "fancybox.ajax fancybox_link main-title"),
-              link_helper.link_to(item.name, {controller: "users", action: "edit", id: item.id, tab_page: 1}, title: "#{item.name}", class: "main-title tab_page")+item.quick_info,
+              '<div class="text-left main-title">'+item.name+"</div>"+item.quick_info, #link_helper.link_to(item.name, {controller: "users", action: "edit", id: item.id, tab_page: 1}, title: "#{item.name}", class: "main-title tab_page")+item.quick_info,
               '<div class="text-center">'+item.roles_name+"</div>",
-              '<div class="text-center">'+item.created_at.strftime("%Y-%m-%d")+"</div>", 
+              '<div class="text-center">'+item.created_at.strftime("%Y-%m-%d")+"</div>",
+              '<div class="text-center">'+item.display_staff_col+"</div>",
               '',
             ]
       data << item
@@ -234,6 +237,10 @@ class User < ActiveRecord::Base
     
     return {result: result, items: @records, actions_col: actions_col}
     
+  end
+  
+  def display_staff_col
+    user.nil? ? "" : user.staff_col
   end
   
   def roles_name
@@ -574,6 +581,7 @@ class User < ActiveRecord::Base
     
       item.roles << Role.where(name: "user").first
       # item.roles << Role.where(name: "education_consultant").first
+      item.user_id = User.first.id
       
       item.save      
 

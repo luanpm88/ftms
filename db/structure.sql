@@ -2454,7 +2454,8 @@ CREATE TABLE users (
     mobile character varying,
     image character varying,
     "tmp_ConsultantID" text,
-    name text
+    name text,
+    user_id integer
 );
 
 
@@ -3979,4 +3980,6 @@ INSERT INTO schema_migrations (version) VALUES ('20151007063852');
 INSERT INTO schema_migrations (version) VALUES ('20151008032914');
 
 INSERT INTO schema_migrations (version) VALUES ('20151008033152');
+
+INSERT INTO schema_migrations (version) VALUES ('20151014034211');
 

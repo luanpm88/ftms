@@ -46,6 +46,7 @@ class UsersController < ApplicationController
   # POST /users.json
   def create
     @user = User.new(user_params)
+    @user.user_id = current_user.id
     
     respond_to do |format|
       if @user.save
@@ -133,7 +134,7 @@ class UsersController < ApplicationController
     result = User.datatable(params, current_user)
     
     result[:items].each_with_index do |item, index|
-      actions = render_users_actions(item)
+      actions = render_users_actions(item,current_user)
       
       result[:result]["data"][index][result[:actions_col]] = actions
     end
@@ -175,6 +176,8 @@ class UsersController < ApplicationController
         
     @statistics = []
     @users = User.order("users.first_name, users.last_name")
+    
+    params[:users] = [current_user.id] if current_user.lower?("manager")
     @users = @users.where(id: params[:users]) if params[:users].present?
     
     current_id = nil
