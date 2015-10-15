@@ -25,7 +25,7 @@ class LogoUploader < CarrierWave::Uploader::Base
   # end
 
   # Process files as they are uploaded:
-  # process :scale => [200, 300]
+  process :resize_to_fit => [800, 800]
   #
   # def scale(width, height)
   #   # do something
@@ -39,7 +39,7 @@ class LogoUploader < CarrierWave::Uploader::Base
      process :resize_to_fit => [312, 312]
    end
    version :thumb3x do
-     process :resize_to_fit => [800, 800]
+     process :resize_to_fit => [500, 500]
    end
 
   # Add a white list of extensions which are allowed to be uploaded.

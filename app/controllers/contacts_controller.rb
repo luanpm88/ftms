@@ -335,6 +335,7 @@ class ContactsController < ApplicationController
   end
   
   def logo
+    params[:type] = params[:type].present? ? params[:type] : "thumb3x"
     send_file @contact.logo_path(params[:type]), :disposition => 'inline'
   end
   
