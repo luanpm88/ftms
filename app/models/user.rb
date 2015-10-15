@@ -217,7 +217,7 @@ class User < ActiveRecord::Base
     actions_col = 5
     @records.each do |item|
       item = [
-              link_helper.link_to("<img class=\"avatar-big\" width='60' src='#{item.avatar(:square)}' />".html_safe, {controller: "users", action: "show", id: item.id}, class: "fancybox.ajax fancybox_link main-title"),
+              link_helper.link_to("<img class=\"avatar-big\" width='60' src='#{item.avatar(:square)}?v=#{Time.now.to_i}' />".html_safe, {controller: "users", action: "show", id: item.id}, class: "fancybox.ajax fancybox_link main-title"),
               '<div class="text-left main-title">'+item.name+"</div>"+item.quick_info, #link_helper.link_to(item.name, {controller: "users", action: "edit", id: item.id, tab_page: 1}, title: "#{item.name}", class: "main-title tab_page")+item.quick_info,
               '<div class="text-center">'+item.roles_name+"</div>",
               '<div class="text-center">'+item.created_at.strftime("%Y-%m-%d")+"</div>",

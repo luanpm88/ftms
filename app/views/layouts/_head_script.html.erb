@@ -3026,7 +3026,17 @@
 			}
 		})
 		
-		$('.fancybox').fancybox();
+		//$('.fancybox').fancybox();
+		//fancybox link
+		$(document).on("click", ".fancybox", function(e) {
+			e.preventDefault();
+			
+			var href = $(this).attr("href")
+			window.parent.$.fancybox({
+				href: href,
+				type: 'image'
+			});
+		});
 		
 		
 		$('select[name="course_register[preferred_mailing]"]').change(function() {

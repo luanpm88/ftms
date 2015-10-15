@@ -726,7 +726,7 @@ class Contact < ActiveRecord::Base
     ActionView::Base.send(:include, Rails.application.routes.url_helpers)
     link_helper = ActionController::Base.helpers
     
-    link_helper.link_to(display_picture(:thumb), logo+".png", class: "fancybox.image fancybox logo", title: display_name)
+    link_helper.link_to(display_picture(:thumb), logo+".png?v=#{Time.now.to_i}", class: "fancybox.image fancybox logo", title: display_name)
   end
   
   def city_name
