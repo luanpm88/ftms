@@ -132,7 +132,7 @@ class UsersController < ApplicationController
   end
   
   def avatar
-    params[:type] = params[:type].present? ? params[:type] : "thumb2x"
+    # params[:type] = params[:type].present? ? params[:type] : "thumb2x"
     send_file @user.avatar_path(params[:type]), :disposition => 'inline'
   end
   
