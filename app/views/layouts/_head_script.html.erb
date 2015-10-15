@@ -2773,7 +2773,19 @@
 		setTimeout("$('.dataTables_wrapper select').select2();", 2000);
 		
 		//fancybox link
-		$('.fancybox_link').fancybox({width: "100%",'autoDimensions': false, 'autoSize':false});
+		$(document).on("click", ".fancybox_link", function(e) {
+			e.preventDefault();
+			
+			var href = $(this).attr("href")
+			window.parent.$.fancybox({
+				width: "70%",
+				height: 400,
+				autoSize: false,
+				href: href,
+				type: 'ajax'
+			});
+		});
+		// $('.fancybox_link').fancybox({width: "100%",'autoDimensions': false, 'autoSize':false});
 		
 		//contact filter
 		$(document).on("change", "#contact_filter input, #contact_filter select", function() {
