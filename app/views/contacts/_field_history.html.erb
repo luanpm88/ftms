@@ -16,8 +16,8 @@
         <li><%= c.invoice_info.contact_link %> <span class="nowrap time-span"><%= c.created_at.strftime("%d-%b-%Y, %I:%M %p") %></span></li>
       <% end %>
       
-      <% if value != c[type] && ["birthday"].include?(type) %>
-        <li><%= c.birthday.strftime("%d-%b-%Y") %> <span class="nowrap time-span"><%= c.created_at.strftime("%d-%b-%Y, %I:%M %p") %></span></li>
+      <% if value != c[type] && ["birthday","valid_from","valid_to"].include?(type) %>
+        <li><%= c[type].strftime("%d-%b-%Y") %> <span class="nowrap time-span"><%= c.created_at.strftime("%d-%b-%Y, %I:%M %p") %></span></li>
       <% end %>
       
       <% if value != c[type] && ["sex"].include?(type) %>

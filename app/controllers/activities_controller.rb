@@ -1,7 +1,7 @@
 class ActivitiesController < ApplicationController
   include ActivitiesHelper
   
-  before_action :set_activity, only: [:show, :edit, :update, :destroy]
+  before_action :set_activity, only: [:approve_delete, :show, :edit, :update, :destroy]
 
   # GET /activities
   # GET /activities.json
@@ -81,6 +81,17 @@ class ActivitiesController < ApplicationController
     end
     
     render json: result[:result]
+  end
+  
+  def approve_delete
+    authorize! :approve_delete, @activity
+    
+    @activity.update_attribute(:deleted, 2)
+    
+    respond_to do |format|
+      format.html { render "/activities/deleted", layout: nil }
+      format.json { render action: 'show', status: :created, location: @activity }
+    end
   end
 
   private

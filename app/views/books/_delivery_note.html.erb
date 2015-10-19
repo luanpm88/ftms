@@ -49,7 +49,7 @@
     <% if !row[:list].empty? %>
           <div class="page" style="top: <%= 1020*index %>px; position: absolute" >
             <div class="logo">
-              <img src="<%= ["delivery_note","delivery_print"].include?(params[:action]) ? "file://"+File.join(Rails.root, 'public', 'img', 'FTMSGlobalNew_transparent.png') : url_for("/img/FTMSGlobalNew_transparent.png") %>" class="login-logo" />
+              <img src="<%= ["deliver_all","delivery_note","delivery_print"].include?(params[:action]) ? "file://"+File.join(Rails.root, 'public', 'img', 'FTMSGlobalNew_transparent.png') : url_for("/img/FTMSGlobalNew_transparent.png") %>" class="login-logo" />
             </div>
             
             <div class="heading">
@@ -114,7 +114,7 @@
                       
                     </td>
                     <td class="text-left">
-                      <div><strong><%= d[1].display_intake+d[1].book.paper_name %></strong></div>          
+                      <div><strong><%= d[1].book.paper_name %></strong></div>          
                     </td>
                     <td class="text-left">
                       <%= d[1].book.type_name %>

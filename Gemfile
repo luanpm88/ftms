@@ -45,6 +45,7 @@ gem 'bcrypt-ruby', '~> 3.1.2'
 # gem 'debugger', group: [:development, :test]
 
 gem "roo"
+gem "roo-xls"
 gem "cancan"
 gem "devise"
 gem 'wkhtmltopdf-binary'

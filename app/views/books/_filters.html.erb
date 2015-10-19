@@ -5,17 +5,18 @@
 						  <h4>Stock Type</h4>							
 						  <%= select_tag 'stock_types[]', options_for_select(StockType.active_stock_types.collect{ |u| [u.name, u.id] }), class: "modern_select width100", multiple: true %>
 					  </div>
-                      <div class="col-md-3">
-                        <h4>Program</h4>                        
-						<%= select_tag 'filter[course_types[]]', options_for_select(CourseType.active_course_types.collect{ |u| [u.short_name, u.id] }), :include_blank => 'All', class: "modern_select width100" %>
-                      </div>
-					  
-					  <div class="col-md-3">
-                        <h4>Paper</h4>                        
-						<div class="subjects-filter-box">
-							<%= select_tag 'filter[subjects[]]', options_for_select(Subject.active_subjects.collect{ |u| [u.name, u.id] }), :include_blank => 'All', class: "modern_select width100" %>
-						</div>
-                      </div>
+                      <div class="program_paper_select_box">
+											<div class="col-md-3">
+												<h4>Program</h4>							
+												<%= select_tag 'filter[course_types[]]', options_for_select(CourseType.active_course_types.collect{ |u| [u.short_name, u.id] }), class: "modern_select width100 program_select", multiple: "multiple", input_name: "filter[subjects[]]" %>
+											</div>							
+											<div class="col-md-3">
+												<h4>Paper</h4>
+												<span class="paper_select_box">
+													<%= select_tag 'filter[subjects[]]', options_for_select(Subject.active_subjects.collect{ |u| [u.name, u.id] }), class: "modern_select width100", multiple: "multiple" %>
+												</span>
+											</div>
+										</div>		
 						
 					  <div class="col-md-3 student-book-filter hidden">
 						  <h4>Student</h4>                        

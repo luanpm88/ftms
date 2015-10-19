@@ -1,7 +1,7 @@
 class DeliveriesController < ApplicationController
   load_and_authorize_resource
   
-  before_action :set_delivery, only: [:trash, :pdf, :show, :edit, :update, :destroy]
+  before_action :set_delivery, only: [:print, :trash, :pdf, :show, :edit, :update, :destroy]
 
   # GET /deliveries
   # GET /deliveries.json
@@ -37,9 +37,10 @@ class DeliveriesController < ApplicationController
     
    @delivery.update_deliveries(params[:delivery_details])
 
-    respond_to do |format|
+    respond_to do |format|      
       if @delivery.save
-        format.html { redirect_to params[:tab_page].present? ? "/home/close_tab" : @delivery, notice: 'Delivery was successfully created.' }
+        url = {controller: "deliveries", action: "print", id: @delivery.id}
+        format.html { redirect_to url }
         format.json { render action: 'show', status: :created, location: @delivery }
       else
         format.html { render action: 'new', tab_page: params[:tab_page] }
@@ -73,9 +74,7 @@ class DeliveriesController < ApplicationController
   end
   
   def print
-    authorize! :delivery_print, @delivery.course_register
-    
-    render  :pdf => "delivery_"+@delivery.delivery_date.strftime("%d_%b_%Y"),
+      render  :pdf => "delivery_"+@delivery.delivery_date.strftime("%d_%b_%Y"),
             :template => 'deliveries/print.pdf.erb',
             :layout => nil,
             :footer => {

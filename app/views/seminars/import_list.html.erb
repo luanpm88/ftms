@@ -25,6 +25,13 @@
 								<p><strong>Not Sure: <span class="price_outdated"><%= @list[:waiting_count] %></span></strong></p>
 								<br />
 								
+								
+								<h4>Education Consultant</h4>
+								<div class="">
+									<%= select_tag 'user', options_for_select(User.main_users.collect{ |u| [u.name, u.id] }, current_user.id) , {:include_blank => 'None', class: "modern_select width100 required"} %>
+								</div>
+								<br />
+								
 								<h4><span class="semi-bold">Listing Result</span></h4>
 								<table class="table seminar_import_box">
 										<tr>
@@ -32,6 +39,7 @@
 												<th>Company</th>
 												<th>Mobile</th>
 												<th>Email</th>
+												<th>Background</th>
 												<th class="text-center">Present?</th>
 												<th class="text-center">Status</th>
 												<th class="text-right" width="1%">Actions</th>
@@ -55,6 +63,9 @@
 														</td>
 														<td>
 																<%= text_field_tag "rows["+index.to_s+"][email]", row[:email], class: "form-control" %>
+														</td>
+														<td>
+																<%= text_area_tag "rows["+index.to_s+"][note]", row[:background], class: "form-control" %>
 														</td>
 														<td class="text-center">
 																<% if row[:present].present? %>
@@ -101,6 +112,9 @@
 																	<td>
 																			<%= contact.email %>
 																	</td>
+																	<td>
+																				<%= contact.note %>
+																		</td>
 																	<td class="text-center">
 																		<% if row[:present].present? %>
 																			<a class="check-radio ajax-check-radio" href="#"><i class="true icon-check"></i></a>

@@ -1,1 +1,5 @@
-<%= select_tag 'filter[subjects[]]', options_for_select(@subjects.collect{ |u| [u.name, u.id] }), class: "modern_select width100", multiple: "multiple" %>
+<% if params[:input_multiple] == "false" %>
+  <%= select_tag params[:input_name].to_s, options_for_select(@subjects.collect{ |u| [u.name, u.id] }), {include_blank: "None", class: "modern_select width100 "+params[:input_required].to_s} %>
+<% else %>
+  <%= select_tag params[:input_name].to_s, options_for_select(@subjects.collect{ |u| [u.name, u.id] }), {include_blank: "None", class: "modern_select width100 "+params[:input_required].to_s, multiple: "multiple"} %>
+<% end %>

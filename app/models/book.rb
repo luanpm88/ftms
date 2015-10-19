@@ -37,6 +37,13 @@ class Book < ActiveRecord::Base
                   }
                 }
   
+  def valid_from=(new)
+    self[:valid_from] = new.to_datetime.beginning_of_day
+  end
+  def valid_to=(new)
+    self[:valid_to] = new.to_datetime.end_of_day
+  end
+  
   def self.full_text_search(params)    
     self.active_books.order("name").search(params[:q]).limit(50).map {|model| {:id => model.id, :text => model.name} }
   end
@@ -85,8 +92,8 @@ class Book < ActiveRecord::Base
       end
     end
     
-    if !params[:status].present? || params[:status] != "deleted"
-      @records = @records.where("books.status NOT LIKE ?","%[deleted]%")
+    if !params[:status].present? || (params[:status] != "deleted" && params[:status] != "out_of_date")
+      @records = @records.where("books.status NOT LIKE ? AND books.status NOT LIKE ?","%[deleted]%","%[out_of_date]%")
     end
 
     ########## END REVISION-FEATURE #########################
@@ -109,10 +116,8 @@ class Book < ActiveRecord::Base
       case params["order"]["0"]["column"]
       when "1"
         order = "course_types.short_name #{params["order"]["0"]["dir"]}, subjects.name #{params["order"]["0"]["dir"]}, books.name #{params["order"]["0"]["dir"]}"      
-      when "3"
+      when "2"
         order = "books.publisher"
-      when "9"
-        order = "books.created_at"
       else
         order = "books.name"
       end
@@ -129,7 +134,7 @@ class Book < ActiveRecord::Base
     @records = @records.limit(params[:length]).offset(params["start"])
     data = []
     
-    actions_col = 10
+    actions_col = 9
     itemsx = []
     @records.each do |item|
       ############### BEGIN REVISION #########################
@@ -141,8 +146,7 @@ class Book < ActiveRecord::Base
       
       itemx = [
               item.cover_link,                            
-              item.book_link,
-              '<div class="text-center">'+item.stock_type.name+"</div>",
+              item.book_link, #            '<div class="text-center">'+item.stock_type.name+"</div>",
               '<div class="text-left">'+item.publisher.to_s+"</div>",
               '<div class="text-right">'+item.display_prices+"</div>",
               '<div class="text-center">'+item.stock.to_s+"</div>",
@@ -345,7 +349,7 @@ class Book < ActiveRecord::Base
     
     title = title.nil? ? display_name : title
     
-    link_helper.link_to(title, {controller: "books", action: "edit", id: id, tab_page: 1}, class: "tab_page", title: name)
+    link_helper.link_to(title, {controller: "books", action: "edit", id: id, tab_page: 1}, class: "tab_page", title: name)+"<div class=\"nowrap\">#{display_valid_time}</div>".html_safe
   end
   
   def book_price
@@ -487,7 +491,7 @@ class Book < ActiveRecord::Base
     self.where(parent_id: nil)
   end
   def self.active_books
-    self.main_books.where("status IS NOT NULL AND status LIKE ?", "%[active]%")
+    self.main_books.where("status IS NOT NULL AND status LIKE ? AND status NOT LIKE ?", "%[active]%", "%[out_of_date]%")
   end
   
   def draft?
@@ -516,7 +520,8 @@ class Book < ActiveRecord::Base
   
   def display_statuses
     return "" if statuses.empty?
-    result = statuses.map {|s| "<span title=\"Last updated: #{current.created_at.strftime("%d-%b-%Y, %I:%M %p")}; By: #{current.user.name}\" class=\"badge user-role badge-info contact-status #{s}\">#{s}</span>"}
+    aa =  statuses.include?("out_of_date") ? ["out_of_date"] : statuses
+    result = aa.map {|s| "<span title=\"Last updated: #{current.created_at.strftime("%d-%b-%Y, %I:%M %p")}; By: #{current.user.name}\" class=\"badge user-role badge-info contact-status #{s}\">#{s}</span>"}
     result.join(" ").html_safe
   end
   
@@ -579,6 +584,20 @@ class Book < ActiveRecord::Base
       add_status("active")     
     else
       delete_status("active")
+    end    
+  end
+  
+  def is_out_of_date?
+    return valid_from >= Time.now || valid_to <= Time.now
+  end
+  
+  def check_out_of_date
+    if is_out_of_date?
+      add_status("out_of_date")
+      return true
+    else
+      delete_status("out_of_date")
+      return false
     end    
   end
   
@@ -687,6 +706,7 @@ class Book < ActiveRecord::Base
       ["New Pending","new_pending"],
       ["Update Pending","update_pending"],
       ["Delete Pending","delete_pending"],
+      ["Out Of Date","out_of_date"],
       ["Deleted","deleted"]
     ]
   end
@@ -734,9 +754,7 @@ class Book < ActiveRecord::Base
   
   ############### END REVISION #########################
   
-  def display_name
-    
-    
+  def display_name   
     return [paper_name,type_name].join("-")
   end
   
@@ -777,6 +795,11 @@ class Book < ActiveRecord::Base
     self.update_attribute(:cache_search, str.join(" "))
   end
   
-  
+  def display_valid_time
+    str = []
+    str << valid_from.strftime("%d-%b-%Y") if valid_from.present?
+    str << valid_to.strftime("%d-%b-%Y") if valid_to.present?
+    return str.join(" to ")
+  end
   
 end

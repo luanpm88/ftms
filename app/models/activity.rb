@@ -45,6 +45,8 @@ class Activity < ActiveRecord::Base
     
     if params[:status].present?
       @records = @records.where(deleted: params[:status])
+    else
+      @records = @records.where.not(deleted: 2)
     end    
     
     return @records
@@ -107,16 +109,16 @@ class Activity < ActiveRecord::Base
   end
   
   def display_statuses
-    s = deleted == 1 ? "deleted" : "active"
+    s = deleted == 2 ? "deleted" : (deleted == 1 ? "delete_pending" : "active")
     result = "<span title=\"\" class=\"badge user-role badge-info contact-status #{s}\">#{s}</span>"
     return result
   end
   
   def self.status_options
     [      
-      ["Active",0],
-      ["Deleted",1],
       ["All",""],
+      ["Delete Pending",1],
+      ["Deleted",2]
     ]
   end
 

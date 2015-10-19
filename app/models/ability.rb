@@ -291,7 +291,7 @@ class Ability
       can :read, Activity
       can :create, Activity
       can :destroy, Activity do |a|
-        a.user == user
+        a.user == user && a.deleted == 0
       end
       
       can :datatable, Transfer
@@ -369,8 +369,11 @@ class Ability
       end
       can :approve_delete, CourseRegister do |c|
         c.statuses.include?("delete_pending") && c.current.user.lower?("education_consultant")
-      end   
-
+      end
+      
+      can :approve_delete, Activity do |c|
+        c.deleted == 1 && c.contact.account_manager  == user && c.user.lower?("education_consultant")
+      end
     end
     
     if user.has_role?("storage_manager") || user.has_role?("manager")
@@ -635,7 +638,10 @@ class Ability
       can :read, Activity
       can :create, Activity
       can :destroy, Activity do |a|
-        a.user == user
+        a.user == user && a.deleted == 0
+      end
+      can :approve_delete, Activity do |c|
+        c.deleted == 1
       end
       
       ## TRANSFER

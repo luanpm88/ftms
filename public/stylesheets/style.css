@@ -8520,3 +8520,7 @@ h5.list_title {
 .user-role.user {
     display: none;
 }
+.badge.out_of_date {
+    color: #fff;
+    background: grey;
+}

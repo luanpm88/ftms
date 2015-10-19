@@ -238,9 +238,9 @@ class Seminar < ActiveRecord::Base
     header = spreadsheet.row(1)
     (2..spreadsheet.last_row).each do |i|
       row = Hash[[header, spreadsheet.row(i)].transpose]
-      item = {name: row["Full name"], company: row["Company"], mobile: row["Mobile"], email: row["Email"], present: row["Status"]}
+      item = {name: row["Fullname"], company: row["Company"], mobile: row["Mobile"], email: row["Email"], present: row["Status"], background: "University: #{row["University"]}\nMajor: #{row["Major"]}\nYear: #{row["Year"]}"}
       item[:contacts] = similar_contacts({email: item[:email], name: item[:name], mobile: item[:mobile]})
-      list << item
+      list << item if row["Fullname"].present?
     end
     
     return list
@@ -287,7 +287,7 @@ class Seminar < ActiveRecord::Base
   def similar_contacts(data={})
     result = []
     if data[:email].present?
-      result += Contact.main_contacts.where("LOWER(email) = ? OR LOWER(name) = ? OR LOWER(mobile) = ?", data[:email].strip.downcase, data[:name].strip.downcase, Contact.format_mobile(data[:mobile]))
+      result += Contact.main_contacts.where("LOWER(email) = ? OR LOWER(name) = ? OR LOWER(mobile) = ?", data[:email].strip.downcase, data[:name].to_s.strip.downcase, Contact.format_mobile(data[:mobile].to_s))
     end
     
     return result

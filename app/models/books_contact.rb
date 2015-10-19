@@ -151,7 +151,7 @@ class BooksContact < ActiveRecord::Base
     
     if params["subjects"].present?
       @records = @records.includes(:book => :subject)
-                          .where(subjects: {subject_id: params["subjects"].split(",")})
+                          .where(subjects: {id: params["subjects"].split(",")})
     end
     
     if params["student"].present?
@@ -241,7 +241,7 @@ class BooksContact < ActiveRecord::Base
       item = [
               "<div class=\"checkbox check-default\"><input name=\"ids[]\" id=\"checkbox#{item.id}\" type=\"checkbox\" value=\"#{item.id}\"><label for=\"checkbox#{item.id}\"></label></div>",
               item.contact.contact_link,
-              item.display_intake+item.book.display_name,
+              item.book.display_name,
               '<div class="text-center">'+ item.delivered_count.to_s + "/" + item.quantity.to_s+"</div>",
               '<div class="text-center">'+ item.display_upfront+"</div>",
               '<div class="text-center">'+ item.display_delivery_status+"</div>",
@@ -307,8 +307,8 @@ class BooksContact < ActiveRecord::Base
   #
   #end
   
-  def display_intake
-    upfront ? "Upfront-" : (intake.nil? ? "" : intake.strftime("%b-%Y")+"-")
+  def upfont_title
+    upfront ? "Upfront-" : ""
   end
   
   def display_delivery_status    

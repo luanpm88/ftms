@@ -285,7 +285,9 @@ CREATE TABLE books (
     course_type_id integer,
     subject_id integer,
     stock_type_id integer,
-    cache_search text
+    cache_search text,
+    valid_from timestamp without time zone,
+    valid_to timestamp without time zone
 );
 
 
@@ -2036,7 +2038,8 @@ CREATE TABLE phrases (
     updated_at timestamp without time zone NOT NULL,
     status text,
     parent_id integer,
-    annoucing_user_ids text
+    annoucing_user_ids text,
+    course_type_id integer
 );
 
 
@@ -3982,4 +3985,10 @@ INSERT INTO schema_migrations (version) VALUES ('20151008032914');
 INSERT INTO schema_migrations (version) VALUES ('20151008033152');
 
 INSERT INTO schema_migrations (version) VALUES ('20151014034211');
+
+INSERT INTO schema_migrations (version) VALUES ('20151019055111');
+
+INSERT INTO schema_migrations (version) VALUES ('20151019055124');
+
+INSERT INTO schema_migrations (version) VALUES ('20151019084913');
 

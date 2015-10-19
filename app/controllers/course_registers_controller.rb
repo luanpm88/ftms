@@ -278,8 +278,9 @@ class CourseRegistersController < ApplicationController
         if !bc.delivered?
           if row[:list][bc.contact_id.to_s+"_"+bc.book_id.to_s].nil?
             row[:list][bc.contact_id.to_s+"_"+bc.book_id.to_s] = bc
+            row[:list][bc.contact_id.to_s+"_"+bc.book_id.to_s].quantity = bc.remain
           else
-            row[:list][bc.contact_id.to_s+"_"+bc.book_id.to_s].quantity += bc.quantity
+            row[:list][bc.contact_id.to_s+"_"+bc.book_id.to_s].quantity += bc.remain
           end         
         end
       end

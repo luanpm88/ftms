@@ -26,17 +26,22 @@ class PhrasesController < ApplicationController
   # GET /phrases/new
   def new
     @phrase = Phrase.new
+    
+    @subjects = Subject.active_subjects
+    @subjects = @subjects.includes(:course_types).where(course_types: {id: @phrase.course_type_id}).order("subjects.name") if @phrase.course_type_id.present?
   end
 
   # GET /phrases/1/edit
   def edit
+    @subjects = Subject.active_subjects
+    @subjects = @subjects.includes(:course_types).where(course_types: {id: @phrase.course_type_id}).order("subjects.name") if @phrase.course_type_id.present?
   end
 
   # POST /phrases
   # POST /phrases.json
   def create    
     s_params = phrase_params
-    s_params[:subject_ids] = phrase_params[:subject_ids][0].split(",") if phrase_params[:subject_ids].present?
+    #s_params[:subject_ids] = phrase_params[:subject_ids][0].split(",") if phrase_params[:subject_ids].present?
     
     @phrase = Phrase.new(s_params)
     @phrase.user = current_user
@@ -59,7 +64,7 @@ class PhrasesController < ApplicationController
   # PATCH/PUT /phrases/1.json
   def update
     s_params = phrase_params
-    s_params[:subject_ids] = phrase_params[:subject_ids][0].split(",") if phrase_params[:subject_ids].present?
+    #s_params[:subject_ids] = phrase_params[:subject_ids][0].split(",") if phrase_params[:subject_ids].present?
     
     respond_to do |format|
       if @phrase.update(s_params)
@@ -177,6 +182,6 @@ class PhrasesController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def phrase_params
-      params.require(:phrase).permit(:name, :description, :subject_ids => [])
+      params.require(:phrase).permit(:course_type_id, :course_type_id, :name, :description, :subject_ids => [])
     end
 end

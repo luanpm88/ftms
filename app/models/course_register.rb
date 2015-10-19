@@ -128,7 +128,7 @@ class CourseRegister < ActiveRecord::Base
         end
         
         cc.upfront = row[1]["upfront"]
-        cc.intake = Date.new row[1]["intake(1i)"].to_i, row[1]["intake(2i)"].to_i
+        #cc.intake = Date.new row[1]["intake(1i)"].to_i, row[1]["intake(2i)"].to_i
       end
     end
   end

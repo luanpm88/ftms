@@ -141,8 +141,16 @@ class SeminarsController < ApplicationController
     if params[:rows].present?
       params[:rows].each do |row|
         if row[1]["check"].present? && row[1]["check"] == "true"        
-          contact = Contact.new(is_individual: true, name: row[1]["name"], email: row[1]["email"], mobile: row[1]["mobile"])
-          contact.account_manager = current_user
+          contact = Contact.new(is_individual: true, name: row[1]["name"], email: row[1]["email"], mobile: row[1]["mobile"], note: row[1]["note"])
+          contact.user = current_user
+          if row[1]["present"] == "true"
+            contact.contact_types << ContactType.student
+          else
+            contact.contact_types << ContactType.inquiry
+          end          
+          contact.account_manager_id = params[:user].to_i if params[:user].present?
+          contact.preferred_mailing = "other"
+          
           contact.save
           
           contact.add_status("new_pending")
@@ -155,7 +163,7 @@ class SeminarsController < ApplicationController
       end
     end
     
-    # save row new data
+    # save row old data
     if params[:contacts].present?
       params[:contacts].each do |row|
         if row[1]["check"].present? && row[1]["check"] == "true"  && row[1]["id"].present?

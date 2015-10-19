@@ -96,6 +96,8 @@ class SubjectsController < ApplicationController
   end
   
   def ajax_select_box
+    @subjects = Subject.active_subjects
+    @subjects = @subjects.includes(:course_types).where(course_types: {id: params[:program_id].split(",")}).order("subjects.name") if params[:program_id].present? 
     render layout: nil
   end
   

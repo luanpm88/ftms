@@ -46,6 +46,7 @@ Hkerp::Application.routes.draw do
   resources :activities do
     collection do
       get :datatable
+      get :approve_delete
     end
   end
   resources :payment_records do

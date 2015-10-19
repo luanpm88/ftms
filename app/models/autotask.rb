@@ -13,11 +13,11 @@ class Autotask < ActiveRecord::Base
   
   def process    
       case self.name
-      when "order_debt_outdate"
-          orders = Order.where(payment_status_name: "debt")    
+      when "book_out_of_date"
+          books = Book.main_books
           count = 0
-          orders.each do |o|
-            if o.check_debt_outdate
+          books.each do |o|
+            if o.check_out_of_date
               count += 1
             end
           end          

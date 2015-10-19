@@ -40,15 +40,19 @@
 													  </div>
 												  </div>
 											  </div>
-										</div>								  
-										<div class="col-md-3">
-											<h4>Program</h4>							
-											<%= select_tag 'course_types[]', options_for_select(CourseType.active_course_types.collect{ |u| [u.short_name, u.id] }), class: "modern_select width100", multiple: "multiple" %>
-										</div>							
-										<div class="col-md-3">
-											<h4>Paper</h4>							
-											<%= select_tag 'subjects[]', options_for_select(Subject.active_subjects.collect{ |u| [u.name, u.id] }), class: "modern_select width100", multiple: "multiple" %>
-										</div>									  
+										</div>
+										<div class="program_paper_select_box">
+											<div class="col-md-3">
+												<h4>Program</h4>							
+												<%= select_tag 'course_types[]', options_for_select(CourseType.active_course_types.collect{ |u| [u.short_name, u.id] }), class: "modern_select width100 program_select", multiple: "multiple", input_name: "subjects[]" %>
+											</div>							
+											<div class="col-md-3">
+												<h4>Paper</h4>
+												<span class="paper_select_box">
+													<%= select_tag 'subjects[]', options_for_select(Subject.active_subjects.collect{ |u| [u.name, u.id] }), class: "modern_select width100", multiple: "multiple" %>
+												</span>
+											</div>
+										</div>
 										<div class="col-md-3 student-course-register-filter">
 											<h4>Student</h4>                        
 											<div class="lecturers-filter-box">

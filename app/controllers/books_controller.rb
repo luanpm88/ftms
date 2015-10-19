@@ -31,10 +31,14 @@ class BooksController < ApplicationController
       @book.parent = Book.find(params[:parent_id])
     end
     
+    @subjects = Subject.active_subjects
+    
   end
 
   # GET /books/1/edit
   def edit
+    @subjects = Subject.active_subjects
+    @subjects = @subjects.includes(:course_types).where(course_types: {id: @book.course_type_id}).order("subjects.name") if @book.course_type_id.present?
   end
 
   # POST /books
@@ -50,6 +54,8 @@ class BooksController < ApplicationController
         
         @book.update_status("create", current_user)        
         @book.save_draft(current_user)
+        
+        @book.check_out_of_date
         
         format.html { redirect_to params[:tab_page].present? ? "/home/close_tab" : @book, notice: 'Book was successfully created.' }
         format.json { render action: 'show', status: :created, location: @book }
@@ -72,6 +78,8 @@ class BooksController < ApplicationController
         @book.save_draft(current_user)
         
         @book.update_cache_search
+        
+        @book.check_out_of_date
         
         format.html { redirect_to params[:tab_page].present? ? "/home/close_tab" : @book, notice: 'Book was successfully updated.' }
         format.json { head :no_content }
@@ -233,13 +241,17 @@ class BooksController < ApplicationController
   def stock_form_list
     records = []
     
-    @intake = Time.now.beginning_of_month
+    # @intake = Time.now.beginning_of_month
     
     if params[:stock_type_id].present? || params[:subject_id].present? || params[:subject_id].present?
       records = Book.active_books.order("name")
       records = records.where(stock_type_id: params[:stock_type_id]) if params[:stock_type_id].present?
       records = records.where(course_type_id: params[:program_id]) if params[:program_id].present?
       records = records.where(subject_id: params[:subject_id]) if params[:subject_id].present?
+      #records = records.where("valid_from <= ?", Time.now).where("valid_to >= ?", Time.now)
+      records = records.where("valid_from >= ?", params[:valid_from].to_datetime.beginning_of_day) if params[:valid_from].present?
+      records = records.where("valid_to <= ?", params[:valid_to].to_datetime.end_of_day) if params[:valid_to].present?
+      
     end
     
     @books = []
@@ -296,8 +308,9 @@ class BooksController < ApplicationController
         if !bc.delivered?
           if row[:list][bc.contact_id.to_s+"_"+bc.book_id.to_s].nil?
             row[:list][bc.contact_id.to_s+"_"+bc.book_id.to_s] = bc
+            row[:list][bc.contact_id.to_s+"_"+bc.book_id.to_s].quantity = bc.remain
           else
-            row[:list][bc.contact_id.to_s+"_"+bc.book_id.to_s].quantity += bc.quantity
+            row[:list][bc.contact_id.to_s+"_"+bc.book_id.to_s].quantity += bc.remain
           end         
         end
       end
@@ -429,6 +442,6 @@ class BooksController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def book_params
-      params.require(:book).permit(:stock_type_id, :subject_id, :course_type_id, :subject_ids, :course_type_ids, :name, :description, :user_id, :image, :pirce, :publisher, :parent_id)
+      params.require(:book).permit(:valid_from, :valid_to, :stock_type_id, :subject_id, :course_type_id, :subject_ids, :course_type_ids, :name, :description, :user_id, :image, :pirce, :publisher, :parent_id)
     end
 end
