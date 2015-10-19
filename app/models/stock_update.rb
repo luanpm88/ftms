@@ -46,10 +46,10 @@ class StockUpdate < ActiveRecord::Base
     end
     
     if params["created_from"].present?      
-      @records = @records.where("created_date >= ?", params["created_from"].to_date.beginning_of_day)
+      @records = @records.where("created_at >= ?", params["created_from"].to_date.beginning_of_day)
     end
     if params["created_to"].present?      
-      @records = @records.where("created_date <= ?", params["created_to"].to_date.end_of_day)
+      @records = @records.where("created_at <= ?", params["created_to"].to_date.end_of_day)
     end
     
     
@@ -79,7 +79,7 @@ class StockUpdate < ActiveRecord::Base
               item.book.book_link,
               '<div class="text-center">'+item.type_name+"</div>",
               '<div class="text-center">'+item.quantity.to_s+"</div>",
-              '<div class="text-center">'+item.created_date.strftime("%d-%b-%Y")+"</div>",
+              '<div class="text-center">'+item.created_at.strftime("%d-%b-%Y")+"</div>",
               '<div class="text-center">'+item.user.staff_col+"</div>",
             ]
       data << item

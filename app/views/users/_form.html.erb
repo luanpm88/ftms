@@ -144,16 +144,99 @@
 								<span class="help"></span>
 								<div class="input-with-icon  right">                                       
 									<i class=""></i>
-								   <% Role.all.each do |role| %>
+									
+									
+									
+									
+								   <div class="input-with-icon  right">                                       
+									<i class=""></i>
+									
+										<div class="row">
+											 <div class="col-md-12">
+												  <div class="row-fluid user-role user">
+													<div class="checkbox check-info">
+													  <input type="checkbox" checked="checked" value="2" id="role_2" name="user[role_ids][]">
+													  <label for="role_2">User</label>
+													</div>
+												  </div>
+											 </div>
+										</div>
+										<div class="row">
+											 <div class="col-md-12">
+												  <div class="row-fluid user-role admin">
+													<div class="checkbox check-info">
+													  <input type="checkbox" value="1" id="role_1" name="user[role_ids][]">
+													  <label for="role_1">Admin</label>
+													</div>
+												  </div>
+											 </div>
+										</div>
+										<hr style="margin-top: 0" />
+										<div class="row">
+											 <div class="col-md-12">
+												  <div class="row-fluid user-role manager">
+													<div class="checkbox check-info">
+													  <input type="checkbox" <%= 'checked="checked"'.html_safe if @user.has_role?("manager") %> value="3" id="role_3" name="user[role_ids][]">
+													  <label for="role_3">Manager</label>
+													</div>
+												  </div>
+											 </div>
+										</div>
+										<hr style="margin-top: 0" />
+										<div class="row">											 
+											 <div class="col-md-5">
+												  <div class="row-fluid user-role education_consultant">
+													<div class="checkbox check-info">
+													  <input type="checkbox" <%= 'checked="checked"'.html_safe if @user.has_role?("education_consultant") %> value="5" id="role_5" name="user[role_ids][]">
+													  <label for="role_5">Education consultant</label>
+													</div>
+												  </div>
+											 </div>
+											 <div class="col-md-3">
+												  <div class="row-fluid user-role accountant">
+													<div class="checkbox check-info">
+													  <input type="checkbox" <%= 'checked="checked"'.html_safe if @user.has_role?("accountant") %> value="6" id="role_6" name="user[role_ids][]">
+													  <label for="role_6">Accountant</label>
+													</div>
+												  </div>
+											 </div>
+											 <div class="col-md-4">
+												  <div class="row-fluid user-role storage_manager">
+													<div class="checkbox check-info">
+													  <input type="checkbox" <%= 'checked="checked"'.html_safe if @user.has_role?("storage_manager") %> value="7" id="role_7" name="user[role_ids][]">
+													  <label for="role_7">Storage manager</label>
+													</div>
+												  </div>
+											 </div>
+										</div>
+										<hr style="margin-top: 0" />
+										<div class="row">
+											 <div class="col-md-12">												
+												  <div class="row-fluid user-role sales_admin">
+													<div class="checkbox check-info">
+													  <input type="checkbox" <%= 'checked="checked"'.html_safe if @user.has_role?("sales_admin") %> value="4" id="role_4" name="user[role_ids][]">
+													  <label for="role_4">Sales admin</label>
+													</div>
+												  </div>
+											 </div>
+										</div>
+								</div>
+									
+									
+									
+									
+									
+									
+								   <!--<% Role.all.each do |role| %>
 										<% if current_user.has_role?("admin") || (current_user.has_role?("manager") && !["admin","manager"].include?(role.name)) %>
-											 <div class="row-fluid">
+											 <div class="row-fluid user-role <%= role.name %>">
 											   <div class="checkbox check-info">
 												 <%= check_box_tag 'user[role_ids][]', role.id, @user.roles.include?(role) || (@user.id.nil? && role.name == "user"), :id => "role_#{role.id}" %>
 												 <%= f.label role.name, :for => "role_#{role.id}" %>
 											   </div>
 											 </div>
 										<% end %>
-								   <% end %>
+								   <% end %>-->
 								</div>
 							  </div>
 						 </div>

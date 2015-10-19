@@ -12,6 +12,10 @@
 				
 			<%= form_tag("", {class: "listing_form", method: "post", target: "_blank"}) do |f| %>
 				
+				<div class="top_buttons">
+							<%= link_to 'Merge Contacts', merge_contacts_contacts_path(tab_page: 1),title: "Find Related Contacts", :class => 'btn btn-white btn-cons tab_page pull-right' %>
+							<%= link_to 'New Contact', new_contact_path(tab_page: 1),title: "New Contact", psrc: contacts_url(tab_page: 1), :class => 'btn btn-primary btn-cons tab_page pull-right' %>
+				</div>
 				
 				<%= render "filters" %>
 				
@@ -33,8 +37,7 @@
 								<label for="checkbox_all_page">Select All Pages</label>
 							</div>
 							
-							<%= link_to 'Merge Contacts', merge_contacts_contacts_path(tab_page: 1),title: "Find Related Contacts", :class => 'btn btn-white btn-cons tab_page pull-right' %>
-							<%= link_to 'New Contact', new_contact_path(tab_page: 1),title: "New Contact", psrc: contacts_url(tab_page: 1), :class => 'btn btn-primary btn-cons tab_page pull-right' %>
+							
 							
 						</div>
                         <div class="grid simple">

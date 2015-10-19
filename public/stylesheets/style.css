@@ -8509,3 +8509,14 @@ h5.list_title {
     font-size: 20px;
     margin: 13px;
 }
+.base_box {
+    background: #f5f5f5 none repeat scroll 0 0;
+    padding: 10px 10px 0;
+}
+.top_buttons {
+    float: right;
+    margin-top: -50px;
+}
+.user-role.user {
+    display: none;
+}

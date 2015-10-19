@@ -326,6 +326,10 @@ class Contact < ActiveRecord::Base
       @records = @records.includes(:old_link_students).where(old_link_students: {subject_id: params["old_course"].split(",")})
     end
     
+    if params["online_id"].present?      
+      @records = @records.where("LOWER(contacts.bases) LIKE ?", "%#{params["online_id"].strip.downcase}%")
+    end
+    
     if !params[:status].present? || params[:status] != "deleted"
       @records = @records.where("contacts.status NOT LIKE ?","%[deleted]%")
     end

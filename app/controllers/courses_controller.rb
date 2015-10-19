@@ -48,6 +48,7 @@ class CoursesController < ApplicationController
     @course.user = current_user    
     @course.update_program_paper(params[:program_paper])
     @course.intake = "1990-01-01".to_date if @course.upfront
+    @course.lecturer = nil if @course.upfront
     
     respond_to do |format|
       if @course.save
@@ -72,6 +73,7 @@ class CoursesController < ApplicationController
     @course.assign_attributes(course_params)
     @course.update_program_paper(params[:program_paper])
     @course.intake = "1990-01-01".to_date if @course.upfront
+    @course.lecturer = nil if @course.upfront
     
     respond_to do |format|
       if @course.save        

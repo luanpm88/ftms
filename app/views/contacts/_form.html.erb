@@ -169,7 +169,7 @@
 																	  </div>
 																	  
 																	 
-																	 <br style="clear:both" />
+																	 
 																</div>
 														   </div>										
 													  </div>
@@ -190,61 +190,146 @@
 																 </div>
 													  </div>
 												 </div>
+												 
+													  <div class="row">
+															<div class="col-md-12">													   
+																<div class="form-group">
+																	 <label class="form-label"><%= f.label :education_consultant %></label>
+																	 <span class="help">(required)</span>
+																	 <%= render "field_history", drafts: @contact.field_history("account_manager_id"), type: "account_manager_id" %>
+																	 <div class="input-with-icon right">                                       
+																		  <i class=""></i>
+																		  <div class="input-with_add_but_">																			   
+																			   <input style="width:100%;margin-bottom: 5px;" name="contact[account_manager_id]" data="<%= users_path(format: "json") %>" class="select2-ajax-users required" value="<%= @contact.account_manager_id %>" text="<%= @contact.account_manager.name if !@contact.account_manager.nil? %>" />
+																		  </div>
+																	 </div>
+																</div>			
+														   </div>
+													   </div>
 													  
-												 <div class="row">
-													  <div class="col-md-12">													   
-														   <div class="form-group">
-																<label class="form-label"><%= f.label :address %></label>
-																<span class="help">(required)</span>
-																<%= render "field_history", drafts: @contact.field_history("address"), type: "address" %>
-																
-																<div class="input-with-icon  right">                                       
-																		<i class=""></i>
-																		<%= f.text_field :address, :class => "form-control required" %>
-																</div>
-														   </div>							
-													  </div>
-													  <!--<div class="col-md-6">
-														   <div class="form-group">
-																<label class="form-label"><%= f.label :area %></label>
-																<span class="help">(required)</span>
-																<div class="input-with-icon  right">                                       
-																	 <i class=""></i>
-																	 <input style="width:100%;margin-bottom: 5px;" name="contact[city_id]" data="<%= cities_path(format: "json") %>" class="select2-ajax-states required" value="<%= @contact.city_id %>" text="<%= @contact.city.name_with_state if !@contact.city.nil? %>" />
-																</div>
-														   </div>							
-													  </div>-->
-												 </div>
-													  
-												 <div class="row">
-													  <div class="col-md-6">													   
-														   <div class="form-group">
-																<label class="form-label"><%= f.label :email %></label>
-																<span class="help personal-box">(required)</span>
-																<%= render "field_history", drafts: @contact.field_history("email"), type: "email" %>
-																
-																<div class="input-with-iconx right">                                       
-																		<i class=""></i>
-																		<%= f.text_field :email, rel: related_info_box_contacts_path(type: "email", id: @contact.id), :class => "form-control required email related_info_input" %>
-																		<label class="related_info_msg" style="display: none">Has related contact(s)!</label>
-																		<div class="related_info_box" style="display: none">
-																		   
+													  <div class="personal-box">
+															<strong>Online #ID</strong>
+															<hr style="margin: 0" />
+															<%= render "field_history", drafts: @contact.field_history("bases"), type: "bases" %>
+															
+															<% num = 0 %>
+															<% @contact.base_items.each do |base| %>
+															
+																  <div class="base_box">
+																		<div class="row " style="clear: both">
+																			  
+																			  <div class="col-md-6">													   
+																				  <div class="form-group">
+																					   <label class="form-label"><label>Program #<%= num+1 %></label></label>
+																					   <span class="help"></span>
+																					   <div class="input-with-icon right">
+																							   <i class=""></i>
+																							   <div class="input-with_add_but">
+																									  <%= link_to '<i class="icon-plus"></i>'.html_safe, new_course_type_path(tab_page: 1), title: "New Course Type", :class => 'btn btn-sm btn-small btn-white tab_page' %>
+																									  <input style="width:100%;margin-bottom: 5px;" name="bases[<%= num %>][course_type_id]" data="<%= course_types_path(format: "json") %>" class="select2-ajax-bases main_input" value="<%= base["course_type"].id %>" text="<%= base["course_type"].short_name %>" /> 
+																							   </div>
+																						</div>
+																				  </div>								
+																			 </div>
+																			  <div class="col-md-6">
+																				  <div class="form-group">
+																					   <label class="form-label"><label>Status #<%= num+1 %></label></label>
+																					   <span class="help"></span>
+																					   <div class="input-with-icon  right">                                       
+																							   <i class=""></i>
+																							   <%= select_tag "bases[#{num}][status]", options_for_select(Contact.base_status_options,base["status"]), class: "modern_select width100" %>
+																					   </div>
+																				  </div>								
+																			 </div>
+																			 
 																		</div>
-																</div>
-														   </div>						
+																		 <div class="row">
+																			  <div class="col-md-6">													   
+																				  <div class="form-group">
+																					   <label class="form-label"><label>ID #<%= num+1 %></label></label>
+																					   <span class="help"></span>
+																					   <div class="input-with-icon  right">                                       
+																							   <i class=""></i>
+																							   <%= text_field_tag "bases[#{num}][name]", base["name"], :class => "form-control" %>
+																					   </div>
+																				  </div>								
+																			 </div>
+																			 <div class="col-md-6">
+																				  <div class="form-group">
+																					   <label class="form-label"><label>Password #<%= num+1 %></label></label>
+																					   <span class="help"></span>
+																					   <div class="input-with-icon  right">                                       
+																							   <i class=""></i>
+																							   <%= text_field_tag "bases[#{num}][password]", base["password"], :class => "form-control" %>
+																					   </div>
+																				  </div>								
+																			 </div>
+																			 
+																		</div>
+																		 <hr style="margin: 0" />
+																  </div>
+															
+																  <% num = num+1 %>
+															<% end %>
+															
+															<% (num..9).each do |number| %>
+																  <div class="base_box" <%= "style='display:none'".html_safe if number > num %>>
+																		<div class="row">
+																			  <div class="col-md-6">													   
+																				  <div class="form-group">
+																					   <label class="form-label"><label>Program #<%= number+1 %></label></label>
+																					   <span class="help"></span>
+																					   <div class="input-with-icon right">
+																							   <i class=""></i>
+																							   <div class="input-with_add_but">
+																									  <%= link_to '<i class="icon-plus"></i>'.html_safe, new_course_type_path(tab_page: 1), title: "New Course Type", :class => 'btn btn-sm btn-small btn-white tab_page' %>
+																									  <input style="width:100%;margin-bottom: 5px;" name="bases[<%= number %>][course_type_id]" data="<%= course_types_path(format: "json") %>" class="select2-ajax-bases main_input" /> 
+																							   </div>
+																						</div>
+																				  </div>								
+																			 </div>
+																			 <div class="col-md-6">
+																				  <div class="form-group">
+																					   <label class="form-label"><label>Status #<%= num+1 %></label></label>
+																					   <span class="help"></span>
+																					   <div class="input-with-icon  right">                                       
+																							   <i class=""></i>
+																							   <%= select_tag "bases[#{num}][status]", options_for_select(Contact.base_status_options), class: "modern_select width100" %>
+																					   </div>
+																				  </div>								
+																			 </div>
+																		</div>
+																		 <div class="row">
+																			  <div class="col-md-6">													   
+																				  <div class="form-group">
+																					   <label class="form-label"><label>ID #<%= number+1 %></label></label>
+																					   <span class="help"></span>
+																					   <div class="input-with-icon  right">                                       
+																							   <i class=""></i>
+																							   <%= text_field_tag "bases[#{number}][name]", "", :class => "form-control" %>
+																					   </div>
+																				  </div>								
+																			 </div>
+																			 <div class="col-md-6">
+																				  <div class="form-group">
+																					   <label class="form-label"><label>Password #<%= number+1 %></label></label>
+																					   <span class="help"></span>
+																					   <div class="input-with-icon  right">                                       
+																							   <i class=""></i>
+																							   <%= text_field_tag "bases[#{number}][password]", "", :class => "form-control" %>
+																					   </div>
+																				  </div>								
+																			 </div>
+																			 
+																		</div>
+																		 <hr style="margin: 0" />
+																  </div>
+																	 
+												
+															<% end %>
 													  </div>
-													  <div class="col-md-6">
-														   <div class="form-group">
-																<label class="form-label"><%= f.label :email_2 %></label>
-																<%= render "field_history", drafts: @contact.field_history("email_2"), type: "email_2" %>
-																<span class="help"></span>
-																<div class="input-with-icon  right">                                       
-																		<i class=""></i>
-																		<%= f.text_field :email_2, :class => "form-control email" %>
-																</div>
-														   </div>					
-													  </div>
-												 </div>
+													  
+												<br />
 												 
 												 <div class="form-group">
 													  <label class="form-label">Tag</label>
@@ -303,6 +388,66 @@
 																 </div>										
 														   </div>
 													  </div>
+											
+											
+											
+												<div class="row">
+													  <div class="col-md-12">													   
+														   <div class="form-group">
+																<label class="form-label"><%= f.label :address %></label>
+																<span class="help">(required)</span>
+																<%= render "field_history", drafts: @contact.field_history("address"), type: "address" %>
+																
+																<div class="input-with-icon  right">                                       
+																		<i class=""></i>
+																		<%= f.text_field :address, :class => "form-control required" %>
+																</div>
+														   </div>							
+													  </div>
+													  <!--<div class="col-md-6">
+														   <div class="form-group">
+																<label class="form-label"><%= f.label :area %></label>
+																<span class="help">(required)</span>
+																<div class="input-with-icon  right">                                       
+																	 <i class=""></i>
+																	 <input style="width:100%;margin-bottom: 5px;" name="contact[city_id]" data="<%= cities_path(format: "json") %>" class="select2-ajax-states required" value="<%= @contact.city_id %>" text="<%= @contact.city.name_with_state if !@contact.city.nil? %>" />
+																</div>
+														   </div>							
+													  </div>-->
+												 </div>
+													  
+												 <div class="row">
+													  <div class="col-md-6">													   
+														   <div class="form-group">
+																<label class="form-label"><%= f.label :email %></label>
+																<span class="help personal-box"></span>
+																<%= render "field_history", drafts: @contact.field_history("email"), type: "email" %>
+																
+																<div class="input-with-iconx right">                                       
+																		<i class=""></i>
+																		<%= f.text_field :email, rel: related_info_box_contacts_path(type: "email", id: @contact.id), :class => "form-control email related_info_input" %>
+																		<label class="related_info_msg" style="display: none">Has related contact(s)!</label>
+																		<div class="related_info_box" style="display: none">
+																		   
+																		</div>
+																</div>
+														   </div>						
+													  </div>
+													  <div class="col-md-6">
+														   <div class="form-group">
+																<label class="form-label"><%= f.label :email_2 %></label>
+																<%= render "field_history", drafts: @contact.field_history("email_2"), type: "email_2" %>
+																<span class="help"></span>
+																<div class="input-with-icon  right">                                       
+																		<i class=""></i>
+																		<%= f.text_field :email_2, :class => "form-control email" %>
+																</div>
+														   </div>					
+													  </div>
+												 </div>
+											
+											
+											
 													  
 													  <!--<div class="row">
 														   <div class="col-md-6">													   
@@ -333,12 +478,12 @@
 														   <div class="col-md-6">													   
 																<div class="form-group">
 																	 <label class="form-label"><%= f.label :mobile %></label>
-																	 <span class="help">(required)</span>
+																	 <span class="help"></span>
 																	 <%= render "field_history", drafts: @contact.field_history("mobile"), type: "mobile" %>
 																	 
 																	 <div class="input-with-iconx  right">                                       
 																		  <i class=""></i>
-																		  <%= f.text_field :mobile, rel: related_info_box_contacts_path(type: "mobile", id: @contact.id), :class => "form-control required related_info_input" %>
+																		  <%= f.text_field :mobile, rel: related_info_box_contacts_path(type: "mobile", id: @contact.id), :class => "form-control related_info_input" %>
 																		   <label class="related_info_msg" style="display: none">Has related contact(s)!</label>
 																		   <div class="related_info_box" style="display: none">
 																			  
@@ -462,128 +607,7 @@
 															</div>
 													  </div>
 													   
-													   <div class="row">
-															<div class="col-md-12">													   
-																<div class="form-group">
-																	 <label class="form-label"><%= f.label :education_consultant %></label>
-																	 <span class="help">(required)</span>
-																	 <%= render "field_history", drafts: @contact.field_history("account_manager_id"), type: "account_manager_id" %>
-																	 <div class="input-with-icon right">                                       
-																		  <i class=""></i>
-																		  <div class="input-with_add_but_">																			   
-																			   <input style="width:100%;margin-bottom: 5px;" name="contact[account_manager_id]" data="<%= users_path(format: "json") %>" class="select2-ajax-users required" value="<%= @contact.account_manager_id %>" text="<%= @contact.account_manager.name if !@contact.account_manager.nil? %>" />
-																		  </div>
-																	 </div>
-																</div>			
-														   </div>
-													   </div>
 													  
-													  <%= render "field_history", drafts: @contact.field_history("bases"), type: "bases" %>
-													  
-													  <% num = 0 %>
-													  <% @contact.base_items.each do |base| %>
-													  
-															
-															<div class="row base_box" style="clear: both">
-																  <div class="col-md-3">													   
-																	  <div class="form-group">
-																		   <label class="form-label"><label>Program #<%= num+1 %></label></label>
-																		   <span class="help"></span>
-																		   <div class="input-with-icon right">
-																				   <i class=""></i>
-																				   <div class="input-with_add_but">
-																						  <%= link_to '<i class="icon-plus"></i>'.html_safe, new_course_type_path(tab_page: 1), title: "New Course Type", :class => 'btn btn-sm btn-small btn-white tab_page' %>
-																						  <input style="width:100%;margin-bottom: 5px;" name="bases[<%= num %>][course_type_id]" data="<%= course_types_path(format: "json") %>" class="select2-ajax-bases main_input" value="<%= base["course_type"].id %>" text="<%= base["course_type"].short_name %>" /> 
-																				   </div>
-																			</div>
-																	  </div>								
-																 </div>
-																 <div class="col-md-3">													   
-																	  <div class="form-group">
-																		   <label class="form-label"><label>ID #<%= num+1 %></label></label>
-																		   <span class="help"></span>
-																		   <div class="input-with-icon  right">                                       
-																				   <i class=""></i>
-																				   <%= text_field_tag "bases[#{num}][name]", base["name"], :class => "form-control" %>
-																		   </div>
-																	  </div>								
-																 </div>
-																 <div class="col-md-3">
-																	  <div class="form-group">
-																		   <label class="form-label"><label>Password #<%= num+1 %></label></label>
-																		   <span class="help"></span>
-																		   <div class="input-with-icon  right">                                       
-																				   <i class=""></i>
-																				   <%= text_field_tag "bases[#{num}][password]", base["password"], :class => "form-control" %>
-																		   </div>
-																	  </div>								
-																 </div>
-																 <div class="col-md-3">
-																	  <div class="form-group">
-																		   <label class="form-label"><label>Status #<%= num+1 %></label></label>
-																		   <span class="help"></span>
-																		   <div class="input-with-icon  right">                                       
-																				   <i class=""></i>
-																				   <%= select_tag "bases[#{num}][status]", options_for_select(Contact.base_status_options,base["status"]), class: "modern_select width100" %>
-																		   </div>
-																	  </div>								
-																 </div>
-															</div>
-													  
-													  
-															<% num = num+1 %>
-													  <% end %>
-													  
-													  <% (num..9).each do |number| %>
-															<div class="row base_box" <%= "style='display:none'".html_safe if number > num %>>
-																  <div class="col-md-3">													   
-																	  <div class="form-group">
-																		   <label class="form-label"><label>Program #<%= number+1 %></label></label>
-																		   <span class="help"></span>
-																		   <div class="input-with-icon right">
-																				   <i class=""></i>
-																				   <div class="input-with_add_but">
-																						  <%= link_to '<i class="icon-plus"></i>'.html_safe, new_course_type_path(tab_page: 1), title: "New Course Type", :class => 'btn btn-sm btn-small btn-white tab_page' %>
-																						  <input style="width:100%;margin-bottom: 5px;" name="bases[<%= number %>][course_type_id]" data="<%= course_types_path(format: "json") %>" class="select2-ajax-bases main_input" /> 
-																				   </div>
-																			</div>
-																	  </div>								
-																 </div>
-																 <div class="col-md-3">													   
-																	  <div class="form-group">
-																		   <label class="form-label"><label>ID #<%= number+1 %></label></label>
-																		   <span class="help"></span>
-																		   <div class="input-with-icon  right">                                       
-																				   <i class=""></i>
-																				   <%= text_field_tag "bases[#{number}][name]", "", :class => "form-control" %>
-																		   </div>
-																	  </div>								
-																 </div>
-																 <div class="col-md-3">
-																	  <div class="form-group">
-																		   <label class="form-label"><label>Password #<%= number+1 %></label></label>
-																		   <span class="help"></span>
-																		   <div class="input-with-icon  right">                                       
-																				   <i class=""></i>
-																				   <%= text_field_tag "bases[#{number}][password]", "", :class => "form-control" %>
-																		   </div>
-																	  </div>								
-																 </div>
-																 <div class="col-md-3">
-																	  <div class="form-group">
-																		   <label class="form-label"><label>Status #<%= num+1 %></label></label>
-																		   <span class="help"></span>
-																		   <div class="input-with-icon  right">                                       
-																				   <i class=""></i>
-																				   <%= select_tag "bases[#{num}][status]", options_for_select(Contact.base_status_options), class: "modern_select width100" %>
-																		   </div>
-																	  </div>								
-																 </div>
-															</div>
-															
-															   
-										  
-													  <% end %>
 													  
 															
 															
@@ -594,7 +618,60 @@
 													  
 													  <h4><span class="semi-bold">Company Infomation</span></h4>
 													  
+													  <div class="row">
+													  <div class="col-md-12">													   
+														   <div class="form-group">
+																<label class="form-label"><%= f.label :address %></label>
+																<span class="help">(required)</span>
+																<%= render "field_history", drafts: @contact.field_history("address"), type: "address" %>
+																
+																<div class="input-with-icon  right">                                       
+																		<i class=""></i>
+																		<%= f.text_field :address, :class => "form-control required" %>
+																</div>
+														   </div>							
+													  </div>
+													  <!--<div class="col-md-6">
+														   <div class="form-group">
+																<label class="form-label"><%= f.label :area %></label>
+																<span class="help">(required)</span>
+																<div class="input-with-icon  right">                                       
+																	 <i class=""></i>
+																	 <input style="width:100%;margin-bottom: 5px;" name="contact[city_id]" data="<%= cities_path(format: "json") %>" class="select2-ajax-states required" value="<%= @contact.city_id %>" text="<%= @contact.city.name_with_state if !@contact.city.nil? %>" />
+																</div>
+														   </div>							
+													  </div>-->
+												 </div>
 													  
+												 <div class="row">
+													  <div class="col-md-6">													   
+														   <div class="form-group">
+																<label class="form-label"><%= f.label :email %></label>
+																<span class="help personal-box"></span>
+																<%= render "field_history", drafts: @contact.field_history("email"), type: "email" %>
+																
+																<div class="input-with-iconx right">                                       
+																		<i class=""></i>
+																		<%= f.text_field :email, rel: related_info_box_contacts_path(type: "email", id: @contact.id), :class => "form-control email related_info_input" %>
+																		<label class="related_info_msg" style="display: none">Has related contact(s)!</label>
+																		<div class="related_info_box" style="display: none">
+																		   
+																		</div>
+																</div>
+														   </div>						
+													  </div>
+													  <div class="col-md-6">
+														   <div class="form-group">
+																<label class="form-label"><%= f.label :email_2 %></label>
+																<%= render "field_history", drafts: @contact.field_history("email_2"), type: "email_2" %>
+																<span class="help"></span>
+																<div class="input-with-icon  right">                                       
+																		<i class=""></i>
+																		<%= f.text_field :email_2, :class => "form-control email" %>
+																</div>
+														   </div>					
+													  </div>
+												 </div>
 													  
 													  <div class="row">
 														   <div class="col-md-6">													   
@@ -703,5 +780,17 @@
 				  vs = JSON.parse($(this).attr('values'))
 				  $(this).select2('data', vs)
 		  });
+		  $(document).on("change", "input[name='contact[email]']", function() {
+				  var val = $(this).val()
+				  $("input[name='contact[email]']").val(val)
+		  });
+		  $(document).on("change", "input[name='contact[email_2]']", function() {
+				  var val = $(this).val()
+				  $("input[name='contact[email_2]']").val(val)
+		  });
+		  $(document).on("change", "input[name='contact[address]']", function() {
+				  var val = $(this).val()
+				  $("input[name='contact[address]']").val(val)
+		  });		  
 	 });
 </script>

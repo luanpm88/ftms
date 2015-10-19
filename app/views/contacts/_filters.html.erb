@@ -47,6 +47,11 @@
 							</div>
 							
 							<div class="col-md-2 personal-box">
+								<h4>Status#1</h4>							
+								<%= text_field_tag 'online_id', "", class: "form-control width100" %>
+							</div>
+							
+							<div class="col-md-2 personal-box">
 								<h4>Paper</h4>							
 								<%= select_tag 'subjects[]', options_for_select(Subject.active_subjects.collect{ |u| [u.name, u.id] }), class: "modern_select width100", multiple: "multiple" %>
 							</div>
@@ -80,10 +85,7 @@
 								</div>
 							</div>-->
 							
-							<div class="col-md-2 personal-box">
-								<h4>Tag</h4>
-								<%= select_tag 'tags[]', options_for_select(ContactTag.active_contact_tags.collect{ |u| [u.name, u.id] }), class: "modern_select width100", multiple: "multiple" %>
-							</div>
+							
 							
 							<div class="col-md-3 seminar-contact-filter personal-box">
 								<h4>Seminar</h4>							
@@ -100,7 +102,10 @@
 								<%= select_tag 'status', options_for_select(Contact.status_options, params[:status]), class: "modern_select width100" %>
 							</div>	
 							
-							
+							<div class="col-md-2 personal-box">
+								<h4>Tag</h4>
+								<%= select_tag 'tags[]', options_for_select(ContactTag.active_contact_tags.collect{ |u| [u.name, u.id] }), class: "modern_select width100", multiple: "multiple" %>
+							</div>
 						
 							
 
