@@ -425,10 +425,10 @@ class CourseRegister < ActiveRecord::Base
     arr = []
     courses.each do |row|
       
-      
+      arr << "<div class=\"#{(row[:contacts_course].is_write_off? ? "write_off" : "")}\" title=\"#{(row[:contacts_course].is_write_off? ? "write-off" : "")}\">"
       arr << "<div class=\"nowrap\"><strong>"+row[:course].display_name+"</strong></div>"
       arr << "<div class=\"courses_phrases_list\">"+Course.render_courses_phrase_list(row[:courses_phrases],row[:contacts_course])+"</div>" if phrase_list
-      #arr << "<div>#{no_ucrs_html}</div>"
+      arr << "</div>"
       
     end
     
@@ -491,7 +491,7 @@ class CourseRegister < ActiveRecord::Base
   end
   
   def total
-    price - transfer.to_f
+    price - transfer.to_f - write_off_amount
   end
   
   def discount_program_amount_old
@@ -590,6 +590,14 @@ class CourseRegister < ActiveRecord::Base
   
   def remain_amount(date=nil)
     total - paid_amount(date)
+  end
+  
+  def write_off_amount
+    result = 0.0
+    contacts_courses.each do |cc|
+      result += cc.remain if cc.is_write_off?
+    end
+    return result
   end
   
   def payment_status

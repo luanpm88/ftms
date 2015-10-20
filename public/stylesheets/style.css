@@ -8524,3 +8524,9 @@ h5.list_title {
     color: #fff;
     background: grey;
 }
+.uncheckable {
+    opacity: 0.8
+}
+.write_off * {
+    color: #ccc !important;
+}

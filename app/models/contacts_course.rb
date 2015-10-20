@@ -197,4 +197,13 @@ class ContactsCourse < ActiveRecord::Base
     self.update_attribute(:cache_payment_status, self.payment_status.join(","))
   end
   
+  def is_write_off?
+    return false if !course_register.statuses.include?("active")
+    contact.active_courses_with_phrases.each do |row|
+      row[:contacts_courses].each do |cc|
+        return false if cc.id == self.id
+      end      
+    end
+    return true
+  end
 end

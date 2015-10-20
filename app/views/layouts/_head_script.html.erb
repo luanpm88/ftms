@@ -163,7 +163,9 @@
 						}
 					})
 					box.find(".total_phrase_hour").html(total)
-					box.find(".total_phrase_money").html(ReplaceNumberWithDots((per_hour*total).toFixed(0)))				
+					if(per_hour == "") {
+						box.find(".total_phrase_money").html(ReplaceNumberWithDots((per_hour*total).toFixed(0)))
+					}
 				}
 			})
 			
@@ -219,18 +221,41 @@
 		var to_money = $("select[name='transfer[to_money]']").val()
 	}
 	
-	function ajaxTransferToBox(course_id) {
+	function ajaxTransferToBox(course_id, contact_id, to_contact_id) {
 		if (course_id == "") {
 			$(".transfer_to_box").html("")
 			return
 		}
 		$.ajax({
-			url: "<%= transfer_to_box_courses_path %>?id="+course_id,
+			url: "<%= transfer_to_box_courses_path %>?id="+course_id+"&contact_id="+contact_id+"&to_contact_id="+to_contact_id,
 			success: function(data, textStatus, jqXHR)
 			{
 				$(".transfer_to_box").html(data)
 				$(".transfer_to_box").find(".modern_select").select2()
 				format_price($('.transfer_to_box').find('input.price_input'));
+				
+				//ajax select2 for contacts
+				$(".transfer_to_box").find('.select2-ajax-contacts').select2({
+					placeholder: "Search for a contact",
+					minimumInputLength: 1,
+					allowClear: true,
+					multiple: $('.select2-ajax-contacts').hasClass("multiple"),
+					ajax: {
+					  url: $('.select2-ajax-contacts').attr("data"),
+					  dataType: 'json',
+					  data: function (term, page) { // page is the one-based page number tracked by Select2
+						return {
+						  q: term, //search term				  
+						};
+					  },
+					  results: function (data, page) {
+						return {results: data};
+					  }
+					},
+					initSelection: function (element, callback) {				      
+					  callback({ id: element.val(), text: element.attr('text') });
+					}
+				});
 				
 				transferToTypeCheck()
 				updatePhraseListBoxHour()
@@ -3377,7 +3402,12 @@
 			ajaxCoursePhrasesList($(this))
 		});
 		$(document).on("change", ".transfer_course_from .from_course", function() {
-			ajaxTransferToBox($(this).select2("val"))
+			var fid = $("input[name='transfer[contact_id]']").val()
+			var tid = $("input[name='transfer[contact_id]']").val()
+			if ($("input[name='transfer[to_contact_id]']").length) {
+				tid = $("input[name='transfer[to_contact_id]']").val()
+			}
+			ajaxTransferToBox($(this).select2("val"), fid, tid)
 		});
 		if($(".transfer_course_from").length) {
 			$(".transfer_course_from .from_course").trigger("change")
@@ -3394,8 +3424,7 @@
 		});
 		
 		$(document).on("change", "input[name='transfer[to_contact_id]']", function() {
-			$("select[name='transfer[course_id]']").trigger("change")
-			
+			$("select[name='transfer[course_id]']").trigger("change")			
 		});
 
 		$(document).on("keyup", ".transfer_payment_form .payment-record-paid", function() {
@@ -3440,6 +3469,9 @@
 		});
 		$(document).on("change", ".program_paper_select_box select.program_select, .program_paper_select_box input.program_select", function(e) {
 			ajaxSubjectSelect($(this))
+		});
+		$(document).on("click", ".uncheckable *", function(e) {
+			e.preventDefault()
 		});
 	})
 	

@@ -1675,13 +1675,15 @@ class Contact < ActiveRecord::Base
     accs = accs.where("course_registers.created_at <= ?", datetime) if !datetime.nil?
     accs.each do |cc|
       row = {}
+      row[:contacts_courses] = [cc]
       row[:course] = cc.course
       th = 0
       ContactsCourse.find(cc.id).courses_phrases.each do |cp|
-        th += cp.hour
+        th += cp.hour if cp.hour.present?
       end
       row[:hour] = th == 0 ? "N/A" : th
-      row[:money] = ContactsCourse.find(cc.id).price
+      row[:money] = ContactsCourse.find(cc.id).paid
+      row[:remain] = ContactsCourse.find(cc.id).remain
       row[:courses_phrases] = ContactsCourse.find(cc.id).courses_phrases
       row[:created_at] = ContactsCourse.find(cc.id).course_register.created_at
       origin << row
@@ -1735,7 +1737,7 @@ class Contact < ActiveRecord::Base
               exist = true
             end           
           end
-          origin << {course: course, courses_phrases: courses_phrases, hour: transfer.to_course_hour, money: transfer.to_course_money, created_at: transfer.created_at} if exist == false
+          origin << {remain: 0,contacts_courses: [],course: course, courses_phrases: courses_phrases, hour: transfer.to_course_hour, money: transfer.to_course_money, created_at: transfer.created_at} if exist == false
           
           
         end
@@ -1757,12 +1759,16 @@ class Contact < ActiveRecord::Base
     origin.each do |item|
       if merged_courses[item[:course].id].nil?
         merged_courses[item[:course].id] = {}
+        merged_courses[item[:course].id][:contacts_courses] = item[:contacts_courses]
         merged_courses[item[:course].id][:course] = item[:course]
         merged_courses[item[:course].id][:hour] = item[:hour]
         merged_courses[item[:course].id][:money] = item[:money]
+        merged_courses[item[:course].id][:remain] = item[:remain]
         merged_courses[item[:course].id][:courses_phrases] = item[:courses_phrases]
         merged_courses[item[:course].id][:created_at] = item[:created_at]
       else
+        merged_courses[item[:course].id][:contacts_courses] += item[:contacts_courses]
+        merged_courses[item[:course].id][:remain] += item[:remain]
         merged_courses[item[:course].id][:hour] = item[:hour]
         merged_courses[item[:course].id][:money] = item[:money]
         merged_courses[item[:course].id][:courses_phrases] = item[:courses_phrases]

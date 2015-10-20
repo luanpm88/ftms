@@ -79,13 +79,22 @@
 															<% end %>
 											 </div>
                                              <div class="col-md-2">
-												  <div class="form-group">
-														<label class="form-label">Total</label>
-														<span class="help"></span>
-														<div class="input-with-iconz text-right">                                       
-															 <strong style="font-size: 18px"><%= cc.no_price? ? "No price" : format_price(cc.total) %></strong>
-														</div>
-												  </div>
+												<div class="form-group">
+													  <label class="form-label">Total</label>
+													  <span class="help"></span>
+													  <div class="input-with-iconz text-right">                                       
+															<strong style="font-size: 18px"><%= cc.no_price? ? "No price" : format_price(cc.total) %></strong>
+													  </div>
+												</div>
+												<% if cc.is_write_off? %>
+													  <div class="form-group">
+															<label class="form-label">Write-Off</label>
+															<span class="help"></span>
+															<div class="input-with-iconz text-right">                                       
+																  <strong style="font-size: 18px"><%= cc.no_price? ? "No price" : format_price(cc.remain) %></strong>
+															</div>
+													  </div>
+												<% end %>
 											 </div>
 										</div>
 										
@@ -281,6 +290,15 @@
 													 </div>
 												</div>-->
 										<% end %>
+										  <% if @course_register.write_off_amount > 0 %>
+												<div class="form-group">
+													  <label class="form-label">Write-Off</label>
+													  <span class="help"></span>
+													  <div class="input-with-iconz text-right" style="font-size: 20px;" width="100%">                                       
+															<strong><%= format_price(@course_register.write_off_amount) %></strong>
+													  </div>
+												</div>
+										  <% end %>
 										<div class="form-group">
 											 <label class="form-label">Total Price</label>
 											 <span class="help"></span>
@@ -290,6 +308,8 @@
 												  </div>
 												 
 											 </div>
+											 
+												
 										</div>										
 								   </div>
 								   

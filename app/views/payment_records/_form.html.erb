@@ -220,7 +220,9 @@
 														<label class="form-label">Paid</label>
 														<span class="help"></span>
 														<div class="input-with-iconz">
-															<% if cc.paid? %>
+															<% if cc.is_write_off? %>
+																 <div class="text-right"><strong style="font-size: 18px" class="detail_total"><%= format_price(cc.paid) %></strong></div>
+															<% elsif cc.paid? %>
 																 <div class="paid text-right">
 																	  <strong>Paid</strong>
 																 </div>
@@ -234,8 +236,14 @@
 												  <div class="form-group">
 														<label class="form-label">Receivable</label>
 														<span class="help"></span>
-														<div class="input-with-iconz text-right">                                       
-															 <strong style="font-size: 18px" class="detail_remain" rel="<%= cc.remain %>">0</strong>
+														<div class="input-with-iconz text-right">
+															<% if cc.is_write_off? %>																 
+																 <div class="paid text-right">
+																	  <strong>Write-Off</strong>
+																 </div>															
+															<% else %>
+																 <strong style="font-size: 18px" class="detail_remain" rel="<%= cc.remain %>">0</strong>
+															<% end %>															 
 														</div>
 												  </div>
 											 </div>

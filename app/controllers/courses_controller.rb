@@ -255,6 +255,7 @@ class CoursesController < ApplicationController
       @courses_phrases = @to_contact.active_course(@course.id)[:courses_phrases]
       @hour = @to_contact.active_course(@course.id)[:hour]
       @money = @to_contact.active_course(@course.id)[:money]
+      @remain = @to_contact.active_course(@course.id)[:remain]
       @type = "from"
     end
     
@@ -262,7 +263,11 @@ class CoursesController < ApplicationController
   end
   
   def transfer_to_box
+    @contact = Contact.find(params[:contact_id])
+    @to_contact_id = Contact.find(params[:to_contact_id])
     @transfer = @course.transfers.new
+    @transfer.contact = @to_contact_id
+    @remain = @contact.active_course(@course.id)[:money]
     
     render layout: nil
   end
@@ -275,8 +280,7 @@ class CoursesController < ApplicationController
       @course.remove_no_report_contact(@contact)
     else
       @course.add_no_report_contact(@contact)
-    end
-    
+    end    
     
     render layout: nil
   end

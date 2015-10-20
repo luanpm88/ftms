@@ -1,4 +1,34 @@
-                     <div class="row transfer_type_box transfer_type_box_course" style="display:none">
+                     <div class="row">
+							<div class="col-md-8">
+								 <div class="form-group">
+									  <label class="form-label"><label>Contact</label></label>
+									  <span class="help">(required)</span>							   
+									  <div class="input-with-icon  right">                                       
+										   <i class=""></i>
+										   <div class="input-with_add_but">
+												<%= link_to '<i class="icon-plus"></i>'.html_safe, new_contact_path(contact_type_id: ContactType.lecturer.id, tab_page: 1), title: "New Lecturer", :class => 'btn btn-sm btn-small btn-white add-agent-button tab_page' %>
+												<input style="width:100%;margin-bottom: 5px;" name="transfer[to_contact_id]" data="<%= contacts_path(is_individual: "true", format: "json") %>" class="select2-ajax-contacts" value="<%= @transfer.contact_id %>" text="<%= @transfer.contact.display_name %>" />
+										   </div>
+									  </div>
+								 </div>
+							</div>
+							<div class="col-md-4">
+								 <div class="form-group">
+									  <label class="form-label"><label>Type</label></label>
+									  <span class="help">(required)</span>
+									  <div class="input-with-icon  right">
+										   <select name="transfer[to_type]" class="modern_select required width100">
+												 <option value="">None</option>
+												 <% if @remain == 0 %><option value="course">Course</option><% end %>
+												 <% if @remain == 0 %><option value="hour">Hour</option><% end %>
+												 <option value="money">Money</option>
+										   </select>
+									  </div>
+								 </div>
+							</div>
+					 </div>
+					 
+					 <div class="row transfer_type_box transfer_type_box_course" style="display:none">
 							<div class="col-md-12 transfer_course_box to_course_box" type="">
 								   <div class="form-group">
 										 <label class="form-label"><label>Course</label></label>
