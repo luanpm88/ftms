@@ -88,8 +88,8 @@ class Course < ActiveRecord::Base
         result = result.where.not(id: learned_course_ids)
       end      
     end
-    
-    result = result.search(q).limit(50).map {|model| {:id => model.id, :text => model.display_name} }
+    result = result.search(params[:q]) if params[:q].present?    
+    result = result.limit(50).map {|model| {:id => model.id, :text => model.display_name} }
   end
   
   def course_exist

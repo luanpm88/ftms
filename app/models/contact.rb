@@ -924,7 +924,8 @@ class Contact < ActiveRecord::Base
       cids = Contact.joins(:contact_types).where(contact_types: {id: params[:contact_type_id]}).map(&:id)
       records = records.where(id: cids)
     end
-    records.search(params[:q]).limit(50).map {|model| {:id => model.id, :text => model.display_name(params)} }
+    records = records.search(params[:q]) if params[:q].present?
+    records.order("name").limit(50).map {|model| {:id => model.id, :text => model.display_name(params)} }
   end
   
   def short_name
@@ -1874,8 +1875,11 @@ class Contact < ActiveRecord::Base
         #contact. = item.student_home_phone
         
         contact.account_manager = User.where(:tmp_ConsultantID => item.consultant_id).first
-
+        
         contact.save
+        
+        # import contact type/course type
+        contact.update_contact_type_from_old_student
         
         contact.add_status("active")
         contact.save_draft(User.where(:email => "manager@ftmsglobal.edu.vn").first)
@@ -1884,6 +1888,25 @@ class Contact < ActiveRecord::Base
         puts item
       end
 
+  end
+  
+  def update_contact_type_from_old_student
+    return false if old_student.nil? || !contact_types.empty?
+    
+    partten = "inquiry|members|affliliate|charterholder"
+    is_inquiry = old_student.student_type.strip.downcase.scan(/(#{partten})/).count > 0
+    if is_inquiry
+      contact_types << ContactType.inquiry
+      program_name = old_student.student_type.strip.downcase.scan(/(.*?)(#{partten})/)[0][0].strip
+      ct = CourseType.where("LOWER(short_name) = '#{program_name}'").first
+      course_types << ct if !ct.nil?
+    else
+      program_name = old_student.student_type.strip.downcase
+      ct = CourseType.where("LOWER(short_name) = '#{program_name}'").first
+      course_types << ct if !ct.nil?
+    end
+    
+    return self
   end
 
   def self.find_related_contacts

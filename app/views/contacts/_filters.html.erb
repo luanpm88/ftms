@@ -46,7 +46,7 @@
 												<h4>Program</h4>							
 												<%= select_tag 'course_types[]', options_for_select(CourseType.active_course_types.collect{ |u| [u.short_name, u.id] }), class: "modern_select width100 program_select", multiple: "multiple", input_name: "subjects[]" %>
 											</div>
-											<div class="col-md-2 personal-box">
+											<div class="col-md-2 seminar-contact-filter personal-box">
 												<h4>Status#1</h4>							
 												<%= text_field_tag 'online_id', "", class: "form-control width100" %>
 											</div>

@@ -10,9 +10,11 @@ class OldTag < ActiveRecord::Base
 			tag.save
 		end
 	end
-	
+
 	def self.full_text_search(params)    
-		tags = self.order("tag_name").where("LOWER(old_tags.tag_name) LIKE ?", "%#{params[:q].strip.downcase}%").limit(50)
+		tags = self.order("tag_name")
+		tags = tags.where("LOWER(old_tags.tag_name) LIKE ?", "%#{params[:q].strip.downcase}%") if params[:q].present?
+		tags = tags.limit(50)
 		tags = (tags.map {|c| c.tag_name}).uniq
 		tags = tags.map {|model| {:id => model, :text => model} }
 	end

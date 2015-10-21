@@ -29,7 +29,9 @@ class Seminar < ActiveRecord::Base
                 }
   
   def self.full_text_search(params)    
-    self.active_seminars.search(params[:q]).limit(50).map {|model| {:id => model.id, :text => model.name} }
+    records = self.active_seminars
+    records = records.search(params[:q]) if params[:q].present?    
+    records = records.order("name").limit(50).map {|model| {:id => model.id, :text => model.name} }
   end
   
   def self.filter(params, user)

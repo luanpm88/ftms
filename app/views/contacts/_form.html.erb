@@ -780,6 +780,8 @@
 				  vs = JSON.parse($(this).attr('values'))
 				  $(this).select2('data', vs)
 		  });
+		  
+		   $("input[name='contact[email]']").removeClass("required")
 		  $(document).on("change", "input[name='contact[email]']", function() {
 				  var val = $(this).val()
 				  $("input[name='contact[email]']").val(val)

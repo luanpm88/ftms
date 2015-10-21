@@ -102,6 +102,7 @@
 											 <div class="input-with_add_but">
 												  <%= link_to '<i class="icon-plus"></i>'.html_safe, new_contact_path(contact_type_id: ContactType.lecturer.id, tab_page: 1), title: "New Lecturer", :class => 'btn btn-sm btn-small btn-white add-agent-button tab_page' %>
 												  <input style="width:100%;margin-bottom: 5px;" name="course[lecturer_id]" data="<%= contacts_path(format: "json", contact_type_id: ContactType.lecturer.id) %>" class="select2-ajax-contacts" value="<%= @course.lecturer_id %>" text="<%= @course.lecturer.name if !@course.lecturer.nil? %>" />
+												  
 											 </div>
 										</div>
 								   </div>	
@@ -117,7 +118,7 @@
 															<div class="col-md-6">
 																 <div class="form-group">
 																	  <label class="form-label"><%= f.label :course_price %></label>
-																	  <span class="help"></span>
+																	  <span class="help"><%= (0 == num ? "(required)" : "") %></span>
 																	  <div>
 																		   <%= text_field_tag "course_prices["+num.to_s+"][amount]", format_price(price.amount), class: "width100 price_input"+(0 == num ? " required" : "") %>
 																	  </div>
@@ -130,7 +131,7 @@
 																	  <div class="input-with-icon  right">                                       
 																		   <i class=""></i>
 																		   <div class="input-append success date col-md-10 no-padding">
-																			 <%= text_field_tag "course_prices["+num.to_s+"][deadline]", price.deadline.strftime("%d-%b-%Y"), :class => "form-control" %>
+																			 <%= text_field_tag "course_prices["+num.to_s+"][deadline]", (price.deadline.nil? ? "" : price.deadline.strftime("%d-%b-%Y")), :class => "form-control" %>
 																			 <span class="add-on"><span class="arrow"></span><i class="icon-th"></i></span>
 																		   </div>
 																		   <br style="clear: both" />
@@ -147,7 +148,7 @@
 															<div class="col-md-6">
 																 <div class="form-group">
 																	  <label class="form-label"><%= f.label :course_price %></label>
-																	  <span class="help"></span>
+																	  <span class="help"><%= (0 == number ? "(required)" : "") %></span>
 																	  <div>
 																		   <%= text_field_tag "course_prices["+number.to_s+"][amount]", "", class: "width100 price_input"+(number == 0 ? " required" : "") %>
 																	  </div>

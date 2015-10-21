@@ -121,7 +121,9 @@ class CourseType < ActiveRecord::Base
   end
   
   def self.full_text_search(q)
-    self.active_course_types.order("short_name").search(q).limit(50).map {|model| {:id => model.id, :text => model.short_name} }
+    result = self.active_course_types.order("short_name")
+    result = result.search(q) if q.present?
+    result = result.limit(50).map {|model| {:id => model.id, :text => model.short_name} }
   end
   
   ############### BEGIN REVISION #########################

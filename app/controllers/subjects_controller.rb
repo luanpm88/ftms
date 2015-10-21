@@ -36,7 +36,7 @@ class SubjectsController < ApplicationController
   # POST /subjects.json
   def create
     s_params = subject_params
-    s_params[:course_type_ids] = subject_params[:course_type_ids][0].split(",") if subject_params[:course_type_ids].present?
+    # s_params[:course_type_ids] = subject_params[:course_type_ids][0].split(",") if subject_params[:course_type_ids].present?
     
     @subject = Subject.new(s_params)    
     @subject.user = current_user
@@ -59,7 +59,7 @@ class SubjectsController < ApplicationController
   # PATCH/PUT /subjects/1.json
   def update
     s_params = subject_params
-    s_params[:course_type_ids] = subject_params[:course_type_ids][0].split(",") if subject_params[:course_type_ids].present?
+    # s_params[:course_type_ids] = subject_params[:course_type_ids][0].split(",") if subject_params[:course_type_ids].present?
     respond_to do |format|
       if @subject.update(s_params)
         @subject.update_status("update", current_user)        
