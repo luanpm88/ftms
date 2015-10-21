@@ -50,4 +50,14 @@ class CoursesPhrase < ActiveRecord::Base
     return (total/hours)*hour
   end
   
+  def used_count
+    ContactsCourse.joins("LEFT JOIN course_registers ON course_registers.id = contacts_courses.course_register_id")
+                  .where(course_registers: {parent_id: nil}).where("course_registers.status IS NOT NULL AND course_registers.status NOT LIKE ?", "%[deleted]%")
+                  .where("contacts_courses.courses_phrase_ids LIKE ?", "%[#{self.id}]%").count
+  end
+  
+  def used?
+    used_count > 0
+  end
+  
 end

@@ -17,8 +17,10 @@
 								   <%= render "field_history", drafts: @course.field_history("phrases"), type: "phrases" %>
 								   <% num = 0 %>
 								   <% @course.courses_phrases.joins(:phrase).order("phrases.name, courses_phrases.start_at").each do |courses_phrase| %>
-										<div class="row phrase_boxx phrase_box_<%= num %>">
-											 <div class="col-md-4">
+												
+										<div class="row phrase_boxx phrase_box_<%= num %>">												
+											 <div title="<%= "This phrase can't be changed because it is in use!" if CoursesPhrase.find(courses_phrase.id).used? %>" class="col-md-4 <%= 'cp_unchangable' if CoursesPhrase.find(courses_phrase.id).used? %>">
+												<%= '<div class="cp_unchangable_cover"></div>'.html_safe if CoursesPhrase.find(courses_phrase.id).used? %>
 												  <div class="input-with-icon  right">                                       
 													   <i class=""></i>
 													   <div class="input-with_add_but">

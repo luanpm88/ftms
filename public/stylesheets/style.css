@@ -8530,3 +8530,12 @@ h5.list_title {
 .write_off * {
     color: #ccc !important;
 }
+.cp_unchangable {
+    opacity: 0.8;
+}
+.cp_unchangable_cover {
+    height: 48px;
+    position: absolute;
+    width: 100%;
+    z-index: 1000;
+}
