@@ -36,7 +36,7 @@
 						  </div>
 						<% end %>
 						
-						<div class="col-md-2">
+						<div class="col-md-3">
 						  <h4>Bank Account</h4>
 								<div class="input-with-icon  right">                                       
 									 <i class=""></i>
@@ -45,11 +45,11 @@
 									 </div>
 								</div>
 						</div>
-						<div class="col-md-2">
+						<!--<div class="col-md-2">
 							<h4>Program</h4>							
 							<%= select_tag 'course_types[]', options_for_select(CourseType.active_course_types.collect{ |u| [u.short_name, u.id] }), :include_blank => 'All', class: "modern_select width100" %>
-						</div>
-						<div class="col-md-2">
+						</div>-->
+						<div class="col-md-3">
 							<h4>Course</h4>							
 							<input style="width:100%;margin-bottom: 5px;" name="courses" data="<%= courses_path(format: "json") %>" class="select2-ajax-courses" />
 						</div>

@@ -8,6 +8,10 @@ module ActivitiesHelper
         actions += '<li>'+ActionController::Base.helpers.link_to('Delete', {controller: "activities", action: "destroy", id: item.id}, class: "activity_destroy")+'</li>'        
       end
       
+      if can? :undo_delete, item
+        actions += '<li>'+ActionController::Base.helpers.link_to('Undo Delete', {controller: "activities", action: "undo_delete", id: item.id}, class: "approve_link")+'</li>'        
+      end 
+      
       if can? :approve_delete, item
         actions += '<li>'+ActionController::Base.helpers.link_to('Approve Delete', {controller: "activities", action: "approve_delete", id: item.id}, class: "approve_link")+'</li>'        
       end 

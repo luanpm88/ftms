@@ -1,7 +1,7 @@
 class ActivitiesController < ApplicationController
   include ActivitiesHelper
   
-  before_action :set_activity, only: [:approve_delete, :show, :edit, :update, :destroy]
+  before_action :set_activity, only: [:undo_delete, :approve_delete, :show, :edit, :update, :destroy]
 
   # GET /activities
   # GET /activities.json
@@ -90,6 +90,17 @@ class ActivitiesController < ApplicationController
     
     respond_to do |format|
       format.html { render "/activities/deleted", layout: nil }
+      format.json { render action: 'show', status: :created, location: @activity }
+    end
+  end
+  
+  def undo_delete
+    authorize! :undo_delete, @activity
+    
+    @activity.update_attribute(:deleted, 0)
+    
+    respond_to do |format|
+      format.html { render "/activities/undo_delete", layout: nil }
       format.json { render action: 'show', status: :created, location: @activity }
     end
   end

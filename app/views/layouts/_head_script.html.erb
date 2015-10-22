@@ -150,15 +150,15 @@
 			$(".from_phrase_list_box_hour_money").each(function() {
 				var box = $(this)
 				if (box.find(".courses_phrase_item").length) {					
-					var total = 0
+					var total = 0.0
 					var money = 0.0
-					var per_hour = 0
+					var per_hour = 0.0
 					if(box.find(".total_phrase_money").length) {
 						per_hour = parseFloat(box.find(".total_phrase_money").attr("per_hour").replace(/,/g,""))
 					}
 					box.find(".courses_phrase_item").each(function() {
 						if ($(this).prop('checked')) {
-							total += parseInt($(this).attr("hour"))
+							total += parseFloat($(this).attr("hour"))
 							//money += parseInt($(this).attr("money"))
 						}
 					})
@@ -189,7 +189,7 @@
 					
 					box.find(".courses_phrase_item").each(function() {
 						if ($(this).prop('checked')) {
-							h += parseInt($(this).attr("hour"))
+							h += parseFloat($(this).attr("hour"))
 							m += parseInt($(this).attr("money"))
 						}
 					})		
@@ -339,16 +339,22 @@
 			{
 				$(".import-export-stock-list").html(data)
 				$('.import-export-stock-list').find(".modern_select").select2({allowClear: true})
-				$('.import-export-stock-list').find('input.number_input').number(true, 0);
+				$('.import-export-stock-list').find('input.number_input').number(true, 2);
 			}
 		});
 	}
 	
 	function updateStockFormList(stock_type_id, program_id, subject_id, valid_from, valid_to) {
 		var contact_id = $("input[name='course_register[contact_id]']").val()
+		if(typeof(program_id) == 'undefined') {
+			program_id = ""
+		}
+		if(typeof(subject_id) == 'undefined') {
+			subject_id = ""
+		}
 		$.ajax({
 			url : '<%= stock_form_list_books_path %>?contact_id='+contact_id+'&stock_type_id='+stock_type_id+'&program_id='+program_id+'&subject_id='+subject_id+'&valid_from='+valid_from+'&valid_to='+valid_to,
-			success:function(data, textStatus, jqXHR)
+			success: function(data, textStatus, jqXHR)
 			{
 				$(".stock_box_list").html(data)
 				$('.stock_box_list').find(".modern_select").select2({allowClear: true})
@@ -404,10 +410,10 @@
 
 	
 	function calculatePhraseHour() {
-		var count = 0
+		var count = 0.0
 		$(".phrase_hour").each(function () {
 			if ($(this).val() != "" && $(this).parents(".phrase_boxx").find("select.main_input").val() != "") {
-				count += parseInt($(this).val().replace(/,/g,""))
+				count += parseFloat($(this).val().replace(/,/g,""))
 			}			
 		})
 		$(".total_phrase_hour").html(count)
@@ -1849,7 +1855,7 @@
 					}
 				}
 			},
-			"columnDefs": [ { "targets": [1,2,3,4], "orderable": false } ],
+			"columnDefs": [ { "targets": [1,2,3,4,5], "orderable": false } ],
 			"order": [],
 			"aLengthMenu": [[10, 25, 50, 75, 100], [10, 25, 50, 75, 100]],
 			"iDisplayLength": 25
@@ -2192,6 +2198,13 @@
 					}					
 					if($(".delivery-filter select[name='filter[intake(1i)]']").val()) {
 						d.intake_year =  $(".delivery-filter select[name='filter[intake(1i)]']").val()
+					}
+					
+					if($(".delivery-filter input[name='valid_from']").val()) {
+						d.valid_from =  $(".delivery-filter input[name='valid_from']").val()
+					}
+					if($(".delivery-filter input[name='valid_to']").val()) {
+						d.valid_to =  $(".delivery-filter input[name='valid_to']").val()
 					}
 				}
 			},
@@ -2813,7 +2826,7 @@
 	    
 		//number input
 	    $('input.number_input').number(true, 2);
-		$('input.number_input_0').number(true, 0);
+		$('input.number_input_0').number(true, 2);
 		
 		//select2 for datatable
 		setTimeout("$('.dataTables_wrapper select').select2();", 2000);
@@ -3360,6 +3373,9 @@
 		$(document).on("keyup", ".phrase_hour", function() {
 			calculatePhraseHour()
 		});
+		$(document).on("change", ".phrase_boxx .main_input", function() {
+			calculatePhraseHour()
+		});
 		
 		$(document).on("click", ".phrase_title", function() {
 			$("."+$(this).attr("rel")).toggle()
@@ -3371,7 +3387,7 @@
 		})
 		
 		$(".stock_form_filter input, .stock_form_filter select").change(function() {
-			updateStockFormList($(".stock_form_filter select[name='stock_type_id']").select2("val"),$(".stock_form_filter input[name='program_id']").val(),$(".stock_form_filter input[name='subject_id']").val(),$(".stock_form_filter input[name='valid_from']").val(),$(".stock_form_filter input[name='valid_to']").val())
+			updateStockFormList($(".stock_form_filter select[name='stock_type_id']").select2("val"),$(".stock_form_filter select[name='program_id']").select2("val"),$(".stock_form_filter select[name='subject_id']").select2("val"),$(".stock_form_filter input[name='valid_from']").val(),$(".stock_form_filter input[name='valid_to']").val())
 		})
 		
 		$(".import_export_form_filter select[name=stock_type_id], .import_export_form_filter input[name=program_id], .import_export_form_filter input[name=subject_id]").change(function() {

@@ -116,8 +116,8 @@
                                               <div class="input-with-icon  right">                                       
                                                    <i class=""></i>
                                                    <div class="input-append success date col-md-10 no-padding">
-                                                     <%= f.text_field :start_at, :class => "form-control required", value: (@discount_program.start_at.nil? ? "" : @discount_program.start_at.strftime("%d-%b-%Y")) %>
-                                                     <span class="add-on"><span class="arrow"></span><i class="icon-th"></i></span>
+													   <span class="add-on"><span class="arrow"></span><i class="icon-th"></i></span>
+													   <%= f.text_field :start_at, :class => "form-control required", value: (@discount_program.start_at.nil? ? "" : @discount_program.start_at.strftime("%d-%b-%Y")) %>                                                     
                                                    </div>
                                                    <br style="clear: both" />
                                               </div>
@@ -132,8 +132,8 @@
                                               <div class="input-with-icon  right">                                       
                                                    <i class=""></i>
                                                    <div class="input-append success date col-md-10 no-padding">
-                                                     <%= f.text_field :end_at, :class => "form-control required", value: (@discount_program.end_at.nil? ? "" : @discount_program.end_at.strftime("%d-%b-%Y")) %>
-                                                     <span class="add-on"><span class="arrow"></span><i class="icon-th"></i></span>
+													   <span class="add-on"><span class="arrow"></span><i class="icon-th"></i></span>
+													   <%= f.text_field :end_at, :class => "form-control required", value: (@discount_program.end_at.nil? ? "" : @discount_program.end_at.strftime("%d-%b-%Y")) %>
                                                    </div>
                                                    <br style="clear: both" />
                                               </div>

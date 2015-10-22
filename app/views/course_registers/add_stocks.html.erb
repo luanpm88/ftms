@@ -65,7 +65,7 @@
 								   </div>
 							  </div>	
 						 </div>
-						 <div class="col-md-3">
+						 <div class="col-md-2">
 							  <div class="form-group">
 								   <label class="form-label"><label>Program</label></label>
 								   <span class="help"></span>
@@ -78,9 +78,9 @@
 								   </div>
 							  </div>
 						 </div>
-						 <div class="col-md-3">
+						 <div class="col-md-2">
 							  <div class="form-group">
-								   <label class="form-label"><label>Subject</label></label>
+								   <label class="form-label"><label>Paper</label></label>
 								   <span class="help"></span>
 								   <div class="input-with-icon date-group right">                                       
 										<i class=""></i>
@@ -91,6 +91,41 @@
 								   </div>
 							  </div>	
 						 </div>
+						 
+						 
+		
+						<div class="col-md-2">
+						   <div class="form-group">
+								<label class="form-label"><label>Valid from</label></label>
+								
+								<span class="help"></span>
+								<div class="input-with-iconz  left">                                       
+									 <i class=""></i>
+									 <div class="input-append success date col-md-10 no-padding">
+										  <span class="add-on"><span class="arrow"></span><i class="icon-th"></i></span>
+										  <%= text_field_tag :valid_from, "", :class => "form-control" %>
+									 </div>
+									 <br style="clear: both" />
+								</div>
+						   </div>										
+						 </div>
+						<div class="col-md-2">
+						   <div class="form-group">
+								<label class="form-label"><label>Valid to</label></label>
+								
+								<span class="help"></span>
+								<div class="input-with-iconz  left">                                       
+									 <i class=""></i>
+									 <div class="input-append success date col-md-10 no-padding">
+										  <span class="add-on"><span class="arrow"></span><i class="icon-th"></i></span>
+									   <%= text_field_tag :valid_to, "", :class => "form-control", value: Time.now.strftime("%d-%b-%Y") %>
+									   
+									 </div>
+									 <br style="clear: both" />
+								</div>
+						   </div>										
+						</div>
+						 
 						 
 					</div>
 					

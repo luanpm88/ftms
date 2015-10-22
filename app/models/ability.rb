@@ -643,6 +643,9 @@ class Ability
       can :approve_delete, Activity do |c|
         c.deleted == 1
       end
+      can :undo_delete, Activity do |c|
+        c.deleted == 1
+      end
       
       ## TRANSFER
       can :approved, Transfer

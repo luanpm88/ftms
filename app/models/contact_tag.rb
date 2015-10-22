@@ -70,7 +70,7 @@ class ContactTag < ActiveRecord::Base
     @records = @records.limit(params[:length]).offset(params["start"])
     data = []
     
-    actions_col = 4
+    actions_col = 5
     @records.each do |item|
       ############### BEGIN REVISION #########################
       # update approved status
@@ -83,6 +83,7 @@ class ContactTag < ActiveRecord::Base
               '<div class="text-left">'+item.description+"</div>",
               '<div class="text-center">'+item.created_at.strftime("%d-%b-%Y")+"</div>",
               '<div class="text-center">'+item.display_statuses+"</div>",
+              '<div class="text-center">'+item.user.staff_col+"</div>",
               "", 
             ]
       data << item

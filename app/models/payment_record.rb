@@ -87,8 +87,9 @@ class PaymentRecord < ActiveRecord::Base
       @records = @records.where("contacts_courses.course_id = ?", params["courses"])
     end
     
+    
     if params["receivable"].present?
-      @records = @records.where("cache_payment_status LIKE ?", "%#{params["receivable"]}%")
+      @records = @records.where("payment_records.cache_payment_status LIKE ?", "%#{params["receivable"]}%")
     end
     
     if params["status"].present?
@@ -175,7 +176,7 @@ class PaymentRecord < ActiveRecord::Base
     if !company.nil?
       account_manager.staff_col
     else
-      contact.staff_col
+      course_register.account_manager.staff_col
     end    
   end
   

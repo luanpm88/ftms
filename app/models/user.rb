@@ -170,7 +170,11 @@ class User < ActiveRecord::Base
                 }
   
   def self.full_text_search(q)
-    self.search(q).limit(50).map {|model| {:id => model.id, :text => model.name} }
+    result = self.order("name")
+    result = result.search(q) if q.present?
+    result = result.limit(50).map {|model| {:id => model.id, :text => model.name} }
+    
+    return result
   end
   
   def notification_unread_count

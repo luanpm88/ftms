@@ -190,6 +190,8 @@ class BooksContact < ActiveRecord::Base
       end
     end
     
+    @records = @records.where("books.valid_from <= ?", params[:valid_from].to_datetime.beginning_of_day) if params[:valid_from].present?
+    @records = @records.where("books.valid_to >= ?", params[:valid_to].to_datetime.end_of_day) if params[:valid_to].present?
     
     return @records
   end
@@ -241,7 +243,7 @@ class BooksContact < ActiveRecord::Base
       item = [
               "<div class=\"checkbox check-default\"><input name=\"ids[]\" id=\"checkbox#{item.id}\" type=\"checkbox\" value=\"#{item.id}\"><label for=\"checkbox#{item.id}\"></label></div>",
               item.contact.contact_link,
-              item.book.display_name,
+              item.book.display_name+"<div class=\"nowrap\">#{item.book.display_valid_time}</div>".html_safe,
               '<div class="text-center">'+ item.delivered_count.to_s + "/" + item.quantity.to_s+"</div>",
               '<div class="text-center">'+ item.display_upfront+"</div>",
               '<div class="text-center">'+ item.display_delivery_status+"</div>",
