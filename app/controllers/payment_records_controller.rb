@@ -52,7 +52,7 @@ class PaymentRecordsController < ApplicationController
         end
         
         #if !transfer.nil?
-          @tab = {url: {controller: "contacts", action: "edit", id: @payment_record.course_register.contact.id, tab_page: 1, tab: "course_registration"}, title: @payment_record.course_register.contact.display_name}
+          @tab = {url: {controller: "contacts", action: "edit", id: @payment_record.course_register.contact.id, tab_page: 1, tab: "course_registration"}, title: @payment_record.course_register.contact.display_name+" #"+@payment_record.course_register.contact.id.to_s}
         #end
         format.html { render "/home/close_tab", layout: nil }
         format.json { render action: 'show', status: :created, location: @payment_record }

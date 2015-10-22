@@ -53,7 +53,7 @@ class CourseRegistersController < ApplicationController
         @course_register.update_status("create", current_user)        
         @course_register.save_draft(current_user)
         
-        @tab = {url: {controller: "contacts", action: "edit", id: @course_register.contact.id, tab_page: 1, tab: "course_registration"}, title: @course_register.contact.display_name}
+        @tab = {url: {controller: "contacts", action: "edit", id: @course_register.contact.id, tab_page: 1, tab: "course_registration"}, title: @course_register.contact.display_name+" #"+@course_register.contact.id.to_s}
         format.html { render "/home/close_tab", layout: nil }
         format.json { render action: 'show', status: :created, location: @course_register }
       else

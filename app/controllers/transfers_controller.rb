@@ -182,7 +182,7 @@ class TransfersController < ApplicationController
     @transfer.transferred_contact = @transfer.contact
     
     if @contact.pending_transfer_count > 0
-      @tab = {url: {controller: "contacts", action: "edit", id: @contact.id, tab_page: 1, tab: "transfer"}, title: @contact.display_name}
+      @tab = {url: {controller: "contacts", action: "edit", id: @contact.id, tab_page: 1, tab: "transfer"}, title: @contact.display_name+" #"+@contact.id.to_s}
       flash[:alert] = 'Error: Previous transfer(s) must be approved first.!'
       render "/home/close_tab", layout: nil
     else
