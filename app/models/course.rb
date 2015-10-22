@@ -204,7 +204,7 @@ class Course < ActiveRecord::Base
               '<div class="text-left nowrap">'+item.program_paper_name+"</div>",
               '<div class="text-left">'+item.courses_phrase_list+"</div>",
               '<div class="text-center nowrap">'+item.display_for_exam+"</div>",
-              '<div class="text-center nowrap">'+item.display_lecturer+"</div>",
+              '<div class="text-center">'+item.display_lecturer+"</div>",
               '<div class="text-right">'+item.display_prices+"</div>",
               '<div class="text-center">'+item.student_count_link+"</div>",              
               '<div class="text-center">'+item.created_at.strftime("%d-%b-%Y")+"</div>",
