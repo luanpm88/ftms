@@ -233,6 +233,10 @@ class CoursesController < ApplicationController
       @tab = {url: {controller: "contacts", action: "edit", id: @contact.id, tab_page: 1, tab: "transfer"}, title: @contact.display_name}
       flash[:alert] = 'Error: Previous transfer(s) must be approved first.!'
       render "/home/close_tab", layout: nil
+    elsif @contact.active_course(@course.id)[:money].to_f == 0
+      @tab = {url: {controller: "contacts", action: "edit", id: @contact.id, tab_page: 1, tab: "course"}, title: @contact.display_name}
+      flash[:alert] = "Error: Course's money cannot be zero. Student need to pay first.!"
+      render "/home/close_tab", layout: nil
     else
       render layout: "content"
     end   
@@ -264,10 +268,10 @@ class CoursesController < ApplicationController
   
   def transfer_to_box
     @contact = Contact.find(params[:contact_id])
-    @to_contact_id = Contact.find(params[:to_contact_id])
+    @to_contact = Contact.find(params[:to_contact_id])
     @transfer = @course.transfers.new
-    @transfer.contact = @to_contact_id
-    @remain = @contact.active_course(@course.id)[:money]
+    @transfer.contact = @to_contact
+    @remain = @contact.active_course(@course.id)[:remain]
     
     render layout: nil
   end
