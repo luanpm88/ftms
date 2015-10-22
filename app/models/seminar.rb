@@ -202,7 +202,7 @@ class Seminar < ActiveRecord::Base
   
   def contact_list_link(title=nil)
     title = title.nil? ? "Attendance List (#{contacts.count.to_s})" : title
-    ActionController::Base.helpers.link_to(title, {controller: "seminars", action: "edit", id: id, tab_page: 1, tab: "attendance"}, title: "#{name}: Attendance List", class: "tab_page")
+    ActionController::Base.helpers.link_to(title, {controller: "seminars", action: "edit", id: id, tab_page: 1, tab: "attendance"}, title: name, class: "tab_page")
   end
   
   def contact_count_link

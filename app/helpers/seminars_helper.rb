@@ -30,7 +30,7 @@ module SeminarsHelper
       actions += '<li class="divider"></li>' if group_1 > 0
       
       if can? :import_list, item
-        actions += '<li>'+ActionController::Base.helpers.link_to('Import List', {controller: "seminars", action: "import_list", id: item.id, tab_page: 1}, psrc: seminars_path(tab_page: 1), title: item.name+": Import List", class: "tab_page")+'</li>'        
+        actions += '<li>'+ActionController::Base.helpers.link_to('Import List', {controller: "seminars", action: "import_list", id: item.id, tab_page: 1}, title: item.name+": Import List", class: "tab_page")+'</li>'        
       end
       
       if can? :update, item

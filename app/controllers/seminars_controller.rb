@@ -176,7 +176,8 @@ class SeminarsController < ApplicationController
     end
     
     respond_to do |format|
-      format.html { redirect_to "/home/close_tab" }
+      @tab = {url: {controller: "seminars", action: "edit", id: @seminar.id, tab_page: 1, tab: "attendance"}, title: @seminar.name}
+      format.html { render "/home/close_tab", layout: nil }
       format.json { head :no_content }
     end
   end

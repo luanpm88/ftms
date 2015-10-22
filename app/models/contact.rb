@@ -723,7 +723,7 @@ class Contact < ActiveRecord::Base
     
     title = title.nil? ? display_name : title
     
-    link_helper.link_to(title, {controller: "contacts", action: "edit", id: id, tab_page: 1}, class: "tab_page", title: display_name)
+    link_helper.link_to(title, {controller: "contacts", action: "edit", id: id, tab_page: 1}, class: "tab_page", title: display_name+" #"+id.to_s)
   end
   
   def picture_link
