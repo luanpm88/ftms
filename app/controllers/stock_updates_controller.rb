@@ -49,6 +49,8 @@ class StockUpdatesController < ApplicationController
       @books = @books.where(stock_type_id: params[:stock_type_id]) if params[:stock_type_id].present?
       @books = @books.where(course_type_id: params[:program_id]) if params[:program_id].present?
       @books = @books.where(subject_id: params[:subject_id]) if params[:subject_id].present?
+      @books = @books.where("valid_from <= ?", params[:valid_from].to_datetime.beginning_of_day) if params[:valid_from].present?
+      @books = @books.where("valid_to >= ?", params[:valid_to].to_datetime.end_of_day) if params[:valid_to].present?
     end 
     
     render layout: nil

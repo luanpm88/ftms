@@ -332,9 +332,15 @@
 		//}
 	}
 	
-	function updateImportExportList(stock_type_id, program_id, subject_id) {
+	function updateImportExportList(stock_type_id, program_id, subject_id, valid_from, valid_to) {
+		if(typeof(program_id) == 'undefined') {
+			program_id = ""
+		}
+		if(typeof(subject_id) == 'undefined') {
+			subject_id = ""
+		}
 		$.ajax({
-			url : '<%= import_export_form_list_stock_updates_path %>?stock_type_id='+stock_type_id+'&program_id='+program_id+'&subject_id='+subject_id,
+			url : '<%= import_export_form_list_stock_updates_path %>?stock_type_id='+stock_type_id+'&program_id='+program_id+'&subject_id='+subject_id+'&valid_from='+valid_from+'&valid_to='+valid_to,
 			success:function(data, textStatus, jqXHR)
 			{
 				$(".import-export-stock-list").html(data)
@@ -3398,8 +3404,8 @@
 			updateStockFormList($(".stock_form_filter select[name='stock_type_id']").select2("val"),$(".stock_form_filter select[name='program_id']").select2("val"),$(".stock_form_filter select[name='subject_id']").select2("val"),$(".stock_form_filter input[name='valid_from']").val(),$(".stock_form_filter input[name='valid_to']").val())
 		})
 		
-		$(".import_export_form_filter select[name=stock_type_id], .import_export_form_filter input[name=program_id], .import_export_form_filter input[name=subject_id]").change(function() {
-			updateImportExportList($(".import_export_form_filter select[name='stock_type_id']").select2("val"),$(".import_export_form_filter input[name='program_id']").val(),$(".import_export_form_filter input[name='subject_id']").val())
+		$(".import_export_form_filter select[name=stock_type_id], .import_export_form_filter input[name=program_id], .import_export_form_filter input[name=subject_id], .import_export_form_filter input[name=valid_from], .import_export_form_filter input[name=valid_to]").change(function() {
+			updateImportExportList($(".import_export_form_filter select[name='stock_type_id']").select2("val"),$(".import_export_form_filter input[name='program_id']").val(),$(".import_export_form_filter input[name='subject_id']").val(),$(".import_export_form_filter input[name='valid_from']").val(),$(".import_export_form_filter input[name='valid_to']").val())
 		})
 		
 		$(document).on("change", ".phrase_box .price_course", function() {
