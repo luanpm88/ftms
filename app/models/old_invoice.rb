@@ -9,7 +9,7 @@ class OldInvoice < ActiveRecord::Base
 			invoice.invoice_id = row[:InvoiceID]
 			invoice.student_id = row[:StudentID]
 			invoice.paid = row[:Paid]
-			invoice.count_for = row[:CountFor]
+			invoice.count_for = row[:Countfor]
 			invoice.save
 		end
 	end
