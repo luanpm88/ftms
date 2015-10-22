@@ -8448,10 +8448,10 @@ td .logo {
     color: #aa6708;
 }
 .date_mbe #s2id_course_for_exam_year, .date_mbe #s2id_for_exam_year, .date_mbe #s2id_year {
-    width: 90px;
+    width: 75px;
 }
 .date_mbe #s2id_course_for_exam_month, .date_mbe #s2id_for_exam_month, .date_mbe #s2id_month {
-    width: 120px;
+    width: 115px;
 }
 .alert-level1 {
     margin-right: 0 2px 0 0 !important;

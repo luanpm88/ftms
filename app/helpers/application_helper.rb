@@ -36,7 +36,7 @@ module ApplicationHelper
       actions += '<ul class="dropdown-menu">'      
       
       if can?(:update, item) && (current_user.has_role?("admin") || (current_user.has_role?("manager") && item.lower?("manager")) )
-        actions += '<li>'+ActionController::Base.helpers.link_to('Edit', {controller: "users", action: "edit", id: item.id, tab_page: 1}, psrc: users_path(tab_page: 1), title: "Edit: #{item.name}", class: "tab_page")+'</li>'        
+        actions += '<li>'+ActionController::Base.helpers.link_to('Edit', {controller: "users", action: "edit", id: item.id, tab_page: 1}, title: "#{item.name} ##{item.id.to_s}", class: "tab_page")+'</li>'        
       end
       if can? :activity_log, item
         actions += '<li>'+ActionController::Base.helpers.link_to('Activity Logs', {controller: "users", action: "activity_log", id: item.id, tab_page: 1}, title: "Activity Logs: #{item.name}", class: "tab_page")+'</li>'        

@@ -577,18 +577,20 @@ class User < ActiveRecord::Base
     ### USER
     User.where.not(tmp_ConsultantID: nil).destroy_all
     OldConsultant.all.each_with_index do |row,index|
-      item = User.new(:email => "unknown#{index}@ftmsglobal.edu.vn", :password => "aA456321@", :password_confirmation => "aA456321@")
-      item.tmp_ConsultantID = row.consultant_id
-      #item.first_name = row[:ConsultantName].split(" ").last
-      #item.last_name = row[:ConsultantName].split(" ")
-      item.name = row.consultant_name.strip
-    
-      item.roles << Role.where(name: "user").first
-      # item.roles << Role.where(name: "education_consultant").first
-      item.user_id = User.first.id
+      if User.where(tmp_ConsultantID: row.consultant_id).empty?
+        item = User.new(:email => "unknown#{index}@ftmsglobal.edu.vn", :password => "aA456321@", :password_confirmation => "aA456321@")
+        item.tmp_ConsultantID = row.consultant_id
+        #item.first_name = row[:ConsultantName].split(" ").last
+        #item.last_name = row[:ConsultantName].split(" ")
+        item.name = row.consultant_name.strip
       
-      item.save      
-
+        item.roles << Role.where(name: "user").first
+        # item.roles << Role.where(name: "education_consultant").first
+        item.user_id = User.first.id
+        
+        item.save
+        
+      end
     end
   end
   

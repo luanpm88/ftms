@@ -1,4 +1,5 @@
 		<% if !@phrases.empty? %>
+								<%= render "field_history", drafts: @course.field_history("phrases"), type: "phrases" %>
                                 
                                 <div class="form-group">
 									<h4 style="margin-top: 0">Total Hour: <strong class="total_phrase_hour"><%= @course.total_hour %></strong></h4>
@@ -14,12 +15,12 @@
 										</div>
 									</div>
 								   <span class="help"></span>
-								   <%= render "field_history", drafts: @course.field_history("phrases"), type: "phrases" %>
+								   
 								   <% num = 0 %>
-								   <% @course.courses_phrases.joins(:phrase).order("phrases.name, courses_phrases.start_at").each do |courses_phrase| %>
+								   <% @course.courses_phrases.joins(:phrase).order("courses_phrases.start_at").each do |courses_phrase| %>
 												
 										<div class="row phrase_boxx phrase_box_<%= num %>">												
-											 <div title="<%= "This phrase can't be changed because it is in use!" if CoursesPhrase.find(courses_phrase.id).used? %>" class="col-md-4 <%= 'cp_unchangable' if CoursesPhrase.find(courses_phrase.id).used? %>">
+											 <div title="<%= "This phrase can't be changed because it is in use!" if CoursesPhrase.find(courses_phrase.id).used? %>" class="col-md-5 <%= 'cp_unchangable' if CoursesPhrase.find(courses_phrase.id).used? %>">
 												<%= '<div class="cp_unchangable_cover"></div>'.html_safe if CoursesPhrase.find(courses_phrase.id).used? %>
 												  <div class="input-with-icon  right">                                       
 													   <i class=""></i>
@@ -29,7 +30,7 @@
 													   </div>
 												  </div>
 											 </div>
-											 <div class="col-md-5">											 
+											 <div class="col-md-4">											 
 												  <div class="input-with-icon right">                                       
 													   <i class=""></i>
 													   <div class="input-append success date col-md-10 no-padding">
@@ -55,7 +56,7 @@
 								   
 								   <% (num..50).each do |number| %>
 										<div class="row phrase_boxx phrase_box_<%= number %>" <%= 'style="display:none"'.html_safe if number > num %>>
-											 <div class="col-md-4">
+											 <div class="col-md-5">
 												  <div class="input-with-icon  right">                                       
 													   <i class=""></i>
 													   <div class="input-with_add_but">
@@ -64,7 +65,7 @@
 													   </div>
 												  </div>
 											 </div>
-											 <div class="col-md-5">											 
+											 <div class="col-md-4">											 
 												  <div class="input-with-icon  right">                                       
 													   <i class=""></i>
 													   <div class="input-append success date col-md-10 no-padding">

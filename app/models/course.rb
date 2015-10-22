@@ -305,7 +305,7 @@ class Course < ActiveRecord::Base
   end
   
   def ordered_courses_phrases
-    courses_phrases.joins(:phrase).order("phrases.id, courses_phrases.start_at")
+    courses_phrases.joins(:phrase).order("courses_phrases.start_at, phrases.name")
   end
   
   def courses_phrase_list

@@ -50,7 +50,8 @@ class UsersController < ApplicationController
     
     respond_to do |format|
       if @user.save
-        format.html { redirect_to params[:tab_page].present? ? "/home/close_tab" : users_path, notice: 'User was successfully created.' }
+        @tab = {url: {controller: "users", action: "edit", id: @user.id, tab_page: 1}, title: @user.name+" #"+@user.id.to_s}
+        format.html { render "/home/close_tab", layout: nil }
         format.json { render action: 'show', status: :created, location: @user }
       else
         format.html { render action: 'new', tab_page: params[:tab_page] }
@@ -76,7 +77,8 @@ class UsersController < ApplicationController
     
     respond_to do |format|
       if @user.update(new_params)
-        format.html { redirect_to params[:tab_page].present? ? "/home/close_tab" : users_path, notice: 'User was successfully updated.' }
+        @tab = {url: {controller: "users", action: "edit", id: @user.id, tab_page: 1}, title: @user.name+" #"+@user.id.to_s}
+        format.html { render "/home/close_tab", layout: nil }
         format.json { head :no_content }
       else
         format.html { render action: 'edit', tab_page: params[:tab_page] }
@@ -413,6 +415,6 @@ class UsersController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def user_params
-      params.require(:user).permit(:name, :mobile, :email, :first_name, :last_name, :ATT_No, :image, :password, :password_confirmation, :role_ids => [])
+      params.require(:user).permit(:tmp_ConsultantID, :name, :mobile, :email, :first_name, :last_name, :ATT_No, :image, :password, :password_confirmation, :role_ids => [])
     end
 end

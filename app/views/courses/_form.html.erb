@@ -32,7 +32,7 @@
 					<%= hidden_field_tag("tab_page", 1) if params[:tab_page] %>
 					
 					<div class="row  intake_box column-seperation <%= "draft_form" if @course.draft? %>">
-						 <div class="col-md-7">
+						 <div class="col-md-6">
                           
                             <div class="row">
                                   <div class="col-md-2">
@@ -115,24 +115,25 @@
 											 <% @course.prices.each do |price| %>
 												  <div class="price_line line_<%= num %>">
 													   <div class="row">
-															<div class="col-md-6">
+															<div class="col-md-5">
 																 <div class="form-group">
-																	  <label class="form-label"><%= f.label :course_price %></label>
+																	  <label class="form-label"><%= f.label :price %></label>
 																	  <span class="help"><%= (0 == num ? "(required)" : "") %></span>
 																	  <div>
 																		   <%= text_field_tag "course_prices["+num.to_s+"][amount]", format_price(price.amount), class: "width100 price_input"+(0 == num ? " required" : "") %>
 																	  </div>
 																 </div>
 															</div>
-															<div class="col-md-6">
+															<div class="col-md-7">
 																 <div class="form-group">
 																	  <label class="form-label"><%= f.label :deadline %></label>
 																	  <span class="help"></span>
 																	  <div class="input-with-icon  right">                                       
 																		   <i class=""></i>
 																		   <div class="input-append success date col-md-10 no-padding">
+																				<span class="add-on"><span class="arrow"></span><i class="icon-th"></i></span>
 																			 <%= text_field_tag "course_prices["+num.to_s+"][deadline]", (price.deadline.nil? ? "" : price.deadline.strftime("%d-%b-%Y")), :class => "form-control" %>
-																			 <span class="add-on"><span class="arrow"></span><i class="icon-th"></i></span>
+																			 
 																		   </div>
 																		   <br style="clear: both" />
 																	  </div>
@@ -145,16 +146,16 @@
 											 <% (num..9).each do |number| %>
 												  <div class="price_line line_<%= number %>" <%= 'style="display: none"'.html_safe if number > num %>>
 													   <div class="row">
-															<div class="col-md-6">
+															<div class="col-md-5">
 																 <div class="form-group">
-																	  <label class="form-label"><%= f.label :course_price %></label>
+																	  <label class="form-label"><%= f.label :price %></label>
 																	  <span class="help"><%= (0 == number ? "(required)" : "") %></span>
 																	  <div>
 																		   <%= text_field_tag "course_prices["+number.to_s+"][amount]", "", class: "width100 price_input"+(number == 0 ? " required" : "") %>
 																	  </div>
 																 </div>
 															</div>
-															<div class="col-md-6">
+															<div class="col-md-7">
 																 <div class="form-group">
 																	  <label class="form-label"><%= f.label :deadline %></label>
 																	  <span class="help"></span>
@@ -183,7 +184,7 @@
 							  
 						 </div>
 						 
-						 <div class="col-md-5 course-phrases-select intake_group">
+						 <div class="col-md-6 course-phrases-select intake_group">
 							  
 							  
 							  

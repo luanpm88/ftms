@@ -1191,6 +1191,8 @@
 		if($(window).width() <= 750 && $('.page-sidebar').css("display") == "block") {
 			$('#main-menu-toggle').trigger("click");
 		}
+		
+		return tid
 	}
 	
 	function resizeIframe(tid) {
@@ -3385,6 +3387,9 @@
 		})
 		
 		$(document).on("keyup", ".phrase_hour", function() {
+			calculatePhraseHour()
+		});
+		$(document).on("change", ".phrase_hour", function() {
 			calculatePhraseHour()
 		});
 		$(document).on("change", ".phrase_boxx .main_input", function() {
