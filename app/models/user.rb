@@ -575,7 +575,6 @@ class User < ActiveRecord::Base
 
   def self.import_from_old_consultant
     ### USER
-    User.where.not(tmp_ConsultantID: nil).destroy_all
     OldConsultant.all.each_with_index do |row,index|
       if User.where(tmp_ConsultantID: row.consultant_id).empty?
         item = User.new(:email => "unknown#{index}@ftmsglobal.edu.vn", :password => "aA456321@", :password_confirmation => "aA456321@")
