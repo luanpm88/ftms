@@ -222,9 +222,6 @@ class UsersController < ApplicationController
           end
         end
         
-        
-        
-        
         ## company sales
         @records = PaymentRecord.where(status: 1)
                               .where(account_manager_id: u.id)

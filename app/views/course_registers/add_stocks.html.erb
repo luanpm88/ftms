@@ -65,7 +65,44 @@
 								   </div>
 							  </div>	
 						 </div>
-						 <div class="col-md-2">
+							  
+							  <div class="row program_paper_select_box">
+								   <div class="col-md-4">
+										<div class="form-group">
+											  <label class="form-label"><%= f.label :program %></label>
+											  <span class="help"></span>
+											  <div class="input-with-icon  right">                                       
+													 <i class=""></i>
+													 <div class="input-with_add_but">
+															<%= link_to '<i class="icon-plus"></i>'.html_safe, new_subject_path(tab_page: 1), title: "New Paper", :class => 'btn btn-sm btn-small btn-white add-agent-button tab_page' %>
+															<%= select_tag 'program_id', options_for_select(CourseType.active_course_types.collect{ |u| [u.short_name, u.id] }), {include_blank: "None", class: "modern_select width100 program_select", multiple: "multiple", input_name: "subject_id", input_required: "required"} %>
+													 </div>
+																							   
+											   
+											  </div>
+										 </div>
+								   </div>
+								   <div class="col-md-4">
+										<div class="form-group">
+											  <label class="form-label"><%= f.label :paper %></label>
+											  <span class="help"></span>
+											  
+											  <div class="input-with-icon  right">                                       
+													 <i class=""></i>
+													 <div class="input-with_add_but">
+															<%= link_to '<i class="icon-plus"></i>'.html_safe, new_subject_path(tab_page: 1), title: "New Paper", :class => 'btn btn-sm btn-small btn-white add-agent-button tab_page' %>
+															<span class="paper_select_box">
+																 <%= select_tag 'subject_id', options_for_select(Subject.active_subjects.collect{ |u| [u.name, u.id] }), {include_blank: "None", class: "modern_select width100 required", multiple: "multiple"} %>																 
+															</span>
+													 </div>
+																							   
+											   
+											  </div>
+										 </div>
+								   </div>
+							  </div>
+								   
+						 <!--<div class="col-md-2">
 							  <div class="form-group">
 								   <label class="form-label"><label>Program</label></label>
 								   <span class="help"></span>
@@ -90,7 +127,7 @@
 										</div>
 								   </div>
 							  </div>	
-						 </div>
+						 </div>-->
 						 
 						 
 		

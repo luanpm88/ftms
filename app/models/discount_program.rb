@@ -66,7 +66,7 @@ class DiscountProgram < ActiveRecord::Base
     
     ########## END REVISION-FEATURE #########################
     
-    if params["course_types"].present?
+    if params["course_types"].present? && params["search"]["value"].empty?
       @records = @records.joins(:course_types)
       @records = @records.where("course_types.id IN (#{params["course_types"].join(",")})")
     end
