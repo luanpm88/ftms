@@ -222,20 +222,7 @@ class UsersController < ApplicationController
           end
         end
         
-        @records = PaymentRecord.includes(:course_register => :contact)
-                              .where(course_registers: {parent_id: nil}).where("course_registers.status IS NOT NULL AND course_registers.status LIKE ?", "%[active]%")
-                              .where(status: 1)
-                              .where(course_registers: {account_manager_id: u.id}) #.where(course_types: {id: ct.id}) #.sum(:price)                              
-                              .where("payment_records.payment_date >= ? AND payment_records.payment_date <= ? ", @from_date.beginning_of_day, @to_date.end_of_day).uniq
         
-        @records.each do |pr|
-          pr.payment_record_details.each do |prd|
-            if !prd.contacts_course.nil? && prd.contacts_course.course.course_type_id == ct.id
-              total += prd.amount
-              group_total += prd.amount
-            end
-          end
-        end
         
         
         ## company sales
