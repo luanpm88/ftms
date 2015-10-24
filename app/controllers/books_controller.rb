@@ -44,19 +44,24 @@ class BooksController < ApplicationController
   # POST /books
   # POST /books.json
   def create
-    @book = Book.new(book_params)
-    @book.user = current_user
+    params[:stock_type_ids].each do |stid|
+      @book = Book.new(book_params)
+      @book.user = current_user
+      @book.stock_type_id = stid
+      
+      @book.save
+      
+      new_price = @book.book_prices.new(prices: params[:book_prices], user_id: current_user.id)
+      @book.update_price(new_price)
+      
+      @book.update_status("create", current_user)        
+      @book.save_draft(current_user)
+      
+      @book.check_out_of_date
+    end
 
     respond_to do |format|
-      if @book.save
-        new_price = @book.book_prices.new(prices: params[:book_prices], user_id: current_user.id)
-        @book.update_price(new_price)
-        
-        @book.update_status("create", current_user)        
-        @book.save_draft(current_user)
-        
-        @book.check_out_of_date
-        
+      if true        
         format.html { redirect_to params[:tab_page].present? ? "/home/close_tab" : @book, notice: 'Book was successfully created.' }
         format.json { render action: 'show', status: :created, location: @book }
       else

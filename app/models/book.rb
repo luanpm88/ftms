@@ -588,7 +588,7 @@ class Book < ActiveRecord::Base
   end
   
   def is_out_of_date?
-    return valid_from >= Time.now || valid_to <= Time.now
+    false # return valid_from >= Time.now || valid_to <= Time.now
   end
   
   def check_out_of_date
@@ -769,7 +769,7 @@ class Book < ActiveRecord::Base
   def type_name
     str = []    
     str << stock_type.name if !stock_type.nil?
-    str << name
+    #str << name
     
     return str.join("-").html_safe
   end

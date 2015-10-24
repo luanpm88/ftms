@@ -74,39 +74,7 @@
 							  <div class="row">
 								   <div class="col-md-6">
 							  
-											 <div class="row">
-												  <div class="col-md-6">
-													   <div class="form-group">
-															<label class="form-label"><%= f.label :valid_from %></label>
-															<%= render "field_history", drafts: @book.field_history("valid_from"), type: "valid_from" %>
-															<span class="help">(required)</span>
-															<div class="input-with-iconz  left">                                       
-																 <i class=""></i>
-																 <div class="input-append success date col-md-10 no-padding">
-																	  <span class="add-on"><span class="arrow"></span><i class="icon-th"></i></span>
-																	  <%= f.text_field :valid_from, :class => "form-control required", value: (@book.valid_from.nil? ? "" : @book.valid_from.strftime("%d-%b-%Y")) %>
-																 </div>
-																 <br style="clear: both" />
-															</div>
-													   </div>										
-												  </div>
-												  <div class="col-md-6">
-													   <div class="form-group">
-															<label class="form-label"><%= f.label :valid_to %></label>
-															<%= render "field_history", drafts: @book.field_history("valid_to"), type: "valid_to" %>
-															<span class="help">(required)</span>
-															<div class="input-with-iconz  left">                                       
-																 <i class=""></i>
-																 <div class="input-append success date col-md-10 no-padding">
-																	  <span class="add-on"><span class="arrow"></span><i class="icon-th"></i></span>
-																   <%= f.text_field :valid_to, :class => "form-control required", value: (@book.valid_to.nil? ? "" : @book.valid_to.strftime("%d-%b-%Y")) %>
-																   
-																 </div>
-																 <br style="clear: both" />
-															</div>
-													   </div>										
-												  </div>
-											 </div>
+											 
 											 
 											 <div class="program_paper_select_box">
 												  <div class="form-group">
@@ -144,7 +112,11 @@
 													   <i class=""></i>
 													   <div class="input-with_add_but">
 															  <%= link_to '<i class="icon-plus"></i>'.html_safe, new_stock_type_path(tab_page: 1), title: "New Stock Type", :class => 'btn btn-sm btn-small btn-white add-agent-button tab_page' %>
-															  <%= select_tag 'book[stock_type_id]', options_for_select(StockType.active_stock_types.collect{ |u| [u.name, u.id] }, @book.stock_type_id), {include_blank: "None", class: "modern_select width100"} %>
+																 <% if !@book.id.nil? %>
+																	  <%= select_tag 'book[stock_type_id]', options_for_select(StockType.active_stock_types.collect{ |u| [u.name, u.id] }, @book.id), {include_blank: "None", class: "modern_select width100 required"} %>
+																 <% else %>
+																	  <%= select_tag 'stock_type_ids[]', options_for_select(StockType.active_stock_types.collect{ |u| [u.name, u.id] }), {include_blank: "None", class: "modern_select width100 required", multiple: "multiple"} %>
+																 <% end %>
 													   </div>
 												  </div>
 											 </div>
@@ -155,7 +127,40 @@
 								   </div>
 								   
 								   <div class="col-md-6">
-										<div class="form-group">
+										<div class="row">
+												  <div class="col-md-6">
+													   <div class="form-group">
+															<label class="form-label"><%= f.label :valid_from %></label>
+															<%= render "field_history", drafts: @book.field_history("valid_from"), type: "valid_from" %>
+															<span class="help">(required)</span>
+															<div class="input-with-iconz  left">                                       
+																 <i class=""></i>
+																 <div class="input-append success date col-md-10 no-padding">
+																	  <span class="add-on"><span class="arrow"></span><i class="icon-th"></i></span>
+																	  <%= f.text_field :valid_from, :class => "form-control required", value: (@book.valid_from.nil? ? "" : @book.valid_from.strftime("%d-%b-%Y")) %>
+																 </div>
+																 <br style="clear: both" />
+															</div>
+													   </div>										
+												  </div>
+												  <div class="col-md-6">
+													   <div class="form-group">
+															<label class="form-label"><%= f.label :valid_to %></label>
+															<%= render "field_history", drafts: @book.field_history("valid_to"), type: "valid_to" %>
+															<span class="help">(required)</span>
+															<div class="input-with-iconz  left">                                       
+																 <i class=""></i>
+																 <div class="input-append success date col-md-10 no-padding">
+																	  <span class="add-on"><span class="arrow"></span><i class="icon-th"></i></span>
+																   <%= f.text_field :valid_to, :class => "form-control required", value: (@book.valid_to.nil? ? "" : @book.valid_to.strftime("%d-%b-%Y")) %>
+																   
+																 </div>
+																 <br style="clear: both" />
+															</div>
+													   </div>										
+												  </div>
+											 </div>
+										<!--<div class="form-group">
 											  <label class="form-label"><%= f.label :title %></label>
 											  <span class="help">(required)</span>
 											  <%= render "field_history", drafts: @book.field_history("name"), type: "name" %>
@@ -163,7 +168,7 @@
 												<i class=""></i>
 												<%= f.text_field :name, :class => "form-control required" %>
 											  </div>
-										</div>
+										</div>-->
 											 
 										<div class="form-group">
 											 <label class="form-label"><%= f.label :publisher %></label>

@@ -425,7 +425,7 @@ class CourseRegister < ActiveRecord::Base
     arr = []
     courses.each do |row|
       
-      arr << "<div class=\"#{(row[:contacts_course].is_write_off? ? "write_off" : "")}\" title=\"#{(row[:contacts_course].is_write_off? ? "write-off" : "")}\">"
+      arr << "<div class=\"#{(row[:contacts_course].is_write_off? ? "write_off" : "")}\" title=\"#{(row[:contacts_course].is_write_off? ? "write-off: #{ApplicationController.helpers.format_price(row[:contacts_course].write_off_amount)} #{Setting.get("currency_code")}" : "")}\">"
       arr << "<div class=\"nowrap\"><strong>"+row[:course].display_name+"</strong></div>"
       arr << "<div class=\"courses_phrases_list\">"+Course.render_courses_phrase_list(row[:courses_phrases],row[:contacts_course])+"</div>" if phrase_list
       arr << "</div>"
