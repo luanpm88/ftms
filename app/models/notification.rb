@@ -294,7 +294,7 @@ class Notification < ActiveRecord::Base
           return ""
         end
         
-        records = StockType.main_stock_types.where("status LIKE ?","%pending]%")
+        records = StockType.main_stock_types.where("status LIKE ?","%pending]%").where("status NOT LIKE ?","%[out_of_date]%")
         
         return records.count == 0 ? "" : records.count
       end

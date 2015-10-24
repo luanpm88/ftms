@@ -769,9 +769,9 @@ class Book < ActiveRecord::Base
   def type_name
     str = []    
     str << stock_type.name if !stock_type.nil?
-    str = str.join("-") + "-" + name
+    str << name
     
-    return str.html_safe
+    return str.join("-").html_safe
   end
   
   def registered?(contact)
@@ -786,7 +786,7 @@ class Book < ActiveRecord::Base
   
     str = []
     str << display_name
-    str << stock_type.name
+    str << stock_type.name if !stock_type.nil?
     str << publisher.to_s
     str << display_prices
     str << user.name

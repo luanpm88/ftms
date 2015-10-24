@@ -75,7 +75,7 @@ class Subject < ActiveRecord::Base
     
     @records = @records.order(order) if !order.nil?
     
-    if params["course_types"].present?
+    if params["course_types"].present? && params["search"]["value"].empty?
       @records = @records.joins(:course_types)
       @records = @records.where("course_types.id IN (#{params["course_types"].join(",")})")
     end
@@ -122,7 +122,9 @@ class Subject < ActiveRecord::Base
   end
   
   def self.full_text_search(q)
-    self.active_subjects.search(q).limit(50).map {|model| {:id => model.id, :text => model.name} }
+    result = self.active_subjects
+    result = result.search(q) if q.present?
+    result = result.limit(50).map {|model| {:id => model.id, :text => model.name} }
   end
   
   def json_encode_course_type_ids_names
