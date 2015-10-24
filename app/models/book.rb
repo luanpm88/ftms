@@ -588,9 +588,9 @@ class Book < ActiveRecord::Base
   end
   
   def is_out_of_date?
-    from = !valid_from.nil? and valid_from >= Time.now
-    to = !valid_to.nil? and valid_to <= Time.now
-    return from || to
+    o_from = (!valid_from.nil? and valid_from >= Time.now)
+    o_to = (!valid_to.nil? and valid_to <= Time.now)
+    return (o_from || o_to)
   end
   
   def check_out_of_date
