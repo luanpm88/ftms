@@ -271,7 +271,7 @@ class Notification < ActiveRecord::Base
           return ""
         end
         
-        records = Book.main_books.where("status LIKE ?","%pending]%")
+        records = Book.main_books.where("status LIKE ?","%pending]%").where("status NOT LIKE ?","%[out_of_date]%")
         
         #if user.has_role?("education_consultant")
         #  records = records.select{|item| item.current.user.lower?("education_consultant")}
@@ -294,7 +294,7 @@ class Notification < ActiveRecord::Base
           return ""
         end
         
-        records = StockType.main_stock_types.where("status LIKE ?","%pending]%").where("status NOT LIKE ?","%[out_of_date]%")
+        records = StockType.main_stock_types.where("status LIKE ?","%pending]%")
         
         return records.count == 0 ? "" : records.count
       end

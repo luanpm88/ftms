@@ -1,7 +1,7 @@
 class Book < ActiveRecord::Base
   include PgSearch
   
-  validates :name, presence: true
+  #validates :name, presence: true
   validates :user_id, presence: true
   
   belongs_to :user

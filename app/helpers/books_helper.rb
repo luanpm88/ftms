@@ -8,22 +8,22 @@ module BooksHelper
       group_1 = 0
       
       if can? :approve_new, item
-        actions += '<li>'+ActionController::Base.helpers.link_to('Approve New', {controller: "books", action: "approve_new", id: item.id, tab_page: 1}, title: "#{item.name}: Approve New", class: "approve_link")+'</li>'
+        actions += '<li>'+ActionController::Base.helpers.link_to('Approve New', {controller: "books", action: "approve_new", id: item.id, tab_page: 1}, title: "#{item.display_name}: Approve New", class: "approve_link")+'</li>'
         group_1 += 1
       end
       
       if can? :approve_update, item
-        actions += '<li>'+ActionController::Base.helpers.link_to('Approve Update', {controller: "books", action: "approve_update", id: item.id, tab_page: 1}, title: "#{item.name}: Approve Update", class: "approve_link")+'</li>'
+        actions += '<li>'+ActionController::Base.helpers.link_to('Approve Update', {controller: "books", action: "approve_update", id: item.id, tab_page: 1}, title: "#{item.display_name}: Approve Update", class: "approve_link")+'</li>'
         group_1 += 1
       end
       
       if can? :approve_delete, item
-        actions += '<li>'+ActionController::Base.helpers.link_to('Approve Delete', {controller: "books", action: "approve_delete", id: item.id, tab_page: 1}, title: "#{item.name}: Approve Delete", class: "approve_link")+'</li>'
+        actions += '<li>'+ActionController::Base.helpers.link_to('Approve Delete', {controller: "books", action: "approve_delete", id: item.id, tab_page: 1}, title: "#{item.display_name}: Approve Delete", class: "approve_link")+'</li>'
         group_1 += 1
       end
       
       if can? :undo_delete, item
-        actions += '<li>'+ActionController::Base.helpers.link_to('Undo Delete', {controller: "books", action: "undo_delete", id: item.id, tab_page: 1}, title: "#{item.name}: Undo Delete", class: "approve_link")+'</li>'
+        actions += '<li>'+ActionController::Base.helpers.link_to('Undo Delete', {controller: "books", action: "undo_delete", id: item.id, tab_page: 1}, title: "#{item.display_name}: Undo Delete", class: "approve_link")+'</li>'
         group_1 += 1
       end
       
@@ -36,11 +36,11 @@ module BooksHelper
       end
       
       if can? :update, item
-        actions += '<li>'+ActionController::Base.helpers.link_to('Edit', {controller: "books", action: "edit", id: item.id, tab_page: 1}, psrc: books_path(tab_page: 1), title: item.name, class: "tab_page")+'</li>'        
+        actions += '<li>'+ActionController::Base.helpers.link_to('Edit', {controller: "books", action: "edit", id: item.id, tab_page: 1}, psrc: books_path(tab_page: 1), title: item.display_name, class: "tab_page")+'</li>'        
       end
       
       if can? :delete, item
-        actions += '<li>'+ActionController::Base.helpers.link_to('Delete', {controller: "books", action: "delete", id: item.id, tab_page: 1}, title: "#{item.name}: Delete", class: "approve_link")+'</li>'        
+        actions += '<li>'+ActionController::Base.helpers.link_to('Delete', {controller: "books", action: "delete", id: item.id, tab_page: 1}, title: "#{item.display_name}: Delete", class: "approve_link")+'</li>'        
       end
       
       actions += '</ul></div></div>'
@@ -81,7 +81,7 @@ module BooksHelper
       actions += '<ul class="dropdown-menu">'
       
       item.revisions.order("created_at DESC").each do |d|
-        actions += '<li>'+ActionController::Base.helpers.link_to("#{d.created_at.strftime("%d-%b-%Y %I:%M %p")}", {controller: "books", action: "edit", id: d.id, tab_page: 1}, title: "[#{d.created_at.strftime("%d-%b-%Y %I:%M %p")}] #{d.name}", class: "tab_page")+'</li>'        
+        actions += '<li>'+ActionController::Base.helpers.link_to("#{d.created_at.strftime("%d-%b-%Y %I:%M %p")}", {controller: "books", action: "edit", id: d.id, tab_page: 1}, title: "[#{d.created_at.strftime("%d-%b-%Y %I:%M %p")}] #{d.display_name}", class: "tab_page")+'</li>'        
       end
       
       actions += '</ul></div></div>'
