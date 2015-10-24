@@ -8539,3 +8539,7 @@ h5.list_title {
     width: 100%;
     z-index: 1000;
 }
+.input-append.date .add-on {
+    position: absolute !important;
+    right: 0 !important;
+}

@@ -77,7 +77,7 @@
 											 <label class="form-label"><label>Paper</label></label>
 											 <span class="help">(required)</span>
 											 <%= render "field_history", drafts: @course.field_history("program_paper"), type: "program_paper" %>
-											 <div class="input-with-icon date-group right">                                       
+											 <div class="input-with-icon date-group left">                                       
 												  <i class=""></i>
 												  <div class="input-with_add_but">
 														 <%= link_to '<i class="icon-plus"></i>'.html_safe, new_subject_path(tab_page: 1), title: "New Paper", :class => 'btn btn-sm btn-small btn-white add-agent-button tab_page' %>
@@ -109,7 +109,7 @@
                                   </div>
 								  <div class="col-md-7">										
 										 <%= render "field_history", drafts: @course.field_history("course_price"), type: "course_price" %>
-                                         <div class="input-with-iconz date-group right">                                       
+                                         <div class="input-with-iconz date-group left">                                       
 											 <i class=""></i>
 											 <% num = 0 %>
 											 <% @course.prices.each do |price| %>
