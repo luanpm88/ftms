@@ -312,12 +312,12 @@ class BooksContact < ActiveRecord::Base
   end
   
   def display_upfront(link=true)
-    ActionView::Base.send(:include, Rails.application.routes.url_helpers)
-    link_helper = ActionController::Base.helpers
-    
-    url = link ? link_helper.url_for({controller: "books_contacts", action: "check_upfront", value: !self.upfront, id: self.id}) : "#none"
-    
-    ApplicationController.helpers.check_ajax_button(upfront, url, "upfront?")    
+    if upfront
+      # select_tag = ActionController::Base.helpers.select_tag('books[]', ActionController::Base.helpers.options_for_select(Book.active_books.where(course_type_id: book.course_type_id, subject_id: book.subject_id).collect{ |u| [u.display_name+u.display_valid_time, u.id] }), class: "modern_select bc-upfront-select width100")
+      "<a class=\"check-radio ajax-uncheck-book-upfront\" rel=\"#{self.id.to_s}\" href=\"#c\"><i class=\"icon-check\"></i></a><div style=\"display:none\" class=\"select-bc-box\"></div>"
+    else
+      "<a class=\"check-radio ajax-check-book-upfront\" rel=\"#{self.id.to_s}\" href=\"#c\"><i class=\"icon-check-empty\"></i></a>"
+    end    
   end
   
   #def display_delivery_status    

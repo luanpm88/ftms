@@ -210,4 +210,5 @@ class ContactsCourse < ActiveRecord::Base
     end
     return self.remain > 0.0 ? true : false
   end
+  
 end

@@ -279,6 +279,7 @@
 													</th>
 													<th class="text-left">Name</th>
 													<th>Info</th>
+													<th><%= "Deferred Phrase(s)" if params[:courses].present? %></th>
 													<th width="20%" class="text-center">Education Consultant</th>												
 												</tr>
 											</thead>
@@ -303,6 +304,9 @@
 																<strong><%= item.contact_link %></strong></div>
 																<div class="text-left"><%= item.html_info_line.html_safe+item.referrer_link.html_safe %></div>
 																
+														</td>
+														<td>
+																<%= item.display_transferred_courses_phrases(params[:courses], false) %>
 														</td>
 														<td class="text-center">
 															<%= item.staff_col %>

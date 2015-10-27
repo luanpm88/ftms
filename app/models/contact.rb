@@ -397,7 +397,7 @@ class Contact < ActiveRecord::Base
               '<div class="text-left"><strong>'+item.contact_link+"</strong></div>"+'<div class="text-left">'+item.html_info_line.html_safe+item.referrer_link+"</div>"+item.picture_link,              
               '<div class="text-right">'+item.contact_type_name+"</div>",
               '<div class="text-left">'+item.course_types_name_col+"</div>",
-              '<div class="text-center">'+item.course_count_link+"</div>",
+              '<div class="text-center">'+item.course_count_link+item.display_transferred_courses_phrases(params[:courses])+"</div>",
               '<div class="text-center contact_tag_box" rel="'+item.id.to_s+'">'+ContactsController.helpers.render_contact_tags_selecter(item)+"</div>",
               '<div class="text-center">'+item.created_at.strftime("%d-%b-%Y")+"</div>",
               '<div class="text-center">'+item.account_manager_col+"</div>",
@@ -1939,6 +1939,31 @@ class Contact < ActiveRecord::Base
     return Contact.main_contacts.where("contacts.status NOT LIKE ?","%[deleted]%").where.not(id: self.id)
                                 .where(cond_name+" AND "+cond_other)
 
+  end
+  
+  def transferred_courses_phrases
+    res_cp_ids = (self.active_contacts_courses.map{|cc| cc.courses_phrase_ids}).join("").split("][").map {|s| s.gsub("[","").gsub("]","") }
+    res_cps = CoursesPhrase.where(id: res_cp_ids)
+    
+    active_cps = []
+    (self.active_courses_with_phrases.map{|r| r[:courses_phrases]}).each do |cps|
+      active_cps += cps
+    end
+    
+    return (res_cps - [])
+  end
+  
+  def display_transferred_courses_phrases(course_id,show_title=true)
+    aa = transferred_courses_phrases
+    if course_id.present?
+      aa = transferred_courses_phrases.collect{|cp| cp if cp.course_id == course_id}
+    else
+      aa = []
+    end
+    
+    title = show_title ? "<div class=\"col_label\">Deferred Phrase(s):</div>" : ""
+    
+    aa.empty? ? "" : ("<div class=\"text-left nowrap items_confirmed\">#{title}<div>#{Course.find(course_id).display_name}</div>"+Course.render_courses_phrase_list(transferred_courses_phrases)+"</div>").html_safe
   end
 
 end

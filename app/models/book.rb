@@ -520,7 +520,7 @@ class Book < ActiveRecord::Base
     return "" if statuses.empty?
     aa = statuses # statuses.include?("out_of_date") ? ["out_of_date"] : statuses
     result = aa.map { |s|
-      if statuses.include?("out_of_date") && s == "active"
+      if (statuses.include?("out_of_date") || is_in_progress?) && s == "active"
         ""
       else
         "<span title=\"Last updated: #{current.created_at.strftime("%d-%b-%Y, %I:%M %p")}; By: #{current.user.name}\" class=\"badge user-role badge-info contact-status #{s}\">#{s}</span>"
@@ -592,9 +592,15 @@ class Book < ActiveRecord::Base
   end
   
   def is_out_of_date?
-    o_from = (!valid_from.nil? and valid_from >= Time.now)
+    #o_from = (!valid_from.nil? and valid_from >= Time.now)
     o_to = (!valid_to.nil? and valid_to <= Time.now)
-    return (o_from || o_to)
+    return o_to # (o_from || o_to)
+  end
+  
+  def is_in_progress?
+    o_from = (!valid_from.nil? and valid_from >= Time.now)
+    #o_to = (!valid_to.nil? and valid_to <= Time.now)
+    return o_from # (o_from || o_to)
   end
   
   def check_out_of_date

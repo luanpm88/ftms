@@ -234,6 +234,8 @@ class CourseRegistersController < ApplicationController
       end
     end
     
+    @course = params[:courses].present? ? Course.find(params[:courses]) : nil
+    
     @course_register = CourseRegister.new    
     
     render layout: "content"
