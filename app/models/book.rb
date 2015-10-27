@@ -101,6 +101,9 @@ class Book < ActiveRecord::Base
     if params[:stock_types].present?
       @records = @records.where(stock_type_id: params[:stock_types])
     end
+    
+    @records = @records.where("books.valid_from <= ?", params[:valid_on].to_datetime.beginning_of_day) if params[:valid_on].present?
+    @records = @records.where("books.valid_to >= ?", params[:valid_on].to_datetime.end_of_day) if params[:valid_on].present?
         
     return @records
   end
@@ -152,6 +155,7 @@ class Book < ActiveRecord::Base
               '<div class="text-center">'+item.stock.to_s+"</div>",
               '<div class="text-center">'+BooksContact.to_be_delivered_count(item.id).to_s+"</div>",
               '<div class="text-center">'+BooksContact.to_be_ordered_count(item.id).to_s+"</div>",
+              '<div class="text-center">'+BooksContact.to_be_imported_count(item.id).to_s+"</div>",
               '<div class="text-center">'+item.user.staff_col+"</div>",
               '<div class="text-center">'+item.display_statuses+"</div>",
               ''

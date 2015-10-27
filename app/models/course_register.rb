@@ -459,7 +459,7 @@ class CourseRegister < ActiveRecord::Base
   def book_list
     arr = []
     books.each do |row|
-      arr << "<div><strong><span class=\"badge badge-success\">#{row[:books_contact].quantity}</span> "+row[:book].display_name+"</strong> <div class=\"nowrap\"><span>"+row[:books_contact].display_upfront+"</span> | <span>"+row[:books_contact].display_delivery_status+"</span><div></div><br />"
+      arr << "<div><strong><span class=\"badge badge-success\">#{row[:books_contact].quantity}</span> "+row[:book].display_name+"<div>"+row[:books_contact].display_valid_time+"</div></strong> <div class=\"nowrap\"><span>"+row[:books_contact].display_upfront+"</span> | <span>"+row[:books_contact].display_delivery_status+"</span><div></div><br />"
     end
     
     return arr.join("")

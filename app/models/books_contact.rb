@@ -157,6 +157,13 @@ class BooksContact < ActiveRecord::Base
     self.all_to_be_ordered(book_id).sum(:quantity)
   end
   
+  def self.to_be_imported_count(book_id=nil)
+    result = self.to_be_ordered_count(book_id) - Book.find(book_id).stock
+    result = 0 if result < 0
+    
+    return result
+  end
+  
   def self.filter(params, user)
     @records = self.all_to_be_ordered
     
@@ -206,8 +213,8 @@ class BooksContact < ActiveRecord::Base
       end
     end
     
-    @records = @records.where("books.valid_from <= ?", params[:valid_from].to_datetime.beginning_of_day) if params[:valid_from].present?
-    @records = @records.where("books.valid_to >= ?", params[:valid_to].to_datetime.end_of_day) if params[:valid_to].present?
+    @records = @records.where("books.valid_from <= ?", params[:valid_on].to_datetime.beginning_of_day) if params[:valid_on].present?
+    @records = @records.where("books.valid_to >= ?", params[:valid_on].to_datetime.end_of_day) if params[:valid_on].present?
     
     return @records
   end
@@ -312,9 +319,9 @@ class BooksContact < ActiveRecord::Base
   def display_upfront(link=true)
     if upfront
       # select_tag = ActionController::Base.helpers.select_tag('books[]', ActionController::Base.helpers.options_for_select(Book.active_books.where(course_type_id: book.course_type_id, subject_id: book.subject_id).collect{ |u| [u.display_name+u.display_valid_time, u.id] }), class: "modern_select bc-upfront-select width100")
-      "<div class=\"upfront-box\"><a class=\"check-radio ajax-uncheck-book-upfront\" rel=\"#{self.id.to_s}\" href=\"#c\"><i class=\"icon-check\"></i></a><div style=\"display:none\" class=\"select-bc-box\"></div></div>"
+      "<span class=\"upfront-box\"><a class=\"check-radio ajax-uncheck-book-upfront\" rel=\"#{self.id.to_s}\" href=\"#c\"><i class=\"icon-check\"></i></a> Upfront<div style=\"display:none\" class=\"select-bc-box\"></div></span>"
     else
-      "<a class=\"check-radio ajax-check-book-upfront\" valid_time='#{self.book.display_valid_time}' rel=\"#{self.id.to_s}\" href=\"#c\"><i class=\"icon-check-empty\"></i></a>"
+      "<a class=\"check-radio ajax-check-book-upfront\" bc_id=\"#{self.id.to_s}\" valid_time='#{self.book.display_valid_time}' rel=\"#{self.id.to_s}\" href=\"#c\"><i class=\"icon-check-empty\"></i></a> Upfront"
     end    
   end
 

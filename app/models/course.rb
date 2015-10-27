@@ -79,7 +79,9 @@ class Course < ActiveRecord::Base
   end
   
   def self.full_text_search(q, params=nil)
-    result = self.active_courses.order("upfront DESC, courses.intake DESC")
+    result = self.active_courses.joins("LEFT JOIN course_types cts ON cts.id=courses.course_type_id")
+                                .joins("LEFT JOIN subjects sjs ON sjs.id=courses.subject_id")
+                                .order("cts.short_name, sjs.name, courses.upfront, courses.intake DESC")
     if !params.nil?
       if params[:student_id].present?
         contact = Contact.find(params[:student_id])
@@ -460,7 +462,7 @@ class Course < ActiveRecord::Base
     self.where(parent_id: nil)
   end
   def self.active_courses(filter=nil)
-    result = self.main_courses.where("status IS NOT NULL AND status LIKE ?", "%[active]%")
+    result = self.main_courses.where("courses.status IS NOT NULL AND courses.status LIKE ?", "%[active]%")
     if !filter.nil?
       if filter[:course_type_id].present?
         result = result.where(course_type_id: filter[:course_type_id])

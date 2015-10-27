@@ -31,28 +31,24 @@
 					  </div>
 						
                   </div>
-                  </div>
-						  
-				  
-				  <div class="row">
-								<div class="col-md-2">
+					  
+					  <div class="row">
+								<div class="col-md-3">
 
-										<h4>Valid from</h4>	
+										<h4>Valid on</h4>	
 										<div class="input-append success date col-md-10 no-padding">
 											<span class="add-on"><span class="arrow"></span><i class="icon-th"></i></span>
-											<%= text_field_tag :valid_from, Time.now.strftime("%d-%b-%Y"), :class => "form-control" %>
+											<%= text_field_tag :valid_on, Time.now.strftime("%d-%b-%Y"), :class => "form-control" %>
 										</div>
 										<br style="clear: both" />
 							  </div>
-							  <div class="col-md-2">
-								   <h4>Valid to</h4>	
-											 <div class="input-append success date col-md-10 no-padding">
-												  <span class="add-on"><span class="arrow"></span><i class="icon-th"></i></span>
-											   <%= text_field_tag :valid_to, "", :class => "form-control" %>
-											   
-											 </div>
-						
-							  </div>
+							  
 					</div>	
+					  
+					  
+                  </div>
+						  
+				  
+				  
 						  
 				</div>

@@ -257,8 +257,8 @@ class BooksController < ApplicationController
       records = records.where(course_type_id: params[:program_id].split(",")) if params[:program_id].present?
       records = records.where(subject_id: params[:subject_id].split(",")) if params[:subject_id].present?
       #records = records.where("valid_from <= ?", Time.now).where("valid_to >= ?", Time.now)
-      records = records.where("valid_from <= ?", params[:valid_from].to_datetime.beginning_of_day) if params[:valid_from].present?
-      records = records.where("valid_to >= ?", params[:valid_to].to_datetime.end_of_day) if params[:valid_to].present?
+      records = records.where("valid_from <= ?", params[:valid_on].to_datetime.beginning_of_day) if params[:valid_on].present?
+      records = records.where("valid_to >= ?", params[:valid_on].to_datetime.end_of_day) if params[:valid_on].present?
       
     end
     

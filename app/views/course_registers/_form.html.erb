@@ -214,35 +214,20 @@
 						 <div class="row">
 							  <div class="col-md-2">
 								   <div class="form-group">
-										<label class="form-label"><%= f.label :valid_from %></label>
+										<label class="form-label"><%= f.label :valid_on %></label>
 										
 										<span class="help"></span>
 										<div class="input-with-iconz  left">                                       
 											 <i class=""></i>
 											 <div class="input-append success date col-md-10 no-padding">
 												  <span class="add-on"><span class="arrow"></span><i class="icon-th"></i></span>
-												  <%= text_field_tag :valid_from, Time.now.strftime("%d-%b-%Y"), :class => "form-control" %>
+												  <%= text_field_tag :valid_on, Time.now.strftime("%d-%b-%Y"), :class => "form-control" %>
 											 </div>
 											 <br style="clear: both" />
 										</div>
 								   </div>										
 							  </div>
-							  <div class="col-md-2">
-								   <div class="form-group">
-										<label class="form-label"><%= f.label :valid_to %></label>
-										
-										<span class="help"></span>
-										<div class="input-with-iconz  left">                                       
-											 <i class=""></i>
-											 <div class="input-append success date col-md-10 no-padding">
-												  <span class="add-on"><span class="arrow"></span><i class="icon-th"></i></span>
-											   <%= text_field_tag :valid_to, "", :class => "form-control" %>
-											   
-											 </div>
-											 <br style="clear: both" />
-										</div>
-								   </div>										
-							  </div>
+							  
 						 </div>
 							  
 					</div>

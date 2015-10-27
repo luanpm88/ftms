@@ -80,6 +80,8 @@ class BooksContactsController < ApplicationController
     if params[:book_id].present?
       @books_contact.update_attribute(:book_id, params[:book_id])
       @books_contact.update_attribute(:upfront, false)
+    else
+      @books_contact.update_attribute(:upfront, true)
     end
     
     render layout: nil

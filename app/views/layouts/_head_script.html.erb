@@ -332,7 +332,7 @@
 		//}
 	}
 	
-	function updateImportExportList(stock_type_id, program_id, subject_id, valid_from, valid_to) {
+	function updateImportExportList(stock_type_id, program_id, subject_id, valid_on) {
 		if(typeof(program_id) == 'undefined') {
 			program_id = ""
 		}
@@ -340,7 +340,7 @@
 			subject_id = ""
 		}
 		$.ajax({
-			url : '<%= import_export_form_list_stock_updates_path %>?stock_type_id='+stock_type_id+'&program_id='+program_id+'&subject_id='+subject_id+'&valid_from='+valid_from+'&valid_to='+valid_to,
+			url : '<%= import_export_form_list_stock_updates_path %>?stock_type_id='+stock_type_id+'&program_id='+program_id+'&subject_id='+subject_id+'&valid_on='+valid_on,
 			success:function(data, textStatus, jqXHR)
 			{
 				$(".import-export-stock-list").html(data)
@@ -350,7 +350,7 @@
 		});
 	}
 	
-	function updateStockFormList(stock_type_id, program_id, subject_id, valid_from, valid_to) {
+	function updateStockFormList(stock_type_id, program_id, subject_id, valid_on) {
 		var contact_id = $("input[name='course_register[contact_id]']").val()
 		if(typeof(program_id) == 'undefined') {
 			program_id = ""
@@ -359,7 +359,7 @@
 			subject_id = ""
 		}
 		$.ajax({
-			url : '<%= stock_form_list_books_path %>?contact_id='+contact_id+'&stock_type_id='+stock_type_id+'&program_id='+program_id+'&subject_id='+subject_id+'&valid_from='+valid_from+'&valid_to='+valid_to,
+			url : '<%= stock_form_list_books_path %>?contact_id='+contact_id+'&stock_type_id='+stock_type_id+'&program_id='+program_id+'&subject_id='+subject_id+'&valid_on='+valid_on,
 			success: function(data, textStatus, jqXHR)
 			{
 				$(".stock_box_list").html(data)
@@ -1805,12 +1805,10 @@
 						d.status =  $(".book-filter select[name='status']").val()
 					}
 					
-					if($(".book-filter input[name='valid_from']").val()) {
-						d.valid_from =  $(".book-filter input[name='valid_from']").val()
+					if($(".book-filter input[name='valid_on']").val()) {
+						d.valid_on =  $(".book-filter input[name='valid_on']").val()
 					}
-					if($(".book-filter input[name='valid_to']").val()) {
-						d.valid_to =  $(".book-filter input[name='valid_to']").val()
-					}
+					
 				}
 			},
 			"columnDefs": [ { "targets": [0,2,3,4,5,6,7,8,9], "orderable": false } ],
@@ -2223,12 +2221,10 @@
 						d.intake_year =  $(".delivery-filter select[name='filter[intake(1i)]']").val()
 					}
 					
-					if($(".delivery-filter input[name='valid_from']").val()) {
-						d.valid_from =  $(".delivery-filter input[name='valid_from']").val()
+					if($(".delivery-filter input[name='valid_on']").val()) {
+						d.valid_on =  $(".delivery-filter input[name='valid_on']").val()
 					}
-					if($(".delivery-filter input[name='valid_to']").val()) {
-						d.valid_to =  $(".delivery-filter input[name='valid_to']").val()
-					}
+					
 				}
 			},
 			"columnDefs": [ { "targets": [0,2,3,4,5,6,7], "orderable": false } ],
@@ -3416,11 +3412,11 @@
 		})
 		
 		$(document).on("change", ".stock_form_filter input, .stock_form_filter select", function() {
-			updateStockFormList($(".stock_form_filter select[name='stock_type_id']").select2("val"),$(".stock_form_filter select[name='program_id']").select2("val"),$(".stock_form_filter select[name='subject_id']").select2("val"),$(".stock_form_filter input[name='valid_from']").val(),$(".stock_form_filter input[name='valid_to']").val())
+			updateStockFormList($(".stock_form_filter select[name='stock_type_id']").select2("val"),$(".stock_form_filter select[name='program_id']").select2("val"),$(".stock_form_filter select[name='subject_id']").select2("val"),$(".stock_form_filter input[name='valid_on']").val())
 		})
 		
-		$(document).on("change", ".import_export_form_filter select[name=stock_type_id], .import_export_form_filter select[name=program_id], .import_export_form_filter select[name=subject_id], .import_export_form_filter input[name=valid_from], .import_export_form_filter input[name=valid_to]", function() {
-			updateImportExportList($(".import_export_form_filter select[name='stock_type_id']").select2("val"),$(".import_export_form_filter select[name='program_id']").select2("val"),$(".import_export_form_filter select[name='subject_id']").select2("val"),$(".import_export_form_filter input[name='valid_from']").val(),$(".import_export_form_filter input[name='valid_to']").val())
+		$(document).on("change", ".import_export_form_filter select[name=stock_type_id], .import_export_form_filter select[name=program_id], .import_export_form_filter select[name=subject_id], .import_export_form_filter input[name=valid_on]", function() {
+			updateImportExportList($(".import_export_form_filter select[name='stock_type_id']").select2("val"),$(".import_export_form_filter select[name='program_id']").select2("val"),$(".import_export_form_filter select[name='subject_id']").select2("val"),$(".import_export_form_filter input[name='valid_on']").val())
 		})
 		
 		$(document).on("change", ".phrase_box .price_course", function() {
@@ -3538,16 +3534,32 @@
 			var id = $(this).attr("bc_id")
 			var book_id = $(this).select2("val")
 			var box = $(this).parents(".upfront-box")
+			var table = $(this).parents("table")
 			// load select bc sellect
 			$.ajax({
 				url : '<%= check_upfront_books_contacts_path %>?id='+id+'&book_id='+book_id,
 				success:function(data, textStatus, jqXHR)
 				{					
-					box.parents("tr").find(".valid_time").html($("<div>").html(data).find(".ajax-check-book-upfront").attr("valid_time"))
-					box.parent().html(data)
+					table.dataTable().fnFilter();
 				}
 			});
 		});
+		
+		$(document).on("click", ".ajax-check-book-upfront", function(e) {
+			var id = $(this).attr("bc_id")
+			var box = $(this).parents(".upfront-box")
+			var table = $(this).parents("table")
+			// load select bc sellect
+			$.ajax({
+				url : '<%= check_upfront_books_contacts_path %>?id='+id+'&book_id=',
+				success:function(data, textStatus, jqXHR)
+				{					
+					table.dataTable().fnFilter();
+				}
+			});
+		});		
+		
+		
 	})
 	
 
