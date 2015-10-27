@@ -8273,9 +8273,6 @@ td .logo {
     background-color: #f3faf8 !important;
 }
 .contact_type_line {
-    display: block;
-    white-space: nowrap;
-    height: 30px;
 }
 .phrase_checkbox, .volumn_checkbox {
     float: left;
@@ -8448,10 +8445,10 @@ td .logo {
     color: #aa6708;
 }
 .date_mbe #s2id_course_for_exam_year, .date_mbe #s2id_for_exam_year, .date_mbe #s2id_year {
-    width: 75px;
+    width: 84px;
 }
 .date_mbe #s2id_course_for_exam_month, .date_mbe #s2id_for_exam_month, .date_mbe #s2id_month {
-    width: 115px;
+    width: 110px;
 }
 .alert-level1 {
     margin-right: 0 2px 0 0 !important;
@@ -8467,6 +8464,10 @@ form .icon-time {
 }
 .phrase_title {
     cursor: pointer;
+    padding-top: 5px;
+    margin-top: -5px;
+    min-width: 145px;
+    display: block;
 }
 .not_selected {
     opacity: 0.3;
@@ -8547,4 +8548,7 @@ h5.list_title {
 .select-bc-box {
     margin-top: -28px;
     width: 230px;
+}
+.contact_type_line {
+    display: inline;
 }

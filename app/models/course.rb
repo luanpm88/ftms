@@ -192,7 +192,7 @@ class Course < ActiveRecord::Base
     @records = @records.limit(params[:length]).offset(params["start"])
     data = []
     
-    actions_col = 10
+    actions_col = 9
     @records.each do |item|
       ############### BEGIN REVISION #########################
       # update approved status
@@ -209,8 +209,7 @@ class Course < ActiveRecord::Base
               '<div class="text-center">'+item.display_lecturer+"</div>",
               '<div class="text-right">'+item.display_prices+"</div>",
               '<div class="text-center">'+item.student_count_link+"</div>",              
-              '<div class="text-center">'+item.created_at.strftime("%d-%b-%Y")+"</div>",
-              '<div class="text-center">'+item.user.staff_col+"</div>",
+              '<div class="text-center">'+item.created_at.strftime("%d-%b-%Y")+"<div><strong>by:</strong></div>"+item.user.staff_col+"</div>",
               '<div class="text-center">'+item.display_statuses+"</div>",
               "", 
             ]
@@ -294,7 +293,7 @@ class Course < ActiveRecord::Base
     group_name = ""
     list.each do |p|
         if group_name != p.phrase.name
-          arr << "<div><strong class=\"width100 phrase_title\" rel=\"phrase_date_#{p.course_id}_#{p.phrase.id}\">#{p.phrase.name} <span class=\"phrase_date_#{p.course_id}_#{p.phrase.id}\">[<i class=\"icon-ellipsis-horizontal\"></i>]</span></strong></div>"
+          arr << "<div><strong class=\"width100 phrase_title\" rel=\"phrase_date_#{p.course_id}_#{p.phrase.id}\">#{p.phrase.name} <span class=\"phrase_date_#{p.course_id}_#{p.phrase.id}\"></span></strong></div>"
           group_name = p.phrase.name
         end
         

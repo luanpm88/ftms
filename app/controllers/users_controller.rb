@@ -116,6 +116,7 @@ class UsersController < ApplicationController
     @database = YAML.load_file('config/database.yml')["production"]["database"]
     
     if params[:restore]
+      puts "zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz"
       User.restore_system(params)
     end
     render layout: "content" if params[:tab_page].present?

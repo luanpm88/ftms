@@ -382,7 +382,7 @@ class Contact < ActiveRecord::Base
     @records = @records.limit(params[:length]).offset(params["start"])
     data = []
     
-    actions_col = 9
+    actions_col = 8
     @records.each do |item|
       ############### BEGIN REVISION #########################
       # update approved status
@@ -395,11 +395,10 @@ class Contact < ActiveRecord::Base
               "<div class=\"checkbox check-default\"><input name=\"ids[]\" id=\"checkbox#{item.id}\" type=\"checkbox\" value=\"#{item.id}\"><label for=\"checkbox#{item.id}\"></label></div>",
               
               '<div class="text-left"><strong>'+item.contact_link+"</strong></div>"+'<div class="text-left">'+item.html_info_line.html_safe+item.referrer_link+"</div>"+item.picture_link,              
-              '<div class="text-right">'+item.contact_type_name+"</div>",
               '<div class="text-left">'+item.course_types_name_col+"</div>",
               '<div class="text-center">'+item.course_count_link+item.display_transferred_courses_phrases(params[:courses])+"</div>",
               '<div class="text-center contact_tag_box" rel="'+item.id.to_s+'">'+ContactsController.helpers.render_contact_tags_selecter(item)+"</div>",
-              '<div class="text-center">'+item.created_at.strftime("%d-%b-%Y")+"</div>",
+              '<div class="text-center">'+item.created_at.strftime("%d-%b-%Y")+"<br /><strong>by:</strong><br />"+item.user.staff_col+"</div>",
               '<div class="text-center">'+item.account_manager_col+"</div>",
               '<div class="text-center">'+item.display_statuses+"</div>",
               '',
@@ -447,7 +446,7 @@ class Contact < ActiveRecord::Base
     @records = @records.limit(params[:length]).offset(params["start"])
     data = []
     
-    actions_col = 9
+    actions_col = 8
     arr = []
     @records.each_with_index do |item,index|
       ############### BEGIN REVISION #########################
@@ -461,7 +460,6 @@ class Contact < ActiveRecord::Base
               "<div class=\"row-color-#{(index%2 == 0).to_s} checkbox check-default\"><input name=\"ids[]\" id=\"checkbox#{item.id}\" type=\"checkbox\" value=\"#{item.id}\"><label for=\"checkbox#{item.id}\"></label></div>",
               
               '<div class="text-left"><strong>'+item.contact_link+"</strong></div>"+'<div class="text-left">'+item.html_info_line.html_safe+item.referrer_link+"</div>"+item.picture_link,              
-              '<div class="text-right">'+item.contact_type_name+"</div>",
               '<div class="text-left">'+item.course_types_name_col+"</div>",
               '<div class="text-center">'+item.course_count_link+"</div>",
               '<div class="text-center contact_tag_box" rel="'+item.id.to_s+'">'+ContactsController.helpers.render_contact_tags_selecter(item)+"</div>",
@@ -477,8 +475,7 @@ class Contact < ActiveRecord::Base
                 "<div class=\"row-color-#{(index%2 == 0).to_s} checkbox check-default\"><input name=\"ids[]\" id=\"checkbox#{child.id}\" type=\"checkbox\" value=\"#{child.id}\"><label for=\"checkbox#{child.id}\"></label></div>",
                 
                 '<div class="text-left"><strong>'+child.contact_link+"</strong></div>"+'<div class="text-left">'+child.html_info_line.html_safe+child.referrer_link+"</div>"+child.picture_link,              
-                '<div class="text-right">'+child.contact_type_name+"</div>",
-                '<div class="text-left">'+child.course_types_name_col+"</div>",
+                '<div class="text-left">'+item.course_types_name_col+"</div>",
                 '<div class="text-center">'+child.course_count_link+"</div>",
                 '<div class="text-center contact_tag_box" rel="'+child.id.to_s+'">'+ContactsController.helpers.render_contact_tags_selecter(child)+"</div>",
                 '<div class="text-center">'+child.created_at.strftime("%d-%b-%Y")+"</div>",
@@ -705,12 +702,12 @@ class Contact < ActiveRecord::Base
   end
   
   def course_types_name_col
-    result = ""
-    result += "<div class=\"contact_type_line\">#{joined_course_types_name}</div>" if contact_types.include?(ContactType.student)
-    result += "<div class=\"contact_type_line\">#{course_types.map(&:short_name).join(", ")}</div>" if contact_types.include?(ContactType.inquiry)
-    result += "<div class=\"contact_type_line\">#{lecturer_course_types.map(&:short_name).join(", ")}</div>" if contact_types.include?(ContactType.lecturer)
+    result = []
+    result << "<strong>Student</strong>: <div class=\"contact_type_line\">#{joined_course_types_name}</div>" if contact_types.include?(ContactType.student)
+    result << "<strong>Inquiry</strong>: <div class=\"contact_type_line\">#{course_types.map(&:short_name).join(", ")}</div>" if contact_types.include?(ContactType.inquiry)
+    result << "<strong>Lecturer</strong>: <div class=\"contact_type_line\">#{lecturer_course_types.map(&:short_name).join(", ")}</div>" if contact_types.include?(ContactType.lecturer)
     
-    return result
+    return result.join("<br />")
   end
   
   def referrer_link
