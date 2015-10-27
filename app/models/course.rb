@@ -183,7 +183,7 @@ class Course < ActiveRecord::Base
       end
       order += " "+params["order"]["0"]["dir"] if !["0","1","3"].include?(params["order"]["0"]["column"])
     else
-      order = "courses.intake DESC, course_types.short_name, subjects.name"
+      order = "course_types.short_name, subjects.name, courses.upfront, courses.intake DESC"
     end
     
     @records = @records.order(order) if !order.nil?
