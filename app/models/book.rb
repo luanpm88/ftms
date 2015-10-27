@@ -92,8 +92,8 @@ class Book < ActiveRecord::Base
       end
     end
     
-    if !params[:status].present? || (params[:status] != "deleted" && params[:status] != "out_of_date")
-      @records = @records.where("books.status NOT LIKE ? AND books.status NOT LIKE ?","%[deleted]%","%[out_of_date]%")
+    if !params[:status].present? || params[:status] != "deleted"
+      @records = @records.where("books.status NOT LIKE ?","%[deleted]%")
     end
 
     ########## END REVISION-FEATURE #########################
@@ -146,7 +146,7 @@ class Book < ActiveRecord::Base
       
       itemx = [
               item.cover_link,                            
-              item.book_link, #            '<div class="text-center">'+item.stock_type.name+"</div>",
+              item.book_link, # '<div class="text-center">'+item.stock_type.name+"</div>",
               '<div class="text-left">'+item.publisher.to_s+"</div>",
               '<div class="text-right">'+item.display_prices+"</div>",
               '<div class="text-center">'+item.stock.to_s+"</div>",
@@ -269,8 +269,6 @@ class Book < ActiveRecord::Base
     else
       order = "course_registers.created_at"
     end
-    
-    
     
     @records = @records.order(order) if !order.nil? && !params["search"]["value"].present?
     
@@ -520,8 +518,14 @@ class Book < ActiveRecord::Base
   
   def display_statuses
     return "" if statuses.empty?
-    aa =  statuses.include?("out_of_date") ? ["out_of_date"] : statuses
-    result = aa.map {|s| "<span title=\"Last updated: #{current.created_at.strftime("%d-%b-%Y, %I:%M %p")}; By: #{current.user.name}\" class=\"badge user-role badge-info contact-status #{s}\">#{s}</span>"}
+    aa = statuses # statuses.include?("out_of_date") ? ["out_of_date"] : statuses
+    result = aa.map { |s|
+      if statuses.include?("out_of_date") && s == "active"
+        ""
+      else
+        "<span title=\"Last updated: #{current.created_at.strftime("%d-%b-%Y, %I:%M %p")}; By: #{current.user.name}\" class=\"badge user-role badge-info contact-status #{s}\">#{s}</span>"
+      end
+    }
     result.join(" ").html_safe
   end
   
@@ -801,7 +805,7 @@ class Book < ActiveRecord::Base
     str = []
     str << valid_from.strftime("%d-%b-%Y") if valid_from.present?
     str << valid_to.strftime("%d-%b-%Y") if valid_to.present?
-    return str.join(" to ")
+    return ("<span class=\"book_valid_time\">"+str.join(" to ")+"</span>").html_safe
   end
   
 end

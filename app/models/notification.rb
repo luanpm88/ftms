@@ -271,7 +271,7 @@ class Notification < ActiveRecord::Base
           return ""
         end
         
-        records = Book.main_books.where("status LIKE ?","%pending]%").where("status NOT LIKE ?","%[out_of_date]%")
+        records = Book.main_books.where("status LIKE ?","%pending]%") # .where("status NOT LIKE ?","%[out_of_date]%")
         
         #if user.has_role?("education_consultant")
         #  records = records.select{|item| item.current.user.lower?("education_consultant")}

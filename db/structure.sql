@@ -310,7 +310,8 @@ CREATE TABLE books_contacts (
     cache_delivery_status text,
     upfront boolean DEFAULT false,
     cache_search text,
-    intake timestamp without time zone
+    intake timestamp without time zone,
+    discount_programs text
 );
 
 
@@ -3993,4 +3994,6 @@ INSERT INTO schema_migrations (version) VALUES ('20151019055124');
 INSERT INTO schema_migrations (version) VALUES ('20151019084913');
 
 INSERT INTO schema_migrations (version) VALUES ('20151022084754');
+
+INSERT INTO schema_migrations (version) VALUES ('20151027014000');
 

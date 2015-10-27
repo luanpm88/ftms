@@ -44,20 +44,23 @@ class BooksController < ApplicationController
   # POST /books
   # POST /books.json
   def create
-    params[:stock_type_ids].each do |stid|
-      @book = Book.new(book_params)
-      @book.user = current_user
-      @book.stock_type_id = stid
-      
-      @book.save
-      
-      new_price = @book.book_prices.new(prices: params[:book_prices], user_id: current_user.id)
-      @book.update_price(new_price)
-      
-      @book.update_status("create", current_user)        
-      @book.save_draft(current_user)
-      
-      @book.check_out_of_date
+    params[:subject_ids].each do |su_id|
+      params[:stock_type_ids].each do |stid|
+        @book = Book.new(book_params)
+        @book.subject_id = su_id
+        @book.user = current_user
+        @book.stock_type_id = stid
+        
+        @book.save
+        
+        new_price = @book.book_prices.new(prices: params[:book_prices], user_id: current_user.id)
+        @book.update_price(new_price)
+        
+        @book.update_status("create", current_user)        
+        @book.save_draft(current_user)
+        
+        @book.check_out_of_date
+      end
     end
 
     respond_to do |format|

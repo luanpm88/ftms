@@ -409,8 +409,10 @@
 		var val = input.parents(".intake_box").find("input.upfront_radio:checked").val()
 		if (val == "true") {
 			input.parents(".intake_box").find(".intake_group").hide()
+			input.parents(".intake_box").find(".book_valid_time").hide()
 		} else {
 			input.parents(".intake_box").find(".intake_group").show()
+			input.parents(".intake_box").find(".book_valid_time").show()
 		}
 	}
 
@@ -645,17 +647,22 @@
 						}
 						if(box.find('input[name="books_contacts['+number+'][discount]"]').length && box.find('input[name="books_contacts['+number+'][discount]"]').val() != "") {
 						  price_discount = parseFloat(box.find('input[name="books_contacts['+number+'][discount]"]').val().replace(/,/g,""))
-						}       
-						if(box.find('input[name="books_contacts['+number+'][discount_program_id]"]').length && box.find('input[name="books_contacts['+number+'][discount_program_id]"]').val() != "") {
-						  var text = box.find('input[name="books_contacts['+number+'][discount_program_id]"]').select2("data").text
-						  var dd_v = parseFloat(text.split("[")[1].split("]")[0].split(" ")[0].replace(/,/g,""))
-						  var pp_type = text.split("[")[1].split("]")[0].split(" ")[1]
-						  price_discount_program = parseFloat(box.find('input[name="books_contacts['+number+'][discount_program_id]"]').select2("data").text.split("[")[1].split("]")[0].replace(/,/g,""))
-						  
-						  if(pp_type=="%") {
-							price_discount_program = (price_discount_program/100)*price
-						  }
 						}
+						box.find(".discount_program_box").each(function() {
+							if($(this).find('input.main_input').length && $(this).find('input.main_input').val() != "") {
+								var dp = 0
+								var text = $(this).find('input.main_input').select2("data").text
+								var dd_v = parseFloat(text.split("[")[1].split("]")[0].split(" ")[0].replace(/,/g,""))
+								var pp_type = text.split("[")[1].split("]")[0].split(" ")[1]
+								dp = parseFloat( $(this).find('input.main_input').select2("data").text.split("[")[1].split("]")[0].replace(/,/g,""))
+								alert(dp)
+								if(pp_type=="%") {
+									dp = (dp/100)*price
+								}
+							  
+							  price_discount_program += dp
+							}
+						})
 						
 						line_total = price - price_discount - price_discount_program
 						
@@ -3132,13 +3139,13 @@
 		$('select[name="course_register[preferred_mailing]"]').trigger("change")
 		
 		
-		$(document).on("change",".phrase_boxx .main_input",function() {
+		$(document).on("change",".phrase_boxx .main_input", function() {
 			var value = $(this).val()
 			var next_box = $(this).parents(".phrase_boxx").next()
 			if (value != "") {
-				next_box.show()
+				next_box.removeClass("hidden")
 			} else if (next_box.find(".main_input").val() == "") {
-				next_box.hide()
+				next_box.addClass("hidden")
 			}
 		})
 		

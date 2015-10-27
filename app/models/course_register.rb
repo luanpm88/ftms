@@ -123,7 +123,15 @@ class CourseRegister < ActiveRecord::Base
           cc.price = -1
         else
           cc.price = row[1]["price"]
-          cc.discount_program_id = row[1]["discount_program_id"]
+          # cc.discount_program_id = row[1]["discount_program_id"]
+          
+          # Discount programs
+          dps = []
+          row[1]["discount_programs"].each do |r|
+            dps << {id: r[1]["id"], discount_program_type: r[1]["discount_program_type"]} if r[1]["id"].present?
+          end
+          cc.discount_programs = dps.to_json
+          
           cc.discount = row[1]["discount"]
         end
         

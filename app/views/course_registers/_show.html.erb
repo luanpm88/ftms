@@ -158,23 +158,29 @@
 															  </div>
 														 </div>
 														 <div class="col-md-2">
-																	<!--<div class="form-group">
-																		  <label class="form-label">Discount Program</label>
-																		  <span class="help"></span>
-																		  <div class="input-with-iconz  text-right">                                       
-																			  <div><strong><%= format_price(bc.discount_program_amount) %></strong></div>																			   
-																		  </div>
-																	</div>-->
-																	<% if bc.discount.to_f > 0 %>
-																			<div class="form-group">
+																		<% if bc.discount_program_amount > 0 %>
+																			  <div class="form-group">
+																					<label class="form-label">Discount Programs</label>
+																					<span class="help"></span>
+																						  <% bc.all_discount_programs.each do |dp| %>
+																								<div class="input-with-iconz  text-right">                                       
+																									  <div>
+																											<strong><%= DiscountProgram.find(dp["id"]).display_rate %></strong>
+																											<br />(<%= DiscountProgram.find(dp["id"]).name %>)
+																									  </div>
+																								</div>
+																						  <% end %>
+																			  </div>
+																		<% end %>
+																		<% if bc.discount.to_f > 0 %>
+																			  <div class="form-group">
 																					<label class="form-label">Other discount/credit</label>
 																					<span class="help"></span>
 																					<div class="input-with-iconz  text-right">                                       
-																						 <div><strong><%= format_price(bc.discount.to_f) %></strong></div>
-																						 
+																						 <div><strong><%= format_price(bc.discount.to_f) %></strong></div>																						 
 																					</div>
-																			</div>
-																	<% end %>
+																			  </div>
+																		<% end %>
 														 </div>
 														 <div class="col-md-2">
 															  <div class="form-group">

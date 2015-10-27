@@ -73,10 +73,26 @@ class BooksContact < ActiveRecord::Base
     paid_amount == total && !no_price?
   end
   
-  def discount_program_amount
+  def discount_program_amount_old
     return 0.00 if discount_program.nil?
     
     return discount_program.type_name == "percent" ? (discount_program.rate/100)*price : discount_program.rate
+  end
+  
+  def discount_program_amount
+    result = 0.00    
+    all_discount_programs.each do |row|
+      if row["id"].present?
+        dp = DiscountProgram.find(row["id"])
+        result += dp.type_name == "percent" ? (dp.rate/100)*price : dp.rate
+      end
+    end
+    
+    return result
+  end
+  
+  def all_discount_programs
+    discount_programs.nil? ? [] : JSON.parse(discount_programs)
   end
   
   def remain
@@ -243,7 +259,7 @@ class BooksContact < ActiveRecord::Base
       item = [
               "<div class=\"checkbox check-default\"><input name=\"ids[]\" id=\"checkbox#{item.id}\" type=\"checkbox\" value=\"#{item.id}\"><label for=\"checkbox#{item.id}\"></label></div>",
               item.contact.contact_link,
-              item.book.display_name+"<div class=\"nowrap\">#{item.book.display_valid_time}</div>".html_safe,
+              item.book.display_name+"<div class=\"nowrap\">#{item.display_valid_time}</div>".html_safe,
               '<div class="text-center">'+ item.delivered_count.to_s + "/" + item.quantity.to_s+"</div>",
               '<div class="text-center">'+ item.display_upfront+"</div>",
               '<div class="text-center">'+ item.display_delivery_status+"</div>",
@@ -263,6 +279,10 @@ class BooksContact < ActiveRecord::Base
     
     return {result: result, items: @records, actions_col: actions_col}
     
+  end
+  
+  def display_valid_time
+    upfront ? "" : book.display_valid_time
   end
   
   def display_delivery_status    
