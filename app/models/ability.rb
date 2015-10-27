@@ -185,10 +185,10 @@ class Ability
       can :stock_statistics, Book
       can :statistics, Book
       
+      
       can :datatable, BooksContact
       can :check_upfront, BooksContact
-      
-      
+      can :upfront_book_select_box, BooksContact
       
       can :view, ContactTag
       can :datatable, ContactTag

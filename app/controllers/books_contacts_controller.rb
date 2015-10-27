@@ -2,7 +2,7 @@ class BooksContactsController < ApplicationController
   load_and_authorize_resource
   include BooksContactsHelper
   
-  before_action :set_books_contact, only: [:remove, :check_upfront, :show, :edit, :update, :destroy]
+  before_action :set_books_contact, only: [:upfront_book_select_box, :remove, :check_upfront, :show, :edit, :update, :destroy]
 
   # GET /books_contacts
   # GET /books_contacts.json
@@ -77,7 +77,10 @@ class BooksContactsController < ApplicationController
   end
   
   def check_upfront
-    @books_contact.update_attribute(:upfront, params[:value])
+    if params[:book_id].present?
+      @books_contact.update_attribute(:book_id, params[:book_id])
+      @books_contact.update_attribute(:upfront, false)
+    end
     
     render layout: nil
   end
@@ -89,6 +92,11 @@ class BooksContactsController < ApplicationController
       format.html { render "/books_contacts/deleted", layout: nil }
       format.json { render action: 'show', status: :created, location: @contact }
     end
+  end
+  
+  def upfront_book_select_box
+    @book = @books_contact.book
+    render layout: nil
   end
 
   private

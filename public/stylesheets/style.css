@@ -8543,3 +8543,8 @@ h5.list_title {
     position: absolute !important;
     right: 0 !important;
 }
+
+.select-bc-box {
+    margin-top: -28px;
+    width: 230px;
+}

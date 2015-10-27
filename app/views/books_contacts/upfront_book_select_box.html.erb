@@ -1,0 +1,4 @@
+<div class="bc_box" valid_time="<%= @books_contact.display_valid_time %>">
+  <%= select_tag('book_id', options_for_select(Book.active_books.where(course_type_id: @book.course_type_id, subject_id: @book.subject_id).collect{ |u| [u.display_name+" "+u.display_valid_time_raw, u.id] }), {include_blank: "- Select a stock -", class: "modern_select bc-upfront-select width100", bc_id: @books_contact.id}) %>
+  <a href="#remove" onclick="$(this).parents('.select-bc-box').hide()"><i class="icon-remove"></i></a>
+</div>

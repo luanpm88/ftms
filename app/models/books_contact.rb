@@ -259,7 +259,7 @@ class BooksContact < ActiveRecord::Base
       item = [
               "<div class=\"checkbox check-default\"><input name=\"ids[]\" id=\"checkbox#{item.id}\" type=\"checkbox\" value=\"#{item.id}\"><label for=\"checkbox#{item.id}\"></label></div>",
               item.contact.contact_link,
-              item.book.display_name+"<div class=\"nowrap\">#{item.display_valid_time}</div>".html_safe,
+              item.book.display_name+"<div class=\"nowrap valid_time\">#{item.display_valid_time}</div>".html_safe,
               '<div class="text-center">'+ item.delivered_count.to_s + "/" + item.quantity.to_s+"</div>",
               '<div class="text-center">'+ item.display_upfront+"</div>",
               '<div class="text-center">'+ item.display_delivery_status+"</div>",
@@ -276,11 +276,10 @@ class BooksContact < ActiveRecord::Base
               "recordsFiltered" => total
     }
     result["data"] = data
-    
+
     return {result: result, items: @records, actions_col: actions_col}
-    
   end
-  
+
   def display_valid_time
     upfront ? "" : book.display_valid_time
   end
@@ -291,55 +290,52 @@ class BooksContact < ActiveRecord::Base
     else
       return "<div class=\"nowrap check-radio\">"+ActionController::Base.helpers.link_to("<i class=\"#{delivered?.to_s} icon-check#{delivered? ? "" : "-empty"}\"></i>".html_safe, {controller: "deliveries", action: "new", course_register_id: self.course_register_id, tab_page: 1}, title: "Deliver Stock: #{self.contact.display_name}", title: 'Materials Delivery', class: "tab_page")+"</div>"
     end
-
   end
-  
+
   def delivery_status
     delivered? ? "delivered" : "not_delivered"
   end
-  
+
   def update_statuses
     # delivery
     self.update_attribute(:cache_delivery_status, self.delivery_status)
   end
-  
+
   def all_deliveries
     course_register.all_deliveries.includes(:delivery_details).where(delivery_details: {book_id: book_id})
   end
-  
+
   def all_payment_records
     course_register.all_payment_records.includes(:payment_record_details).where(payment_record_details: {books_contact_id: self.id})
   end
-  
+
   def display_upfront(link=true)
     if upfront
       # select_tag = ActionController::Base.helpers.select_tag('books[]', ActionController::Base.helpers.options_for_select(Book.active_books.where(course_type_id: book.course_type_id, subject_id: book.subject_id).collect{ |u| [u.display_name+u.display_valid_time, u.id] }), class: "modern_select bc-upfront-select width100")
-      "<a class=\"check-radio ajax-uncheck-book-upfront\" rel=\"#{self.id.to_s}\" href=\"#c\"><i class=\"icon-check\"></i></a><div style=\"display:none\" class=\"select-bc-box\"></div>"
+      "<div class=\"upfront-box\"><a class=\"check-radio ajax-uncheck-book-upfront\" rel=\"#{self.id.to_s}\" href=\"#c\"><i class=\"icon-check\"></i></a><div style=\"display:none\" class=\"select-bc-box\"></div></div>"
     else
-      "<a class=\"check-radio ajax-check-book-upfront\" rel=\"#{self.id.to_s}\" href=\"#c\"><i class=\"icon-check-empty\"></i></a>"
+      "<a class=\"check-radio ajax-check-book-upfront\" valid_time='#{self.book.display_valid_time}' rel=\"#{self.id.to_s}\" href=\"#c\"><i class=\"icon-check-empty\"></i></a>"
     end    
   end
-  
+
   #def display_delivery_status    
   #  if delivered?
   #    return "<a class=\"check-radio ajax-check-radioz\" href=\"#c\"><i class=\"#{delivered?.to_s} icon-check#{delivered? ? "" : "-empty"}\"></i></a>"
   #  else
   #    return "<div class=\"nowrap check-radio\">"+ActionController::Base.helpers.link_to("<i class=\"#{delivered?.to_s} icon-check#{delivered? ? "" : "-empty"}\"></i>".html_safe, {controller: "deliveries", action: "new", course_register_id: self.course_register_id, tab_page: 1}, title: "Deliver Stock: #{self.contact.display_name}", title: 'Materials Delivery', class: "tab_page")+"</div>"
   #  end
-  #
   #end
-  
+
   def upfont_title
     upfront ? "Upfront-" : ""
   end
-  
+
   def display_delivery_status    
     if delivered?
       return "<div class=\"nowrap check-radio\">"+ActionController::Base.helpers.link_to("<i class=\"#{delivered?.to_s} icon-check#{delivered? ? "" : "-empty"}\"></i>".html_safe, {controller: "books_contacts", action: "remove", id: self.id, tab_page: 1}, title: "Deliver Stock: #{self.contact.display_name}", title: 'Remove Delivery', class: "approve_link")+"</div> (#{delivered_count.to_s}/#{quantity.to_s}) delivered?"
     else
       return "<div class=\"nowrap check-radio\">"+ActionController::Base.helpers.link_to("<i class=\"#{delivered?.to_s} icon-check#{delivered? ? "" : "-empty"}\"></i>".html_safe, {controller: "deliveries", action: "new", course_register_id: self.course_register_id, tab_page: 1}, title: "Deliver Stock: #{self.contact.display_name}", title: 'Materials Delivery', class: "tab_page")+"</div> (#{delivered_count.to_s}/#{quantity.to_s}) delivered?"
     end
-
   end
-  
+
 end

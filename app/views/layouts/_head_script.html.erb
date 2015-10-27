@@ -3139,13 +3139,16 @@
 		$('select[name="course_register[preferred_mailing]"]').trigger("change")
 		
 		
-		$(document).on("change",".phrase_boxx .main_input", function() {
+		$(document).on("change",".phrase_boxx select.main_input", function() {
+			
 			var value = $(this).val()
 			var next_box = $(this).parents(".phrase_boxx").next()
 			if (value != "") {
 				next_box.removeClass("hidden")
+				next_box.show()
 			} else if (next_box.find(".main_input").val() == "") {
 				next_box.addClass("hidden")
+				next_box.hide()
 			}
 		})
 		
@@ -3514,6 +3517,36 @@
 		});
 		$(document).on("click", ".uncheckable *", function(e) {
 			e.preventDefault()
+		});
+		
+		$(document).on("click", ".ajax-uncheck-book-upfront", function(e) {
+			var id = $(this).attr("rel")
+			var box = $(this).parents(".upfront-box")
+			// load select bc sellect
+			$.ajax({
+				url : '<%= upfront_book_select_box_books_contacts_path %>?id='+id,
+				success:function(data, textStatus, jqXHR)
+				{
+					box.find(".select-bc-box").html(data)
+					box.find(".select-bc-box").show()
+					box.find(".select-bc-box select").select2()
+				}
+			});
+		});
+		
+		$(document).on("change", "select.bc-upfront-select", function(e) {
+			var id = $(this).attr("bc_id")
+			var book_id = $(this).select2("val")
+			var box = $(this).parents(".upfront-box")
+			// load select bc sellect
+			$.ajax({
+				url : '<%= check_upfront_books_contacts_path %>?id='+id+'&book_id='+book_id,
+				success:function(data, textStatus, jqXHR)
+				{					
+					box.parents("tr").find(".valid_time").html($("<div>").html(data).find(".ajax-check-book-upfront").attr("valid_time"))
+					box.parent().html(data)
+				}
+			});
 		});
 	})
 	

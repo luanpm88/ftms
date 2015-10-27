@@ -814,4 +814,11 @@ class Book < ActiveRecord::Base
     return ("<span class=\"book_valid_time\">"+str.join(" to ")+"</span>").html_safe
   end
   
+  def display_valid_time_raw
+    str = []
+    str << valid_from.strftime("%d-%b-%Y") if valid_from.present?
+    str << valid_to.strftime("%d-%b-%Y") if valid_to.present?
+    return ("("+str.join(" to ")+")").html_safe
+  end
+  
 end

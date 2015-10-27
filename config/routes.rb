@@ -87,6 +87,8 @@ Hkerp::Application.routes.draw do
       get :datatable
       get :check_upfront
       get :remove
+      
+      get :upfront_book_select_box
     end
   end
   resources :book_prices
