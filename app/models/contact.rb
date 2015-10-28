@@ -103,11 +103,12 @@ class Contact < ActiveRecord::Base
       ids = c.child_contacts.where.not(id: self.id).map(&:id)
       ids << c.id
       aa = Contact.where(id: ids)
-    else
-      []
     end
-    
-    return aa.map{|c| c if !self.no_related_contacts.include?(c)}
+    bb = []
+    aa.each do |c|
+      bb << c if !self.no_related_contacts.include?(c)
+    end
+    return bb
   end
   
   def active_books
@@ -1964,6 +1965,7 @@ class Contact < ActiveRecord::Base
     cond_other = "("+cond_other.join(" OR ")+")"
     return Contact.main_contacts.where("contacts.status NOT LIKE ?","%[deleted]%").where.not(id: self.id)
                                 .where(cond_name+" OR "+cond_other)
+                                .where("contacts.no_related_ids NOT LIKE ?", "%[#{self.id}]%")
 
   end
   

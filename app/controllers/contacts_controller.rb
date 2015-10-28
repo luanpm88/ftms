@@ -4,7 +4,7 @@ class ContactsController < ApplicationController
   include ContactsHelper
   
   load_and_authorize_resource
-  before_action :set_contact, only: [:related_info_box, :delete, :course_register, :ajax_quick_info, :ajax_tag_box, :ajax_edit, :ajax_update, :show, :edit, :update, :destroy, :ajax_destroy, :ajax_show, :ajax_list_agent, :ajax_list_supplier_agent]
+  before_action :set_contact, only: [:remove_related_contact, :related_info_box, :delete, :course_register, :ajax_quick_info, :ajax_tag_box, :ajax_edit, :ajax_update, :show, :edit, :update, :destroy, :ajax_destroy, :ajax_show, :ajax_list_agent, :ajax_list_supplier_agent]
 
   # GET /contacts
   # GET /contacts.json
@@ -502,6 +502,14 @@ class ContactsController < ApplicationController
       end
     end      
     render layout: "content"
+  end
+  
+  def remove_related_contact
+    @contact.add_no_related_contact(Contact.find(params[:remove_id]))
+    respond_to do |format|
+      @tab = {url: {controller: "contacts", action: "edit", id: @contact.id, tab_page: 1, tab: "course_registration"}, title: @contact.display_name+" #"+@contact.id.to_s}
+      format.html { render "/home/close_tab", layout: nil }
+    end
   end
 
   private

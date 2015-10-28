@@ -129,7 +129,8 @@ class SeminarsController < ApplicationController
     render nothing: true
   end
   
-  def import_list    
+  def import_list
+    @default_ec = User.where(id: 13).empty? ? nil : User.where(id: 13).first.id
     if params[:file].present?
       @list = @seminar.render_list(params[:file])
       @list = @seminar.process_rendered_list(@list)

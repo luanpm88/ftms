@@ -491,6 +491,7 @@ class Ability
       can :undo_delete, Contact do |c|
         c.statuses.include?("delete_pending")
       end
+      can :remove_related_contact, Contact
       
       
       ## BOOK

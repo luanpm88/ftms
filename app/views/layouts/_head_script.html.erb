@@ -3572,7 +3572,22 @@
 			});
 		});		
 		
-		
+		$(document).on("click", ".remove_related_contact_link", function(e) {
+			var message = $(this).attr("confirm-message")
+			var url = $(this).attr("href")
+			
+			if (confirm(message)) {
+				$.ajax({
+					url : url,
+					success:function(data, textStatus, jqXHR)
+					{					
+						alert(data)
+					}
+				});
+			} else {
+				e.preventDefault()
+			}
+		})
 	})
 	
 

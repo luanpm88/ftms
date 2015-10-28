@@ -440,6 +440,8 @@ Hkerp::Application.routes.draw do
       get :merge_contacts_datatable
       
       get :undo_delete
+      
+      get :remove_related_contact
     end
   end
 
