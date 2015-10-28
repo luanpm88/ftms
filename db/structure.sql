@@ -608,7 +608,8 @@ CREATE TABLE contacts (
     cache_search text,
     cache_courses text,
     related_id integer,
-    cache_phrases text
+    cache_phrases text,
+    no_related_ids text
 );
 
 
@@ -3999,4 +4000,6 @@ INSERT INTO schema_migrations (version) VALUES ('20151022084754');
 INSERT INTO schema_migrations (version) VALUES ('20151027014000');
 
 INSERT INTO schema_migrations (version) VALUES ('20151028021715');
+
+INSERT INTO schema_migrations (version) VALUES ('20151028104210');
 

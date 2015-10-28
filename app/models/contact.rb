@@ -95,16 +95,19 @@ class Contact < ActiveRecord::Base
   before_validation :check_type
   
   def related_contacts
+    aa = []
     if related_id == 0
-      Contact.main_contacts.where.not("contacts.status LIKE ?", "%[deleted]%").where(related_id: self.id)
+      aa = Contact.main_contacts.where.not("contacts.status LIKE ?", "%[deleted]%").where(related_id: self.id)
     elsif related_id.to_f > 0
       c = Contact.find(related_id)
       ids = c.child_contacts.where.not(id: self.id).map(&:id)
       ids << c.id
-      Contact.where(id: ids)
+      aa = Contact.where(id: ids)
     else
       []
-    end   
+    end
+    
+    return aa.map{|c| c if !self.no_related_contacts.include?(c)}
   end
   
   def active_books
@@ -1897,6 +1900,7 @@ class Contact < ActiveRecord::Base
         #contact. = item.student_home_phone
         
         contact.account_manager = User.where(:tmp_ConsultantID => item.consultant_id).first
+        contact.user = User.where(:tmp_ConsultantID => item.consultant_id).first
         
         if contact.save        
           # import contact type/course type
@@ -1990,6 +1994,21 @@ class Contact < ActiveRecord::Base
   
   def display_note
     note.gsub("\n","<br />").html_safe
+  end
+  
+  def no_related_ids_array
+    no_related_ids.to_s.split("][").map {|s| s.gsub("[","").gsub("]","").to_i}
+  end
+  
+  def no_related_contacts
+    Contact.where(id: no_related_ids_array)
+  end
+  
+  def add_no_related_contact(contact)
+    aa = no_related_ids_array
+    aa << contact.id if !no_related_ids_array.include?(contact.id)
+    
+    self.update_attribute(:no_related_ids, "["+aa.join("][")+"]")
   end
 
 end
