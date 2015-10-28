@@ -1898,15 +1898,15 @@ class Contact < ActiveRecord::Base
         
         contact.account_manager = User.where(:tmp_ConsultantID => item.consultant_id).first
         
-        contact.save
+        if contact.save        
+          # import contact type/course type
+          contact.update_contact_type_from_old_student
+          
+          contact.add_status("active")
+          contact.save_draft(User.where(:email => "manager@ftmsglobal.edu.vn").first)
+          contact.update_info
+        end
         
-        # import contact type/course type
-        contact.update_contact_type_from_old_student
-        
-        contact.add_status("active")
-        contact.save_draft(User.where(:email => "manager@ftmsglobal.edu.vn").first)
-        contact.update_info
-
         puts item
       end
 

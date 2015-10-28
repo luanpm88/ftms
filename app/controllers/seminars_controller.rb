@@ -153,16 +153,16 @@ class SeminarsController < ApplicationController
           contact.account_manager_id = params[:user].to_i if params[:user].present?
           contact.preferred_mailing = "other"
           
-          contact.save
-          
-          contact.update_info
-          
-          contact.add_status("new_pending")
-          contact.add_status("education_consultant_pending")
-          contact.save_draft(User.first)
-          
-          @seminar.add_contacts([contact])
-          contact.set_present_in_seminar(@seminar, row[1]["present"])
+          if contact.save          
+            contact.update_info
+            
+            contact.add_status("new_pending")
+            contact.add_status("education_consultant_pending")
+            contact.save_draft(User.first)
+            
+            @seminar.add_contacts([contact])
+            contact.set_present_in_seminar(@seminar, row[1]["present"])
+          end
         end
       end
     end
