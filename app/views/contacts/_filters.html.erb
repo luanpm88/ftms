@@ -96,19 +96,14 @@
 								<input style="width:100%;margin-bottom: 5px;" name="seminars" data="<%= seminars_path(format: "json") %>" class="select2-ajax-seminars multiple" value="<%= @seminar.id if !@seminar.nil? %>" text="<%= @seminar.name if !@seminar.nil? %>" />
 							</div>
 							
-							<div class="col-md-2 course-contact-filter personal-box">
+							<div class="col-md-3 course-contact-filter personal-box">
 								<h4>Course</h4>							
 								<input style="width:100%;margin-bottom: 5px;" name="courses" data="<%= courses_path(format: "json") %>" class="select2-ajax-courses" value="<%= @course.id if !@course.nil? %>" text="<%= @course.display_name if !@course.nil? %>" />
 							</div>
 							
-							<div class="col-md-2">
-								<h4>ApproveStatus</h4>							
-								<%= select_tag 'status', options_for_select(Contact.status_options, params[:status]), class: "modern_select width100" %>
-							</div>	
-							
-							<div class="col-md-2 personal-box">
-								<h4>Tag</h4>
-								<%= select_tag 'tags[]', options_for_select(ContactTag.active_contact_tags.collect{ |u| [u.name, u.id] }), class: "modern_select width100", multiple: "multiple" %>
+							<div class="col-md-3 course-contact-filter personal-box">
+								<h4>Phrase</h4>							
+								<input style="width:100%;margin-bottom: 5px;" name="phrases" data="<%= phrases_path(format: "json") %>" class="select2-ajax-phrases multiple" />
 							</div>
 						
 							
@@ -167,14 +162,23 @@
 						</div>
 							
 						<div class="row">
-							<div class="col-md-4">
+								<div class="col-md-3">
+												<h4>ApproveStatus</h4>							
+												<%= select_tag 'status', options_for_select(Contact.status_options, params[:status]), class: "modern_select width100" %>
+								</div>	
+							
+							<div class="col-md-3 personal-box">
+								<h4>Tag</h4>
+								<%= select_tag 'tags[]', options_for_select(ContactTag.active_contact_tags.collect{ |u| [u.name, u.id] }), class: "modern_select width100", multiple: "multiple" %>
+							</div>
+							<div class="col-md-3">
 								<h4>Old Tag</h4>                        
 								<div class="lecturers-filter-box">
 									<input style="width:100%;margin-bottom: 5px;" name="old_tag" data="<%= old_tags_path(format: "json") %>" class="select2-ajax-old-tags" />
 								</div>
 							</div>
 
-							<div class="col-md-4">
+							<div class="col-md-3">
 								<h4>Old Course</h4>                        
 								<div class="lecturers-filter-box">
 									<input style="width:100%;margin-bottom: 5px;" name="old_course" data="<%= old_link_students_path(format: "json") %>" class="select2-ajax-old-link-students" />

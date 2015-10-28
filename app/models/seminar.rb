@@ -28,6 +28,10 @@ class Seminar < ActiveRecord::Base
                   }
                 }
   
+  def main_contacts
+    contacts.where(draft_for: nil).where("contacts.status IS NOT NULL AND contacts.status NOT LIKE ?", "%[deleted]%")
+  end
+  
   def self.full_text_search(params)    
     records = self.active_seminars
     records = records.search(params[:q]) if params[:q].present?    
@@ -240,7 +244,7 @@ class Seminar < ActiveRecord::Base
     header = spreadsheet.row(1)
     (2..spreadsheet.last_row).each do |i|
       row = Hash[[header, spreadsheet.row(i)].transpose]
-      item = {name: row["Fullname"], company: row["Company"], mobile: row["Mobile"], email: row["Email"], present: row["Status"], background: "University: #{row["University"]}\nMajor: #{row["Major"]}\nYear: #{row["Year"]}"}
+      item = {name: row["Fullname"], company: row["Company"], mobile: row["Mobile"], email: row["Email"], present: row["Status"], background: "Company: #{row["Company"]}\nUniversity: #{row["University"]}\nMajor: #{row["Major"]}\nYear: #{row["Year"]}"}
       item[:contacts] = similar_contacts({email: item[:email], name: item[:name], mobile: item[:mobile]})
       list << item if row["Fullname"].present?
     end

@@ -45,13 +45,13 @@
 												<th class="text-right" width="1%">Actions</th>
 												<th class="text-left" width="1%">
 														<!--<div class="checkbox check-default">
-																<input id="checkbox_all" type="checkbox" value="all" class="checkall">
+																<input checked="checked" id="checkbox_all" type="checkbox" value="all" class="checkall">
 																<label for="checkbox_all"></label>
 														</div>-->
 												</th>
 										</tr>
 										<% @list[:list].each_with_index do |row,index| %>
-												<tr class="raw_rol row_<%= row[:status] %> seminar_import_row seminar_group seminar_group_<%= index %>">
+												<tr class="<%= 'row_selected' if row[:contacts].empty? %>  raw_rol row_<%= row[:status] %> seminar_import_row seminar_group seminar_group_<%= index %>">
 														<td>
 																<%= text_area_tag "rows["+index.to_s+"][name]", row[:name], class: "form-control" %>
 														</td>
@@ -89,7 +89,7 @@
 														<td>
 															<% if !["old_imported"].include?(row[:status]) %>
 																		<div class="checkbox check-success pull-right">
-																			<input group="<%= index %>" name="rows[<%= index %>][check]" id="checkbox_<%= index %>" type="checkbox" value="true" class="checkall">
+																			<input <%= 'checked=checked' if row[:contacts].empty? %> group="<%= index %>" name="rows[<%= index %>][check]" id="checkbox_<%= index %>" type="checkbox" value="true" class="checkall">
 																			<label for="checkbox_<%= index %>"></label>
 																		</div>																	
 															<% end %>
@@ -98,7 +98,7 @@
 												</tr>
 												<% row[:contacts].each do |contact| %>
 													<% if true %>
-															<tr class="dark_row row_<%= row[:status] %> seminar_group seminar_group_<%= index %>" >
+															<tr class="<%= 'row_selected' if !contact.seminars.include?(@seminar) %> dark_row row_<%= row[:status] %> seminar_group seminar_group_<%= index %>" >
 																	<td>
 																			<i class="icon-long-arrow-right"></i> <%= contact.contact_link %>
 																			<%= hidden_field_tag "contacts["+contact.id.to_s+"][id]", contact.id, class: "form-control" %>
@@ -113,7 +113,7 @@
 																			<%= contact.email %>
 																	</td>
 																	<td>
-																				<%= contact.note %>
+																				<%= contact.display_note %>
 																		</td>
 																	<td class="text-center">
 																		<% if row[:present].present? %>
@@ -139,7 +139,7 @@
 																	<td>
 																		<% if !["new_imported","old_imported"].include?(row[:status]) %>
 																			<div class="checkbox check-success pull-right">
-																				<input checked="checked" group="<%= index %>" name="contacts[<%= contact.id %>][check]" id="checkbox_c_<%= contact.id %>" type="checkbox" value="true" class="checkall">
+																				<input <%= 'checked=checked' if !contact.seminars.include?(@seminar) %> group="<%= index %>" name="contacts[<%= contact.id %>][check]" id="checkbox_c_<%= contact.id %>" type="checkbox" value="true" class="checkall">
 																				<label for="checkbox_c_<%= contact.id %>"></label>
 																			</div>
 																		<% end %>

@@ -11,7 +11,7 @@ class Contact < ActiveRecord::Base
   #validates :sex, presence: true, if: :is_individual?
   #validates :account_manager_id, presence: true, if: :is_individual?
   
-  validate :not_exist
+  #validate :not_exist
   
   has_many :parent_contacts, :dependent => :destroy
   has_many :parent, :through => :parent_contacts, :source => :parent
@@ -161,6 +161,7 @@ class Contact < ActiveRecord::Base
     self.update_cache_intakes
     self.update_cache_subjects
     self.update_cache_courses
+    self.update_cache_phrases
     self.update_cache_search
   end
   
@@ -241,6 +242,15 @@ class Contact < ActiveRecord::Base
     
     if params[:courses].present?
       @records = @records.where("contacts.cache_courses LIKE ?", "%[#{params[:courses]}]%")
+    end
+    
+    if params[:phrases].present?
+      conds = []
+      params[:phrases].split(",").each do |ccid|
+        conds << "contacts.cache_phrases LIKE '%[#{ccid}]%'"
+      end
+      
+      @records = @records.where(conds.join(" OR "))
     end
     
     if params[:courses_phrases].present?
@@ -438,7 +448,7 @@ class Contact < ActiveRecord::Base
       end
       order += " "+params["order"]["0"]["dir"]
     else
-      order = "contacts.name"
+      order = "contacts.created_at DESC"
     end
     @records = @records.order(order) if !order.nil? && !params["search"].present?
     
@@ -589,18 +599,20 @@ class Contact < ActiveRecord::Base
     @records = @records.limit(params[:length]).offset(params["start"])
     data = []
     
-    actions_col = 8
+    actions_col = 10
     @records.each do |item|
       item = [
               "<div class=\"checkbox check-default\"><input name=\"ids[]\" id=\"checkbox#{item.id}\" type=\"checkbox\" value=\"#{item.id}\"><label for=\"checkbox#{item.id}\"></label></div>",
               item.picture_link,
               '<div class="text-left">'+item.contact_link+"</div>",
               '<div class="text-left">'+item.html_info_line.html_safe+item.referrer_link+"</div>",               
-              '<div class="text-center">'+item.joined_course_types_name+"</div>",
+              '<div class="text-left">'+item.course_types_name_col+"</div>",
               '<div class="text-center">'+item.course_count_link+"</div>",
               #'<div class="text-left">'+item.referrer_link+"</div>",
               '<div class="text-center contact_tag_box" rel="'+item.id.to_s+'">'+ContactsController.helpers.render_contact_tags_selecter(item)+"</div>",
               '<div class="text-center">'+item.display_present_with_seminar(@seminar)+"</div>",
+              '<div class="text-center">'+item.created_at.strftime("%d-%b-%Y")+"<br /><strong>by:</strong><br />"+item.user.staff_col+"</div>",
+              '<div class="text-center">'+item.account_manager_col+"</div>",
               "<div class=\"text-right\"><div rel=\"#{@seminar.id}\" contact_ids=\"#{item.id}\" class=\"remove_contact_from_seminar_but btn btn-mini btn-danger\">Remove</div></div>",
             ]
       data << item
@@ -1841,8 +1853,21 @@ class Contact < ActiveRecord::Base
     return arr
   end
   
+  def real_phrase_ids
+    arr = []
+    active_courses_with_phrases.each do |row|
+      arr += (row[:courses_phrases].map{|cp| cp.phrase_id}).uniq
+    end
+    
+    return arr
+  end
+  
   def update_cache_courses
     self.update_attribute(:cache_courses, "["+real_courses.map(&:id).join("][")+"]")
+  end
+  
+  def update_cache_phrases
+    self.update_attribute(:cache_phrases, "["+real_phrase_ids.join("][")+"]")
   end
 
   def self.import_contact_from_old_student
@@ -1934,7 +1959,7 @@ class Contact < ActiveRecord::Base
     
     cond_other = "("+cond_other.join(" OR ")+")"
     return Contact.main_contacts.where("contacts.status NOT LIKE ?","%[deleted]%").where.not(id: self.id)
-                                .where(cond_name+" AND "+cond_other)
+                                .where(cond_name+" OR "+cond_other)
 
   end
   
@@ -1961,6 +1986,10 @@ class Contact < ActiveRecord::Base
     title = show_title ? "<div class=\"col_label\">Deferred Phrase(s):</div>" : ""
     
     aa.empty? ? "" : ("<div class=\"text-left nowrap items_confirmed\">#{title}<div>#{Course.find(course_id).display_name}</div>"+Course.render_courses_phrase_list(transferred_courses_phrases)+"</div>").html_safe
+  end
+  
+  def display_note
+    note.gsub("\n","<br />").html_safe
   end
 
 end

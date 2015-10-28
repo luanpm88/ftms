@@ -147,11 +147,15 @@ class SeminarsController < ApplicationController
             contact.contact_types << ContactType.student
           else
             contact.contact_types << ContactType.inquiry
+            # add curse type
+            contact.course_types << @seminar.course_type if !contact.course_types.include?(@seminar.course_type)
           end          
           contact.account_manager_id = params[:user].to_i if params[:user].present?
           contact.preferred_mailing = "other"
           
           contact.save
+          
+          contact.update_info
           
           contact.add_status("new_pending")
           contact.add_status("education_consultant_pending")
@@ -169,6 +173,9 @@ class SeminarsController < ApplicationController
         if row[1]["check"].present? && row[1]["check"] == "true"  && row[1]["id"].present?
           contact = Contact.find(row[1]["id"])
           @seminar.add_contacts([contact]) if !contact.seminars.include?(@seminar)
+          
+          # add course type
+          contact.course_types << @seminar.course_type if !contact.course_types.include?(@seminar.course_type)
           
           contact.set_present_in_seminar(@seminar, row[1]["present"])
         end

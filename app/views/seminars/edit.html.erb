@@ -42,7 +42,7 @@
 										<a href="#information">Information</a>
 								</li>
 								<li class="<%= "active" if params[:tab] == "attendance" %>">
-								  <a href="#attendance">Attendance List (<span class="seminar_students_count"><%= @seminar.contacts.count %></span>)</a>
+								  <a href="#attendance">Attendance List (<span class="seminar_students_count"><%= @seminar.main_contacts.count %></span>)</a>
 								</li>
 						 </ul>
 						 <div class="tools"> <a href="javascript:;" class="collapse"></a> <a href="#grid-config" data-toggle="modal" class="config"></a> <a href="javascript:;" class="reload"></a> <a href="javascript:;" class="remove"></a> </div>
@@ -120,7 +120,7 @@
 																						<th width="1%" class="text-left">Avatar</th>
 																						<th class="text-left">Name</th>
 																						<th class="text-left">Info</th>
-																						<th class="text-left">Program</th>
+																						<th class="text-left">Type: Program</th>
 																						<th class="text-center">
 																								<span class="personal-box">Course</span>
 																								<span class="company-box">Student</span>
@@ -128,6 +128,8 @@
 																						<!--<th class="text-left">Company</th>-->
 																						<th class="text-center">Tag</th>
 																						<th class="text-center">Present?</th>
+																						<th class="text-center">Created On</th>
+																						<th class="text-center">Education Consultant</th>
 																						<th class="text-right">Actions</th>
 																				</tr>
 																			</thead>

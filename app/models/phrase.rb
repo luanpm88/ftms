@@ -131,8 +131,14 @@ class Phrase < ActiveRecord::Base
     json.to_json
   end
   
-  def self.full_text_search(q)
-    self.active_phrases.search(q).limit(50).map {|model| {:id => model.id, :text => model.name} }
+  def self.full_text_search(params)
+    result = self.active_phrases
+    result = result.search(params[:q]) if params[:q].present?
+    if params[:course_ids].present?
+      phrase_ids = CoursesPhrase.where(course_id: params[:course_ids].split(",")).map(&:phrase_id).uniq
+      result = result.where(id: phrase_ids)
+    end
+    result = result.order("name").limit(50).map {|model| {:id => model.id, :text => model.name} }
   end
   
   def phrase_link

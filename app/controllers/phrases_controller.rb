@@ -13,7 +13,7 @@ class PhrasesController < ApplicationController
     respond_to do |format|
       format.html { render layout: "content" if params[:tab_page].present? }
       format.json {
-        render json: Phrase.full_text_search(params[:q])
+        render json: Phrase.full_text_search(params)
       }
     end
   end
