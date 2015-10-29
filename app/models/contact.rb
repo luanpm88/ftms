@@ -1935,11 +1935,15 @@ class Contact < ActiveRecord::Base
     
     # add default program id
     if old_student.student_acca_no.present?
+        arr = self.bases.present? ? JSON.parse(self.bases) : []
+        
         item = {}
         item[:course_type_id] = nil
         item[:name] = old_student.student_acca_no
         item[:password] = nil
-        item[:status] = row[1]["status"]
+        item[:status] = is_inquiry ? "in_proccess" : "completed"
+        
+        arr << item
     end
     
     

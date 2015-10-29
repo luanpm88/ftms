@@ -655,7 +655,6 @@
 								var dd_v = parseFloat(text.split("[")[1].split("]")[0].split(" ")[0].replace(/,/g,""))
 								var pp_type = text.split("[")[1].split("]")[0].split(" ")[1]
 								dp = parseFloat( $(this).find('input.main_input').select2("data").text.split("[")[1].split("]")[0].replace(/,/g,""))
-								alert(dp)
 								if(pp_type=="%") {
 									dp = (dp/100)*price
 								}
