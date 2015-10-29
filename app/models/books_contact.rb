@@ -158,7 +158,7 @@ class BooksContact < ActiveRecord::Base
   end
   
   def self.to_be_imported_count(book_id=nil)
-    result = self.to_be_ordered_count(book_id) - Book.find(book_id).stock
+    result = self.to_be_delivered_count(book_id) - Book.find(book_id).stock
     result = 0 if result < 0
     
     return result

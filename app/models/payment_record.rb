@@ -175,6 +175,8 @@ class PaymentRecord < ActiveRecord::Base
   def staff_col
     if !company.nil?
       account_manager.staff_col
+    elsif !transfer.nil?
+      transfer.user.staff_col
     else
       course_register.account_manager.staff_col
     end    
