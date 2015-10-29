@@ -48,7 +48,7 @@
 											</div>
 											<div class="col-md-2 seminar-contact-filter personal-box">
 												<h4>Status</h4>							
-												<%= text_field_tag 'online_id', "", class: "form-control width100" %>
+												<%= select_tag "base_status", options_for_select(Contact.base_status_options), class: "modern_select width100" %>
 											</div>
 											<div class="col-md-2 personal-box">
 												<h4>Paper</h4>

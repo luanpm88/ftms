@@ -1944,6 +1944,8 @@ class Contact < ActiveRecord::Base
         item[:status] = is_inquiry ? "in_proccess" : "completed"
         
         arr << item
+        
+        self.update_attribute(:bases, arr.to_json)
     end
     
     
