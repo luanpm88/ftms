@@ -427,7 +427,7 @@ class Ability
       
     end
     
-    if user.has_role? "manager" || user.has_role?("admin")
+    if user.has_role?("manager") || user.has_role?("admin")
       can :create, User
       can :update, User
       
