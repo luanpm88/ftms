@@ -1034,6 +1034,8 @@ class CourseRegister < ActiveRecord::Base
   end
   
   def has_course_transferred?
+    return false if !self.statuses.include?("active")
+    
     course_ids = contact.active_courses_with_phrases.map {|r| r[:course].id}
     contacts_courses.each do |cc|
       return true if !course_ids.include?(cc.course.id)

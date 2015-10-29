@@ -257,6 +257,10 @@ class Contact < ActiveRecord::Base
       @records = @records.where(conds.join(" OR "))
     end
     
+    if params[:base_status].present?
+      @records = @records.where("contacts.bases LIKE '%[#{params[:base_status]}]%'")
+    end
+    
     if params[:courses_phrases].present?
        @records = @records.joins(:contacts_courses)
       @records = @records.where("contacts_courses.courses_phrase_ids LIKE ?","%[#{params[:courses_phrases]}]%")
@@ -414,7 +418,7 @@ class Contact < ActiveRecord::Base
               '<div class="text-center contact_tag_box" rel="'+item.id.to_s+'">'+ContactsController.helpers.render_contact_tags_selecter(item)+"</div>",
               '<div class="text-center">'+item.created_at.strftime("%d-%b-%Y")+"<br /><strong>by:</strong><br />"+item.user.staff_col+"</div>",
               '<div class="text-center">'+item.account_manager_col+"</div>",
-              '<div class="text-center">'+item.display_statuses+"</div>",
+              '<div class="text-center">'+item.display_statuses+item.display_bases+"</div>",
               '',
             ]
       data << item
@@ -1209,7 +1213,9 @@ class Contact < ActiveRecord::Base
     result = []
     arr.each do |item|
       one = item
-      one["course_type"] = CourseType.find(one["course_type_id"])
+      one["course_type"] = CourseType.where(id: one["course_type_id"]).first
+      one["course_type"] = CourseType.new if one["course_type"].nil?
+      one["course_type"].short_name = "NaN"
       
       result << one
     end
@@ -1650,7 +1656,7 @@ class Contact < ActiveRecord::Base
   
   
   def self.base_status_options
-    [["In Progress","in_progress"],["Completed","completed"]]
+    [["None",""],["In Progress","in_progress"],["Completed","completed"]]
   end
   
   def activity_count
@@ -2028,6 +2034,10 @@ class Contact < ActiveRecord::Base
     aa << contact.id if !no_related_ids_array.include?(contact.id)
     
     self.update_attribute(:no_related_ids, "["+aa.join("][")+"]")
+  end
+  
+  def display_bases
+    base_items.empty? ? "" : ("<div class=\"display_bases\"><div class=\"col_label\">Online #ID:</div>"+(base_items.map {|item| item["course_type"].short_name+"-"+item["name"]+"-"+item["password"].to_s+"-"+item["status"].to_s}).join("<br />")+"</div>").html_safe
   end
 
 end

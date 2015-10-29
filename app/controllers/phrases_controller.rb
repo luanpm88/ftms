@@ -45,7 +45,7 @@ class PhrasesController < ApplicationController
     
     @phrase = Phrase.new(s_params)
     @phrase.user = current_user
-
+    
     respond_to do |format|
       if @phrase.save
         @phrase.update_status("create", current_user)        
@@ -54,6 +54,9 @@ class PhrasesController < ApplicationController
         format.html { redirect_to params[:tab_page].present? ? "/home/close_tab" : @phrase, notice: 'Phrase was successfully created.' }
         format.json { render action: 'show', status: :created, location: @phrase }
       else
+        @subjects = Subject.active_subjects
+        @subjects = @subjects.includes(:course_types).where(course_types: {id: @phrase.course_type_id}).order("subjects.name") if @phrase.course_type_id.present?
+    
         format.html { render action: 'new', tab_page: params[:tab_page] }
         format.json { render json: @phrase.errors, status: :unprocessable_entity }
       end
@@ -74,6 +77,9 @@ class PhrasesController < ApplicationController
         format.html { redirect_to params[:tab_page].present? ? "/home/close_tab" : @phrase, notice: 'Phrase was successfully updated.' }
         format.json { head :no_content }
       else
+        @subjects = Subject.active_subjects
+        @subjects = @subjects.includes(:course_types).where(course_types: {id: @phrase.course_type_id}).order("subjects.name") if @phrase.course_type_id.present?
+        
         format.html { render action: 'edit', tab_page: params[:tab_page] }
         format.json { render json: @phrase.errors, status: :unprocessable_entity }
       end

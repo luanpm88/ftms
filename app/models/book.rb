@@ -137,7 +137,7 @@ class Book < ActiveRecord::Base
     @records = @records.limit(params[:length]).offset(params["start"])
     data = []
     
-    actions_col = 9
+    actions_col = 10
     itemsx = []
     @records.each do |item|
       ############### BEGIN REVISION #########################
