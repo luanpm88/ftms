@@ -1933,6 +1933,17 @@ class Contact < ActiveRecord::Base
       course_types << ct if !ct.nil?
     end
     
+    # add default program id
+    if old_student.student_acca_no.present?
+        item = {}
+        item[:course_type_id] = nil
+        item[:name] = old_student.student_acca_no
+        item[:password] = nil
+        item[:status] = row[1]["status"]
+    end
+    
+    
+    
     return self
   end
 
