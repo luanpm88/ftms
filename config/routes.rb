@@ -351,7 +351,11 @@ Hkerp::Application.routes.draw do
   get 'home/index'
   get 'home/close_tab'
   
-  resources :old_tags
+  resources :old_tags do
+    collection do
+      get :delete
+    end
+  end
   
   resources :old_link_students
 

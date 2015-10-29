@@ -3592,11 +3592,31 @@
 					url : url,
 					success:function(data, textStatus, jqXHR)
 					{					
-						alert(data)
+						location.reload(); 
 					}
 				});
 			} else {
 				e.preventDefault()
+			}
+		})
+		
+		$(document).on("click", ".destroy-old-tag", function(e) {
+			e.preventDefault()
+			
+			var message = "Sure you want to destroy this tag?"
+			var url = $(this).attr("href")
+			var id = $(this).attr("rel")
+			
+			if (confirm(message)) {
+				$.ajax({
+					url : url,
+					method: 'DELETE',
+					success:function(data, textStatus, jqXHR)
+					{					
+						$(".old-tag-row-"+id).hide()
+						window.parent.modernAlert("Old tag was deleted!")
+					}
+				});
 			}
 		})
 	})

@@ -51,6 +51,7 @@ class Ability
       
       can :read, OldTag
       can :read, OldLinkStudent
+      can :delete, OldTag
       
       can :book_features, User
       can :report_features, User

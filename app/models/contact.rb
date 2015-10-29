@@ -1961,7 +1961,7 @@ class Contact < ActiveRecord::Base
 
   def self.find_related_contacts
     Contact.update_all(related_id: nil)
-    Contact.main_contacts.where("contacts.status NOT LIKE ?","%[deleted]%").each do |c|
+    Contact.main_contacts.where("contacts.status IS NOT NULL AND contacts.status NOT LIKE ?","%[deleted]%").each do |c|
       c = Contact.find(c.id)
       if c.related_id.nil?
         cs = c.find_related_contacts
@@ -1978,18 +1978,17 @@ class Contact < ActiveRecord::Base
   end
 
   def find_related_contacts
-    cond_name = "LOWER(contacts.cache_search) LIKE '%[search_name: #{name.unaccent.downcase} ]%'"
     cond_other = []
+    cond_other << "LOWER(contacts.cache_search) LIKE '%[search_name: #{name.unaccent.downcase} ]%'"    
     cond_other << "LOWER(contacts.email) LIKE '%#{self.email.to_s.strip.downcase}%'" if self.email.to_s.strip.present? && self.email.to_s.length > 6
     cond_other << "LOWER(contacts.mobile) LIKE '%#{self.mobile.to_s.strip.downcase}%'" if self.mobile.to_s.strip.present? && self.mobile.to_s.length > 6
      
     return [] if cond_other.empty?
     
-    cond_other = "("+cond_other.join(" OR ")+")"
+    cond_other = cond_other.join(" OR ")
     return Contact.main_contacts.where("contacts.status NOT LIKE ?","%[deleted]%").where.not(id: self.id)
-                                .where(cond_name+" OR "+cond_other)
-                                .where("contacts.no_related_ids NOT LIKE ?", "%[#{self.id}]%")
-
+                                .where(cond_other)
+                                .where("contacts.no_related_ids IS NULL OR contacts.no_related_ids NOT LIKE ?", "%[#{self.id}]%")
   end
   
   def transferred_courses_phrases

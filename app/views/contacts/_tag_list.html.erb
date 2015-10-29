@@ -1,15 +1,19 @@
 <table class="table table-striped no-more-tables">
     <thead>
         <tr>
-            <th class="text-left" width="1%">TagName</th>
+            <th class="text-left">TagName</th>
+            <th width="1%"></th>
         </tr>
     </thead>
 
     <tbody>
         <% tag_list.each do |item| %>
-            <tr>
-                <td class="text-left" width="1%">
+            <tr class="old-tag-row-<%= item.id %>">
+                <td class="text-left">
                     <%= item.tag_name %>
+                </td>
+                <td class="text-left" width="1%">
+                    <a rel="<%= item.id %>" href="<%= delete_old_tags_path(id: item.id) %>" class="btn btn-warning btn-small destroy-old-tag">Destroy</a>
                 </td>
             </tr>
             <% end %>
