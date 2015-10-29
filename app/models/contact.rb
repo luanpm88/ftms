@@ -261,7 +261,7 @@ class Contact < ActiveRecord::Base
       if params["course_types"].present?
         conds = []
         params["course_types"].each do |ctid|          
-          conds << "bases SIMILAR TO '%_id\":\"#{ctid}\",\"name\":\"(_)*\",\"password\":\"(_)*\",\"status\":\"#{params[:base_status]}%'"
+          conds << "bases SIMILAR TO '%_id\":\"#{ctid}\",\"status\":\"#{params[:base_status]}%'"
         end
         @records = @records.where(conds.join(" OR "))
       else
@@ -1205,9 +1205,10 @@ class Contact < ActiveRecord::Base
       if row[1]["course_type_id"].present? && row[1]["name"].present? && row[1]["password"].present?
         item = {}
         item[:course_type_id] = row[1]["course_type_id"]
+        item[:status] = row[1]["status"]
         item[:name] = row[1]["name"]
         item[:password] = row[1]["password"]
-        item[:status] = row[1]["status"]
+        
         
         result << item
       end
@@ -1734,7 +1735,18 @@ class Contact < ActiveRecord::Base
             if transfer.course.upfront == true
               remove_course = true
             else
-              row[:courses_phrases] -= transfer.courses_phrases
+              # remain cp
+              remain_hour = row[:hour]
+              remain_money = row[:money]
+              tmp_cps = row[:courses_phrases]
+              tmp_cps.each do |cp|
+                if transfer.courses_phrases.include?(cp)
+                  row[:courses_phrases] -= [cp]
+                  row[:hour] -= cp.hour
+                  row[:money] -= (remain_money/remain_hour)*cp.hour if remain_hour > 0
+                end
+              end
+              
               remove_course = true if row[:courses_phrases].empty?
             end
           end
@@ -1953,9 +1965,10 @@ class Contact < ActiveRecord::Base
         
         item = {}
         item[:course_type_id] = nil
+        item[:status] = is_inquiry ? "in_proccess" : "completed"
         item[:name] = old_student.student_acca_no
         item[:password] = nil
-        item[:status] = is_inquiry ? "in_proccess" : "completed"
+        
         
         arr << item
         

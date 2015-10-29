@@ -177,7 +177,23 @@ class Transfer < ActiveRecord::Base
       arr = []
       arr << "<div class=\"nowrap\"><strong>"+course.display_name+"</strong></div>"
       arr << "<div class=\"courses_phrases_list\">"+Course.render_courses_phrase_list(courses_phrases)+"</div>" if courses_phrases
-      arr << "<br /><div>Hour: <strong>#{contact.active_course(course.id, self.created_at-1.second)[:hour]}</strong> <br /> Money: <strong>#{ApplicationController.helpers.format_price(contact.active_course(course.id, self.created_at-1.second)[:money])}</trong></div>"
+      
+      active_course = contact.active_course(course.id, self.created_at-1.second)
+      hour = active_course[:hour]
+      money = active_course[:money]
+      
+      if !active_course[:course].upfront && hour > 0
+        per_hour = money/hour
+        tmp_cps = active_course[:courses_phrases]
+        tmp_cps.each do |cp|
+          if !self.courses_phrases.include?(cp)
+            hour -= cp.hour
+            money -= per_hour*cp.hour
+          end
+        end
+      end
+      
+      arr << "<br /><div>Hour: <strong>#{hour}</strong> <br /> Money: <strong>#{ApplicationController.helpers.format_price(money)}</trong></div>"
       
       arr << "<br /><div style=\"font-weight: normal\">Note: #{note}</div>" if note.present?
       return arr.join("")
