@@ -258,7 +258,15 @@ class Contact < ActiveRecord::Base
     end
     
     if params[:base_status].present?
-      @records = @records.where("contacts.bases LIKE '%[#{params[:base_status]}]%'")
+      if params["course_types"].present?
+        conds = []
+        params["course_types"].each do |ctid|          
+          conds << "bases SIMILAR TO '%_id\":\"#{ctid}\",\"name\":\"(_)*\",\"password\":\"(_)*\",\"status\":\"#{params[:base_status]}%'"
+        end
+        @records = @records.where(conds.join(" OR "))
+      else
+        @records = @records.where("contacts.bases LIKE '%#{params[:base_status]}%'")
+      end
     end
     
     if params[:courses_phrases].present?
@@ -280,7 +288,7 @@ class Contact < ActiveRecord::Base
       @records = @records.where(cond.join(" OR "))
     end
     
-    if params["course_types"].present?
+    if params["course_types"].present? && !params[:base_status].present?
       conds = []
       params["course_types"].each do |ccid|
         conds << "contacts.cache_course_type_ids LIKE '%[#{ccid}]%'"
@@ -1214,8 +1222,7 @@ class Contact < ActiveRecord::Base
     arr.each do |item|
       one = item
       one["course_type"] = CourseType.where(id: one["course_type_id"]).first
-      one["course_type"] = CourseType.new if one["course_type"].nil?
-      one["course_type"].short_name = "NaN"
+      one["course_type"] = CourseType.new(short_name: "NaN") if one["course_type"].nil?
       
       result << one
     end
