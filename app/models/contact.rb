@@ -1742,8 +1742,10 @@ class Contact < ActiveRecord::Base
               tmp_cps.each do |cp|
                 if transfer.courses_phrases.include?(cp)
                   row[:courses_phrases] -= [cp]
-                  row[:hour] -= cp.hour
-                  row[:money] -= (remain_money/remain_hour)*cp.hour if remain_hour > 0
+                  if cp.hour.present? && cp.hour != "N/A" && cp.hour != 0.0
+                    row[:hour] -= cp.hour
+                    row[:money] -= (remain_money/remain_hour)*cp.hour if remain_hour > 0
+                  end
                 end
               end
               

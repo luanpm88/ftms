@@ -182,7 +182,7 @@ class Transfer < ActiveRecord::Base
       hour = active_course[:hour]
       money = active_course[:money]
       
-      if !active_course[:course].upfront && hour > 0
+      if !active_course[:course].upfront && hour.to_f > 0
         per_hour = money/hour
         tmp_cps = active_course[:courses_phrases]
         tmp_cps.each do |cp|
@@ -636,6 +636,16 @@ class Transfer < ActiveRecord::Base
   def update_statuses
     # payment
     self.update_attribute(:cache_payment_status, self.payment_status.join(","))
+    
+    # update payment record
+    ccs = ContactsCourse.where(contact_id: self.contact_id, course_id: self.course_id)
+    ccs.each do |cc|
+      cc.update_statuses
+      cc.course_register.update_statuses
+      cc.course_register.payment_records.each do |pr|
+        pr.update_statuses
+      end
+    end
   end
   
   def display_payment_status

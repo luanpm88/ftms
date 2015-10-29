@@ -153,19 +153,22 @@
 					var total = 0.0
 					var money = 0.0
 					var per_hour = 0.0
-					if(box.find(".total_phrase_money").length) {
+					if(box.find(".total_phrase_money").length && box.find(".total_phrase_money").attr("per_hour") != "") {
 						per_hour = parseFloat(box.find(".total_phrase_money").attr("per_hour").replace(/,/g,""))
 					}
 					box.find(".courses_phrase_item").each(function() {
-						if ($(this).prop('checked')) {
+						if ($(this).prop('checked') && typeof($(this).attr("hour")) != 'undefined') {
 							total += parseFloat($(this).attr("hour"))
+							alert(typeof($(this).attr("hour")))
 							//money += parseInt($(this).attr("money"))
 						}
 					})
 					box.find(".total_phrase_hour").html(total)
-					//if(per_hour == "") {
+					if(total > 0) {
+						
 						box.find(".total_phrase_money").html(ReplaceNumberWithDots((per_hour*total).toFixed(0)))
-					//}
+						//alert(per_hour)
+					}
 				}
 			})
 			

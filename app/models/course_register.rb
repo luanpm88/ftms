@@ -78,11 +78,11 @@ class CourseRegister < ActiveRecord::Base
         cc.course_id = row[1]["course_id"]
         cc.contact_id = contact.id
         
+        cc.courses_phrase_ids = "["+row[1]["courses_phrase_ids"].join("][")+"]" if !row[1]["courses_phrase_ids"].nil?
+        
         if row[1]["price"] == "no_price"
           cc.price = -1
         else
-          cc.courses_phrase_ids = "["+row[1]["courses_phrase_ids"].join("][")+"]" if !row[1]["courses_phrase_ids"].nil?
-          #cc.upfront = row[1]["upfront"]
           cc.price = row[1]["price"]        
           cc.discount = row[1]["discount"]
           
