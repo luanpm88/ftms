@@ -1851,6 +1851,7 @@ class Contact < ActiveRecord::Base
     str << phone.to_s.gsub(/^84/,"")
     str << "0" + phone.to_s.gsub(/^84/,"")
     str << referrer.name if !referrer.nil?
+    str << display_bases.to_s
     
     return str.join(" ")
   end
