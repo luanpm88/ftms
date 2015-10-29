@@ -1548,12 +1548,12 @@ class Contact < ActiveRecord::Base
     return result
   end
   
-  def display_bases
-    result = []
-    base_items.each do |b|
-      result << b["name"]
-    end
-  end
+  #def display_bases
+  #  result = []
+  #  base_items.each do |b|
+  #    result << b["name"]
+  #  end
+  #end
   
   def current_contacts_courses
     self.contacts_courses.includes(:course).order("courses.intake DESC")
@@ -2043,7 +2043,7 @@ class Contact < ActiveRecord::Base
   end
   
   def display_bases
-    base_items.empty? ? "" : ("<div class=\"display_bases\"><div class=\"col_label\">Online #ID:</div>"+(base_items.map {|item| item["course_type"].short_name+"-"+item["name"]+"-"+item["password"].to_s+"-"+item["status"].to_s}).join("<br />")+"</div>").html_safe
+    base_items.empty? ? "" : ("<div class=\"display_bases\"><div class=\"col_label\">Online #ID:</div>"+(base_items.map {|item| item["course_type"].short_name+"-"+item["name"]+"-"+item["password"].to_s+"-"+item["status"].to_s}).join("<hr style=\"margin:3px\">")+"</div>").html_safe
   end
 
 end
