@@ -41,7 +41,27 @@ class Ability
     #can :manage, SupplierOrder, :salesperson_id => user.id
     
     if user.has_role? "admin"
-      can :manage, :all
+        can :read, User
+        can :create, User
+        can :update, User
+        can :destroy, User
+      
+        can :backup, User
+        can :backup, User
+        
+        can :restore, User
+        can :restore, User
+        
+        can :download_backup, User
+        can :delete_backup, User
+        
+        can :datatable, User
+        
+        can :import_from_old_system, User
+        can :import_from_old_system, User
+        
+        can :system_setting, User
+        can :system_setting, User
     end
     
     if user.has_role? "user"
@@ -377,11 +397,11 @@ class Ability
       end
     end
     
-    if user.has_role?("storage_manager") || user.has_role?("manager")
+    if user.has_role?("storage_manager") || user.has_role?("manager") || user.has_role?("admin")
       can :deliver_all, Book
     end
     
-    if user.has_role?("accountant") || user.has_role?("manager")
+    if user.has_role?("accountant") || user.has_role?("manager") || user.has_role?("admin")
       can :create, BankAccount
       can :update, BankAccount do |c|
         c.course_registers.empty? && c.payment_records.empty?
@@ -407,8 +427,9 @@ class Ability
       
     end
     
-    if user.has_role? "manager"
-      can :manage, User
+    if user.has_role? "manager" || user.has_role?("admin")
+      can :create, User
+      can :update, User
       
       ## STOCK TYPE
       can :approved, StockType

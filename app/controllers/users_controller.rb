@@ -37,8 +37,7 @@ class UsersController < ApplicationController
 
   # GET /users/1/edit
   def edit
-    authorize! :manage, User
-    
+
     render layout: "content" if params[:tab_page].present?
   end
 
