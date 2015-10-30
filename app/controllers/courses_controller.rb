@@ -77,7 +77,7 @@ class CoursesController < ApplicationController
     
     respond_to do |format|
       if @course.save        
-        @course.update_courses_phrases(params[:courses_phrases]) if !params[:courses_phrases].nil?
+        #@course.update_courses_phrases(params[:courses_phrases]) if !params[:courses_phrases].nil?
         @course.update_course_prices(params[:course_prices]) if !params[:course_prices].nil?
         
         @course.update_status("update", current_user)        
