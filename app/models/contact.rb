@@ -1936,7 +1936,9 @@ class Contact < ActiveRecord::Base
           contact.update_contact_type_from_old_student
           
           contact.add_status("active")
-          contact.save_draft(User.where(:email => "manager@ftmsglobal.edu.vn").first)
+          uu = User.where(:email => "admin@ftmsglobal.edu.vn").first
+          uu = User.first if uu.nil?
+          contact.save_draft(uu)
           contact.update_info
         end
         

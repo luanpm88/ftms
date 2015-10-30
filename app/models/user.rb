@@ -585,7 +585,9 @@ class User < ActiveRecord::Base
       
         item.roles << Role.where(name: "user").first
         # item.roles << Role.where(name: "education_consultant").first
-        item.user_id = User.first.id
+        uu = User.where(:email => "admin@ftmsglobal.edu.vn").first
+        uu = User.first if uu.nil?
+        item.user_id = uu.id
         
         item.save
         

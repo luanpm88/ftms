@@ -22,7 +22,7 @@ class System < ActiveRecord::Base
     # remove over 100 backup old
     @files = Dir.glob("#{bk_dir}/*").sort{|a,b| b <=> a}
     @files.each_with_index do |f,index|
-      if index > revision_max
+      if index > revision_max-1
         `rm -rf #{f}`
       end      
     end
@@ -38,7 +38,7 @@ class System < ActiveRecord::Base
     
     backup_cmd = "mkdir #{bk_dir}/#{dir} && "
     backup_cmd += "pg_dump -a #{database} >> #{bk_dir}/#{dir}/data.dump && " if params[:database].present?
-    backup_cmd += "cp -a uploads #{bk_dir}/#{dir}/ && " if !params[:file].nil? && File.directory?("uploads")
+    backup_cmd += "cp -a #{root_dir}uploads #{bk_dir}/#{dir}/ && " if !params[:file].nil? && File.directory?("#{root_dir}uploads")
     backup_cmd += "zip -r #{bk_dir}/#{dir}.zip #{bk_dir}/#{dir} && "
     backup_cmd += "rm -rf #{bk_dir}/#{dir}"
     
@@ -48,6 +48,45 @@ class System < ActiveRecord::Base
     
     if !File.directory?(dir)
       `rm -rf #{bk_dir}/#{dir}`
+    end
+  end
+  
+  def self.upload_backup_to_dropbox(params)
+    bk_dir = Setting.get("backup_dir")
+    root_dir = params[:dir].present? ? params[:dir] : ""
+    revision_max = Setting.get("dropbox_backup_revision_count").strip.to_i
+    
+    dropbox_list = `#{root_dir}dropbox_uploader.sh list`
+    latest_backup_file = "no file"
+    (Dir.glob("#{bk_dir}/*").sort{|a,b| b <=> a}).each do |f|
+      if f.include?(".zip")
+        latest_backup_file = f
+        break
+      end
+    end
+    if !dropbox_list.include?(latest_backup_file.split("/").last)
+      # upload backup
+      puts "uploading..."
+      uploading = `#{root_dir}dropbox_uploader.sh upload #{latest_backup_file} /`
+      puts "#{latest_backup_file.split("/").last} uploaded!"
+      
+      # remove over 10 backup old
+      puts "remove old backup..."
+      
+      dropbox_list = `#{root_dir}dropbox_uploader.sh list`
+      dropbox_files = []
+      dropbox_list.split("\n [F]").each do |s|
+        dropbox_files << s.split(" ").last.gsub("\n","") if s.include?(".zip")
+      end
+      dropbox_files = dropbox_files.sort{|a,b| b <=> a}
+      dropbox_files.each_with_index do |f,index|
+        if index > revision_max-1
+          `#{root_dir}dropbox_uploader.sh delete #{f}`
+          puts "#{f} deleted!"
+        end
+      end
+      
+      puts "Done!"
     end
   end
 end
