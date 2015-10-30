@@ -291,16 +291,18 @@ class Course < ActiveRecord::Base
   def self.render_courses_phrase_list(list, contacts_course = nil)
     arr = []
     group_name = ""
-    list.each do |p|
+    group_alias = [*1..30000].sample.to_s
+    list.each do |p|        
         if group_name != p.phrase.name
-          arr << "<div><strong class=\"width100 phrase_title\" rel=\"phrase_date_#{p.course_id}_#{p.phrase.id}\">#{p.phrase.name} <span class=\"phrase_date_#{p.course_id}_#{p.phrase.id}\"></span></strong></div>"
+          group_alias = [*1..30000].sample.to_s
+          arr << "<div><strong class=\"width100 phrase_title\" rel=\"phrase_date_#{p.course_id}_#{p.phrase.id}_#{group_alias}\">#{p.phrase.name} <span class=\"phrase_date_#{p.course_id}_#{p.phrase.id}\"></span></strong></div>"
           group_name = p.phrase.name
         end
         
         if contacts_course.present?
           transferred = !p.transferred?(contacts_course) ? "" : "transferred"
         end
-        arr << "<span style=\"display:none\" class=\"#{transferred} phrase_date_#{p.course_id}_#{p.phrase.id}\" title=\"#{transferred}\">[#{p.start_at.strftime("%d-%b-%Y") if p.start_at.present?}]</span> "
+        arr << "<span style=\"display:none\" class=\"#{transferred} phrase_date_#{p.course_id}_#{p.phrase.id}_#{group_alias}\" title=\"#{transferred}\">[#{p.start_at.strftime("%d-%b-%Y") if p.start_at.present?}]</span> "
     end
     return "<div>"+arr.join("").html_safe+"</div>"
   end
@@ -405,14 +407,26 @@ class Course < ActiveRecord::Base
   end
   
   def update_courses_phrases(params)
-    courses_phrases.destroy_all
     if !self.upfront
       params.each do |row|
-        if row[1]["phrase_id"].present?
-          courses_phrases.create(phrase_id: row[1]["phrase_id"],
+        
+        if row[1]["courses_phrase_id"].present?
+          if row[1]["phrase_id"].present?
+              CoursesPhrase.find(row[1]["courses_phrase_id"]).update(
+                          phrase_id: row[1]["phrase_id"],
+                          start_at: row[1]["start_at"],
+                          hour: row[1]["hour"])
+          else
+              CoursesPhrase.find(row[1]["courses_phrase_id"]).destroy
+          end
+        else
+          if row[1]["phrase_id"].present?
+              courses_phrases.create(phrase_id: row[1]["phrase_id"],
                           start_at: row[1]["start_at"],
                           hour: row[1]["hour"]
                       )
+          
+          end
         end
       end
     end
