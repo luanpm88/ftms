@@ -337,9 +337,9 @@ class CourseRegister < ActiveRecord::Base
               "<div class=\"checkbox check-default\"><input name=\"ids[]\" id=\"checkbox#{item.id}\" type=\"checkbox\" value=\"#{item.id}\"><label for=\"checkbox#{item.id}\"></label></div>",
               item.contact.contact_link,
               item.description,
-              '<div class="text-right">'+ApplicationController.helpers.format_price(item.total)+"</div>",
-              '<div class="text-right">'+ApplicationController.helpers.format_price(item.paid_amount)+"</div>",
-              '<div class="text-right">'+ApplicationController.helpers.format_price(item.remain_amount)+"</div>",
+              '<div class="text-right">'+item.total_col+"</div>",
+              '<div class="text-right">'+item.paid_col+"</div>",
+              '<div class="text-right">'+item.remain_col+"</div>",
               '<div class="text-center">'+item.display_payment_status+item.display_payment+item.display_delivery_status+"</div>",
               '<div class="text-center">'+item.account_manager.staff_col+"</div>",
               ""
@@ -367,6 +367,16 @@ class CourseRegister < ActiveRecord::Base
     
     return {result: result, items: @records, actions_col: actions_col}
     
+  end
+  
+  def total_col
+    no_price? ? "No price!" : ApplicationController.helpers.format_price(total)
+  end
+  def paid_col
+    no_price? ? "No price!" : ApplicationController.helpers.format_price(paid_amount)
+  end
+  def remain_col
+    no_price? ? "No price!" : ApplicationController.helpers.format_price(remain_amount)
   end
   
   def paid_on
