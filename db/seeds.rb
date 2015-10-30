@@ -52,6 +52,7 @@ Setting.create(name: "currency_code", value: "VNĐ")
 Setting.create(name: "backup_dir", value: "/media/sdb1/ftms-backup")
 # Setting.create(name: "backup_cron_time", value: "* */12 * * *")
 Setting.create(name: "backup_revision_count", value: "100")
+Setting.create(name: "dropbox_backup_revision_count", value: "10")
 
 
 
