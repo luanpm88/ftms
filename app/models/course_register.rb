@@ -270,7 +270,7 @@ class CourseRegister < ActiveRecord::Base
               "<div class=\"checkbox check-default\"><input name=\"ids[]\" id=\"checkbox#{item.id}\" type=\"checkbox\" value=\"#{item.id}\"><label for=\"checkbox#{item.id}\"></label></div>",
               item.contact.contact_link,
               item.description,              #'<div class="text-center">'+item.display_delivery_status+"</div>",
-              '<div class="text-right"><label class="col_label top0">Total:</label>'+ApplicationController.helpers.format_price(item.total)+"<label class=\"col_label top0\">Paid:</label>"+ApplicationController.helpers.format_price(item.paid_amount)+"<label class=\"col_label top0\">Receivable:</label>"+ApplicationController.helpers.format_price(item.remain_amount)+"</div>",
+              "<div class=\"text-right\">#{item.display_amounts}</div>",
               '<div class="text-center">'+item.display_payment_status+item.display_payment+item.display_delivery_status+"</div>",
               '<div class="text-center">'+item.created_at.strftime("%d-%b-%Y")+"<br /><strong>by:</strong><br />"+item.user.staff_col+"</div>",
               '<div class="text-center">'+item.account_manager.staff_col+"</div>",
@@ -290,6 +290,15 @@ class CourseRegister < ActiveRecord::Base
     
     return {result: result, items: @records, actions_col: actions_col}
     
+  end
+  
+  def display_amounts
+    str = []
+    if no_price? && total == 0.0
+      "No price!"
+    else
+      '<label class="col_label top0">Total:</label>'+ApplicationController.helpers.format_price(item.total)+"<label class=\"col_label top0\">Paid:</label>"+ApplicationController.helpers.format_price(item.paid_amount)+"<label class=\"col_label top0\">Receivable:</label>"+ApplicationController.helpers.format_price(item.remain_amount)
+    end
   end
   
   def self.payment_list(params, user)
