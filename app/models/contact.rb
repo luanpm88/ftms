@@ -2025,7 +2025,7 @@ class Contact < ActiveRecord::Base
       active_cps += cps
     end
     
-    return (res_cps - [])
+    return (res_cps - active_cps)
   end
   
   def display_transferred_courses_phrases(course_id,show_title=true)
