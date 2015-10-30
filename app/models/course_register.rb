@@ -418,7 +418,7 @@ class CourseRegister < ActiveRecord::Base
       item = [
               item.contact.contact_link,
               item.description, # '<div class="text-center">'+item.display_delivery_status+"</div>",              
-              '<div class="text-right"><label class="col_label top0">Total:</label>'+ApplicationController.helpers.format_price(item.total)+"<label class=\"col_label top0\">Paid:</label>"+ApplicationController.helpers.format_price(item.paid_amount)+"<label class=\"col_label top0\">Remain:</label>"+ApplicationController.helpers.format_price(item.remain_amount)+"</div>",
+              '<div class="text-right">'+item.display_amounts+"</div>",
               '<div class="text-center">'+item.display_payment_status+item.display_payment+item.display_delivery_status+"</div>",
               '<div class="text-center">'+item.created_at.strftime("%d-%b-%Y")+"</div>",
               '<div class="text-center">'+item.account_manager.staff_col+"</div>",

@@ -142,8 +142,8 @@
 															  <div class="form-group">
 																	<label class="form-label">Price</label>
 																	<span class="help"></span>
-																	<div class="input-with-iconz  text-right">                                       
-																		 <strong><%= format_price(bc.price) %></strong>
+																	<div class="input-with-iconz  text-right">
+																		<strong><%= bc.no_price? ? "No price" : format_price(bc.price) %></strong>
 																	</div>
 															  </div>
 														 </div>
@@ -186,8 +186,9 @@
 															  <div class="form-group">
 																	<label class="form-label">Total</label>
 																	<span class="help"></span>
-																	<div class="input-with-iconz text-right">                                       
-																		 <strong style="font-size: 18px"><%= format_price(bc.total) %></strong>
+																	<div class="input-with-iconz text-right">
+																		
+																		 <strong style="font-size: 18px"><%= bc.no_price? ? "No price" : format_price(bc.total) %></strong>
 																	</div>
 															  </div>
 														 </div>
