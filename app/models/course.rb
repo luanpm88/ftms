@@ -82,7 +82,7 @@ class Course < ActiveRecord::Base
     if params[:main_courses] == "true"
        result = self.main_courses
     else
-       result = self.active_courses
+       result = self.main_courses
     end
     
     
