@@ -44,7 +44,7 @@
 														<label class="form-label">Price</label>
 														<span class="help"></span>
 														<div class="input-with-iconz  text-right">                                       
-															 <strong><%= cc.no_price? ? "No price" : format_price(cc.price) %></strong>
+															 <strong><%= cc.price == -1 ? "No price" : format_price(cc.price) %></strong>
 														</div>
 												  </div>
 											 </div>
@@ -83,7 +83,7 @@
 													  <label class="form-label">Total</label>
 													  <span class="help"></span>
 													  <div class="input-with-iconz text-right">                                       
-															<strong style="font-size: 18px"><%= cc.no_price? ? "No price" : format_price(cc.total) %></strong>
+															<strong style="font-size: 18px"><%= cc.price == -1 ? "No price" : format_price(cc.total) %></strong>
 													  </div>
 												</div>
 												<% if cc.is_write_off? %>
@@ -143,7 +143,7 @@
 																	<label class="form-label">Price</label>
 																	<span class="help"></span>
 																	<div class="input-with-iconz  text-right">
-																		<strong><%= bc.no_price? ? "No price" : format_price(bc.price) %></strong>
+																		<strong><%= bc.price == -1 ? "No price" : format_price(bc.price) %></strong>
 																	</div>
 															  </div>
 														 </div>
@@ -188,7 +188,7 @@
 																	<span class="help"></span>
 																	<div class="input-with-iconz text-right">
 																		
-																		 <strong style="font-size: 18px"><%= bc.no_price? ? "No price" : format_price(bc.total) %></strong>
+																		 <strong style="font-size: 18px"><%= bc.price == -1 ? "No price" : format_price(bc.total) %></strong>
 																	</div>
 															  </div>
 														 </div>
