@@ -79,7 +79,14 @@ class Course < ActiveRecord::Base
   end
   
   def self.full_text_search(q, params=nil)
-    result = self.active_courses.joins("LEFT JOIN course_types cts ON cts.id=courses.course_type_id")
+    if params[:main_courses] == "true"
+       result = self.main_courses
+    else
+       result = self.active_courses
+    end
+    
+    
+    result = result.joins("LEFT JOIN course_types cts ON cts.id=courses.course_type_id")
                                 .joins("LEFT JOIN subjects sjs ON sjs.id=courses.subject_id")
                                 .order("cts.short_name, sjs.name, courses.upfront, courses.intake DESC")
     if !params.nil?

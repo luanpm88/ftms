@@ -58,7 +58,7 @@ module ApplicationHelper
     ps = []
     array.each do |row|
       p = row.to_s.gsub(/\,/, '').to_f
-      ps << p if p > 1000
+      ps << p if row.present?
     end
     return ps
   end
