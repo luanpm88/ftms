@@ -45,7 +45,7 @@ class Book < ActiveRecord::Base
   end
   
   def self.full_text_search(params)    
-    self.active_books.order("name").search(params[:q]).limit(50).map {|model| {:id => model.id, :text => model.name} }
+    self.main_books.order("name").search(params[:q]).limit(50).map {|model| {:id => model.id, :text => model.name} }
   end
   
   def self.active_books_contacts
