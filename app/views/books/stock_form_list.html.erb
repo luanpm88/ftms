@@ -93,6 +93,15 @@
                                                               <%= text_field_tag "books_contacts["+number.to_s+"][discount]", "", class: "form-control price_input price_discount" %>
                                                           </div>
                                                     </div>
+														
+													<div class="form-group no_price_group">
+                                                          <label class="form-label"><label>Description</label></label>
+                                                          <span class="help"></span>
+                                                          <div class="input-with-iconz">                                       
+                                                              <%= text_area_tag "books_contacts["+number.to_s+"][description]", "", class: "form-control width100" %>
+                                                          </div>
+                                                    </div>
+													
                                                </div>
                                                <div class="col-md-2">
                                                     <div class="form-group no_price_group">
@@ -104,6 +113,7 @@
                                                               </h4>
                                                           </div>
                                                     </div>
+													
                                                </div>
                                                <div class="col-md-1">
                                                     <div class="form-group">

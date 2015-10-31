@@ -1255,31 +1255,43 @@ class Contact < ActiveRecord::Base
   def update_status(action, user, older = nil)
     # when create new contact
     if action == "create"      
-      # check if the contact is student
-      if is_individual?        
-        self.add_status("new_pending")
-        
-        # check if education consultant peding
-        if self.account_manager.present?
-          self.add_status("education_consultant_pending")
-        end        
-      else
-        # auto active if contact is company/organization
+      
+      # admin / manager
+      if user.has_role?("manager") || user.has_role?("admin")
         self.add_status("active")
-      end
+      else
+        # check if the contact is student
+        if is_individual?        
+          self.add_status("new_pending")
+          
+          # check if education consultant peding
+          if self.account_manager.present?
+            self.add_status("education_consultant_pending")
+          end        
+        else
+          # auto active if contact is company/organization
+          self.add_status("active")
+        end
+      end      
+        
     end
     
     # when update exist contact
     if action == "update"
-      # check if the contact is student
-      if is_individual?        
-        self.add_status("update_pending") if !self.has_status("new_pending")
-        
-        # check if education consultant peding
-        if self.account_manager != self.current.account_manager
-          self.add_status("education_consultant_pending")
-        end
+      # admin / manager
+      if user.has_role?("manager") || user.has_role?("admin")
+        self.set_statuses(["active"])
       else
+        # check if the contact is student
+        if is_individual?        
+          self.add_status("update_pending") if !self.has_status("new_pending")
+          
+          # check if education consultant peding
+          if self.account_manager != self.current.account_manager
+            self.add_status("education_consultant_pending")
+          end
+        else
+        end
       end
     end
     
@@ -1964,12 +1976,14 @@ class Contact < ActiveRecord::Base
     end
     
     # add default program id
+    partten = "members|affliliate|charterholder"
+    is_completed = old_student.student_type.strip.downcase.scan(/(#{partten})/).count > 0
     if old_student.student_acca_no.present?
         arr = self.bases.present? ? JSON.parse(self.bases) : []
         
         item = {}
         item[:course_type_id] = nil
-        item[:status] = is_inquiry ? "in_proccess" : "completed"
+        item[:status] = is_completed ? "completed" : "in_proccess"
         item[:name] = old_student.student_acca_no
         item[:password] = nil
         

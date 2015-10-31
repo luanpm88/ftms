@@ -311,7 +311,8 @@ CREATE TABLE books_contacts (
     upfront boolean DEFAULT false,
     cache_search text,
     intake timestamp without time zone,
-    discount_programs text
+    discount_programs text,
+    description text
 );
 
 
@@ -4002,4 +4003,6 @@ INSERT INTO schema_migrations (version) VALUES ('20151027014000');
 INSERT INTO schema_migrations (version) VALUES ('20151028021715');
 
 INSERT INTO schema_migrations (version) VALUES ('20151028104210');
+
+INSERT INTO schema_migrations (version) VALUES ('20151031083628');
 

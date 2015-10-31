@@ -181,16 +181,25 @@
 																					</div>
 																			  </div>
 																		<% end %>
+																		<% if bc.description.present? %>
+																			  <div class="form-group">
+																					<label class="form-label">Description</label>
+																					<span class="help"></span>
+																					<div class="input-with-iconz">																		
+																						<%= bc.description %>
+																					</div>
+																			  </div>
+																		<% end %>
 														 </div>
 														 <div class="col-md-2">
 															  <div class="form-group">
 																	<label class="form-label">Total</label>
 																	<span class="help"></span>
-																	<div class="input-with-iconz text-right">
-																		
+																	<div class="input-with-iconz text-right">																		
 																		 <strong style="font-size: 18px"><%= bc.price == -1 ? "No price" : format_price(bc.total) %></strong>
 																	</div>
 															  </div>
+																  
 														 </div>
 													</div>
 													

@@ -99,6 +99,16 @@ class Notification < ActiveRecord::Base
     return records.count == 0 ? "" : records.count
   end
   
+  def self.activity_pending_count(user, contact=nil)
+    if contact.nil? && !user.has_role?("admin") && !user.has_role?("manager")
+      return ""
+    end
+    
+    records = Activity.where(deleted: 1)
+    records = records.where(contact_id: contact.id) if contact.present?
+    
+    return records.count == 0 ? "" : records.count
+  end  
   
   
   def self.contact_menu_count(user)
@@ -180,23 +190,25 @@ class Notification < ActiveRecord::Base
   end
   
   # course register
-  def self.course_register_pending_count(user)
-    if !user.has_role?("admin") && !user.has_role?("manager")
+  def self.course_register_pending_count(user, contact=nil)
+    if contact.nil? && !user.has_role?("admin") && !user.has_role?("manager")
       return ""
     end
     
     records = CourseRegister.main_course_registers.where("status LIKE ?","%pending]%")
+    records = records.where(contact_id: contact.id) if contact.present?
     
     return records.count == 0 ? "" : records.count
   end
   
   # course register
-  def self.transfer_pending_count(user)
-    if !user.has_role?("admin") && !user.has_role?("manager")
+  def self.transfer_pending_count(user, contact=nil)
+    if contact.nil? && !user.has_role?("admin") && !user.has_role?("manager")
       return ""
     end
     
     records = Transfer.main_transfers.where("status LIKE ?","%pending]%")
+    records = records.where("contact_id = ? OR to_contact_id = ?", contact.id, contact.id) if contact.present?
     
     return records.count == 0 ? "" : records.count
   end

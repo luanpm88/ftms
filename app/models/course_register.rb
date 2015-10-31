@@ -137,6 +137,8 @@ class CourseRegister < ActiveRecord::Base
           cc.discount = row[1]["discount"]
         end
         
+        cc.description = row[1]["description"]
+        
         cc.upfront = row[1]["upfront"]
         #cc.intake = Date.new row[1]["intake(1i)"].to_i, row[1]["intake(2i)"].to_i
       end

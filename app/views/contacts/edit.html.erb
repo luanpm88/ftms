@@ -46,7 +46,10 @@
 								<% if !@contact.draft? %>
 										<% if @contact.contact_types.include?(ContactType.student) || true %>
 												<li class="<%= "active" if ["course_registration"].include?(params[:tab]) %>">
-												  <a href="#course_registration">Course/Stock Registration <span class="badge badge-info pull-right alert-level1"><%= @contact.course_register_count if @contact.course_register_count > 0 %></span></a>
+														<a href="#course_registration">Course/Stock Registration
+																<span class="badge badge-info pull-right alert-level1"><%= @contact.course_register_count if @contact.course_register_count > 0 %></span>
+																<span class="badge badge-warning pull-right alert-level1"><%= Notification.course_register_pending_count(current_user, @contact) %></span>
+														</a>
 												</li>
 												<li class="<%= "active" if ["payment"].include?(params[:tab]) %>">
 												  <a href="#payment">Payment Record
@@ -62,7 +65,10 @@
 										<% end %>
 										
 										<li class="<%= "active" if ["transfer"].include?(params[:tab]) %>">
-												<a href="#transfer">Defer/Transfer <span class="badge badge-info pull-right alert-level1"><%= @contact.transfer_count if @contact.transfer_count > 0 %></span></a>
+												<a href="#transfer">Defer/Transfer
+														<span class="badge badge-info pull-right alert-level1"><%= @contact.transfer_count if @contact.transfer_count > 0 %></span>
+														<span class="badge badge-warning pull-right alert-level1"><%= Notification.transfer_pending_count(current_user, @contact) %></span>
+												</a>
 										</li>
 										
 										<li class="<%= "active" if ["seminar"].include?(params[:tab]) %>">
@@ -76,6 +82,8 @@
 												<a href="#activity">
 														Note Log
 														<span class="badge badge-info pull-right alert-level1"><%= @contact.activity_count if @contact.activity_count > 0 %></span>
+														<span class="badge badge-warning pull-right alert-level1"><%= Notification.activity_pending_count(current_user, @contact) %></span>
+														
 												</a>
 										</li>
 										<% if @contact.old_student.present? %>
