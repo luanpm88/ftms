@@ -33,7 +33,7 @@ class BooksContact < ActiveRecord::Base
   #      }
   
   def no_price?
-    price == -1
+    price.to_f == -1
   end
   
   def price=(new)
