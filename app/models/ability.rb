@@ -338,13 +338,13 @@ class Ability
       can :read, CourseRegister
       can :create, CourseRegister
       can :deliver_stock, CourseRegister do |cr|
-        cr.statuses.include?("active") && cr.books.count > 0 && !cr.delivered?
+        cr.books.count > 0 && !cr.delivered? # && cr.statuses.include?("active")
       end
       can :delivery_print, CourseRegister do |cr|
         cr.statuses.include?("active") && cr.books_contacts.count > 0 && !cr.delivered?
       end
       can :pay_registration, CourseRegister do |cr|
-        cr.statuses.include?("active") && !cr.paid?
+        cr.statuses.include?("active") && !cr.paid? # && cr.statuses.include?("active")
       end
       can :course_register, Contact do |contact|
         !contact.statuses.include?("deleted") && (contact.contact_types.include?(ContactType.student) || contact.contact_types.include?(ContactType.inquiry))
