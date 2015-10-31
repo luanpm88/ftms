@@ -274,11 +274,18 @@ class UsersController < ApplicationController
             if transform_revision_count > 0
               transform = 1
             end
-          end            
+          end
+          if c.contact_types.include?(ContactType.inquiry) && c.course_types.empty?
+            inquiry_total += 1
+          end
+          
           if c.cache_course_type_ids.present? && c.cache_course_type_ids.include?("[#{ct.id}]") && c.contact_types.include?(ContactType.student)          
             student += 1
             student_total += 1
           end
+          #if !c.cache_course_type_ids.present? && c.contact_types.include?(ContactType.student)  
+          #  student_total += 1
+          #end
           
           inquiry -= transform
           inquiry_total -= transform
