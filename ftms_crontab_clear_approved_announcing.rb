@@ -3,7 +3,7 @@ require 'yaml'
 DIR = File.expand_path(File.dirname(__FILE__))
 # Change the following to reflect your database settings
 # config = YAML.load_file(DIR+'/config/database.yml')["production"]
-config = YAML.load_file(DIR+'/config/database.yml')["development"]
+config = YAML.load_file(DIR+'/config/database.yml')["production"]
 
 @connection = ActiveRecord::Base.establish_connection(
   adapter: config["adapter"],
