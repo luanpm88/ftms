@@ -26,11 +26,15 @@
 								<br />
 								
 								
-								<h4>Education Consultant</h4>
-								<div class="">
-									<%= select_tag 'user', options_for_select(User.main_users.collect{ |u| [u.name, u.id] }, @default_ec) , {:include_blank => 'None', class: "modern_select width100 required"} %>
+								<div class="row">
+										<div class="col-md-6">
+												<h4>Education Consultant</h4>
+												<div class="">
+													<%= select_tag 'user', options_for_select(User.main_users.collect{ |u| [u.name, u.id] }, @default_ec) , {:include_blank => 'None', class: "modern_select width100 required"} %>
+												</div>
+												<br />
+										</div>
 								</div>
-								<br />
 								
 								<h4><span class="semi-bold">Listing Result</span></h4>
 								<table class="table seminar_import_box">

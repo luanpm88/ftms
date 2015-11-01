@@ -132,7 +132,7 @@ class SeminarsController < ApplicationController
   def import_list
     @default_ec = User.where(id: 13).empty? ? nil : User.where(id: 13).first.id
     if params[:file].present?
-      @list = @seminar.render_list(params[:file])
+      @list = @seminar.render_list(params[:file], current_user)
       @list = @seminar.process_rendered_list(@list)
     end
   end
@@ -144,13 +144,11 @@ class SeminarsController < ApplicationController
         if row[1]["check"].present? && row[1]["check"] == "true"        
           contact = Contact.new(is_individual: true, name: row[1]["name"], email: row[1]["email"], mobile: row[1]["mobile"], note: row[1]["note"])
           contact.user = current_user
-          if row[1]["present"] == "true"
-            contact.contact_types << ContactType.student
-          else
-            contact.contact_types << ContactType.inquiry
-            # add curse type
-            contact.course_types << @seminar.course_type if !contact.course_types.include?(@seminar.course_type)
-          end          
+
+          contact.contact_types << ContactType.inquiry
+          # add curse type
+          contact.course_types << @seminar.course_type if !contact.course_types.include?(@seminar.course_type)
+      
           contact.account_manager_id = params[:user].to_i if params[:user].present?
           contact.preferred_mailing = "other"
           
@@ -175,6 +173,7 @@ class SeminarsController < ApplicationController
           contact = Contact.find(row[1]["id"])
           @seminar.add_contacts([contact]) if !contact.seminars.include?(@seminar)
           
+          contact.contact_types << ContactType.inquiry if !contact.contact_types.include?(ContactType.inquiry)
           # add course type
           contact.course_types << @seminar.course_type if !contact.course_types.include?(@seminar.course_type)
           

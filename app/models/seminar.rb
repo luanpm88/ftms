@@ -237,14 +237,22 @@ class Seminar < ActiveRecord::Base
     json.to_json
   end
   
-  def render_list(file)
+  def render_list(file, user)
     list = []
     
     spreadsheet = Roo::Spreadsheet.open(file.path)
     header = spreadsheet.row(1)
     (2..spreadsheet.last_row).each do |i|
       row = Hash[[header, spreadsheet.row(i)].transpose]
-      item = {name: row["Fullname"], company: row["Company"], mobile: row["Mobile"], email: row["Email"], present: row["Status"], background: "Company: #{row["Company"]}\nUniversity: #{row["University"]}\nMajor: #{row["Major"]}\nYear: #{row["Year"]}"}
+      
+      # Background: "University: #{row["University"]}\nMajor: #{row["Major"]}\nYear: #{row["Year"]}"
+      bg = "Imported Date: #{Time.now.strftime("%d-%b-%Y")}\n"
+      bg += "Creator: #{user.name}\n"
+      bg += "University: #{row["University"].strip}\n" if row["University"].present?
+      bg += "Major: #{row["Major"].strip}\n" if row["Major"].present?
+      bg += "Year: #{row["Year"].strip}\n" if row["Year"].present?
+      
+      item = {name: row["Fullname"], company: row["Company"], mobile: row["Mobile"], email: row["Email"], present: row["Status"], background: bg}
       item[:contacts] = similar_contacts({email: item[:email], name: item[:name], mobile: item[:mobile]})
       list << item if row["Fullname"].present?
     end

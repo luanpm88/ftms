@@ -508,7 +508,16 @@ class ContactsController < ApplicationController
     @contact.add_no_related_contact(Contact.find(params[:remove_id]))
     Contact.find(params[:remove_id]).add_no_related_contact(@contact)
     respond_to do |format|
-      @tab = {url: {controller: "contacts", action: "edit", id: @contact.id, tab_page: 1, tab: "course_registration"}, title: @contact.display_name+" #"+@contact.id.to_s}
+      @tab = {url: {controller: "contacts", action: "edit", id: @contact.id, tab_page: 1, tab: "old_info"}, title: @contact.display_name+" #"+@contact.id.to_s}
+      format.html { render "/home/close_tab", layout: nil }
+    end
+  end
+  
+  def undo_remove_related_contact
+    @contact.remove_no_related_contact(Contact.find(params[:remove_id]))
+    Contact.find(params[:remove_id]).remove_no_related_contact(@contact)
+    respond_to do |format|
+      @tab = {url: {controller: "contacts", action: "edit", id: @contact.id, tab_page: 1, tab: "old_info"}, title: @contact.display_name+" #"+@contact.id.to_s}
       format.html { render "/home/close_tab", layout: nil }
     end
   end

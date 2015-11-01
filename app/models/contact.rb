@@ -2074,6 +2074,15 @@ class Contact < ActiveRecord::Base
     self.update_attribute(:no_related_ids, "["+aa.join("][")+"]")
   end
   
+  def remove_no_related_contact(contact)
+    aa = []
+    no_related_ids_array.each do |id|
+      aa << id if contact.id != id
+    end
+    
+    self.update_attribute(:no_related_ids, "["+aa.join("][")+"]")
+  end
+  
   def display_bases
     base_items.empty? ? "" : ("<div class=\"display_bases\"><div class=\"col_label\">Online #ID:</div>"+(base_items.map {|item| item["course_type"].short_name+"-"+item["name"]+"-"+item["password"].to_s+"-"+item["status"].to_s}).join("<hr style=\"margin:3px\">")+"</div>").html_safe
   end

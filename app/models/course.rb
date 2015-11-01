@@ -309,7 +309,7 @@ class Course < ActiveRecord::Base
         if contacts_course.present?
           transferred = !p.transferred?(contacts_course) ? "" : "transferred"
         end
-        arr << "<span style=\"display:none\" class=\"#{transferred} phrase_date_#{p.course_id}_#{p.phrase.id}_#{group_alias}\" title=\"#{transferred}\">[#{p.start_at.strftime("%d-%b-%Y") if p.start_at.present?}]</span> "
+        arr << "<span style=\"display:none\" class=\"#{transferred} phrase_date_#{p.course_id}_#{p.phrase.id}_#{group_alias}\" title=\"#{transferred}\">[#{p.start_at.strftime("%d-%b-%Y") if p.start_at.present?} <span class=\"badge badge-info\">#{p.hour.to_s}</span>]</span> "
     end
     return "<div>"+arr.join("").html_safe+"</div>"
   end

@@ -446,6 +446,7 @@ Hkerp::Application.routes.draw do
       get :undo_delete
       
       get :remove_related_contact
+      get :undo_remove_related_contact
     end
   end
 
