@@ -8561,3 +8561,8 @@ h5.list_title {
     background: #f35958 !important;
     color: #fff !important;
 }
+.dark_head {
+    background: #333 none repeat scroll 0 0;
+    color: #fff !important;
+    padding: 5px 10px;
+}

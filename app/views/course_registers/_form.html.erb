@@ -63,7 +63,7 @@
 					
 					
 					 
-					<h3>Course Registration</h3> 
+					<h3 class="dark_head">Course Registration</h3> 
 					
 					 
 					<div class="phrase_box_list">
@@ -114,11 +114,11 @@
 					
 					<br />
 					
-					<h3>Stock Registration</h3>
+					<h3 class="dark_head">Stock Registration</h3>
 					
 					<div class="stock_form_filter">
 						 <div class="row ">
-							  <div class="col-md-2">
+							  <div class="col-md-3">
 								   <div class="form-group">
 										<label class="form-label"><label>Stock Type</label></label>
 										<span class="help"></span>
@@ -133,7 +133,7 @@
 							  </div>
 								   
 										<div class="program_paper_select_box">
-											<div class="col-md-2">
+											<div class="col-md-3">
 												  <div class="form-group">
 													   <label class="form-label"><label>Program</label></label>
 													   <span class="help"></span>
@@ -186,7 +186,7 @@
 										</div>
 								   </div>	
 							  </div>-->
-							  <div class="col-md-2">
+							  <div class="col-md-3">
 								   <div class="form-group">
 										<label class="form-label"><%= f.label :valid_on %></label>
 										
@@ -201,29 +201,7 @@
 										</div>
 								   </div>										
 							  </div>
-							  <div class="col-md-3">													   
-								   <div class="form-group">
-										<label class="form-label"><label><i class="icon-truck"></i> Preferred mailing</label></label>
-										<span class="help">(required)</span>								   
-										<div class="input-with-icon  right">
-											 <select name="course_register[preferred_mailing]" class="modern_select width100 required">
-												   <option <%= 'selected="selected"' if @contact.preferred_mailing == "ftms" %> value="ftms">FTMS</option>
-												   <option <%= 'selected="selected"' if @contact.preferred_mailing == "home" %> value="home">Home address</option>
-												   <option <%= 'selected="selected"' if @contact.preferred_mailing == "company" %> value="company">Company address</option>
-												   <option <%= 'selected="selected"' if @contact.preferred_mailing == "other" %> value="other">Other</option>
-											 </select>
-										</div>
-								   </div>																
-							  </div>
-							  <div class="col-md-3 mailing_address_box">
-								   <div class="form-group">
-											 <label class="form-label"><label>Delivery Address</label></label>
-											 <span class="help">(required)</span>
-											 <div class="input-with-iconz right">                                       
-												  <%= f.text_field :mailing_address, value: @contact.default_mailing_address, :class => "form-control required" %>
-											 </div>
-									</div>
-							  </div>
+							  
 						 </div>
 							  
 						 <div class="row">
@@ -237,9 +215,35 @@
 						 
 					</div>
 					
+					<div class="row">
+						 <div class="col-md-3">													   
+							  <div class="form-group">
+								   <label class="form-label"><label><i class="icon-truck"></i> Preferred mailing</label></label>
+								   <span class="help">(required)</span>								   
+								   <div class="input-with-icon  right">
+										<select name="course_register[preferred_mailing]" class="modern_select width100 required">
+											  <option <%= 'selected="selected"' if @contact.preferred_mailing == "ftms" %> value="ftms">FTMS</option>
+											  <option <%= 'selected="selected"' if @contact.preferred_mailing == "home" %> value="home">Home address</option>
+											  <option <%= 'selected="selected"' if @contact.preferred_mailing == "company" %> value="company">Company address</option>
+											  <option <%= 'selected="selected"' if @contact.preferred_mailing == "other" %> value="other">Other</option>
+										</select>
+								   </div>
+							  </div>																
+						 </div>
+						 <div class="col-md-4 mailing_address_box">
+							  <div class="form-group">
+										<label class="form-label"><label>Delivery Address</label></label>
+										<span class="help">(required)</span>
+										<div class="input-with-iconz right">                                       
+											 <%= f.text_field :mailing_address, value: @contact.default_mailing_address, :class => "form-control required" %>
+										</div>
+							   </div>
+						 </div>
+					</div>
+					
 					<br />
 					
-					<h3>Student Information</h3> 
+					<h3 class="dark_head">Student Information</h3> 
 					
 					<div class="row column-seperation">
 						 <div class="col-md-12">
@@ -262,7 +266,7 @@
 					
 					<br />
 					
-					<h3>Summary</h3> 
+					<h3 class="dark_head">Summary</h3> 
 					
 					
 					<div class="row column-seperation">
