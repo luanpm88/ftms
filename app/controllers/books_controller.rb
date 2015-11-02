@@ -253,7 +253,7 @@ class BooksController < ApplicationController
     
     if params[:subject_id].present?
       records = Book.main_books.order("name")
-      records = records.where(stock_type_id: params[:stock_type_id]) if params[:stock_type_id].present?
+      records = records.where(stock_type_id: params[:stock_type_id].split(",")) if params[:stock_type_id].present?
       records = records.where(course_type_id: params[:program_id].split(",")) if params[:program_id].present?
       records = records.where(subject_id: params[:subject_id].split(",")) if params[:subject_id].present?
       #records = records.where("valid_from <= ?", Time.now).where("valid_to >= ?", Time.now)
