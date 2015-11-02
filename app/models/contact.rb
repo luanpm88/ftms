@@ -134,7 +134,7 @@ class Contact < ActiveRecord::Base
   end
   
   def self.format_mobile(string)
-    result = string.gsub(/\D/, '')
+    result = string.to_s.gsub(/\D/, '')
     return "" if result.to_s.length < 5 # check valid number
     
     if (result =~ /84/i) != 0
@@ -2065,7 +2065,7 @@ class Contact < ActiveRecord::Base
   end
   
   def display_note
-    note.gsub("\n","<br />").html_safe
+    note.to_s.gsub("\n","<br />").html_safe
   end
   
   def no_related_ids_array
