@@ -432,7 +432,7 @@ class CourseRegister < ActiveRecord::Base
               item.description, # '<div class="text-center">'+item.display_delivery_status+"</div>",              
               '<div class="text-right">'+item.display_amounts+"</div>",
               '<div class="text-center">'+item.display_payment_status+item.display_payment+item.display_delivery_status+"</div>",
-              '<div class="text-center">'+item.created_at.strftime("%d-%b-%Y")+"</div>",
+              '<div class="text-center">'+item.created_at.strftime("%d-%b-%Y")+"<br /><strong>by:</strong><br />"+item.user.staff_col+"</div>",
               '<div class="text-center">'+item.account_manager.staff_col+"</div>",
               '<div class="text-center">'+item.display_statuses+"</div>",
               ""
