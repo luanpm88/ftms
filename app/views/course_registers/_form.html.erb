@@ -359,12 +359,11 @@
 											 <tr>
 												  <td class="text-right" colspan="5">Total</td>
 												  <td class="text-right">
-													   <strong class="total_registration_price"></strong>
-													   <br /><input type="text" name="total_valid" style="height: 1px;border: none;background: none;padding: 0;margin-top: -20px;" />
+													   <strong class="total_registration_price"></strong>													   
 												  </td>
 											 </tr>
 										</table>
-									   
+										<input type="text" name="total_valid" style="height: 1px;border: none;background: none;padding: 0;margin-top: -40px;" />
 								   </div>
 							  </div>										
 						 </div>
@@ -396,8 +395,17 @@
 			   var total = parseFloat($('.total_course_'+value).html().replace(/,/g,""))
 			   return total >= 0.0
 		  }, "Total amount is not valid. Please check again.");
+		  
+		  jQuery.validator.addMethod("item_count", function(value, element) {
+			   var course_count = $(".total_course_count").html()
+			   var stock_count = $(".total_stock_count").html()
+			   
+			   return course_count != "0" || stock_count != "0"
+		  }, "You must register at least one course/stock. Please check again.");
+		  
 		  $("input[name='total_valid']").rules('add', {
-			   total: true
+			   total: true,
+			   item_count: true
 		  });
 	 });
 </script>

@@ -247,10 +247,10 @@ class Seminar < ActiveRecord::Base
       
       # Background: "University: #{row["University"]}\nMajor: #{row["Major"]}\nYear: #{row["Year"]}"
       bg = "Imported Date: #{Time.now.strftime("%d-%b-%Y")}\n"
-      bg += "Creator: #{user.name}\n"
-      bg += "University: #{row["University"].strip}\n" if row["University"].present?
-      bg += "Major: #{row["Major"].strip}\n" if row["Major"].present?
-      bg += "Year: #{row["Year"].strip}\n" if row["Year"].present?
+      bg += "Creator: #{user.name.to_s}\n"
+      bg += "University: #{row["University"].to_s.strip}\n" if row["University"].present?
+      bg += "Major: #{row["Major"].to_s.strip}\n" if row["Major"].present?
+      bg += "Year: #{row["Year"].to_s.strip}\n" if row["Year"].present?
       
       item = {name: row["Fullname"], company: row["Company"], mobile: row["Mobile"], email: row["Email"], present: row["Status"], background: bg}
       item[:contacts] = similar_contacts({email: item[:email], name: item[:name], mobile: item[:mobile]})
