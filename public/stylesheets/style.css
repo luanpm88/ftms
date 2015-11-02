@@ -8317,6 +8317,8 @@ td .logo {
 .courses_phrases_list {
     padding-left: 10px;
     border-left: solid 1px #aaa;
+    max-height: 150px;
+    overflow: auto;
 }
 
 #new_activity.loading::before {
