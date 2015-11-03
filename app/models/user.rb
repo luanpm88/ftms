@@ -291,8 +291,9 @@ class User < ActiveRecord::Base
   end
   
   def self.restore_system(params)
+    rails_env = params[:environment]
     bk_dir = Setting.get("backup_dir")
-    database = YAML.load_file('config/database.yml')["development"]["database"]
+    database = YAML.load_file('config/database.yml')[rails_env]["database"]
     
     `mkdir tmp` if !File.directory?("tmp")
     `mkdir tmp/backup` if !File.directory?("tmp/backup")
@@ -315,7 +316,7 @@ class User < ActiveRecord::Base
     end
     
     if File.exist?("tmp/backup#{bk_dir}/#{name.gsub(".zip","")}/data.dump") && params[:database].present?
-      `rake mytask:drop_all_table && rake db:migrate && psql #{database} < tmp/backup#{bk_dir}/#{name.gsub(".zip","")}/data.dump`
+      `RAILS_ENV=#{rails_env} rake mytask:drop_all_table && RAILS_ENV=#{rails_env} rake db:migrate && psql #{database} < tmp/backup#{bk_dir}/#{name.gsub(".zip","")}/data.dump`
     end
     
     `rm -rf tmp/backup#{bk_dir} && rm #{path}`

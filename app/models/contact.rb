@@ -261,7 +261,7 @@ class Contact < ActiveRecord::Base
       if params["course_types"].present?
         conds = []
         params["course_types"].each do |ctid|          
-          conds << "bases SIMILAR TO '%_id\":\"#{ctid}\",\"status\":\"#{params[:base_status]}%'"
+          conds << "bases SIMILAR TO '%_id\":#{ctid},\"status\":\"#{params[:base_status]}%'"
         end
         @records = @records.where(conds.join(" OR "))
       else
@@ -510,7 +510,7 @@ class Contact < ActiveRecord::Base
                 '<div class="text-center">'+child.display_statuses+"</div>",
                 '',
               ]
-        total += 1
+        # total += 1
         arr << child
         data << row
       end
@@ -1969,37 +1969,61 @@ class Contact < ActiveRecord::Base
   def update_contact_type_from_old_student
     return false if old_student.nil? || !contact_types.empty?
     
-    partten = "inquiry"
-    is_inquiry = old_student.student_type.strip.downcase.scan(/(#{partten})/).count > 0
+    inquiry_partten = "inquiry"
+    is_inquiry = old_student.student_type.strip.downcase.scan(/(#{inquiry_partten})/).count > 0
+    
+    partten = "members|affiliate|affliliate|charterholder"
+    is_completed = old_student.student_type.strip.downcase.scan(/(#{partten})/).count > 0
+    
+    
     if is_inquiry
-      contact_types << ContactType.inquiry
-      program_name = old_student.student_type.strip.downcase.scan(/(.*?)(#{partten})/)[0][0].strip
-      ct = CourseType.active_course_types.where("LOWER(short_name) = '#{program_name}'").first
+      contact_types << ContactType.inquiry if !contact_types.include?(ContactType.inquiry)
+      program_name = old_student.student_type.strip.downcase.scan(/(.*?)(#{inquiry_partten})/)[0][0].strip
+      ct = CourseType.main_course_types.where("course_types.status IS NOT NULL AND course_types.status NOT LIKE ?", "%[deleted]%").where("LOWER(short_name) = '#{program_name}'").first
+      
+      # create course type
+      if ct.nil?
+        ct = CourseType.create(short_name: program_name.upcase, name: program_name.upcase)
+        ct.add_status("new_pending")
+        uu = User.where(:email => "admin@ftmsglobal.edu.vn").first
+        uu = User.first if uu.nil?
+        ct.save_draft(uu)
+      end      
+      
       course_types << ct if !ct.nil?
     else
-      program_name = old_student.student_type.strip.downcase
-      ct = CourseType.active_course_types.where("LOWER(short_name) = '#{program_name}'").first
+      program_name = is_completed ? old_student.student_type.strip.downcase.scan(/(.*?)(#{partten})/)[0][0].strip : old_student.student_type.strip.downcase
+      ct = CourseType.main_course_types.where("course_types.status IS NOT NULL AND course_types.status NOT LIKE ?", "%[deleted]%").where("LOWER(short_name) = '#{program_name}'").first
+      
+      # create course type
+      if ct.nil?
+        ct = CourseType.create(short_name: program_name.upcase, name: program_name.upcase)
+        ct.add_status("new_pending")
+        uu = User.where(:email => "admin@ftmsglobal.edu.vn").first
+        uu = User.first if uu.nil?
+        ct.save_draft(uu)
+      end   
+     
       old_courses = []
       old_courses << ct.id if !ct.nil?
       
       if !old_courses.empty?
         self.update_attribute(:old_student_course_type_ids, "["+old_courses.join("][")+"]")
-        contact_types << ContactType.student
+        contact_types << ContactType.student if !contact_types.include?(ContactType.student)
       end
     end
     
-    # add default program id
-    partten = "members|affliliate|charterholder"
-    is_completed = old_student.student_type.strip.downcase.scan(/(#{partten})/).count > 0
+    # add default program id    
     if old_student.student_acca_no.present?
         arr = self.bases.present? ? JSON.parse(self.bases) : []
         
         item = {}
         item[:course_type_id] = nil
+        item[:course_type_id] = ct.id if !ct.nil?
         item[:status] = is_completed ? "completed" : "in_proccess"
         item[:name] = old_student.student_acca_no
-        item[:password] = nil
-        
+        item[:name] = program_name.upcase+"-"+old_student.student_acca_no if ct.nil?
+        item[:password] = nil        
         
         arr << item
         
@@ -2032,7 +2056,7 @@ class Contact < ActiveRecord::Base
     cond_other << "LOWER(contacts.cache_search) LIKE '%[search_name: #{name.unaccent.downcase} ]%'"    
     cond_other << "LOWER(contacts.email) LIKE '%#{self.email.to_s.strip.downcase}%'" if self.email.to_s.strip.present? && self.email.to_s.length > 6
     cond_other << "LOWER(contacts.mobile) LIKE '%#{self.mobile.to_s.strip.downcase}%'" if self.mobile.to_s.strip.present? && self.mobile.to_s.length > 6
-     
+
     return [] if cond_other.empty?
     
     cond_other = cond_other.join(" OR ")
@@ -2104,7 +2128,14 @@ class Contact < ActiveRecord::Base
   end
   
   def display_bases
-    base_items.empty? ? "" : ("<div class=\"display_bases\"><div class=\"col_label\">Online #ID:</div>"+(base_items.map {|item| item["course_type"].short_name+"-"+item["name"]+"-"+item["password"].to_s+"-"+item["status"].to_s}).join("<hr style=\"margin:3px\">")+"</div>").html_safe
+    return "" if base_items.empty?
+    str = ["<div class=\"display_bases\"><div class=\"col_label\">Online #ID:</div>"]
+    base_items.each do |item|
+      prodgram_name = item["course_type"].id.nil? ? "" : item["course_type"].short_name+"-"
+      str << "<hr style=\"margin:3px\">"+prodgram_name+item["name"]+"-"+item["password"].to_s+"-"+item["status"].to_s
+    end
+    str << "</div>"
+    return str.join("")
   end
 
 end
