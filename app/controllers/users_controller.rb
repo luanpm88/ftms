@@ -104,7 +104,7 @@ class UsersController < ApplicationController
       User.backup_system(params)
     end
     
-    @files = (Dir.glob("#{Setting.get("backup_dir")}*").map{|f| f.gsub("#{Setting.get("backup_dir")}","")}).sort{|a,b| b <=> a}
+    @files = (Dir.glob("#{Setting.get("backup_dir")}/*").map{|f| f.gsub("#{Setting.get("backup_dir")}/","")}).sort{|a,b| b <=> a}
     
     render layout: "content" if params[:tab_page].present?
     # render layout = nil
