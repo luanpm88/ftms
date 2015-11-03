@@ -120,6 +120,8 @@ class Ability
       can :export_emails, Contact
       can :merge_contacts, Contact
       can :merge_contacts_datatable, Contact
+      can :remove_related_contact, Contact
+      can :undo_remove_related_contact, Contact
       
       can :datatable, Course
       can :read, Course
@@ -510,9 +512,8 @@ class Ability
       end
       can :undo_delete, Contact do |c|
         c.statuses.include?("delete_pending")
-      end
-      can :remove_related_contact, Contact
-      can :undo_remove_related_contact, Contact
+      end      
+      can :approve_all, Contact
       
       
       ## BOOK
@@ -559,6 +560,7 @@ class Ability
       can :undo_delete, CourseRegister do |c|
         c.statuses.include?("delete_pending")
       end
+      can :approve_all, CourseRegister
       
       
       ## PHRASES

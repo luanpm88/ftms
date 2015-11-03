@@ -212,6 +212,7 @@ Hkerp::Application.routes.draw do
       get :delivery_print
       
       get :undo_delete
+      post :approve_all
     end
   end
   resources :course_types_subjects
@@ -447,6 +448,8 @@ Hkerp::Application.routes.draw do
       
       get :remove_related_contact
       get :undo_remove_related_contact
+      
+      post :approve_all
     end
   end
 
