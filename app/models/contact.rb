@@ -292,6 +292,7 @@ class Contact < ActiveRecord::Base
       conds = []
       params["course_types"].each do |ccid|
         conds << "contacts.cache_course_type_ids LIKE '%[#{ccid}]%'"
+        conds << "contacts.old_student_course_type_ids LIKE '%[#{ccid}]%'"
       end
       
       @records = @records.joins("LEFT JOIN contacts_course_types ON contacts_course_types.contact_id = contacts.id")
@@ -390,9 +391,9 @@ class Contact < ActiveRecord::Base
       case params["order"]["0"]["column"]
       when "1"
         order = "contacts.name"
-      when "6"
+      when "5"
         order = "contacts.created_at"
-      when "8"
+      when "7"
         @records = @records.includes(:current_revision)
         order = "current_revisions_contacts.created_at"
       else
@@ -731,11 +732,17 @@ class Contact < ActiveRecord::Base
   
   def course_types_name_col
     result = []
-    result << "<strong>Student</strong>: <div class=\"contact_type_line\">#{joined_course_types_name}</div>" if contact_types.include?(ContactType.student)
+    result << "<strong>Student</strong>: <div class=\"contact_type_line\">#{joined_course_types_name}#{display_old_student_course_types}</div>" if contact_types.include?(ContactType.student)
     result << "<strong>Inquiry</strong>: <div class=\"contact_type_line\">#{course_types.map(&:short_name).join(", ")}</div>" if contact_types.include?(ContactType.inquiry)
     result << "<strong>Lecturer</strong>: <div class=\"contact_type_line\">#{lecturer_course_types.map(&:short_name).join(", ")}</div>" if contact_types.include?(ContactType.lecturer)
     
     return result.join("<br />")
+  end
+  
+  def display_old_student_course_types
+    return "" if !old_student_course_type_ids.present?
+    ct_ids = old_student_course_type_ids.to_s.split("][").map {|s| s.gsub("[","").gsub("]","")}
+    return "<div><span class=\"nowrap col_label\">Old program(s):</span> #{(CourseType.where(id: ct_ids).map(&:short_name).join(", "))}</div>"
   end
   
   def referrer_link
@@ -1962,17 +1969,23 @@ class Contact < ActiveRecord::Base
   def update_contact_type_from_old_student
     return false if old_student.nil? || !contact_types.empty?
     
-    partten = "inquiry|members|affliliate|charterholder"
+    partten = "inquiry"
     is_inquiry = old_student.student_type.strip.downcase.scan(/(#{partten})/).count > 0
     if is_inquiry
       contact_types << ContactType.inquiry
       program_name = old_student.student_type.strip.downcase.scan(/(.*?)(#{partten})/)[0][0].strip
-      ct = CourseType.where("LOWER(short_name) = '#{program_name}'").first
+      ct = CourseType.active_course_types.where("LOWER(short_name) = '#{program_name}'").first
       course_types << ct if !ct.nil?
     else
       program_name = old_student.student_type.strip.downcase
-      ct = CourseType.where("LOWER(short_name) = '#{program_name}'").first
-      course_types << ct if !ct.nil?
+      ct = CourseType.active_course_types.where("LOWER(short_name) = '#{program_name}'").first
+      old_courses = []
+      old_courses << ct.id if !ct.nil?
+      
+      if !old_courses.empty?
+        self.update_attribute(:old_student_course_type_ids, "["+old_courses.join("][")+"]")
+        contact_types << ContactType.student
+      end
     end
     
     # add default program id
@@ -1992,9 +2005,7 @@ class Contact < ActiveRecord::Base
         
         self.update_attribute(:bases, arr.to_json)
     end
-    
-    
-    
+        
     return self
   end
 

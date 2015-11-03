@@ -493,7 +493,7 @@ class User < ActiveRecord::Base
       end
       report << row if has_course
     end
-                      
+
     return {data: report, subjects: subjects}
   end
   
