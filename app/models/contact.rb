@@ -133,6 +133,10 @@ class Contact < ActiveRecord::Base
     course_registers.where("course_registers.parent_id IS NULL AND course_registers.status IS NOT NULL AND course_registers.status LIKE ?", "%[active]%")
   end
   
+  def main_course_registers
+    course_registers.where("course_registers.parent_id IS NULL AND course_registers.status IS NOT NULL AND course_registers.status NOT LIKE ?", "%[deleted]%")
+  end
+  
   def self.format_mobile(string)
     result = string.to_s.gsub(/\D/, '')
     return "" if result.to_s.length < 5 # check valid number
@@ -1067,7 +1071,7 @@ class Contact < ActiveRecord::Base
   
   def payment_count
     count = 0
-    active_course_registers.each do |cr|
+    main_course_registers.each do |cr|
       count += cr.all_payment_records.count
     end
     

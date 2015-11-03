@@ -21,7 +21,7 @@ module PaymentRecordsHelper
       end
       
       if can? :trash, item
-        actions += '<li>'+ActionController::Base.helpers.link_to("<i class=\"icon icon-trash\"></i> Delete".html_safe, {controller: "payment_records", action: "trash", id: item.id, tab_page: 1})+'</li>'  
+        actions += '<li>'+ActionController::Base.helpers.link_to("<i class=\"icon icon-trash\"></i> Delete".html_safe, {controller: "payment_records", action: "trash", id: item.id, tab_page: 1}, class: "approve_link")+'</li>'  
       end
         
       

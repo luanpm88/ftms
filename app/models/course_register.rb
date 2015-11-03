@@ -804,7 +804,10 @@ class CourseRegister < ActiveRecord::Base
       add_annoucing_users([self.current.user])
       
       # remove all payment records
-      # self.payment_records.update_all(status: 0)
+      self.payment_records.update_all(status: 0)
+      
+      # remove all deliveries
+      self.deliveries.update_all(status: 0)
       
       self.save_draft(user)
     end
@@ -1063,6 +1066,44 @@ class CourseRegister < ActiveRecord::Base
     course_ids = contact.active_courses_with_phrases.map {|r| r[:course].id}
     contacts_courses.each do |cc|
       return true if !course_ids.include?(cc.course.id)
+    end
+    
+    return false
+  end
+  
+  def transferred?
+    return false if !self.statuses.include?("active")
+    
+    # origin courses phrases
+    origin_cc_ids = []
+    contacts_courses.each do |cc|
+      origin_cc_ids << cc.id
+    end
+    
+    # current courses phrases
+    current_cc_ids = []
+    contact.active_courses_with_phrases.each do |row|
+      current_cc_ids += row[:contacts_courses].map(&:id)
+    end
+    
+    origin_cc_ids.each do |cpid|
+      return true if !current_cc_ids.include?(cpid)
+    end
+    
+    # origin courses phrases
+    origin_cp_ids = []
+    contacts_courses.each do |cc|
+      origin_cp_ids += cc.courses_phrases.map(&:id)
+    end
+    
+    # current courses phrases
+    current_cp_ids = []
+    contact.active_courses_with_phrases.each do |row|
+      current_cp_ids += row[:courses_phrases].map(&:id)
+    end
+    
+    origin_cp_ids.each do |cpid|
+      return true if !current_cp_ids.include?(cpid)
     end
     
     return false
