@@ -331,8 +331,6 @@ class Ability
       can :transfer_hour, Transfer
       can :do_transfer_hour, Transfer
       
-      
-      
       can :datatable, CourseRegister
       can :student_course_registers, CourseRegister
       can :read, CourseRegister

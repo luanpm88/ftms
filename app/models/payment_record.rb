@@ -54,8 +54,8 @@ class PaymentRecord < ActiveRecord::Base
   end
   
   def self.filter(params, user)
-     @records = self.all
-     
+    @records = self.all
+    
     if params["students"].present?
       @records = @records.joins("LEFT JOIN course_registers crs ON crs.id = payment_records.course_register_id")
                           .joins("LEFT JOIN transfers ON transfers.id = payment_records.transfer_id")

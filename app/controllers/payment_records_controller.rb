@@ -337,6 +337,6 @@ class PaymentRecordsController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def payment_record_params
-      params.require(:payment_record).permit(:account_manager_id, :transfer_id, :company_id, :bank_account_id, :payment_date, :course_register_id, :amount, :debt_date, :user_id, :note)
+      params.require(:payment_record).permit(:bank_ref, :account_manager_id, :transfer_id, :company_id, :bank_account_id, :payment_date, :course_register_id, :amount, :debt_date, :user_id, :note)
     end
 end
