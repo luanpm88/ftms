@@ -41,7 +41,8 @@ CREATE TABLE activities (
     created_at timestamp without time zone NOT NULL,
     updated_at timestamp without time zone NOT NULL,
     deleted integer DEFAULT 0,
-    item_code character varying
+    item_code character varying,
+    account_manager_id integer
 );
 
 
@@ -4008,4 +4009,6 @@ INSERT INTO schema_migrations (version) VALUES ('20151028104210');
 INSERT INTO schema_migrations (version) VALUES ('20151031083628');
 
 INSERT INTO schema_migrations (version) VALUES ('20151103021916');
+
+INSERT INTO schema_migrations (version) VALUES ('20151103114052');
 

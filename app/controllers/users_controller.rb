@@ -190,7 +190,7 @@ class UsersController < ApplicationController
     current_id = nil
     
     @result = []
-    @all_total = {group_total: 0, inquiry_total: 0, student_total: 0, paper_total: 0, receivable_total: 0}
+    @all_total = {note_total: 0, group_total: 0, inquiry_total: 0, student_total: 0, paper_total: 0, receivable_total: 0}
     @users.each do |u|
       row = {statistics: []}
       group_total = 0.0
@@ -313,7 +313,7 @@ class UsersController < ApplicationController
 
       end
       
-      note_count = u.activities
+      note_count = u.manage_activities
                     .where("activities.created_at >= ? AND activities.created_at <= ? ", @from_date.beginning_of_day, @to_date.end_of_day)
                     .count
       
@@ -329,6 +329,7 @@ class UsersController < ApplicationController
       @result << row
       
       # all_total = {group_total: 0, inquiry_total: 0, student_total: 0, paper_total: 0, receivable_total: 0}
+      @all_total[:note_total] += note_count
       @all_total[:group_total] += group_total
       @all_total[:inquiry_total] += inquiry_total
       @all_total[:student_total] += student_total

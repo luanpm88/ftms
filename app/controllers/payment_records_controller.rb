@@ -129,6 +129,7 @@ class PaymentRecordsController < ApplicationController
     @payment_record.trash
     
     respond_to do |format|
+      @tab = {url: {controller: "payment_records", action: "index", tab_page: 1}, title: "Payment Record"}
       format.html { redirect_to params[:tab_page].present? ? "/home/close_tab" : payment_records_path, notice: 'Payment was successfully updated.' }
       format.json { head :no_content }
     end

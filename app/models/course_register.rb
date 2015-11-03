@@ -803,6 +803,9 @@ class CourseRegister < ActiveRecord::Base
       # Annoucing users
       add_annoucing_users([self.current.user])
       
+      # remove all payment records
+      # self.payment_records.update_all(status: 0)
+      
       self.save_draft(user)
     end
   end

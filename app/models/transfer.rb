@@ -141,7 +141,7 @@ class Transfer < ActiveRecord::Base
               '<div class="text-right">'+item.display_money+"</div>",
               '<div class="text-right"><label class="col_label top0">Total:</label>'+ApplicationController.helpers.format_price(item.total)+"<label class=\"col_label top0\">Paid:</label>"+ApplicationController.helpers.format_price(item.paid)+"<label class=\"col_label top0\">Receivable:</label>"+ApplicationController.helpers.format_price(item.remain)+"</div>",
               #'<div class="text-right">'+ApplicationController.helpers.format_price(item.admin_fee.to_f)+"</div>",              
-              '<div class="text-center">'+item.created_at.strftime("%d-%b-%Y <br/> %I:%M %p").html_safe+"<br /><br />"+item.user.staff_col+"</div>",
+              '<div class="text-center">'+item.created_at.strftime("%d-%b-%Y <br/> %I:%M %p").html_safe+"<br /><strong>by:</strong><br />"+item.user.staff_col+"</div>",
               '<div class="text-center">'+item.display_statuses+"<br /><br />"+item.display_payment_status+"</div>",
               ""
             ]

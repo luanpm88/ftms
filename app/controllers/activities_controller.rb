@@ -33,6 +33,7 @@ class ActivitiesController < ApplicationController
   # POST /activities.json
   def create
     @activity = Activity.new(activity_params)
+    @activity.account_manager = @activity.contact.account_manager
     @activity.user = current_user
 
     respond_to do |format|

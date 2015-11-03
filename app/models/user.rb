@@ -19,6 +19,7 @@ class User < ActiveRecord::Base
   has_many :subjects
   has_many :students, class_name: "Contact", :foreign_key => "account_manager_id"
   has_many :activities
+  has_many :manage_activities, class_name: "Activity", :foreign_key => "account_manager_id"
   
   belongs_to :user, class_name: "User"
   

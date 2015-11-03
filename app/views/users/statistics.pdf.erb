@@ -76,7 +76,8 @@
                                   </tr>
                               </thead>
 							  <tr class="total_row" style="background: #efefef">
-										<td colspan="3" class="text-right">All Total:</td>
+										<td colspan="2" class="text-right">All Total:</td>
+										<td class="text-center"><strong class=" paid"><%= format_price(@all_total[:note_total]) %></strong></td>
 										<td class="text-right"><strong class=" paid"><%= format_price(@all_total[:group_total]) %></strong></td>
 										<td class="text-right"><strong class=" paid"><%= format_price(@all_total[:receivable_total]) %></strong></td>
 										<td class="text-center"><strong class=" paid"><%= @all_total[:paper_total] %></strong></td>
