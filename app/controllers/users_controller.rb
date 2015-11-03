@@ -104,7 +104,7 @@ class UsersController < ApplicationController
       User.backup_system(params)
     end
     
-    @files = (Dir.glob("/media/sdb1/ftms-backup/*").map{|f| f.gsub("/media/sdb1/ftms-backup/","")}).sort{|a,b| b <=> a}
+    @files = (Dir.glob("#{Setting.get("backup_dir")}*").map{|f| f.gsub("#{Setting.get("backup_dir")}","")}).sort{|a,b| b <=> a}
     
     render layout: "content" if params[:tab_page].present?
     # render layout = nil
@@ -362,6 +362,8 @@ class UsersController < ApplicationController
   
   def import_from_old_system
     if params[:import]
+      System.backup({database: true, file: true})
+      
       @result = User.import_from_old_system(params['upload']['datafile'])
     end
   end
