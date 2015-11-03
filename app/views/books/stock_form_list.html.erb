@@ -1,4 +1,6 @@
-                            <% @books.each_with_index do |book,number| %>
+                        <% if !@books.empty? %>
+						  <hr>
+							<% @books.each_with_index do |book,number| %>
 							  <div class="row  intake_box column-seperation item_box stock_box stock_box_<%= number %>" rel="<%= number %>">
                                     <div class="stock_box_label">Stock #<%= number+1 %></div>
 									<!--<div class="stock_box_close" rel="<%= number.to_s %>"><i class="icon icon-remove"></i></div>-->
@@ -70,37 +72,7 @@
                                                       </div>
                                                     </div>	                                                                                                                          
 
-                                                    <div class="form-group no_price_group">
-                                                          <label class="form-label"><label>Discount Program</label></label>
-                                                          <span class="help"></span>
-														  <div>
-															<% (0..9).each do |num| %>
-															  <div  class="discount_program_box input-with-icon right item_box phrase_boxx item_box_<%= num.to_s %> <%= 'hidden'.html_safe if num > 0 %>">                                       
-																   <i class=""></i>
-																	<div class="input-with_add_but">
-																	  <%= link_to '<i class="icon-plus"></i>'.html_safe, new_discount_program_path(tab_page: 1), title: "New Discount Program", :class => 'btn btn-sm btn-small btn-white tab_page' %>
-																	  <input style="width:100%;margin-bottom: 5px;" name="books_contacts[<%= number.to_s %>][discount_programs][<%= num.to_s %>][id]" data="<%= discount_programs_path(format: "json") %>" class="select2-ajax-discount-programs price_discount_program main_input" /> 
-																	</div>
-															  </div>
-															<% end %>
-														  </div>
-                                                    </div>
-                                               
-                                                    <div class="form-group no_price_group">
-                                                          <label class="form-label"><label>Other discount/credit</label></label>
-                                                          <span class="help"></span>
-                                                          <div class="input-with-iconz right">                                       
-                                                              <%= text_field_tag "books_contacts["+number.to_s+"][discount]", "", class: "form-control price_input price_discount" %>
-                                                          </div>
-                                                    </div>
-														
-													<div class="form-group no_price_group">
-                                                          <label class="form-label"><label>Description</label></label>
-                                                          <span class="help"></span>
-                                                          <div class="input-with-iconz">                                       
-                                                              <%= text_area_tag "books_contacts["+number.to_s+"][description]", "", class: "form-control width100" %>
-                                                          </div>
-                                                    </div>
+                                                    
 													
                                                </div>
                                                <div class="col-md-2">
@@ -128,16 +100,59 @@
                                                     </div>
                                                </div>
                                         </div>
+											   
+										<div class="row">
+                                              <div class="col-md-3">
+													<div class="form-group no_price_group">
+                                                          <label class="form-label"><label>Discount Program</label></label>
+                                                          <span class="help"></span>
+														  <div>
+															<% (0..9).each do |num| %>
+															  <div  class="discount_program_box input-with-icon right item_box phrase_boxx item_box_<%= num.to_s %> <%= 'hidden'.html_safe if num > 0 %>">                                       
+																   <i class=""></i>
+																	<div class="input-with_add_but">
+																	  <%= link_to '<i class="icon-plus"></i>'.html_safe, new_discount_program_path(tab_page: 1), title: "New Discount Program", :class => 'btn btn-sm btn-small btn-white tab_page' %>
+																	  <input style="width:100%;margin-bottom: 5px;" name="books_contacts[<%= number.to_s %>][discount_programs][<%= num.to_s %>][id]" data="<%= discount_programs_path(format: "json") %>" class="select2-ajax-discount-programs price_discount_program main_input" /> 
+																	</div>
+															  </div>
+															<% end %>
+														  </div>
+                                                    </div>
+											  </div>
+											  <div class="col-md-3">
+                                                    <div class="form-group no_price_group">
+                                                          <label class="form-label"><label>Other discount/credit</label></label>
+                                                          <span class="help"></span>
+                                                          <div class="input-with-iconz right">                                       
+                                                              <%= text_field_tag "books_contacts["+number.to_s+"][discount]", "", class: "form-control price_input price_discount" %>
+                                                          </div>
+                                                    </div>
+											  </div>
+											  <div class="col-md-3">
+													<div class="form-group no_price_group">
+                                                          <label class="form-label"><label>Description</label></label>
+                                                          <span class="help"></span>
+                                                          <div class="input-with-iconz">                                       
+                                                              <%= text_area_tag "books_contacts["+number.to_s+"][description]", "", class: "form-control width100" %>
+                                                          </div>
+                                                    </div>
+											  </div>
+										</div>
 								   </div>
 								   <div class="col-md-5">
 										<div class="form_volumn_list_<%= number %>"></div>
 								   </div>
 							  </div>
-							  
+							
 						 <% end %>
-						 
-                          <!--<hr />
-                          <a href="#add" class="btn btn-white add-more-stock-form"><i class="icon icon-plus"></i> Add Stock</a>
-                          <hr />-->
+						<hr>
+					  <% else %>
+						  <hr>
+							<div class="text-center">
+							  <h4>There are no search results! Select one or more paper(s).</h4>
+							</div>
+						  <hr>
+					  <% end %>
+
                          
                           

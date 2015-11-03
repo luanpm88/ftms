@@ -134,7 +134,7 @@ class Contact < ActiveRecord::Base
   end
   
   def self.format_mobile(string)
-    result = string.gsub(/\D/, '')
+    result = string.to_s.gsub(/\D/, '')
     return "" if result.to_s.length < 5 # check valid number
     
     if (result =~ /84/i) != 0
@@ -2054,20 +2054,29 @@ class Contact < ActiveRecord::Base
   end
   
   def display_transferred_courses_phrases(course_id,show_title=true)
-    aa = transferred_courses_phrases
-    if course_id.present?
-      aa = transferred_courses_phrases.collect{|cp| cp if cp.course_id == course_id}
-    else
-      aa = []
+    aa = []
+    if course_id.present?      
+      transferred_courses_phrases.each do |cp|
+        aa << cp if cp.course_id == course_id.to_i
+      end
     end
     
-    title = show_title ? "<div class=\"col_label\">Deferred Phrase(s):</div>" : ""
+    list = {}
+    aa.each do |cp|
+      list[cp.course_id] = list[cp.course_id].nil? ? [cp] : list[cp.course_id] + [cp]
+    end
     
-    aa.empty? ? "" : ("<div class=\"text-left nowrap items_confirmed\">#{title}<div>#{Course.find(course_id).display_name}</div>"+Course.render_courses_phrase_list(transferred_courses_phrases)+"</div>").html_safe
+    str = []
+    list.each do |row|
+      title = show_title ? "<h5 class=\"text-left\">Deferred Phrase(s):</h5>" : ""
+      str << ("<div class=\"text-left nowrap items_confirmed\">#{title}<h5><strong>#{Course.find(row[0]).display_name}</strong></h5>"+Course.render_courses_phrase_list(row[1])+"</div>").html_safe
+    end
+    
+    return str.join("<br />")
   end
   
   def display_note
-    note.gsub("\n","<br />").html_safe
+    note.to_s.gsub("\n","<br />").html_safe
   end
   
   def no_related_ids_array
