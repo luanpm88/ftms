@@ -83,7 +83,7 @@ class StockType < ActiveRecord::Base
               item.name,
               item.description,
               '<div class="text-center">'+item.created_at.strftime("%Y-%m-%d")+"</div>",
-              '<div class="text-center">'+item.user.staff_col+"</div>",
+              '<div class="text-center">'+item.staff_col+"</div>",
               '<div class="text-center">'+item.display_statuses+"</div>",
               "", 
             ]
@@ -101,6 +101,11 @@ class StockType < ActiveRecord::Base
     return {result: result, items: @records, actions_col: actions_col}
     
   end
+  
+  def staff_col
+    user.nil? ? "" : user.staff_col
+  end
+
   
   ############### BEGIN REVISION #########################
   
@@ -149,7 +154,7 @@ class StockType < ActiveRecord::Base
   end
   
   def display_statuses
-    return "" if statuses.empty?
+    return "" if statuses.empty? || current.user.nil?
     result = statuses.map {|s| "<span title=\"Last updated: #{current.created_at.strftime("%d-%b-%Y, %I:%M %p")}; By: #{current.user.name}\" class=\"badge user-role badge-info contact-status #{s}\">#{s}</span>"}
     result.join(" ").html_safe
   end

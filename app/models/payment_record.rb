@@ -96,11 +96,11 @@ class PaymentRecord < ActiveRecord::Base
       @records = @records.where(status: params["status"])
     end
     
-    # role
-    if !user.has_role?("manager") && !user.has_role?("admin") && !user.has_role?("accountant")
-      @records = @records.joins(:course_register => :contact)
-                          .where("contacts.account_manager_id = ?", user.id)
-    end
+    ## role
+    #if !user.has_role?("manager") && !user.has_role?("admin") && !user.has_role?("accountant")
+    #  @records = @records.joins(:course_register => :contact)
+    #                      .where("contacts.account_manager_id = ?", user.id)
+    #end
     
      
      return @records
