@@ -69,20 +69,20 @@ class Notification < ActiveRecord::Base
   
   #### CONTACT MENU- PENDING
   def self.contact_pending_count(user)
-    if !user.has_role?("education_consultant") && !user.has_role?("admin") && !user.has_role?("manager")
-      return ""
-    end       
+    #if !user.has_role?("education_consultant") && !user.has_role?("admin") && !user.has_role?("manager")
+    #  return ""
+    #end       
     
-    if !user.has_role?("admin") && !user.has_role?("manager")
-      if user.has_role?("education_consultant")
-        records = Contact.main_contacts
-                        .where("contacts.status LIKE ? OR contacts.status LIKE ? OR contacts.status LIKE ?","%[new_pending]%","%[update_pending]%","%[delete_pending]%")
-        records = records.where(account_manager: user.id)
-        records = records.select{|item| item.current.user.lower?("education_consultant")}
-      end      
-    else
+    #if !user.has_role?("admin") && !user.has_role?("manager")
+    #  if user.has_role?("education_consultant")
+    #    records = Contact.main_contacts
+    #                    .where("contacts.status LIKE ? OR contacts.status LIKE ? OR contacts.status LIKE ?","%[new_pending]%","%[update_pending]%","%[delete_pending]%")
+    #    records = records.where(account_manager: user.id)
+    #    records = records.select{|item| item.current.user.lower?("education_consultant")}
+    #  end      
+    #else
       records = Contact.main_contacts.where("contacts.status LIKE ?","%_pending]%")
-    end
+    #end
     
     return records.count == 0 ? "" : records.count
   end
@@ -90,9 +90,9 @@ class Notification < ActiveRecord::Base
   
   
   def self.contact_tag_pending_count(user)
-    if !user.has_role?("admin") && !user.has_role?("manager")
-      return ""
-    end
+    #if !user.has_role?("admin") && !user.has_role?("manager")
+    #  return ""
+    #end
     
     records = ContactTag.main_contact_tags.where("status LIKE ?","%pending]%")
     
@@ -100,9 +100,9 @@ class Notification < ActiveRecord::Base
   end
   
   def self.activity_pending_count(user, contact=nil)
-    if contact.nil? && !user.has_role?("admin") && !user.has_role?("manager")
-      return ""
-    end
+    #if contact.nil? && !user.has_role?("admin") && !user.has_role?("manager")
+    #  return ""
+    #end
     
     records = Activity.where(deleted: 1)
     records = records.where(contact_id: contact.id) if contact.present?

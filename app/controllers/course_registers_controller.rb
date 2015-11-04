@@ -196,9 +196,9 @@ class CourseRegistersController < ApplicationController
     end
     
     @course_registers.each do |cr|
-      cr.approve_delete(current_user)
-      cr.approve_new(current_user)
-      cr.approve_update(current_user)
+      cr.approve_delete(current_user) if current_user.can?(:approve_delete, cr)
+      cr.approve_new(current_user) if current_user.can?(:approve_new, cr)
+      cr.approve_update(current_user) if current_user.can?(:approve_update, cr)
     end
     
     respond_to do |format|

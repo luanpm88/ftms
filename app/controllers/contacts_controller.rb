@@ -477,10 +477,10 @@ class ContactsController < ApplicationController
     end
     
     @contacts.each do |c|
-      c.approve_delete(current_user)
-      c.approve_new(current_user)
-      c.approve_update(current_user)
-      c.approve_education_consultant(current_user)
+      c.approve_delete(current_user) if current_user.can?(:approve_delete, c)
+      c.approve_new(current_user) if current_user.can?(:approve_new, c)
+      c.approve_update(current_user) if current_user.can?(:approve_update, c)
+      c.approve_education_consultant(current_user) if current_user.can?(:approve_education_consultant, c)
     end
     
     respond_to do |format|

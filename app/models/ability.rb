@@ -381,6 +381,7 @@ class Ability
       can :approve_delete, Contact do |c|
         c.statuses.include?("delete_pending") && c.account_manager  == user && c.current.user.lower?("education_consultant")
       end
+      can :approve_all, Contact
       
       ## COURSE REGISTER
       can :approved, CourseRegister
@@ -393,6 +394,7 @@ class Ability
       can :approve_delete, CourseRegister do |c|
         c.statuses.include?("delete_pending") && c.current.user.lower?("education_consultant")
       end
+      can :approve_all, CourseRegister
       
       can :approve_delete, Activity do |c|
         c.deleted == 1 && c.contact.account_manager  == user && c.user.lower?("education_consultant")
