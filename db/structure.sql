@@ -3479,6 +3479,13 @@ ALTER TABLE ONLY users
 
 
 --
+-- Name: index_contacts_courses_on_courses_phrase_ids; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE INDEX index_contacts_courses_on_courses_phrase_ids ON contacts_courses USING btree (courses_phrase_ids);
+
+
+--
 -- Name: index_users_on_email; Type: INDEX; Schema: public; Owner: -; Tablespace: 
 --
 
@@ -4014,4 +4021,6 @@ INSERT INTO schema_migrations (version) VALUES ('20151103021916');
 INSERT INTO schema_migrations (version) VALUES ('20151103114052');
 
 INSERT INTO schema_migrations (version) VALUES ('20151104044833');
+
+INSERT INTO schema_migrations (version) VALUES ('20151104051628');
 

@@ -97,18 +97,18 @@ class Contact < ActiveRecord::Base
   def related_contacts
     aa = []
     if related_id == 0
-      aa = Contact.main_contacts.where.not("contacts.status LIKE ?", "%[deleted]%").where(related_id: self.id)
+      aa = Contact.main_contacts.where("contacts.status IS NOT NULL AND contacts.status NOT LIKE ?", "%[deleted]%").where(related_id: self.id)
     elsif related_id.to_f > 0
       c = Contact.find(related_id)
-      ids = c.child_contacts.where.not(id: self.id).map(&:id)
+      ids = Contact.main_contacts.where.not(id: self.id).where("contacts.status IS NOT NULL AND contacts.status NOT LIKE ?", "%[deleted]%").where(related_id: c.id).map(&:id)
       ids << c.id
       aa = Contact.where(id: ids)
     end
-    bb = []
-    aa.each do |c|
-      bb << c if !self.no_related_contacts.include?(c)
-    end
-    return bb
+    #bb = []
+    #aa.each do |c|
+    #  bb << c if !self.no_related_contacts.include?(c)
+    #end
+    return aa
   end
   
   def active_books
@@ -2039,7 +2039,7 @@ class Contact < ActiveRecord::Base
 
   def self.find_related_contacts
     Contact.update_all(related_id: nil)
-    Contact.main_contacts.where("contacts.status IS NOT NULL AND contacts.status NOT LIKE ?","%[deleted]%").each do |c|
+    Contact.main_contacts.order("contacts.id").where("contacts.status IS NOT NULL AND contacts.status NOT LIKE ?","%[deleted]%").each do |c|
       c = Contact.find(c.id)
       if c.related_id.nil?
         cs = c.find_related_contacts
@@ -2051,7 +2051,10 @@ class Contact < ActiveRecord::Base
             child.save
           end
         end
-      end 
+      #elsif c.related_contacts.empty? && c.related_id == 0
+      #  c.related_id = -1
+      #  c.save
+      end
     end
   end
 
@@ -2064,7 +2067,8 @@ class Contact < ActiveRecord::Base
     return [] if cond_other.empty?
     
     cond_other = cond_other.join(" OR ")
-    return Contact.main_contacts.where("contacts.status NOT LIKE ?","%[deleted]%").where.not(id: self.id)
+    return Contact.main_contacts.where("contacts.status IS NOT NULL AND contacts.status NOT LIKE ?","%[deleted]%").where.not(id: self.id)
+                                .where("contacts.related_id IS NULL")
                                 .where(cond_other)
                                 .where("contacts.no_related_ids IS NULL OR contacts.no_related_ids NOT LIKE ?", "%[#{self.id}]%")
   end
