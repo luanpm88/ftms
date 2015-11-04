@@ -1687,7 +1687,7 @@ class Contact < ActiveRecord::Base
   
   
   def self.base_status_options
-    [["None",""],["In Progress","in_progress"],["Completed","completed"]]
+    [["None",""],["In Progress","in_progress"],["Completed","completed"],["Dropped Out","dropped_out"]]
   end
   
   def activity_count
