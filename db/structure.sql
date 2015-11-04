@@ -3479,10 +3479,262 @@ ALTER TABLE ONLY users
 
 
 --
+-- Name: index_bank_accounts_on_annoucing_user_ids; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE INDEX index_bank_accounts_on_annoucing_user_ids ON bank_accounts USING btree (annoucing_user_ids);
+
+
+--
+-- Name: index_bank_accounts_on_status; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE INDEX index_bank_accounts_on_status ON bank_accounts USING btree (status);
+
+
+--
+-- Name: index_books_on_annoucing_user_ids; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE INDEX index_books_on_annoucing_user_ids ON books USING btree (annoucing_user_ids);
+
+
+--
+-- Name: index_books_on_status; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE INDEX index_books_on_status ON books USING btree (status);
+
+
+--
+-- Name: index_contact_tags_on_annoucing_user_ids; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE INDEX index_contact_tags_on_annoucing_user_ids ON contact_tags USING btree (annoucing_user_ids);
+
+
+--
+-- Name: index_contact_tags_on_status; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE INDEX index_contact_tags_on_status ON contact_tags USING btree (status);
+
+
+--
 -- Name: index_contacts_courses_on_courses_phrase_ids; Type: INDEX; Schema: public; Owner: -; Tablespace: 
 --
 
 CREATE INDEX index_contacts_courses_on_courses_phrase_ids ON contacts_courses USING btree (courses_phrase_ids);
+
+
+--
+-- Name: index_contacts_on_bases; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE INDEX index_contacts_on_bases ON contacts USING btree (bases);
+
+
+--
+-- Name: index_contacts_on_cache_courses; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE INDEX index_contacts_on_cache_courses ON contacts USING btree (cache_courses);
+
+
+--
+-- Name: index_contacts_on_cache_phrases; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE INDEX index_contacts_on_cache_phrases ON contacts USING btree (cache_phrases);
+
+
+--
+-- Name: index_contacts_on_cache_search; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE INDEX index_contacts_on_cache_search ON contacts USING btree (cache_search);
+
+
+--
+-- Name: index_contacts_on_cache_subjects; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE INDEX index_contacts_on_cache_subjects ON contacts USING btree (cache_subjects);
+
+
+--
+-- Name: index_contacts_on_email; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE INDEX index_contacts_on_email ON contacts USING btree (email);
+
+
+--
+-- Name: index_contacts_on_mobile; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE INDEX index_contacts_on_mobile ON contacts USING btree (mobile);
+
+
+--
+-- Name: index_contacts_on_no_related_ids; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE INDEX index_contacts_on_no_related_ids ON contacts USING btree (no_related_ids);
+
+
+--
+-- Name: index_contacts_on_status; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE INDEX index_contacts_on_status ON contacts USING btree (status);
+
+
+--
+-- Name: index_course_registers_on_annoucing_user_ids; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE INDEX index_course_registers_on_annoucing_user_ids ON course_registers USING btree (annoucing_user_ids);
+
+
+--
+-- Name: index_course_registers_on_cache_payment_status; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE INDEX index_course_registers_on_cache_payment_status ON course_registers USING btree (cache_payment_status);
+
+
+--
+-- Name: index_course_registers_on_cache_search; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE INDEX index_course_registers_on_cache_search ON course_registers USING btree (cache_search);
+
+
+--
+-- Name: index_course_registers_on_status; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE INDEX index_course_registers_on_status ON course_registers USING btree (status);
+
+
+--
+-- Name: index_course_types_on_annoucing_user_ids; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE INDEX index_course_types_on_annoucing_user_ids ON course_types USING btree (annoucing_user_ids);
+
+
+--
+-- Name: index_course_types_on_status; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE INDEX index_course_types_on_status ON course_types USING btree (status);
+
+
+--
+-- Name: index_courses_on_annoucing_user_ids; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE INDEX index_courses_on_annoucing_user_ids ON courses USING btree (annoucing_user_ids);
+
+
+--
+-- Name: index_courses_on_status; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE INDEX index_courses_on_status ON courses USING btree (status);
+
+
+--
+-- Name: index_discount_programs_on_annoucing_user_ids; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE INDEX index_discount_programs_on_annoucing_user_ids ON discount_programs USING btree (annoucing_user_ids);
+
+
+--
+-- Name: index_discount_programs_on_status; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE INDEX index_discount_programs_on_status ON discount_programs USING btree (status);
+
+
+--
+-- Name: index_phrases_on_annoucing_user_ids; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE INDEX index_phrases_on_annoucing_user_ids ON phrases USING btree (annoucing_user_ids);
+
+
+--
+-- Name: index_phrases_on_status; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE INDEX index_phrases_on_status ON phrases USING btree (status);
+
+
+--
+-- Name: index_seminars_on_annoucing_user_ids; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE INDEX index_seminars_on_annoucing_user_ids ON seminars USING btree (annoucing_user_ids);
+
+
+--
+-- Name: index_seminars_on_status; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE INDEX index_seminars_on_status ON seminars USING btree (status);
+
+
+--
+-- Name: index_stock_types_on_annoucing_user_ids; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE INDEX index_stock_types_on_annoucing_user_ids ON stock_types USING btree (annoucing_user_ids);
+
+
+--
+-- Name: index_stock_types_on_status; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE INDEX index_stock_types_on_status ON stock_types USING btree (status);
+
+
+--
+-- Name: index_subjects_on_annoucing_user_ids; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE INDEX index_subjects_on_annoucing_user_ids ON subjects USING btree (annoucing_user_ids);
+
+
+--
+-- Name: index_subjects_on_status; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE INDEX index_subjects_on_status ON subjects USING btree (status);
+
+
+--
+-- Name: index_transfer_details_on_courses_phrase_ids; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE INDEX index_transfer_details_on_courses_phrase_ids ON transfer_details USING btree (courses_phrase_ids);
+
+
+--
+-- Name: index_transfers_on_annoucing_user_ids; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE INDEX index_transfers_on_annoucing_user_ids ON transfers USING btree (annoucing_user_ids);
+
+
+--
+-- Name: index_transfers_on_status; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE INDEX index_transfers_on_status ON transfers USING btree (status);
 
 
 --
@@ -4023,4 +4275,6 @@ INSERT INTO schema_migrations (version) VALUES ('20151103114052');
 INSERT INTO schema_migrations (version) VALUES ('20151104044833');
 
 INSERT INTO schema_migrations (version) VALUES ('20151104051628');
+
+INSERT INTO schema_migrations (version) VALUES ('20151104114200');
 
