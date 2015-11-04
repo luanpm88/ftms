@@ -1213,7 +1213,7 @@ class Contact < ActiveRecord::Base
   def update_bases(bases)
     result = []
     bases.each do |row|
-      if row[1]["course_type_id"].present? && row[1]["name"].present? && row[1]["password"].present?
+      if row[1]["course_type_id"].present? || row[1]["name"].present? || row[1]["password"].present?
         item = {}
         item[:course_type_id] = row[1]["course_type_id"]
         item[:status] = row[1]["status"]
@@ -2024,7 +2024,7 @@ class Contact < ActiveRecord::Base
         item = {}
         item[:course_type_id] = nil
         item[:course_type_id] = ct.id if !ct.nil?
-        item[:status] = is_completed ? "completed" : "in_proccess"
+        item[:status] = is_completed ? "completed" : "in_progress"
         item[:name] = old_student.student_acca_no
         item[:name] = program_name.upcase+"-"+old_student.student_acca_no if ct.nil?
         item[:password] = nil        
