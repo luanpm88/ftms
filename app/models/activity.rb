@@ -1,10 +1,13 @@
 class Activity < ActiveRecord::Base
   validates :note, presence: true
   
+  
+  
   include PgSearch
   
   belongs_to :contact
   belongs_to :user
+  belongs_to :account_manager, class_name: "User"
   
   pg_search_scope :search,
                   against: [:note],
@@ -83,9 +86,9 @@ class Activity < ActiveRecord::Base
     @records.each do |item|
       item = [
               item.note.gsub("\n","<br />").html_safe,
-              "<div class=\"text-center nowrap\">#{item.created_at.strftime("%d-%b-%Y, %I:%M %p")}</div>",
+              "<div class=\"text-center nowrap\">#{item.created_at.strftime("%d-%b-%Y, %I:%M %p")}<br /><strong>by:</strong><br />#{item.user.staff_col}</div>",
               "<div class=\"text-center\">#{item.contact.contact_link}</div>",
-              "<div class=\"text-center\">#{item.user.staff_col}</div>",
+              "<div class=\"text-center\">#{item.staff_col}</div>",
               "<div class=\"text-center\">#{item.display_statuses}</div>",  
               ""
             ]
@@ -102,6 +105,14 @@ class Activity < ActiveRecord::Base
     
     return {result: result, items: @records, actions_col: actions_col}
     
+  end
+  
+  def staff_col
+    if account_manager.nil?
+      self.account_manager = contact.account_manager
+      self.save
+    end
+    account_manager.staff_col
   end
   
   def delete

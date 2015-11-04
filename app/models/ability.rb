@@ -120,6 +120,8 @@ class Ability
       can :export_emails, Contact
       can :merge_contacts, Contact
       can :merge_contacts_datatable, Contact
+      can :remove_related_contact, Contact
+      can :undo_remove_related_contact, Contact
       
       can :datatable, Course
       can :read, Course
@@ -303,7 +305,7 @@ class Ability
       can :create, PaymentRecord
       can :print, PaymentRecord
       can :trash, PaymentRecord do |pr|
-        pr.user == user
+        pr.user == user && !pr.transferred? && pr.status == 1
       end
       can :payment_list, PaymentRecord
       can :datatable_payment_list, PaymentRecord
@@ -354,7 +356,7 @@ class Ability
         c.all_deliveries.empty? && c.all_payment_records.empty?
       end
       can :delete, CourseRegister do |c|
-        !c.has_course_transferred? && c.all_deliveries.empty? && c.all_payment_records.empty? && !c.statuses.include?("delete_pending") && !c.statuses.include?("deleted")
+        !c.transferred? && !c.statuses.include?("delete_pending") && !c.statuses.include?("deleted")
       end
       can :field_history, CourseRegister
       can :export_student_course, CourseRegister
@@ -510,9 +512,8 @@ class Ability
       end
       can :undo_delete, Contact do |c|
         c.statuses.include?("delete_pending")
-      end
-      can :remove_related_contact, Contact
-      can :undo_remove_related_contact, Contact
+      end      
+      can :approve_all, Contact
       
       
       ## BOOK
@@ -559,6 +560,7 @@ class Ability
       can :undo_delete, CourseRegister do |c|
         c.statuses.include?("delete_pending")
       end
+      can :approve_all, CourseRegister
       
       
       ## PHRASES
@@ -648,7 +650,9 @@ class Ability
       can :read, PaymentRecord
       can :create, PaymentRecord
       can :print, PaymentRecord
-      can :trash, PaymentRecord
+      can :trash, PaymentRecord do |c|
+        !c.transferred? && c.status == 1
+      end
       can :company_pay, PaymentRecord
       can :do_company_pay, PaymentRecord
       can :print_payment_list, PaymentRecord

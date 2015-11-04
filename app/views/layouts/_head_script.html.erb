@@ -27,7 +27,8 @@
 				if(table.length && $(".contact_detail_tabs_page").length == 0) {
 					table.dataTable().fnFilter();
 				} else {
-					location.reload(); 
+					var ptab = $(".contact-tabs li.active a").attr("href").replace("#","&tab=")
+					window.location.href = window.location.href+ptab
 				}
 				window.parent.modernAlert(data)
 			}

@@ -7,6 +7,16 @@
   <Worksheet ss:Name="Sheet1">
     <Table>
       <Row>
+        <Cell><Data ss:Type="String">From</Data></Cell>
+        <Cell><Data ss:Type="String"><%= @from_date.strftime("%d-%b-%Y") %></Data></Cell>
+        <Cell><Data ss:Type="String">To</Data></Cell>
+        <Cell><Data ss:Type="String"><%= @to_date.strftime("%d-%b-%Y") %></Data></Cell>
+        <Cell><Data ss:Type="String"></Data></Cell>
+        <Cell><Data ss:Type="String"></Data></Cell>
+        <Cell><Data ss:Type="String"></Data></Cell>
+        <Cell><Data ss:Type="String"></Data></Cell>
+      </Row>
+      <Row>
         <Cell><Data ss:Type="String">Consultant</Data></Cell>
         <Cell><Data ss:Type="String">Program</Data></Cell>
         <Cell><Data ss:Type="String">Note Log</Data></Cell>
@@ -19,8 +29,8 @@
       
       <Row>
         <Cell><Data ss:Type="String"></Data></Cell>
-        <Cell><Data ss:Type="String"></Data></Cell>
         <Cell><Data ss:Type="String">All Total:</Data></Cell>
+        <Cell><Data ss:Type="String"><%= format_price(@all_total[:note_total]) %></Data></Cell>
         <Cell><Data ss:Type="String"><%= format_price(@all_total[:group_total]) %></Data></Cell>
         <Cell><Data ss:Type="String"><%= format_price(@all_total[:receivable_total]) %></Data></Cell>
         <Cell><Data ss:Type="String"><%= @all_total[:paper_total] %></Data></Cell>

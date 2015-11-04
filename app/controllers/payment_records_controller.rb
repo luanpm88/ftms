@@ -129,8 +129,8 @@ class PaymentRecordsController < ApplicationController
     @payment_record.trash
     
     respond_to do |format|
-      format.html { redirect_to params[:tab_page].present? ? "/home/close_tab" : payment_records_path, notice: 'Payment was successfully updated.' }
-      format.json { head :no_content }
+      format.html { render "/payment_records/deleted", layout: nil }
+      format.json { render action: 'show', status: :created, location: @phrase }
     end
   end
   

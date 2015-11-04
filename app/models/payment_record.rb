@@ -139,11 +139,11 @@ class PaymentRecord < ActiveRecord::Base
     actions_col = 9
     @records.each do |item|
       item = [
-              item.contact.display_name,
+              item.contact.contact_link,
               '<div class="text-left">'+item.description+"</div>",
               '<div class="text-right">'+ApplicationController.helpers.format_price(item.ordered_total)+"</div>",
               '<div class="text-right">'+ApplicationController.helpers.format_price(item.paid_amount)+'</div>',
-              '<div class="text-right">'+item.paid_on+"</div>",
+              '<div class="text-right">'+item.paid_on+"<br /><strong>by:</strong><br />"+item.user.staff_col+"</div>",
               '<div class="text-center">'+item.bank_account_name+"</div>",
               '<div class="text-right">'+ApplicationController.helpers.format_price(item.remain)+"</div>",
               '<div class="text-center">'+item.staff_col+"</div>",
@@ -511,6 +511,10 @@ class PaymentRecord < ActiveRecord::Base
     s = status == 1 ? "active" : "deleted"
     result = ["<span title=\"\" class=\"badge user-role badge-info contact-status #{s}\">#{s}</span>"]
     result.join(" ").html_safe
+  end
+  
+  def transferred?
+    return course_register.nil? ? false : course_register.transferred?
   end
   
 end

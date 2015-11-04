@@ -177,6 +177,36 @@ class CourseRegistersController < ApplicationController
     end
   end
   
+  def approve_all
+    authorize! :approve_all, CourseRegister
+    
+    if params[:ids].present?
+      if !params[:check_all_page].nil?
+        params[:intake_year] = params["filter"]["intake(1i)"] if params["filter"].present?
+        params[:intake_month] = params["filter"]["intake(2i)"] if params["filter"].present?
+        
+        if params[:is_individual] == "false"
+          params[:contact_types] = nil
+        end        
+        
+        @course_registers = CourseRegister.filter(params, current_user)
+      else
+        @course_registers = CourseRegister.where(id: params[:ids])
+      end
+    end
+    
+    @course_registers.each do |cr|
+      cr.approve_delete(current_user)
+      cr.approve_new(current_user)
+      cr.approve_update(current_user)
+    end
+    
+    respond_to do |format|
+      format.html { render "/course_registers/approved", layout: nil }
+      format.json { render action: 'show', status: :created, location: @course_register }
+    end
+  end
+  
   def approved
     render layout: "content"
   end
