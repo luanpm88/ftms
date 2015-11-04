@@ -144,13 +144,12 @@ class Notification < ActiveRecord::Base
   #########################################################
   
   
-  
   #### COURSE ADMIN - PENDING
   
   def self.course_pending_count(user)
-    if !user.has_role?("admin") && !user.has_role?("manager")
-      return ""
-    end
+    #if !user.has_role?("admin") && !user.has_role?("manager")
+    #  return ""
+    #end
     
     records = Course.main_courses.where("status LIKE ?","%pending]%")
     
@@ -158,9 +157,9 @@ class Notification < ActiveRecord::Base
   end
   
   def self.course_type_pending_count(user)
-    if !user.has_role?("admin") && !user.has_role?("manager")
-      return ""
-    end
+    #if !user.has_role?("admin") && !user.has_role?("manager")
+    #  return ""
+    #end
     
     records = CourseType.main_course_types.where("status LIKE ?","%pending]%")
     
@@ -169,9 +168,9 @@ class Notification < ActiveRecord::Base
   
   # subject
   def self.subject_pending_count(user)
-    if !user.has_role?("admin") && !user.has_role?("manager")
-      return ""
-    end
+    #if !user.has_role?("admin") && !user.has_role?("manager")
+    #  return ""
+    #end
     
     records = Subject.main_subjects.where("status LIKE ?","%pending]%")
     
@@ -180,9 +179,9 @@ class Notification < ActiveRecord::Base
   
   # phrase
   def self.phrase_pending_count(user)
-    if !user.has_role?("admin") && !user.has_role?("manager")
-      return ""
-    end
+    #if !user.has_role?("admin") && !user.has_role?("manager")
+    #  return ""
+    #end
     
     records = Phrase.main_phrases.where("status LIKE ?","%pending]%")
     
@@ -191,9 +190,9 @@ class Notification < ActiveRecord::Base
   
   # course register
   def self.course_register_pending_count(user, contact=nil)
-    if contact.nil? && !user.has_role?("admin") && !user.has_role?("manager")
-      return ""
-    end
+    #if contact.nil? && !user.has_role?("admin") && !user.has_role?("manager")
+    #  return ""
+    #end
     
     records = CourseRegister.main_course_registers.where("status LIKE ?","%pending]%")
     records = records.where(contact_id: contact.id) if contact.present?
@@ -203,9 +202,9 @@ class Notification < ActiveRecord::Base
   
   # course register
   def self.transfer_pending_count(user, contact=nil)
-    if contact.nil? && !user.has_role?("admin") && !user.has_role?("manager")
-      return ""
-    end
+    #if contact.nil? && !user.has_role?("admin") && !user.has_role?("manager")
+    #  return ""
+    #end
     
     records = Transfer.main_transfers.where("status LIKE ?","%pending]%")
     records = records.where("contact_id = ? OR to_contact_id = ?", contact.id, contact.id) if contact.present?
@@ -279,9 +278,9 @@ class Notification < ActiveRecord::Base
       #### BOOK - PENDING - APPROVED
       
       def self.book_pending_count(user)
-        if !user.has_role?("admin") && !user.has_role?("manager") # && !user.has_role?("education_consultant")
-          return ""
-        end
+        #if !user.has_role?("admin") && !user.has_role?("manager") # && !user.has_role?("education_consultant")
+        #  return ""
+        #end
         
         records = Book.main_books.where("status LIKE ?","%pending]%") # .where("status NOT LIKE ?","%[out_of_date]%")
         
@@ -302,9 +301,9 @@ class Notification < ActiveRecord::Base
       
       #### STOCK TYPE - PENDING - APPROVED
       def self.stock_type_pending_count(user)
-        if !user.has_role?("admin") && !user.has_role?("manager") # && !user.has_role?("education_consultant")
-          return ""
-        end
+        #if !user.has_role?("admin") && !user.has_role?("manager") # && !user.has_role?("education_consultant")
+        #  return ""
+        #end
         
         records = StockType.main_stock_types.where("status LIKE ?","%pending]%")
         
@@ -336,9 +335,9 @@ class Notification < ActiveRecord::Base
   #### DISCOUNT PROGRAM - PENDING - APPROVED
   
   def self.discount_program_pending_count(user)
-    if !user.has_role?("admin") && !user.has_role?("manager") # && !user.has_role?("education_consultant")
-      return ""
-    end
+    #if !user.has_role?("admin") && !user.has_role?("manager") # && !user.has_role?("education_consultant")
+    #  return ""
+    #end
     
     records = DiscountProgram.main_discount_programs.where("status LIKE ?","%pending]%")
     
@@ -362,9 +361,9 @@ class Notification < ActiveRecord::Base
   
   #### ACCOUNTING - PENDING
   def self.bank_account_pending_count(user)
-    if !user.has_role?("admin") && !user.has_role?("manager")
-      return ""
-    end
+    #if !user.has_role?("admin") && !user.has_role?("manager")
+    #  return ""
+    #end
     
     records = BankAccount.main_bank_accounts.where("status LIKE ?","%pending]%")
     
@@ -402,9 +401,9 @@ class Notification < ActiveRecord::Base
   
   #### ACCOUNTING - PENDING
   def self.seminar_pending_count(user)
-    if !user.has_role?("admin") && !user.has_role?("manager")
-      return ""
-    end
+    #if !user.has_role?("admin") && !user.has_role?("manager")
+    #  return ""
+    #end
     
     records = Seminar.main_seminars.where("status LIKE ?","%pending]%")
     
