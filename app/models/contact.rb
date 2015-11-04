@@ -1971,7 +1971,7 @@ class Contact < ActiveRecord::Base
   end
   
   def update_contact_type_from_old_student
-    return false if old_student.nil? || !contact_types.empty?
+    return false if old_student.nil? # || !contact_types.empty?
     
     inquiry_partten = "inquiry"
     is_inquiry = old_student.student_type.strip.downcase.scan(/(#{inquiry_partten})/).count > 0
