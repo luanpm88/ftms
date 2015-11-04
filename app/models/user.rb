@@ -27,6 +27,13 @@ class User < ActiveRecord::Base
   #validates :last_name, presence: true
   validates :email, :presence => true, :uniqueness => true
   
+  def active_for_authentication?
+    # Uncomment the below debug statement to view the properties of the returned self model values.
+    # logger.debug self.to_yaml
+
+    super && status == 1
+  end
+  
   def self.main_users
     self.order("name")
   end
