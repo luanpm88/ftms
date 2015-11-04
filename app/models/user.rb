@@ -189,6 +189,12 @@ class User < ActiveRecord::Base
   def self.backup_system(params)
     System.backup(params)
   end
+  
+  def display_statuses
+    s = status == 1 ? "active" : "deleted"
+    result = ["<span title=\"\" class=\"badge user-role badge-info contact-status #{s}\">#{s}</span>"]
+    result.join(" ").html_safe
+  end
 
                 
   def self.datatable(params, user)
@@ -196,6 +202,10 @@ class User < ActiveRecord::Base
     link_helper = ActionController::Base.helpers    
     
     @records = self.all
+    
+    if params["status"].present?
+      @records = @records.where(status: params["status"])
+    end
     
     @records = @records.search(params["search"]["value"]) if !params["search"]["value"].empty?
     
@@ -219,7 +229,7 @@ class User < ActiveRecord::Base
     @records = @records.limit(params[:length]).offset(params["start"])
     data = []
     
-    actions_col = 5
+    actions_col = 6
     @records.each do |item|
       item = [
               link_helper.link_to("<img class=\"avatar-big\" width='60' src='#{item.avatar(:square)}' />".html_safe, {controller: "users", action: "show", id: item.id}, class: "fancybox.ajax fancybox_link main-title"),
@@ -227,6 +237,7 @@ class User < ActiveRecord::Base
               '<div class="text-center">'+item.roles_name+"</div>",
               '<div class="text-center">'+item.created_at.strftime("%Y-%m-%d")+"</div>",
               '<div class="text-center">'+item.display_staff_col+"</div>",
+              '<div class="text-center">'+item.display_statuses+"</div>",
               '',
             ]
       data << item
@@ -595,6 +606,14 @@ class User < ActiveRecord::Base
         
       end
     end
+  end
+  
+  def self.status_options
+    [
+      ["Active","1"],
+      ["Deleted","0"],
+      ["All",""]      
+    ]
   end
   
 end

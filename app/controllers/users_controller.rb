@@ -3,7 +3,7 @@ class UsersController < ApplicationController
   
   load_and_authorize_resource
   
-  before_action :set_user, only: [:avatar, :show, :edit, :update, :destroy]
+  before_action :set_user, only: [:delete, :avatar, :show, :edit, :update, :destroy]
 
   # GET /users
   # GET /users.json
@@ -97,6 +97,14 @@ class UsersController < ApplicationController
     end
   end
   
+  def delete
+    @user.update_attribute(:status, 0)
+    respond_to do |format|
+      format.html { redirect_to users_url(tab_page: 1) }
+      format.json { head :no_content }
+    end
+  end
+  
   def backup
     @database = YAML.load_file('config/database.yml')["production"]["database"]
     
@@ -182,7 +190,7 @@ class UsersController < ApplicationController
     end
         
     @statistics = []
-    @users = User.order("users.first_name, users.last_name")
+    @users = User.where(status: 1).order("users.first_name, users.last_name")
     
     params[:users] = [current_user.id] if current_user.lower?("manager")
     @users = @users.where(id: params[:users]) if params[:users].present?

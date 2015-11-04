@@ -8,6 +8,23 @@
                         <i class="icon-archive"></i>
                     	<h3>User - <span class="semi-bold"> Management</span></h3>	
                 </div>
+				
+				
+				<div class="grid simple payment-record-filter">
+                  <div class="grid-body no-border filters">
+                    <div class="row user-filters">
+					  
+						
+						<div class="col-md-3">
+						  <h4>Status</h4>							
+						  <%= select_tag 'status', options_for_select(User.status_options, params[:status]), class: "modern_select width100" %>
+						</div>
+                        
+                        
+                    </div>
+                  </div>		    
+				</div>
+				
                 <div class="row">
                     <div class="col-md-12">
                         <%= link_to 'New User', new_user_path(tab_page: 1), psrc: users_path(tab_page: 1), title: "New User", :class => 'btn btn-primary btn-cons tab_page' %>
@@ -26,6 +43,7 @@
                                                 <th class="text-center">Rols</th>
 												<th class="text-center">Joined Date</th>
 												<th class="text-center">Creator</th>
+												<th class="text-center">Status</th>
 												<th class="text-right">Actions</th>
                                             </tr>
                                         </thead>                                        

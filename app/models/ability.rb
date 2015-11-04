@@ -44,7 +44,9 @@ class Ability
         can :read, User
         can :create, User
         can :update, User
-        can :destroy, User
+        can :delete, User do |u|
+          u.status == 1
+        end
       
         can :backup, User
         can :backup, User

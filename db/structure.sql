@@ -2464,7 +2464,8 @@ CREATE TABLE users (
     image character varying,
     "tmp_ConsultantID" text,
     name text,
-    user_id integer
+    user_id integer,
+    status integer DEFAULT 1
 );
 
 
@@ -4011,4 +4012,6 @@ INSERT INTO schema_migrations (version) VALUES ('20151031083628');
 INSERT INTO schema_migrations (version) VALUES ('20151103021916');
 
 INSERT INTO schema_migrations (version) VALUES ('20151103114052');
+
+INSERT INTO schema_migrations (version) VALUES ('20151104044833');
 

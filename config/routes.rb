@@ -384,6 +384,8 @@ Hkerp::Application.routes.draw do
         
         get :system_setting
         post :system_setting
+        
+        get :delete
       end
     end
   end

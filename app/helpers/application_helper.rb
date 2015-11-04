@@ -41,8 +41,8 @@ module ApplicationHelper
       if can? :activity_log, item
         actions += '<li>'+ActionController::Base.helpers.link_to('Activity Logs', {controller: "users", action: "activity_log", id: item.id, tab_page: 1}, title: "Activity Logs: #{item.name}", class: "tab_page")+'</li>'        
       end
-      if can? :destroy, item
-        actions += '<li>'+ActionController::Base.helpers.link_to('Destroy', {controller: "users", action: "destroy", id: item.id}, method: :delete, data: { confirm: 'Are you sure?' })+'</li>'        
+      if can? :delete, item
+        actions += '<li>'+ActionController::Base.helpers.link_to('Delete', {controller: "users", action: "delete", id: item.id}, data: { confirm: 'Are you sure?' })+'</li>'        
       end 
       
       actions += '</ul></div></div>'
