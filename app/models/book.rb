@@ -291,7 +291,7 @@ class Book < ActiveRecord::Base
               '<div class="text-center">'+item.active_books_contacts.where(contact_id: @student.id).sum(:quantity).to_s+"</div>", #'<div class="text-right">'+ApplicationController.helpers.format_price(@student.books_contact(item).total)+"</div>",
               '<div class="text-center">'+ item.display_registerd_at(@student)+"</div>",
               '<div class="text-center">'+ item.display_delivery_status(@student)+"</div>", 
-              '<div class="text-center">'+item.user.staff_col+"</div>",
+              '<div class="text-center">'+item.display_creator(@student)+"</div>",
               ""
             ]
       data << item
@@ -315,6 +315,10 @@ class Book < ActiveRecord::Base
   
   def display_registerd_at(contact)
     (course_registers.where(contact_id: contact.id).map {|cr| cr.created_at.strftime("%d-%b-%Y")}).join("<br />").html_safe
+  end
+  
+  def display_creator(contact)
+    (course_registers.where(contact_id: contact.id).map {|cr| cr.user.staff_col}).join("<br />").html_safe
   end
   
   def display_delivery_status(contact)
