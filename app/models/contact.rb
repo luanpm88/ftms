@@ -2051,9 +2051,6 @@ class Contact < ActiveRecord::Base
             child.save
           end
         end
-      #elsif c.related_contacts.empty? && c.related_id == 0
-      #  c.related_id = -1
-      #  c.save
       end
     end
   end
