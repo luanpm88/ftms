@@ -250,7 +250,9 @@ class StockType < ActiveRecord::Base
   end
   
   def current
-    return drafts.order("created_at DESC").first
+    current = drafts.order("created_at DESC").first
+    current = self if current.nil?
+    return current
   end
   
   def revisions
