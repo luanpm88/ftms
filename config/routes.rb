@@ -351,6 +351,7 @@ Hkerp::Application.routes.draw do
 
   get 'home/index'
   get 'home/close_tab'
+  get 'home/main_menu'
   
   resources :old_tags do
     collection do

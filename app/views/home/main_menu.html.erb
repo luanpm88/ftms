@@ -1,0 +1,281 @@
+      <ul>
+		
+		<% if can? :read, BankAccount %>
+			<li <% if ["bank_accounts","payment_records"].include?params[:controller] %> class="active open"<% end %>>
+			  <%= link_to contacts_url do %>
+			<i class="icon-list-alt"></i>
+			<span class="title">Accounting</span>
+			<span class="arrow<% if ["bank_accounts","payment_records"].include?params[:controller] %> open<% end %>"></span>
+			<span class="badge badge-important pull-right alert-level1"><%= Notification.accounting_count(current_user) %></span>
+			<span class="badge badge-success pull-right alert-level1"><%= Notification.accounting_approved_count(current_user) %></span>
+			
+			  <% end %>
+			  <ul class="sub-menu">
+				<li><%= link_to 'Course/Stock Registration Payment', payment_list_payment_records_path(tab_page:1), class: "tab_page" %></li>
+				<li><%= link_to 'Defer/Transfer Payment', transfers_path(tab_page:1), title: "Defer/Transfer Payment", class: "tab_page" %></li>
+				<li<% if params[:controller] == "payment_records" %> class="active"<% end %>><%= link_to 'Payment Record', payment_records_path(tab_page:1), class: "tab_page" %></li>
+				<li<% if params[:controller] == "bank_accounts" %> class="active"<% end %>>
+					<a title="Bank Account (pending)" href="<%= url_for(bank_accounts_path(tab_page:1, status: "pending")) %>" class="tab_page noti">
+						<span class="badge badge-important pull-right alert-level2"><%= Notification.bank_account_pending_count(current_user) %></span>
+					</a>
+					<a title="Bank Account (approved)" href="<%= url_for(bank_accounts_path(tab_page:1, status: "approved")) %>" class="tab_page noti approved">
+						<span class="badge badge-important pull-right alert-level2"><%= Notification.bank_account_approved_count(current_user) %></span>
+					</a>
+					<%= link_to 'Bank Account', bank_accounts_path(tab_page:1), class: "tab_page" %>
+				</li>
+				
+
+			  </ul>
+			</li>
+		<% end %>
+		
+		<% if can? :read, Contact %>
+			<li <% if params[:controller] == "contacts" %> class="active open"<% end %>>
+			  <%= link_to contacts_url do %>
+			<i class="icon-group"></i>
+			<span class="title">Contact</span>
+			<span class="arrow<% if params[:controller] == "contacts" %> open<% end %>"></span>
+			<span class="badge badge-important pull-right alert-level1"><%= Notification.contact_menu_count(current_user) %></span>
+			<span class="badge badge-success pull-right alert-level1"><%= Notification.contact_menu_approved_count(current_user) %></span>
+			  <% end %>
+			  <ul class="sub-menu">
+				<li<% if params[:controller] == "contacts" %> class="active"<% end %>>					
+					<a title="Contact Management (pending)" href="<%= url_for(contacts_url(tab_page:1, status: "pending")) %>" class="tab_page noti">
+						<span class="badge badge-important pull-right alert-level2"><%= Notification.contact_pending_count(current_user) %></span>
+					</a>
+					<a title="Contact Management (approved)" href="<%= url_for(contacts_url(tab_page:1, status: "approved")) %>" class="tab_page noti approved">
+						<span class="badge badge-important pull-right alert-level2"><%= Notification.contact_approved_count(current_user) %></span>
+					</a>
+					<%= link_to 'Contact Management', contacts_url(tab_page:1), class: "tab_page" %>
+				</li>
+				<% if can? :view, ContactTag %>
+					<li<% if params[:controller] == "contact_tags" %> class="active"<% end %>>
+						<a title="Tag Management (pending)" href="<%= url_for(contact_tags_path(tab_page:1, status: "pending")) %>" class="tab_page noti">
+							<span class="badge badge-important pull-right alert-level2"><%= Notification.contact_tag_pending_count(current_user) %></span>
+						</a>
+						<a title="Tag Management (approved)" href="<%= url_for(contact_tags_path(tab_page:1, status: "approved")) %>" class="tab_page noti approved">
+							<span class="badge badge-important pull-right alert-level2"><%= Notification.contact_tag_approved_count(current_user) %></span>
+						</a>
+						<%= link_to 'Tag Management', contact_tags_path(tab_page:1), class: "tab_page" %>
+					</li>
+				<% end %>
+				<li>
+					<%= link_to 'Note Log', activities_url(tab_page:1), class: "tab_page" %>
+				</li>
+			  </ul>
+			</li>
+		<% end %>
+		
+		<% if can? :course_features, User %>
+			<li <% if ["transfer","course_registers","course_types","subjects","courses"].include?(params[:controller]) %> class="active open"<% end %>>
+					<%= link_to "#" do %>
+						<i class="icon-briefcase"></i>
+						<span class="title">Course Admin</span>
+						<span class="arrow<% if ["course_registers","course_types","subjects","courses"].include?(params[:controller]) %> open<% end %>"></span>
+						<span class="badge badge-important pull-right alert-level1"><%= Notification.course_admin_count(current_user) %></span>
+						<span class="badge badge-success pull-right alert-level1"><%= Notification.course_admin_approved_count(current_user) %></span>
+					<% end %>
+					<ul class="sub-menu">
+						<li<% if params[:controller] == "course_registers" && params[:action] == "index" %> class="active"<% end %>>
+							<a title="Course/Stock Registration Management (pending)" href="<%= url_for(course_registers_path(tab_page:1, status: "pending")) %>" class="tab_page noti">
+								<span class="badge badge-important pull-right alert-level2"><%= Notification.course_register_pending_count(current_user) %></span>
+							</a>
+							<a title="Course/Stock Registration Management (approved)" href="<%= url_for(course_registers_path(tab_page:1, status: "approved")) %>" class="tab_page noti approved">
+								<span class="badge badge-important pull-right alert-level2"><%= Notification.course_register_approved_count(current_user) %></span>
+							</a>
+							<%= link_to 'Course/Stock Registration Management', course_registers_path(tab_page:1), class: "tab_page" %>
+						</li>
+						
+						<li<% if params[:controller] == "course_types" && params[:action] == "index" %> class="active"<% end %>>
+							<a title="Program Management (pending)" href="<%= url_for(course_types_url(tab_page:1, status: "pending")) %>" class="tab_page noti">
+								<span class="badge badge-important pull-right alert-level2"><%= Notification.course_type_pending_count(current_user) %></span>
+							</a>
+							<a title="Program Management (approved)" href="<%= url_for(course_types_url(tab_page:1, status: "approved")) %>" class="tab_page noti approved">
+								<span class="badge badge-important pull-right alert-level2"><%= Notification.course_type_approved_count(current_user) %></span>
+							</a>
+							<%= link_to 'Program Management', course_types_path(tab_page:1), class: "tab_page" %>
+						</li>
+						<li<% if params[:controller] == "subjects" && params[:action] == "index" %> class="active"<% end %>>
+							<a title="Paper Management (pending)" href="<%= url_for(subjects_path(tab_page:1, status: "pending")) %>" class="tab_page noti">
+								<span class="badge badge-important pull-right alert-level2"><%= Notification.subject_pending_count(current_user) %></span>
+							</a>
+							<a title="Paper Management (approved)" href="<%= url_for(subjects_path(tab_page:1, status: "approved")) %>" class="tab_page noti approved">
+								<span class="badge badge-important pull-right alert-level2"><%= Notification.subject_approved_count(current_user) %></span>
+							</a>
+							<%= link_to 'Paper Management', subjects_path(tab_page:1), class: "tab_page" %>
+						</li>						
+						<li<% if params[:controller] == "courses" && params[:action] == "index" %> class="active"<% end %>>
+							<a title="Course Management (pending)" href="<%= url_for(courses_url(tab_page:1, status: "pending")) %>" class="tab_page noti">
+								<span class="badge badge-important pull-right alert-level2"><%= Notification.course_pending_count(current_user) %></span>
+							</a>
+							<a title="Course Management (approved)" href="<%= url_for(courses_url(tab_page:1, status: "approved")) %>" class="tab_page noti approved">
+								<span class="badge badge-important pull-right alert-level2"><%= Notification.course_approved_count(current_user) %></span>
+							</a>
+							<%= link_to 'Course Management', courses_path(tab_page:1), class: "tab_page" %>
+						</li>
+						<li<% if params[:controller] == "phrases" && params[:action] == "index" %> class="active"<% end %>>
+							<a title="Phrase Management (pending)" href="<%= url_for(phrases_path(tab_page:1, status: "pending")) %>" class="tab_page noti">
+								<span class="badge badge-important pull-right alert-level2"><%= Notification.phrase_pending_count(current_user) %></span>
+							</a>
+							<a title="Phrase Management (approved)" href="<%= url_for(phrases_path(tab_page:1, status: "approved")) %>" class="tab_page noti approved">
+								<span class="badge badge-important pull-right alert-level2"><%= Notification.phrase_approved_count(current_user) %></span>
+							</a>
+							<%= link_to 'Phrase Management', phrases_path(tab_page:1), class: "tab_page" %>
+						</li>
+						<li<% if params[:controller] == "transfers" %> class="active"<% end %>>
+							<a title="Defer/Transfer Management (pending)" href="<%= url_for(transfers_path(tab_page:1, status: "pending")) %>" class="tab_page noti">
+								<span class="badge badge-important pull-right alert-level2"><%= Notification.transfer_pending_count(current_user) %></span>
+							</a>
+							<a title="Defer/Transfer Management (approved)" href="<%= url_for(transfers_path(tab_page:1, status: "approved")) %>" class="tab_page noti approved">
+								<span class="badge badge-important pull-right alert-level2"><%= Notification.transfer_approved_count(current_user) %></span>
+							</a>
+							<%= link_to 'Defer/Transfer Management', transfers_path(tab_page:1), title: "Defer/Transfer Management", class: "tab_page" %>
+						</li>
+					</ul>
+			</li>
+		<% end %>
+		
+		<% if can? :read, DiscountProgram %>
+			<li <% if params[:controller] == "discount_programs" %> class="active open"<% end %>>
+			  <%= link_to contacts_url do %>
+			<i class="icon-chevron-sign-down"></i>
+			<span class="title">Discount Program</span>
+			<span class="arrow<% if params[:controller] == "discount_programs" %> open<% end %>"></span>
+			<span class="badge badge-important pull-right alert-level1"><%= Notification.discount_program_pending_count(current_user) %></span>
+						<span class="badge badge-success pull-right alert-level1"><%= Notification.discount_program_approved_count(current_user) %></span>
+			  <% end %>
+			  <ul class="sub-menu">
+							
+				<li<% if params[:controller] == "discount_programs" %> class="active"<% end %>>
+					<a title="Discount Program Management (pending)" href="<%= url_for(discount_programs_path(tab_page:1, status: "pending")) %>" class="tab_page noti">
+						<span class="badge badge-important pull-right alert-level2"><%= Notification.discount_program_pending_count(current_user) %></span>
+					</a>
+					<a title="Discount Program Management (approved)" href="<%= url_for(discount_programs_path(tab_page:1, status: "approved")) %>" class="tab_page noti approved">
+						<span class="badge badge-important pull-right alert-level2"><%= Notification.discount_program_approved_count(current_user) %></span>
+					</a>
+					<%= link_to 'Discount Program', discount_programs_path(tab_page:1), class: "tab_page" %>
+				</li>
+			  </ul>
+			</li>
+		<% end %>
+		
+		<% if can? :seminar_features, Seminar %>
+			<li <% if params[:controller] == "seminars" %> class="active open"<% end %>>
+					<%= link_to contacts_url do %>
+					  <i class="icon-facetime-video"></i>
+					  <span class="title">Marketing</span>
+					  <span class="arrow<% if params[:controller] == "seminars" %> open<% end %>"></span>
+						<span class="badge badge-important pull-right alert-level1"><%= Notification.marketing_pending_count(current_user) %></span>
+						<span class="badge badge-success pull-right alert-level1"><%= Notification.marketing_approved_count(current_user) %></span>
+					<% end %>
+					<ul class="sub-menu">						
+						<li<% if params[:controller] == "seminars" && params[:action] == "index" %> class="active"<% end %>>
+							<a title="Seminar Management (pending)" href="<%= url_for(seminars_path(tab_page:1, status: "pending")) %>" class="tab_page noti">
+								<span class="badge badge-important pull-right alert-level2"><%= Notification.seminar_pending_count(current_user) %></span>
+							</a>
+							<a title="Seminar Management (approved)" href="<%= url_for(seminars_path(tab_page:1, status: "approved")) %>" class="tab_page noti approved">
+								<span class="badge badge-important pull-right alert-level2"><%= Notification.seminar_approved_count(current_user) %></span>
+							</a>
+							<%= link_to 'Seminar Management', seminars_path(tab_page:1), class: "tab_page" %>
+						</li>
+					</ul>
+			</li>
+		<% end %>
+		
+		<% if can? :report_features, User %>
+			<li <% if params[:controller] == "users" %> class="active open"<% end %>>
+					<%= link_to contacts_url do %>
+					  <i class="icon-calendar-empty"></i>
+					  <span class="title">Reports</span>
+					  <span class="arrow<% if params[:controller] == "users" %> open<% end %>"></span>
+					<% end %>
+					<ul class="sub-menu">
+						
+						
+						<li<% if params[:controller] == "users" && params[:action] == "statistic" %> class="active"<% end %>><%= link_to 'Sales Statistic', statistic_users_path(tab_page:1), class: "tab_page" %></li>
+						<li<% if params[:controller] == "users" %> class="active"<% end %>><%= link_to 'Online Report', online_report_users_path(tab_page:1), class: "tab_page" %></li>				
+					</ul>
+			</li>
+		<% end %>
+		
+		<% if can? :book_features, User %>
+			<li <% if params[:controller] == "books" %> class="active open"<% end %>>
+					<%= link_to contacts_url do %>
+					  <i class="icon-book"></i>
+					  <span class="title">Stock</span>
+					  <span class="arrow<% if params[:controller] == "books" %> open<% end %>"></span>
+						<span class="badge badge-important pull-right alert-level1"><%= Notification.stock_pending_count(current_user) %></span>
+						<span class="badge badge-success pull-right alert-level1"><%= Notification.stock_approved_count(current_user) %></span>
+					<% end %>
+					<ul class="sub-menu">
+						
+						<li<% if params[:controller] == "books" && params[:action] == "index" %> class="active"<% end %>>
+							<a title="Stock Management (pending)" href="<%= url_for(books_path(tab_page:1, status: "pending")) %>" class="tab_page noti">
+								<span class="badge badge-important pull-right alert-level2"><%= Notification.book_pending_count(current_user) %></span>
+							</a>
+							<a title="Stock Management (approved)" href="<%= url_for(books_path(tab_page:1, status: "approved")) %>" class="tab_page noti approved">
+								<span class="badge badge-important pull-right alert-level2"><%= Notification.book_approved_count(current_user) %></span>
+							</a>
+							<%= link_to 'Stock Management', books_path(tab_page:1), class: "tab_page" %>
+						</li>
+						<li<% if params[:controller] == "books" && params[:action] == "index" %> class="active"<% end %>>
+							<a title="Stock Type Management (pending)" href="<%= url_for(stock_types_path(tab_page:1, status: "pending")) %>" class="tab_page noti">
+								<span class="badge badge-important pull-right alert-level2"><%= Notification.stock_type_pending_count(current_user) %></span>
+							</a>
+							<a title="Stock Type Management (approved)" href="<%= url_for(stock_types_path(tab_page:1, status: "approved")) %>" class="tab_page noti approved">
+								<span class="badge badge-important pull-right alert-level2"><%= Notification.stock_type_approved_count(current_user) %></span>
+							</a>
+							<%= link_to 'Stock Type Management', stock_types_path(tab_page:1), class: "tab_page" %>
+						</li>
+						<li>
+							<%= link_to 'Delivery Management', delivery_books_path(tab_page:1), class: "tab_page" %>
+						</li>
+						<li>
+							<%= link_to 'Stock Import/Export', stock_updates_path(tab_page:1), class: "tab_page" %>
+						</li>
+						<li>
+							<%= link_to 'Stock Statistic', stock_statistics_books_path(tab_page:1), class: "tab_page" %>
+						</li>
+					</ul>
+			</li>
+		<% end %>
+		
+		
+		<% if current_user.has_role?("admin") || current_user.has_role?("manager") %>
+			<li <% if params[:controller] == "users" %> class="active open"<% end %>>
+					<%= link_to contacts_url do %>
+					  <i class="icon-user"></i>
+					  <span class="title">User</span>
+					  <span class="arrow<% if params[:controller] == "users" %> open<% end %>"></span>
+					<% end %>
+					<ul class="sub-menu">
+						
+						<li<% if params[:controller] == "users" && params[:action] == "index" %> class="active"<% end %>><%= link_to 'User Management', users_path(tab_page:1), class: "tab_page" %></li>
+						
+						
+					</ul>
+			</li>
+		<% end %>
+		
+		
+	
+		<% if current_user.has_role? "admin" %>
+			<li <% if params[:controller] == "users" %> class="active open"<% end %>>
+					<%= link_to contacts_url do %>
+					  <i class="icon-cogs"></i>
+					  <span class="title">System</span>
+					  <span class="arrow<% if params[:controller] == "users" %> open<% end %>"></span>
+					<% end %>
+					<ul class="sub-menu">
+						
+						
+						<li<% if ["backup"].include?(params[:action]) %> class="active"<% end %>><%= link_to 'Backup', "/admin/users/backup?tab_page=1", class: "tab_page" %></li>
+						<li<% if ["restore"].include?(params[:action]) %> class="active"<% end %>><%= link_to 'Restore', "/admin/users/restore?tab_page=1", class: "tab_page" %></li>
+						<li<% if ["system_setting"].include?(params[:action]) %> class="active"<% end %>><%= link_to 'System Setting', "/admin/users/system_setting?tab_page=1", class: "tab_page" %></li>
+						<li<% if ["import_from_old_system"].include?(params[:action]) %> class="active"<% end %>><%= link_to 'Restore From Old System', "/admin/users/import_from_old_system?tab_page=1", class: "tab_page" %></li>
+					</ul>
+			</li>
+		<% end %>
+		
+		
+    </ul>

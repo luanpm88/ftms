@@ -90,7 +90,7 @@ class UsersController < ApplicationController
   def destroy
     authorize! :manage, User
     
-    @user.destroy
+    # @user.destroy
     respond_to do |format|
       format.html { redirect_to users_url(tab_page: 1) }
       format.json { head :no_content }

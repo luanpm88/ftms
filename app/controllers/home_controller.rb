@@ -3,6 +3,10 @@ class HomeController < ApplicationController
     #code
   end
   
+  def main_menu
+    render layout: nil
+  end
+  
   def close_tab
     if params[:contact_id].present?
       @contact = Contact.find(params[:contact_id])
