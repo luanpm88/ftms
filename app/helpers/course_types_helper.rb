@@ -22,15 +22,16 @@ module CourseTypesHelper
         group_1 += 1
       end
       
-      if can? :undo_delete, item
-        actions += '<li>'+ActionController::Base.helpers.link_to('Undo Delete', {controller: "course_types", action: "undo_delete", id: item.id, tab_page: 1}, title: "#{item.short_name}: Undo Delete", class: "approve_link")+'</li>'
-        group_1 += 1
-      end
+      
       
       actions += '<li class="divider"></li>' if group_1 > 0
       
       if can? :delete, item
         actions += '<li>'+ActionController::Base.helpers.link_to('Delete', {controller: "course_types", action: "delete", id: item.id, tab_page: 1}, title: "#{item.short_name}: Delete", class: "approve_link")+'</li>'        
+      end
+      
+      if can? :undo_delete, item
+        actions += '<li>'+ActionController::Base.helpers.link_to('Undo Delete', {controller: "course_types", action: "undo_delete", id: item.id, tab_page: 1}, title: "#{item.short_name}: Undo Delete", class: "approve_link")+'</li>'
       end
       
       

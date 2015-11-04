@@ -23,10 +23,7 @@ module TransfersHelper
         group_1 += 1
       end
       
-      if can? :undo_delete, item
-        actions += '<li>'+ActionController::Base.helpers.link_to('Undo Delete', {controller: "transfers", action: "undo_delete", id: item.id, tab_page: 1}, title: "#{item.contact.name}: Transfer Undo Delete", class: "approve_link")+'</li>'
-        group_1 += 1
-      end
+      
       
       actions += '<li class="divider"></li>' if group_1 > 0
       
@@ -59,6 +56,10 @@ module TransfersHelper
       
       if can? :delete, item
         actions += '<li>'+ActionController::Base.helpers.link_to('Delete', {controller: "transfers", action: "delete", id: item.id, tab_page: 1}, title: "Transfer: Delete", class: "approve_link")+'</li>'        
+      end
+      
+      if can? :undo_delete, item
+        actions += '<li>'+ActionController::Base.helpers.link_to('Undo Delete', {controller: "transfers", action: "undo_delete", id: item.id, tab_page: 1}, title: "#{item.contact.name}: Transfer Undo Delete", class: "approve_link")+'</li>'
       end
       
       actions += '</ul></div></div>'

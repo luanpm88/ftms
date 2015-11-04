@@ -22,10 +22,7 @@ module CourseRegistersHelper
         group_1 += 1
       end
       
-      if can? :undo_delete, item
-        actions += '<li>'+ActionController::Base.helpers.link_to('Undo Delete', {controller: "course_registers", action: "undo_delete", id: item.id, tab_page: 1}, title: "#{item.contact.display_name}: Undo Delete", class: "approve_link")+'</li>'
-        group_1 += 1
-      end
+      
       
       actions += '<li class="divider"></li>' if group_1 > 0
       
@@ -68,6 +65,10 @@ module CourseRegistersHelper
       
       if can? :delete, item
         actions += '<li>'+ActionController::Base.helpers.link_to('Delete', {controller: "course_registers", action: "delete", id: item.id, tab_page: 1}, title: "Course Register: Delete", class: "approve_link")+'</li>'        
+      end
+      
+      if can? :undo_delete, item
+        actions += '<li>'+ActionController::Base.helpers.link_to('Undo Delete', {controller: "course_registers", action: "undo_delete", id: item.id, tab_page: 1}, title: "#{item.contact.display_name}: Undo Delete", class: "approve_link")+'</li>'
       end
       
       #
