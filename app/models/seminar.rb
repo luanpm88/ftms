@@ -250,6 +250,7 @@ class Seminar < ActiveRecord::Base
       bg += "Creator: #{user.name.to_s}\n"
       bg += "University: #{row["University"].to_s.strip}\n" if row["University"].present?
       bg += "Major: #{row["Major"].to_s.strip}\n" if row["Major"].present?
+      bg += "Major: #{row["Major "].to_s.strip}\n" if row["Major "].present?
       bg += "Year: #{row["Year"].to_s.strip}\n" if row["Year"].present?
       
       item = {name: row["Fullname"], company: row["Company"], mobile: row["Mobile"], email: row["Email"], present: row["Status"], background: bg}
