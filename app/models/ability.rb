@@ -386,13 +386,13 @@ class Ability
       ## COURSE REGISTER
       can :approved, CourseRegister
       can :approve_new, CourseRegister do |c|
-        c.statuses.include?("new_pending") && c.current.user.lower?("education_consultant")
+        c.statuses.include?("new_pending") && c.account_manager  == user && c.current.user.lower?("education_consultant")
       end
       can :approve_update, CourseRegister do |c|
-        c.statuses.include?("update_pending") && c.current.user.lower?("education_consultant")
+        c.statuses.include?("update_pending") && c.account_manager  == user && c.current.user.lower?("education_consultant")
       end
       can :approve_delete, CourseRegister do |c|
-        c.statuses.include?("delete_pending") && c.current.user.lower?("education_consultant")
+        c.statuses.include?("delete_pending") && c.account_manager  == user && c.current.user.lower?("education_consultant")
       end
       can :approve_all, CourseRegister
       

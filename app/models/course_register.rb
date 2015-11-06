@@ -233,6 +233,10 @@ class CourseRegister < ActiveRecord::Base
    
     ########## END REVISION-FEATURE #########################
     
+    if params["user"].present?
+      @records = @records.where(account_manager_id: params["user"])
+    end
+    
     return @records
   end
   

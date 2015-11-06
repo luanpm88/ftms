@@ -1213,7 +1213,7 @@ class Contact < ActiveRecord::Base
   def update_bases(bases)
     result = []
     bases.each do |row|
-      if row[1]["course_type_id"].present? || row[1]["name"].present? || row[1]["password"].present?
+      if row[1]["course_type_id"].present? || row[1]["name"].present? || row[1]["password"].present? || row[1]["status"].present?
         item = {}
         item[:course_type_id] = row[1]["course_type_id"]
         item[:status] = row[1]["status"]
@@ -1294,8 +1294,8 @@ class Contact < ActiveRecord::Base
         self.set_statuses(["active"])
       else
         # check if the contact is student
-        if is_individual?        
-          self.add_status("update_pending") if !self.has_status("new_pending")
+        if is_individual?
+          self.add_status("update_pending") if !self.has_status("new_pending") && is_changed?
           
           # check if education consultant peding
           if self.account_manager != self.current.account_manager
@@ -1307,7 +1307,23 @@ class Contact < ActiveRecord::Base
     end
     
     self.check_statuses
-  end  
+  end
+  
+  def is_changed?
+    is_changed = false
+    if is_individual != older.is_individual ||
+        contact_types.order("id").map(&:id).join(",") != older.contact_types.order("id").map(&:id).join(",") ||
+        (image.file.nil? ^ older.image.file.nil? || (!image.file.nil? && !older.image.file.nil? &&image.file.size != older.image.file.size)) ||
+        name != older.name ||
+        account_manager_id != account_manager_id ||
+        bases != older.bases ||
+        contact_tags.order("id").map(&:id).join(",") != older.contact_tags.order("id").map(&:id).join(",") ||
+        (contact_types.include?(ContactType.inquiry) && course_types.order("id").map(&:id).join(",") != older.course_types.order("id").map(&:id).join(",")) ||
+        (contact_types.include?(ContactType.lecturer) && lecturer_course_types.order("id").map(&:id).join(",") != older.lecturer_course_types.order("id").map(&:id).join(","))
+      is_changed = true
+    end
+    return is_changed
+  end
   
   def statuses
     status.to_s.split("][").map {|s| s.gsub("[","").gsub("]","")}
