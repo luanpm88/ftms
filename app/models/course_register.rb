@@ -610,7 +610,7 @@ class CourseRegister < ActiveRecord::Base
     
     # check if stock no price
     books_contacts.each do |bc|
-      if bc.cc.price == -1
+      if bc.price == -1
         return true
       end      
     end
