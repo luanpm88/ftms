@@ -1508,7 +1508,7 @@ class Contact < ActiveRecord::Base
       drafts = drafts.select{|c| c.contact_types.order("name").map(&:name).join("") != self.contact_types.order("name").map(&:name).join("")}
     else
       value = value.nil? ? self[type] : value
-      drafts = drafts.where("#{type} IS NOT NUll AND #{type} != ?", value)
+      drafts = drafts.where("#{type} IS NOT NUll", value)
     end    
     
     return drafts
