@@ -2018,7 +2018,7 @@ class Contact < ActiveRecord::Base
     end
     
     # add default program id    
-    if old_student.student_acca_no.present?
+    if old_student.student_acca_no.present? or ct.present?
         arr = self.bases.present? ? JSON.parse(self.bases) : []
         
         item = {}
