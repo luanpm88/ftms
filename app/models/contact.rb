@@ -1491,10 +1491,10 @@ class Contact < ActiveRecord::Base
     
     if self.draft?
       drafts = self.draft_for_contact.drafts #.where("contacts.status LIKE ?","%[active]%")
-      drafts = drafts.where("created_at > ?", self.created_at)
+      drafts = drafts.where("created_at >= ?", self.created_at)
     else
       drafts = self.drafts
-      drafts = drafts.where("created_at < ?", self.current.created_at) if self.current.present?    
+      drafts = drafts.where("created_at <= ?", self.current.created_at) if self.current.present?    
       # drafts = drafts.where("created_at >= ?", self.active_older.created_at) if !self.active_older.nil?
     end
     
