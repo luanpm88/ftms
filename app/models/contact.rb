@@ -1494,7 +1494,7 @@ class Contact < ActiveRecord::Base
       drafts = drafts.where("created_at >= ?", self.created_at)
     else
       drafts = self.drafts
-      drafts = drafts.where("created_at <= ?", self.current.created_at) if self.current.present?    
+      # drafts = drafts.where("created_at <= ?", self.current.created_at) if self.current.present?    
       # drafts = drafts.where("created_at >= ?", self.active_older.created_at) if !self.active_older.nil?
     end
     
