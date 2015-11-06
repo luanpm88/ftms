@@ -376,13 +376,13 @@ class CourseRegister < ActiveRecord::Base
   end
   
   def total_col
-    no_price? ? "No price!" : ApplicationController.helpers.format_price(total)
+    is_no_price? ? "No price!" : ApplicationController.helpers.format_price(total)
   end
   def paid_col
-    no_price? ? "No price!" : ApplicationController.helpers.format_price(paid_amount)
+    is_no_price? ? "No price!" : ApplicationController.helpers.format_price(paid_amount)
   end
   def remain_col
-    no_price? ? "No price!" : ApplicationController.helpers.format_price(remain_amount)
+    is_no_price? ? "No price!" : ApplicationController.helpers.format_price(remain_amount)
   end
   
   def paid_on
@@ -598,6 +598,24 @@ class CourseRegister < ActiveRecord::Base
       total += p.total
     end
     return total #records.sum(:amount)
+  end
+  
+  def is_no_price?
+    # check if course no price
+    contacts_courses.each do |cc|
+      if cc.price == -1
+        return true
+      end      
+    end
+    
+    # check if stock no price
+    books_contacts.each do |bc|
+      if bc.price == -1
+        return true
+      end      
+    end
+    
+    return false
   end
   
   def no_price?
