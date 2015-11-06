@@ -300,7 +300,7 @@ class CourseRegister < ActiveRecord::Base
   
   def display_amounts
     str = []
-    if no_price? && total == 0.0
+    if is_no_price? && total == 0.0
       "No price!"
     else
       '<label class="col_label top0">Total:</label>'+ApplicationController.helpers.format_price(total)+"<label class=\"col_label top0\">Paid:</label>"+ApplicationController.helpers.format_price(paid_amount)+"<label class=\"col_label top0\">Receivable:</label>"+ApplicationController.helpers.format_price(remain_amount)
