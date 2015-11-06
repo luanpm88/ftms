@@ -1508,13 +1508,10 @@ class Contact < ActiveRecord::Base
       drafts = drafts.select{|c| c.contact_types.order("name").map(&:name).join("") != self.contact_types.order("name").map(&:name).join("")}
     else
       value = value.nil? ? self[type] : value
-      drafts = drafts.where("#{type} IS NOT NUll AND #{type} != ?", value)
+      drafts = drafts.where("#{type} IS NOT NUll AND (#{type} != ? OR contacts.id = #{self.current.id})", value)
     end    
-    aa = [self.current]
-    drafts.each do |i|
-      aa << i
-    end
-    return aa
+    
+    return (drafts.count > 1) ? drafts : []
   end
   
   def self.status_options
