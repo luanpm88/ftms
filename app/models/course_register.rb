@@ -603,14 +603,14 @@ class CourseRegister < ActiveRecord::Base
   def no_price?
     # check if course no price
     contacts_courses.each do |cc|
-      if cc.no_price?
+      if cc.price == -1
         return true
       end      
     end
     
     # check if stock no price
     books_contacts.each do |bc|
-      if bc.no_price?
+      if bc.cc.price == -1
         return true
       end      
     end
