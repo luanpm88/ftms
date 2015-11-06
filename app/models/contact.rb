@@ -1984,7 +1984,7 @@ class Contact < ActiveRecord::Base
       contact_types << ContactType.inquiry if !contact_types.include?(ContactType.inquiry)
       program_name = old_student.student_type.strip.downcase.scan(/(.*?)(#{inquiry_partten})/)[0][0].strip
       ct = CourseType.main_course_types.where("course_types.status IS NOT NULL AND course_types.status NOT LIKE ?", "%[deleted]%").where("LOWER(short_name) = '#{program_name}'").first
-      
+
       # create course type
       if ct.nil?
         ct = CourseType.create(short_name: program_name.upcase, name: program_name.upcase)
@@ -1992,9 +1992,9 @@ class Contact < ActiveRecord::Base
         uu = User.where(:email => "admin@ftmsglobal.edu.vn").first
         uu = User.first if uu.nil?
         ct.save_draft(uu)
-      end      
-      
-      course_types << ct if !ct.nil?
+      end
+
+      course_types << ct if !ct.nil? and !course_types.include?(ct)
     else
       program_name = is_completed ? old_student.student_type.strip.downcase.scan(/(.*?)(#{partten})/)[0][0].strip : old_student.student_type.strip.downcase
       ct = CourseType.main_course_types.where("course_types.status IS NOT NULL AND course_types.status NOT LIKE ?", "%[deleted]%").where("LOWER(short_name) = '#{program_name}'").first
@@ -2137,7 +2137,7 @@ class Contact < ActiveRecord::Base
     str = ["<div class=\"display_bases\"><div class=\"col_label\">Online #ID:</div>"]
     base_items.each do |item|
       prodgram_name = item["course_type"].id.nil? ? "" : item["course_type"].short_name+"-"
-      str << "<hr style=\"margin:3px\">"+prodgram_name+item["name"]+"-"+item["password"].to_s+"-"+item["status"].to_s
+      str << "<hr style=\"margin:3px\">"+prodgram_name+item["name"].to_s+"-"+item["password"].to_s+"-"+item["status"].to_s
     end
     str << "</div>"
     return str.join("")
