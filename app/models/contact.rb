@@ -1975,7 +1975,7 @@ class Contact < ActiveRecord::Base
           contact.update_contact_type_from_old_student
           
           contact.add_status("active")
-          uu = User.where(:email => "admin@ftmsglobal.edu.vn").first
+          uu = User.where(:email => "support@hoangkhang.com.vn").first
           uu = User.first if uu.nil?
           contact.save_draft(uu)
           contact.update_info
@@ -1999,13 +1999,15 @@ class Contact < ActiveRecord::Base
     if is_inquiry
       contact_types << ContactType.inquiry if !contact_types.include?(ContactType.inquiry)
       program_name = old_student.student_type.strip.downcase.scan(/(.*?)(#{inquiry_partten})/)[0][0].strip
+      program_name = "ENGLISH" if program_name.strip.downcase == "english for a & f"
+      program_name = "FIA" if program_name.strip.downcase == "cat"
       ct = CourseType.main_course_types.where("course_types.status IS NOT NULL AND course_types.status NOT LIKE ?", "%[deleted]%").where("LOWER(short_name) = '#{program_name}'").first
 
       # create course type
       if ct.nil?
         ct = CourseType.create(short_name: program_name.upcase, name: program_name.upcase)
         ct.add_status("new_pending")
-        uu = User.where(:email => "admin@ftmsglobal.edu.vn").first
+        uu = User.where(:email => "support@hoangkhang.com.vn").first
         uu = User.first if uu.nil?
         ct.save_draft(uu)
       end
@@ -2013,13 +2015,15 @@ class Contact < ActiveRecord::Base
       course_types << ct if !ct.nil? and !course_types.include?(ct)
     else
       program_name = is_completed ? old_student.student_type.strip.downcase.scan(/(.*?)(#{partten})/)[0][0].strip : old_student.student_type.strip.downcase
+      program_name = "ENGLISH" if program_name.strip.downcase == "english for a & f"
+      program_name = "FIA" if program_name.strip.downcase == "cat"
       ct = CourseType.main_course_types.where("course_types.status IS NOT NULL AND course_types.status NOT LIKE ?", "%[deleted]%").where("LOWER(short_name) = '#{program_name}'").first
       
       # create course type
       if ct.nil?
         ct = CourseType.create(short_name: program_name.upcase, name: program_name.upcase)
         ct.add_status("new_pending")
-        uu = User.where(:email => "admin@ftmsglobal.edu.vn").first
+        uu = User.where(:email => "support@hoangkhang.com.vn").first
         uu = User.first if uu.nil?
         ct.save_draft(uu)
       end   
@@ -2157,6 +2161,47 @@ class Contact < ActiveRecord::Base
     end
     str << "</div>"
     return str.join("")
+  end
+  
+  def self.migrate_program_from_old_system
+    hash = {"fia": ["cat"], "english": ["english for a & f"]}
+    hash.each do |row|
+      main_ct = CourseType.main_course_types.where("course_types.status IS NOT NULL AND course_types.status NOT LIKE ?", "%[deleted]%").where("LOWER(short_name) = '#{row[0]}'").first
+      row[1].each do |old|
+        old_ct = CourseType.main_course_types.where("course_types.status IS NOT NULL AND course_types.status NOT LIKE ?", "%[deleted]%").where("LOWER(short_name) = '#{old}'").first
+        if old_ct.present? && main_ct.present?     
+          old_ct.set_statuses(["deleted"])
+          uu = User.where(:email => "support@hoangkhang.com.vn").first
+          uu = User.first if uu.nil?
+          old_ct.save_draft(uu)
+          
+          # Update Contact Course Types
+          Contact.all.each do |c|
+            if c.course_types.include?(old_ct)
+              ccs = c.course_types.where.not(id: old_ct.id)
+              ccs << main_ct
+              c.course_types = ccs
+              c.save
+            end
+            if c.lecturer_course_types.include?(old_ct)
+              ccs = c.lecturer_course_types.where.not(id: old_ct.id)
+              ccs << main_ct
+              c.lecturer_course_types = ccs
+            end
+            
+            c.save
+            c.update_info
+          end
+          # update base
+          Contact.where("bases SIMILAR TO '%_id\":#{old_ct.id.to_s},\"status\":\"%'").each do |cc|
+            cc.bases = cc.bases.gsub(":#{old_ct.id.to_s},",":#{main_ct.id.to_s},")
+            cc.old_student_course_type_ids = cc.old_student_course_type_ids.gsub("[#{old_ct.id.to_s}]","[#{main_ct.id.to_s}]") if cc.old_student_course_type_ids.present?
+            cc.save
+            cc.update_info
+          end
+        end
+      end
+    end
   end
 
 end
