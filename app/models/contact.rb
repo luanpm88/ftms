@@ -171,6 +171,7 @@ class Contact < ActiveRecord::Base
     self.update_cache_courses
     self.update_cache_phrases
     self.update_cache_search
+    self.check_bases
   end
   
   def check_type
@@ -431,7 +432,7 @@ class Contact < ActiveRecord::Base
               '<div class="text-center contact_tag_box" rel="'+item.id.to_s+'">'+ContactsController.helpers.render_contact_tags_selecter(item)+"</div>",
               '<div class="text-center">'+item.created_at.strftime("%d-%b-%Y")+"<br /><strong>by:</strong><br />"+item.user.staff_col+"</div>",
               '<div class="text-center">'+item.account_manager_col+"</div>",
-              '<div class="text-center">'+item.display_statuses+item.display_bases+"</div>",
+              '<div class="text-center">'+item.display_statuses+item.display_bases("<br />")+"</div>",
               '',
             ]
       data << item
@@ -1311,16 +1312,18 @@ class Contact < ActiveRecord::Base
   
   def is_changed?
     is_changed = false
-    if is_individual != older.is_individual ||
-        contact_types.order("id").map(&:id).join(",") != older.contact_types.order("id").map(&:id).join(",") ||
-        (image.file.nil? ^ older.image.file.nil? || (!image.file.nil? && !older.image.file.nil? &&image.file.size != older.image.file.size)) ||
-        name != older.name ||
-        account_manager_id != account_manager_id ||
-        bases != older.bases ||
-        contact_tags.order("id").map(&:id).join(",") != older.contact_tags.order("id").map(&:id).join(",") ||
-        (contact_types.include?(ContactType.inquiry) && course_types.order("id").map(&:id).join(",") != older.course_types.order("id").map(&:id).join(",")) ||
-        (contact_types.include?(ContactType.lecturer) && lecturer_course_types.order("id").map(&:id).join(",") != older.lecturer_course_types.order("id").map(&:id).join(","))
-      is_changed = true
+    if older.present?
+      if is_individual != older.is_individual ||
+          contact_types.order("id").map(&:id).join(",") != older.contact_types.order("id").map(&:id).join(",") ||
+          (image.file.nil? ^ older.image.file.nil? || (!image.file.nil? && !older.image.file.nil? &&image.file.size != older.image.file.size)) ||
+          name != older.name ||
+          account_manager_id != account_manager_id ||
+          bases != older.bases ||
+          contact_tags.order("id").map(&:id).join(",") != older.contact_tags.order("id").map(&:id).join(",") ||
+          (contact_types.include?(ContactType.inquiry) && course_types.order("id").map(&:id).join(",") != older.course_types.order("id").map(&:id).join(",")) ||
+          (contact_types.include?(ContactType.lecturer) && lecturer_course_types.order("id").map(&:id).join(",") != older.lecturer_course_types.order("id").map(&:id).join(","))
+        is_changed = true
+      end
     end
     return is_changed
   end
@@ -2152,12 +2155,14 @@ class Contact < ActiveRecord::Base
     self.update_attribute(:no_related_ids, "["+aa.join("][")+"]")
   end
   
-  def display_bases
+  def display_bases(divider="-")
     return "" if base_items.empty?
     str = ["<div class=\"display_bases\"><div class=\"col_label\">Online #ID:</div>"]
     base_items.each do |item|
-      prodgram_name = item["course_type"].id.nil? ? "" : item["course_type"].short_name+"-"
-      str << "<hr style=\"margin:3px\">"+prodgram_name+item["name"].to_s+"-"+item["password"].to_s+"-"+item["status"].to_s
+      prodgram_name = item["course_type"].id.nil? ? "" : item["course_type"].short_name+divider
+      pass = !item["password"].present? ? "" : item["password"].to_s+divider
+      vname = !item["name"].present? ? "" : item["name"].to_s+divider
+      str << "<hr style=\"margin:3px\">"+prodgram_name+vname+pass+item["status"].to_s
     end
     str << "</div>"
     return str.join("")
@@ -2203,5 +2208,25 @@ class Contact < ActiveRecord::Base
       end
     end
   end
+  
+  def check_bases
+    currents = base_items.map {|item| item["course_type"]}
+    arr = base_items
+    joined_course_types.each do |jct|      
+      if !currents.include?(jct)
+        b = {}
+        b[:course_type_id] = jct.id
+        b[:status] = "in_progress"
+        b[:name] = ""
+        b[:password] = ""
+        
+        arr << b
+      end     
+    end
+    
+    self.update_attribute(:bases, arr.to_json)
+  end
+  
+  
 
 end

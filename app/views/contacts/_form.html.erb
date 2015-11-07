@@ -746,13 +746,27 @@
 												  </div>
 												 
 												 <div class="form-group">
-													  <label class="form-label"><%= f.label :background %></label>
+													  <label class="form-label"><%= f.label :background %> <span class="nowrap time-span" style="display: inline"><%= @contact.created_at.strftime("%d-%b-%Y, %I:%M %p") %>, by <%= @contact.user.name if @contact.user.present? %></span></label>
 													  <span class="help"></span>
-													  <%= render "field_history", drafts: @contact.field_history("note"), type: "note" %>
 													  <div class="input-with-icon  right">                                       
 															  <i class=""></i>
 															  <%= f.text_area :note, :class => "form-control", style: "height: 160px" %>
 													  </div>
+													  <% if !@contact.drafts.empty? %>															
+															<ul class="history-list">
+															  <% value = "-1" %>
+															  <% @contact.drafts.order("created_at DESC").each do |c| %>
+																
+																<% if c != @contact.current && value != c.note && c.note.present? %>
+																  <li><%= c.note %> <span class="nowrap time-span"><%= c.created_at.strftime("%d-%b-%Y, %I:%M %p") %>, by <%= c.user.name if c.user.present? %></span></li>
+																<% end %>
+																
+																
+																<% value = c.note %>
+															  <% end %>
+															</ul>
+													  <% end %>
+													  
 												 </div>
 												 
 											</div>
