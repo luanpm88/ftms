@@ -142,6 +142,7 @@ class Ability
       can :transfer_course, Course
       can :course_phrases_list, Course
       can :report_toggle, Course
+      can :transfer_to_box, Course
       
       
       
@@ -476,8 +477,7 @@ class Ability
       end
       can :approve_delete, Course do |c|
         c.statuses.include?("delete_pending")
-      end
-      can :transfer_to_box, Course
+      end      
       can :undo_delete, Course do |c|
         c.statuses.include?("delete_pending")
       end
