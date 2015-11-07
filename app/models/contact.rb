@@ -171,6 +171,7 @@ class Contact < ActiveRecord::Base
     self.update_cache_courses
     self.update_cache_phrases
     self.update_cache_search
+    self.update_cache_transferred_courses_phrases
     self.check_bases
   end
   
@@ -333,11 +334,11 @@ class Contact < ActiveRecord::Base
         @records = @records.where("contacts.status LIKE ?","%[#{params[:status]}]%")
       end
     end
-    
-    if params["created_from"].present?      
+
+    if params["created_from"].present?
       @records = @records.where("created_at >= ?", params["created_from"].to_date.beginning_of_day)
     end
-    if params["created_to"].present?      
+    if params["created_to"].present?
       @records = @records.where("created_at <= ?", params["created_to"].to_date.end_of_day)
     end
     if params["payment_type"].present?      
@@ -408,6 +409,9 @@ class Contact < ActiveRecord::Base
     else
       order = "contacts.name"
     end
+    if params[:courses].present?
+      order = "cache_transferred_courses_phrases, "+order
+    end    
     @records = @records.order(order) if !order.nil? && !params["search"]["value"].present?
     
     total = @records.count
@@ -1942,6 +1946,11 @@ class Contact < ActiveRecord::Base
   
   def update_cache_phrases
     self.update_attribute(:cache_phrases, "["+real_phrase_ids.join("][")+"]")
+  end
+  
+  def update_cache_transferred_courses_phrases
+    #"["+transferred_courses_phrases.map(&:id).join("][")+"]"
+    self.update_attribute(:cache_transferred_courses_phrases, "["+transferred_courses_phrases.map(&:id).join("][")+"]")
   end
 
   def self.import_contact_from_old_student

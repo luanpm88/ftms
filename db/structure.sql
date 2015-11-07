@@ -612,7 +612,8 @@ CREATE TABLE contacts (
     related_id integer,
     cache_phrases text,
     no_related_ids text,
-    old_student_course_type_ids text
+    old_student_course_type_ids text,
+    cache_transferred_courses_phrases text
 );
 
 
@@ -4277,4 +4278,6 @@ INSERT INTO schema_migrations (version) VALUES ('20151104044833');
 INSERT INTO schema_migrations (version) VALUES ('20151104051628');
 
 INSERT INTO schema_migrations (version) VALUES ('20151104114200');
+
+INSERT INTO schema_migrations (version) VALUES ('20151107085510');
 

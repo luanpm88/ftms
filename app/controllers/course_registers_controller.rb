@@ -264,6 +264,8 @@ class CourseRegistersController < ApplicationController
       end
     end
     
+    @contacts = @contacts.order("cache_transferred_courses_phrases, name")
+    
     @course = params[:courses].present? ? Course.find(params[:courses]) : nil
     
     @course_register = CourseRegister.new    
