@@ -1273,9 +1273,9 @@ class Contact < ActiveRecord::Base
     if action == "create"      
       
       # admin / manager
-      if user.has_role?("manager") || user.has_role?("admin")
-        self.add_status("active")
-      else
+      #if user.has_role?("manager") || user.has_role?("admin")
+      #  self.add_status("active")
+      #else
         # check if the contact is student
         if is_individual?        
           self.add_status("new_pending")
@@ -1288,16 +1288,16 @@ class Contact < ActiveRecord::Base
           # auto active if contact is company/organization
           self.add_status("active")
         end
-      end      
+      #end      
         
     end
     
     # when update exist contact
     if action == "update"
       # admin / manager
-      if user.has_role?("manager") || user.has_role?("admin")
+      #if user.has_role?("manager") || user.has_role?("admin")
         self.set_statuses(["active"])
-      else
+      #else
         # check if the contact is student
         if is_individual?
           self.add_status("update_pending") if !self.has_status("new_pending") && is_changed?
@@ -1308,7 +1308,7 @@ class Contact < ActiveRecord::Base
           end
         else
         end
-      end
+      #end
     end
     
     self.check_statuses
@@ -1501,24 +1501,31 @@ class Contact < ActiveRecord::Base
       drafts = drafts.where("created_at >= ?", self.created_at)
     else
       drafts = self.drafts
-      # drafts = drafts.where("created_at <= ?", self.current.created_at) if self.current.present?    
-      # drafts = drafts.where("created_at >= ?", self.active_older.created_at) if !self.active_older.nil?
+      drafts = drafts.where("created_at <= ?", self.current.created_at) if self.current.present?    
+      drafts = drafts.where("created_at >= ?", self.active_older.created_at) if !self.active_older.nil?
     end
     
-    drafts = drafts.order("created_at DESC")
+    drafts = drafts.order("created_at")
     
-    if type == "inquiry_course_type"
-      drafts = drafts.select{|c| c.course_types.order("short_name").map(&:short_name).join("") != self.course_types.order("short_name").map(&:short_name).join("")}
-    elsif type == "lecturer_course_type"
-      drafts = drafts.select{|c| c.lecturer_course_types.order("short_name").map(&:short_name).join("") != self.lecturer_course_types.order("short_name").map(&:short_name).join("")}    
-    elsif type == "contact_type"
-      drafts = drafts.select{|c| c.contact_types.order("name").map(&:name).join("") != self.contact_types.order("name").map(&:name).join("")}
-    else
-      value = value.nil? ? self[type] : value
-      drafts = drafts.where("#{type} IS NOT NUll AND (#{type} != ? OR contacts.id = #{self.current.id})", value)
-    end    
+    arr = []
+    value = "-1"
+    drafts.each do |c|
+      if type == "inquiry_course_type"
+        arr << c if c.course_types.order("short_name").map(&:short_name).join("") != value        
+        value = c.course_types.order("short_name").map(&:short_name).join("")
+      elsif type == "lecturer_course_type"
+        arr << c if c.lecturer_course_types.order("short_name").map(&:short_name).join("")   != value  
+        value = c.lecturer_course_types.order("short_name").map(&:short_name).join("")        
+      elsif type == "contact_type"
+        arr << c if c.contact_types.order("name").map(&:name).join("") != value
+        value = c.contact_types.order("name").map(&:name).join("")       
+      else
+        arr << c if !c[type].nil? && c[type] != value
+        value = c[type]
+      end      
+    end
     
-    return (drafts.count > 1) ? drafts : []
+    return (arr.count > 1) ? arr : []
   end
   
   def self.status_options
@@ -2234,6 +2241,18 @@ class Contact < ActiveRecord::Base
     end
     
     self.update_attribute(:bases, arr.to_json)
+  end
+  
+  def background_logs
+    logs = []
+    value = "-1"
+    drafts.order("created_at").each do |c|
+      logs << c if value != c.note && c.note.present?
+      
+      value = c.note
+    end
+    logs = logs.sort! { |a,b| b.created_at <=> a.created_at }
+    return logs
   end
   
   

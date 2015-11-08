@@ -1,30 +1,29 @@
 <% if !drafts.empty? %>
   <i class="icon icon-time contact-field-history" rel="history-<%= type %>" onclick="$('.history-<%= type %>').toggle()"></i>
   <ul class="history-list history-<%= type %>" style="display: none">
-    <% value = "-1" %>
+
     <% drafts.each do |c| %>
       
-      <% if value != c[type] && ["name","description"].include?(type) %>
+      <% if ["name","description"].include?(type) %>
         <li><%= !c[type].present? ? "[empty]" : c[type] %> <span class="nowrap time-span"><%= c.created_at.strftime("%d-%b-%Y, %I:%M %p") %>, by <%= c.user.name if c.user.present? %></span></li>
       <% end %>
       
-      <% if value != c[type] && ["type_name"].include?(type) %>
+      <% if ["type_name"].include?(type) %>
         <li><%= c.rate_unit %> <span class="nowrap time-span"><%= c.created_at.strftime("%d-%b-%Y, %I:%M %p") %>, by <%= c.user.name if c.user.present? %></span></li>
       <% end %>
       
-      <% if value != c[type] && ["start_at","end_at"].include?(type) %>
+      <% if ["start_at","end_at"].include?(type) %>
         <li><%= !c[type].present? ? "[empty]" : c[type].strftime("%d-%b-%Y") %> <span class="nowrap time-span"><%= c.created_at.strftime("%d-%b-%Y, %I:%M %p") %>, by <%= c.user.name if c.user.present? %></span></li>
       <% end %>
       
-      <% if value != c[type] && ["rate"].include?(type) %>
+      <% if ["rate"].include?(type) %>
         <li><%= format_price(c[type]) %> <span class="nowrap time-span"><%= c.created_at.strftime("%d-%b-%Y, %I:%M %p") %>, by <%= c.user.name if c.user.present? %></span></li>
       <% end %>
       
-      <% if value != c[type] && ["course_type"].include?(type) %>
+      <% if ["course_type"].include?(type) %>
         <li><%= c.course_types.order("short_name").map(&:short_name).join(", ") %> <span class="nowrap time-span"><%= c.created_at.strftime("%d-%b-%Y, %I:%M %p") %>, by <%= c.user.name if c.user.present? %></span></li>
       <% end %>
       
-      <% value = c[type] %>
     <% end %>
   </ul>
 <% end %>

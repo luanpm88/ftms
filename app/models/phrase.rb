@@ -328,20 +328,32 @@ class Phrase < ActiveRecord::Base
     
     if self.draft?
       drafts = self.parent.drafts #.where("contacts.status LIKE ?","%[active]%")
-      drafts = drafts.where("created_at > ?", self.created_at)
+      drafts = drafts.where("created_at >= ?", self.created_at)
     else
       drafts = self.drafts
       
-      drafts = drafts.where("created_at < ?", self.current.created_at) if self.current.present?    
+      drafts = drafts.where("created_at <= ?", self.current.created_at) if self.current.present?    
       drafts = drafts.where("created_at >= ?", self.active_older.created_at) if !self.active_older.nil?    
-      drafts = drafts.order("created_at DESC")
+      drafts = drafts.order("created_at")
     end
     
-    if type == "subject"
-      drafts = drafts.select{|c| c.subjects.order("name").map(&:name).join("") != self.subjects.order("name").map(&:name).join("")}
-    else
-      value = value.nil? ? self[type] : value
-      drafts = drafts.where("#{type} IS NOT NUll AND #{type} != ?", value)
+    #if type == "subject"
+    #  drafts = drafts.select{|c| c.subjects.order("name").map(&:name).join("") != self.subjects.order("name").map(&:name).join("")}
+    #else
+    #  value = value.nil? ? self[type] : value
+    #  drafts = drafts.where("#{type} IS NOT NUll")
+    #end
+    
+    arr = []
+    value = "-1"
+    drafts.each do |c|
+      if type == "subject"
+        arr << c if c.subjects.order("name").map(&:name).join("") != value
+        value = c.subjects.order("name").map(&:name).join("")
+      else
+        arr << c if !c[type].nil? && c[type] != value
+        value = c[type]
+      end      
     end
     
     return drafts

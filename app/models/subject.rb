@@ -320,23 +320,35 @@ class Subject < ActiveRecord::Base
     
     if self.draft?
       drafts = self.parent.drafts #.where("contacts.status LIKE ?","%[active]%")
-      drafts = drafts.where("created_at > ?", self.created_at)
+      drafts = drafts.where("created_at >= ?", self.created_at)
     else
       drafts = self.drafts
       
-      drafts = drafts.where("created_at < ?", self.current.created_at) if self.current.present?    
+      drafts = drafts.where("created_at <= ?", self.current.created_at) if self.current.present?    
       drafts = drafts.where("created_at >= ?", self.active_older.created_at) if !self.active_older.nil?    
-      drafts = drafts.order("created_at DESC")
+      drafts = drafts.order("created_at")
     end
     
-    if type == "course_type"
-      drafts = drafts.select{|c| c.course_types.order("short_name").map(&:short_name).join("") != self.course_types.order("short_name").map(&:short_name).join("")}
-    else
-      value = value.nil? ? self[type] : value
-      drafts = drafts.where("#{type} IS NOT NUll AND #{type} != ?", value)
+    #if type == "course_type"
+    #  drafts = drafts.select{|c| c.course_types.order("short_name").map(&:short_name).join("") != self.course_types.order("short_name").map(&:short_name).join("")}
+    #else
+    #  value = value.nil? ? self[type] : value
+    #  drafts = drafts.where("#{type} IS NOT NUll AND #{type} != ?", value)
+    #end
+    
+    arr = []
+    value = "-1"
+    drafts.each do |c|
+      if type == "course_type"
+        arr << c if c.course_types.order("short_name").map(&:short_name).join("") != value
+        value = c.course_types.order("short_name").map(&:short_name).join("")
+      else
+        arr << c if !c[type].nil? && c[type] != value
+        value = c[type]
+      end      
     end
     
-    return drafts
+    return (arr.count > 1) ? arr : []
   end
   
   def self.status_options

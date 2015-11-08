@@ -696,27 +696,45 @@ class Book < ActiveRecord::Base
     
     if self.draft?
       drafts = self.parent.drafts #.where("contacts.status LIKE ?","%[active]%")
-      drafts = drafts.where("created_at > ?", self.created_at)
+      drafts = drafts.where("created_at >= ?", self.created_at)
     else
       drafts = self.drafts
       
-      drafts = drafts.where("created_at < ?", self.current.created_at) if self.current.present?    
+      drafts = drafts.where("created_at <= ?", self.current.created_at) if self.current.present?    
       drafts = drafts.where("created_at >= ?", self.active_older.created_at) if !self.active_older.nil?    
-      drafts = drafts.order("created_at DESC")
+      drafts = drafts.order("created_at")
     end
     
-    if type == "course_type"
-      drafts = drafts.select{|c| c.course_types.map(&:name).join("") != self.course_types.map(&:name).join("")}
-    elsif type == "subject"
-      drafts = drafts.select{|c| c.subjects.map(&:name).join("") != self.subjects.map(&:name).join("")}
-    elsif type == "book_price"
-      drafts = drafts.select{|c| self.book_price.prices != c.book_price.prices}
-    else
-      value = value.nil? ? self[type] : value
-      drafts = drafts.where("#{type} IS NOT NUll AND #{type} != ?", value)
+    #if type == "course_type"
+    #  drafts = drafts.select{|c| c.course_types.map(&:name).join("") != self.course_types.map(&:name).join("")}
+    #elsif type == "subject"
+    #  drafts = drafts.select{|c| c.subjects.map(&:name).join("") != self.subjects.map(&:name).join("")}
+    #elsif type == "book_price"
+    #  drafts = drafts.select{|c| self.book_price.prices != c.book_price.prices}
+    #else
+    #  value = value.nil? ? self[type] : value
+    #  drafts = drafts.where("#{type} IS NOT NUll AND #{type} != ?", value)
+    #end
+    
+    arr = []
+    value = "-1"
+    drafts.each do |c|
+      if type == "course_type"
+        arr << c if c.course_types.map(&:name).join("") != value
+        value = c.course_types.map(&:name).join("")        
+      elsif type == "subject"
+        arr << c if c.subjects.map(&:name).join("") != value
+        value = c.subjects.map(&:name).join("")        
+      elsif type == "book_price"
+        arr << c if self.book_price.prices != value
+        value = self.book_price.prices
+      else
+        arr << c if !c[type].nil? && c[type] != value
+        value = c[type]
+      end
     end
     
-    return drafts
+    return (arr.count > 1) ? arr : []
   end
   
   def self.status_options

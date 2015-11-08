@@ -671,28 +671,46 @@ class Course < ActiveRecord::Base
     
     if self.draft?
       drafts = self.parent.drafts #.where("contacts.status LIKE ?","%[active]%")
-      drafts = drafts.where("created_at > ?", self.created_at)
+      drafts = drafts.where("created_at >= ?", self.created_at)
     else
       drafts = self.drafts
-      drafts = drafts.where("created_at < ?", self.current.created_at) if self.current.present?    
+      drafts = drafts.where("created_at <= ?", self.current.created_at) if self.current.present?    
       drafts = drafts.where("created_at >= ?", self.active_older.created_at) if !self.active_older.nil?    
-      drafts = drafts.order("created_at DESC")
+      drafts = drafts.order("created_at")
     end
     
-    if type == "program_paper"
-      drafts = drafts.select {|u| u.course_type_id != self.course_type_id || u.subject_id != self.subject_id}
-    elsif type == "for_exam"
-      drafts = drafts.select{|c| c.for_exam_year != self.for_exam_year || c.for_exam_month != self.for_exam_month}
-    elsif type == "course_price"
-      drafts = drafts.select{|c| self.course_price.prices != c.course_price.prices}
-    elsif type == "phrases"
-      
-    else
-      value = value.nil? ? self[type] : value
-      drafts = drafts.where("#{type} IS NOT NUll AND #{type} != ?", value)
+    #if type == "program_paper"
+    #  drafts = drafts.select {|u| u.course_type_id != self.course_type_id || u.subject_id != self.subject_id}
+    #elsif type == "for_exam"
+    #  drafts = drafts.select{|c| c.for_exam_year != self.for_exam_year || c.for_exam_month != self.for_exam_month}
+    #elsif type == "course_price"
+    #  drafts = drafts.select{|c| self.course_price.prices != c.course_price.prices}
+    #elsif type == "phrases"
+    #  
+    #else
+    #  value = value.nil? ? self[type] : value
+    #  drafts = drafts.where("#{type} IS NOT NUll")
+    #end
+    
+    arr = []
+    value = "-1"
+    drafts.each do |c|
+      if type == "program_paper"
+        arr << c if c.course_type_id.to_s+"="+c.subject_id.to_s != value
+        value = c.course_type_id.to_s+"="+c.subject_id.to_s
+      elsif type == "for_exam"
+        arr << c if c.for_exam_year.to_s+"="+c.for_exam_month.to_s != value
+        value = c.for_exam_year.to_s+"="+c.for_exam_month.to_s
+      elsif type == "course_price"
+        arr << c if c.course_price.prices
+        value = c.course_price.prices
+      else
+        arr << c if !c[type].nil? && c[type] != value
+        value = c[type]
+      end      
     end
     
-    return drafts
+    return (arr.count > 1) ? arr : []
   end
   
   def self.status_options
