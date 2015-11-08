@@ -748,7 +748,7 @@
 												 <div class="form-group">
 													  <label class="form-label"><%= f.label :background %>
 													  <% if !@contact.background_logs.empty? %>
-															<span class="nowrap time-span" style="display: inline"><%= @contact.background_logs.first.created_at.strftime("%d-%b-%Y, %I:%M %p") %>, by <%= @contact.background_logs.first.user.name if @contact.background_logs.first.user.present? %></span>
+															<span class="nowrap time-span" style="display: inline"><%= @contact.background_logs[:last].created_at.strftime("%d-%b-%Y, %I:%M %p") %>, by <%= @contact.background_logs[:last].user.name if @contact.background_logs[:last].user.present? %></span>
 													  <% end %>
 													  </label>
 													  <span class="help"></span>
@@ -756,10 +756,10 @@
 															  <i class=""></i>
 															  <%= f.text_area :note, :class => "form-control", style: "height: 160px" %>
 													  </div>
-													  <% if !@contact.background_logs.empty? %>															
+													  <% if !@contact.background_logs[:logs].empty? %>															
 															<ul class="history-list">
 															  
-																  <% @contact.background_logs.each do |c| %>
+																  <% @contact.background_logs[:logs].each do |c| %>
 																		<li><%= c.note %> <span class="nowrap time-span"><%= c.created_at.strftime("%d-%b-%Y, %I:%M %p") %>, by <%= c.user.name if c.user.present? %></span></li>
 																  <% end %>
 

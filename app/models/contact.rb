@@ -2252,7 +2252,9 @@ class Contact < ActiveRecord::Base
       value = c.note
     end
     logs = logs.sort! { |a,b| b.created_at <=> a.created_at }
-    return logs
+    last = logs.first
+    logs = logs[1..-1]
+    return {logs: logs, last: last}
   end
   
   
