@@ -22,6 +22,10 @@
       <% if ["stock_type_id"].include?(type) %>
         <li><%= c.stock_type.name %> <span class="nowrap time-span"><%= c.created_at.strftime("%d-%b-%Y, %I:%M %p") %>, by <%= c.user.name %></span></li>
       <% end %>
+      
+      <% if ["valid_from","valid_to"].include?(type) %>
+        <li><%= c[type].strftime("%d-%b-%Y") %> <span class="nowrap time-span"><%= c.created_at.strftime("%d-%b-%Y, %I:%M %p") %>, by <%= c.user.name %></span></li>
+      <% end %>
     <% end %>
   </ul>
 <% end %>
