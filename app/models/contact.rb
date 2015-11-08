@@ -410,7 +410,7 @@ class Contact < ActiveRecord::Base
       order = "contacts.name"
     end
     if params[:courses].present?
-      order = "cache_transferred_courses_phrases, "+order
+      order = "cache_transferred_courses_phrases DESC, "+order
     end    
     @records = @records.order(order) if !order.nil? && !params["search"]["value"].present?
     
