@@ -1070,6 +1070,12 @@ class Contact < ActiveRecord::Base
             .order("created_at ASC")
   end
   
+  def main_all_transfers
+    Transfer.where("transfers.parent_id IS NULL AND transfers.status IS NOT NULL AND (transfers.status LIKE ? OR transfers.status LIKE ?)", "%[active]%", "%[new_pending]%")
+            .where("transfers.contact_id = ? OR transfers.to_contact_id = ?", self.id, self.id)
+            .order("created_at ASC")
+  end
+  
   def transfer_count
     active_all_transfers.count
   end
@@ -1750,7 +1756,7 @@ class Contact < ActiveRecord::Base
     account_manager.nil? ? "" : account_manager.staff_col
   end
   
-  def active_courses_with_phrases(datetime=nil)
+  def active_courses_with_phrases(datetime=nil, type="active")
     origin = []
     accs = active_contacts_courses
     accs = accs.where("course_registers.created_at <= ?", datetime) if !datetime.nil?
@@ -1771,7 +1777,11 @@ class Contact < ActiveRecord::Base
     end
     
     # transferred to others
-    transfers = active_all_transfers
+    if type = "main"
+      transfers = main_all_transfers
+    else
+      transfers = active_all_transfers
+    end
     transfers = transfers.where("transfers.created_at <= ?", datetime) if !datetime.nil?
     transfers.each do |transfer|
       
@@ -2114,7 +2124,7 @@ class Contact < ActiveRecord::Base
     res_cps = CoursesPhrase.where(id: res_cp_ids)
     
     active_cps = []
-    (self.active_courses_with_phrases.map{|r| r[:courses_phrases]}).each do |cps|
+    (self.active_courses_with_phrases(nil, "main").map{|r| r[:courses_phrases]}).each do |cps|
       active_cps += cps
     end
     
