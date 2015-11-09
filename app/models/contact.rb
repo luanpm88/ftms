@@ -2253,7 +2253,7 @@ class Contact < ActiveRecord::Base
     end
     logs = logs.sort! { |a,b| b.created_at <=> a.created_at }
     last = logs.first
-    logs = logs[1..-1] if !logs.empty?
+    #logs = logs[1..-1] if !logs.empty?
     return {logs: logs, last: last}
   end
   
