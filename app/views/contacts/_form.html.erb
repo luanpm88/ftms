@@ -747,7 +747,7 @@
 												 
 												 <div class="form-group">
 													  <label class="form-label"><%= f.label :background %>
-													  <% if !@contact.background_logs.empty? %>
+													  <% if !@contact.background_logs[:logs].empty? %>
 															<span class="nowrap time-span" style="display: inline"><%= @contact.background_logs[:last].created_at.strftime("%d-%b-%Y, %I:%M %p") %>, by <%= @contact.background_logs[:last].user.name if @contact.background_logs[:last].user.present? %></span>
 													  <% end %>
 													  </label>
