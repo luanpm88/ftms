@@ -2195,7 +2195,7 @@ class Contact < ActiveRecord::Base
   end
   
   def self.migrate_program_from_old_system
-    hash = {"fia": ["cat"], "english": ["english for a & f"]}
+    hash = {"fia" => ["cat"], "english" => ["english for a & f"]}
     hash.each do |row|
       main_ct = CourseType.main_course_types.where("course_types.status IS NOT NULL AND course_types.status NOT LIKE ?", "%[deleted]%").where("LOWER(short_name) = '#{row[0]}'").first
       row[1].each do |old|
