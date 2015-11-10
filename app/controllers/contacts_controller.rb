@@ -307,7 +307,7 @@ class ContactsController < ApplicationController
   end
 
   def merge_contacts
-    Contact.find_related_contacts
+    # Contact.find_related_contacts
   end
   
   def course_students

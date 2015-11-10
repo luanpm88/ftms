@@ -382,7 +382,7 @@ class Contact < ActiveRecord::Base
       @records = @records.where(city_id: cities_ids)
     end
     
-    @records = @records.search(params["search"]["value"]) if params["search"].present? && !params["search"]["value"].empty?
+    @records = @records.where("LOWER(contacts.cache_search) LIKE ?", "%#{params["search"]["value"].strip.downcase}%")  if params["search"].present? && !params["search"]["value"].empty? #.search(params["search"]["value"])
     
     return @records
   end
@@ -906,7 +906,7 @@ class Contact < ActiveRecord::Base
       line += "<span class=\"box_mini_info nowrap\"><i class=\"icon-phone\"></i> " + display_mobile + "</span> " if !mobile.nil? && !mobile.empty? 
     else
       line += "<span class=\"box_mini_info nowrap\"><i class=\"icon-phone\"></i> " + phone + "</span> " if !phone.nil? && !phone.empty?
-      line += "<span class=\"box_mini_info nowrap\"><i class=\"icon-envelope\"></i> " + email + "</span> " if !email.nil? && !email.empty?
+      line += "<span class=\"box_mini_info\"><i class=\"icon-envelope\"></i> " + email + "</span> " if !email.nil? && !email.empty?
       line += "Tax Code " + tax_code + "</span><br />" if tax_code.present?
     end
     line += "<div class=\"address_info_line\"><i class=\"icon-truck\"></i> " + address + "</div>" if address.present?
@@ -1934,6 +1934,10 @@ class Contact < ActiveRecord::Base
     str << "0" + mobile.to_s.gsub(/^84/,"")
     str << phone.to_s.gsub(/^84/,"")
     str << "0" + phone.to_s.gsub(/^84/,"")
+    str << email.to_s
+    str << email_2.to_s
+    str << address.to_s
+    str << birthday.strftime("%d-%b-%Y") if birthday.present?
     str << referrer.name if !referrer.nil?
     str << display_bases.to_s
     
