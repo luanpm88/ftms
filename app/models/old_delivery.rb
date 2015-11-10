@@ -13,6 +13,5 @@ class OldDelivery < ActiveRecord::Base
 			delivery.delivery_yes = row[:DeliveryYes]
 			delivery.save
 		end
-
 	end
 end
