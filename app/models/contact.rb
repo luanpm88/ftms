@@ -1940,6 +1940,7 @@ class Contact < ActiveRecord::Base
   
   def render_cache_search
     str = []
+    str << display_name.to_s
     str << display_name.unaccent
     str << "[search_name: "+name.unaccent.downcase+" ]"
     str << "[tag:"+(contact_tags.map {|ct| ct.name}).join("][tag:")+"]"
