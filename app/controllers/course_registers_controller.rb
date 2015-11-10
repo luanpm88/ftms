@@ -280,6 +280,7 @@ class CourseRegistersController < ApplicationController
       @course_register.contact_id = cid
       @course_register.update_books_contacts(params[:books_contacts]) if !params[:books_contacts].nil?      
       @course_register.account_manager_id = Contact.find(cid).account_manager
+      @course_register.account_manager = Contact.find(cid).account_manager
       
       if !@course_register.books_contacts.empty?
         @course_register.save
