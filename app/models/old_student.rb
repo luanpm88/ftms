@@ -11,7 +11,7 @@ class OldStudent < ActiveRecord::Base
 			student.consultant_id = row[:CounsultantID]
 			student.student_name = row[:StudentName]
 			student.student_title = row[:StudentTitle]
-			student.student_birth = row[:StudentBirth].to_date
+			student.student_birth = row[:StudentBirth].to_date if !row[:StudentBirth].nil?
 			student.student_acca_no = row[:StudentACCANo]
 			student.student_company = row[:StudentCompany]
 			student.student_vat_code = row[:StudentVATCode]

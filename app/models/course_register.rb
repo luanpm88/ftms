@@ -273,15 +273,23 @@ class CourseRegister < ActiveRecord::Base
       end
       ############### END REVISION #########################
       item = [
-              "<div class=\"checkbox check-default\"><input name=\"ids[]\" id=\"checkbox#{item.id}\" type=\"checkbox\" value=\"#{item.id}\"><label for=\"checkbox#{item.id}\"></label></div>",
+              "<div item_id=\"#{item.id.to_s}\" class=\"main_part_info checkbox check-default\"><input name=\"ids[]\" id=\"checkbox#{item.id}\" type=\"checkbox\" value=\"#{item.id}\"><label for=\"checkbox#{item.id}\"></label></div>",
               item.contact.contact_link,
-              item.description,              #'<div class="text-center">'+item.display_delivery_status+"</div>",
-              "<div class=\"text-right\">#{item.display_amounts}</div>",
-              '<div class="text-center">'+item.display_payment_status+item.display_payment+item.display_delivery_status+"</div>",
-              '<div class="text-center">'+item.created_at.strftime("%d-%b-%Y")+"<br /><strong>by:</strong><br />"+item.user.staff_col+"</div>",
-              '<div class="text-center">'+item.account_manager.staff_col+"</div>",
-              '<div class="text-center">'+item.display_statuses+"</div>",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
               ""
+              #item.contact.contact_link,
+              #item.description,              #'<div class="text-center">'+item.display_delivery_status+"</div>",
+              #"<div class=\"text-right\">#{item.display_amounts}</div>",
+              #'<div class="text-center">'+item.display_payment_status+item.display_payment+item.display_delivery_status+"</div>",
+              #'<div class="text-center">'+item.created_at.strftime("%d-%b-%Y")+"<br /><strong>by:</strong><br />"+item.user.staff_col+"</div>",
+              #'<div class="text-center">'+item.account_manager.staff_col+"</div>",
+              #'<div class="text-center">'+item.display_statuses+"</div>",
+              #""
             ]
       data << item
       

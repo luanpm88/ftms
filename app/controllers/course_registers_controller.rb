@@ -3,7 +3,7 @@ class CourseRegistersController < ApplicationController
   
   load_and_authorize_resource
   
-  before_action :set_course_register, only: [:delivery_print, :delete, :show, :edit, :update, :destroy]
+  before_action :set_course_register, only: [:part_info, :delivery_print, :delete, :show, :edit, :update, :destroy]
   
   # GET /course_registers
   # GET /course_registers.json
@@ -336,6 +336,18 @@ class CourseRegistersController < ApplicationController
                           :left   => 0,
                           :right  => 0},
             }
+  end
+  
+  def part_info
+    item = @course_register
+    render json: {
+      col_2: item.description,              #'<div class="text-center">'+item.display_delivery_status+"</div>",
+      col_3: "<div class=\"text-right\">#{item.display_amounts}</div>",
+      col_4: '<div class="text-center">'+item.display_payment_status+item.display_payment+item.display_delivery_status+"</div>",
+      col_5: '<div class="text-center">'+item.created_at.strftime("%d-%b-%Y")+"<br /><strong>by:</strong><br />"+item.user.staff_col+"</div>",
+      col_6: '<div class="text-center">'+item.account_manager.staff_col+"</div>",
+      col_7: '<div class="text-center">'+item.display_statuses+"</div>"
+    }
   end
 
   private

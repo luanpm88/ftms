@@ -213,6 +213,7 @@ Hkerp::Application.routes.draw do
       
       get :undo_delete
       post :approve_all
+      get :part_info
     end
   end
   resources :course_types_subjects

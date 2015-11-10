@@ -369,6 +369,7 @@ class Ability
       can :delivery_print, CourseRegister do |cr|
         !cr.delivered?
       end
+      can :part_info, CourseRegister
     end
     
     if user.has_role? "education_consultant"
