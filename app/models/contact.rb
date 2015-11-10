@@ -1927,7 +1927,7 @@ class Contact < ActiveRecord::Base
   
   def render_cache_search
     str = []
-    str << display_name.unaccent
+    str << display_name.unaccent+" "+display_name.unaccent+" "+display_name.unaccent+" "+display_name.unaccent+" "+display_name.unaccent
     str << "[search_name: "+name.unaccent.downcase+" ]"
     str << "[tag:"+(contact_tags.map {|ct| ct.name}).join("][tag:")+"]"
     str << mobile.to_s.gsub(/^84/,"")
