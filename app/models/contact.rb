@@ -500,31 +500,44 @@ class Contact < ActiveRecord::Base
       ############### END REVISION #########################
       
       row = [
-              "<div class=\"row-color-#{(index%2 == 0).to_s} checkbox check-default\"><input name=\"ids[]\" id=\"checkbox#{item.id}\" type=\"checkbox\" value=\"#{item.id}\"><label for=\"checkbox#{item.id}\"></label></div>",
+              "<div item_id=\"#{item.id.to_s}\" class=\"main_part_info row-color-#{(index%2 == 0).to_s} checkbox check-default\"><input name=\"ids[]\" id=\"checkbox#{item.id}\" type=\"checkbox\" value=\"#{item.id}\"><label for=\"checkbox#{item.id}\"></label></div>",
               
-              '<div class="text-left"><strong>'+item.contact_link+"</strong></div>"+'<div class="text-left">'+item.html_info_line.html_safe+item.referrer_link+"</div>"+item.picture_link,              
-              '<div class="text-left">'+item.course_types_name_col+"</div>",
-              '<div class="text-center">'+item.course_count_link+"</div>",
-              '<div class="text-center contact_tag_box" rel="'+item.id.to_s+'">'+ContactsController.helpers.render_contact_tags_selecter(item)+"</div>",
-              '<div class="text-center">'+item.created_at.strftime("%d-%b-%Y")+"</div>",
-              '<div class="text-center">'+item.account_manager_col+"</div>",
-              '<div class="text-center">'+item.display_statuses+"</div>",
-              '',
+              '<div class="text-left"><strong>'+item.contact_link+"</strong></div>"+'<div class="text-left">'+item.html_info_line.html_safe+item.referrer_link+"</div>"+item.picture_link,
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              ""
+              #'<div class="text-left">'+item.course_types_name_col+"</div>",
+              #'<div class="text-center">'+item.course_count_link+"</div>",
+              #'<div class="text-center contact_tag_box" rel="'+item.id.to_s+'">'+ContactsController.helpers.render_contact_tags_selecter(item)+"</div>",
+              #'<div class="text-center">'+item.created_at.strftime("%d-%b-%Y")+"</div>",
+              #'<div class="text-center">'+item.account_manager_col+"</div>",
+              #'<div class="text-center">'+item.display_statuses+"</div>",
+              #'',
             ]
       data << row
 
       item.related_contacts.each do |child|
         row = [
-                "<div class=\"row-color-#{(index%2 == 0).to_s} checkbox check-default\"><input name=\"ids[]\" id=\"checkbox#{child.id}\" type=\"checkbox\" value=\"#{child.id}\"><label for=\"checkbox#{child.id}\"></label></div>",
-                
+                "<div item_id=\"#{child.id.to_s}\" class=\"main_part_info row-color-#{(index%2 == 0).to_s} checkbox check-default\"><input name=\"ids[]\" id=\"checkbox#{child.id}\" type=\"checkbox\" value=\"#{child.id}\"><label for=\"checkbox#{child.id}\"></label></div>",
                 '<div class="text-left"><strong>'+child.contact_link+"</strong></div>"+'<div class="text-left">'+child.html_info_line.html_safe+child.referrer_link+"</div>"+child.picture_link,              
-                '<div class="text-left">'+child.course_types_name_col+"</div>",
-                '<div class="text-center">'+child.course_count_link+"</div>",
-                '<div class="text-center contact_tag_box" rel="'+child.id.to_s+'">'+ContactsController.helpers.render_contact_tags_selecter(child)+"</div>",
-                '<div class="text-center">'+child.created_at.strftime("%d-%b-%Y")+"</div>",
-                '<div class="text-center">'+child.account_manager_col+"</div>",
-                '<div class="text-center">'+child.display_statuses+"</div>",
-                '',
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                ""                
+                #'<div class="text-left">'+child.course_types_name_col+"</div>",
+                #'<div class="text-center">'+child.course_count_link+"</div>",
+                #'<div class="text-center contact_tag_box" rel="'+child.id.to_s+'">'+ContactsController.helpers.render_contact_tags_selecter(child)+"</div>",
+                #'<div class="text-center">'+child.created_at.strftime("%d-%b-%Y")+"</div>",
+                #'<div class="text-center">'+child.account_manager_col+"</div>",
+                #'<div class="text-center">'+child.display_statuses+"</div>",
+                #'',
               ]
         # total += 1
         arr << child
@@ -1927,7 +1940,7 @@ class Contact < ActiveRecord::Base
   
   def render_cache_search
     str = []
-    str << display_name.unaccent+" "+display_name.unaccent+" "+display_name.unaccent+" "+display_name.unaccent+" "+display_name.unaccent
+    str << display_name.unaccent
     str << "[search_name: "+name.unaccent.downcase+" ]"
     str << "[tag:"+(contact_tags.map {|ct| ct.name}).join("][tag:")+"]"
     str << mobile.to_s.gsub(/^84/,"")
