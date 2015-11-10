@@ -2028,8 +2028,8 @@ class Contact < ActiveRecord::Base
     if is_inquiry
       contact_types << ContactType.inquiry if !contact_types.include?(ContactType.inquiry)
       program_name = old_student.student_type.strip.downcase.scan(/(.*?)(#{inquiry_partten})/)[0][0].strip
-      program_name = "ENGLISH" if program_name.strip.downcase == "english for a & f"
-      program_name = "FIA" if program_name.strip.downcase == "cat"
+      #program_name = "ENGLISH" if program_name.strip.downcase == "english for a & f"
+      #program_name = "FIA" if program_name.strip.downcase == "cat"
       ct = CourseType.main_course_types.where("course_types.status IS NOT NULL AND course_types.status NOT LIKE ?", "%[deleted]%").where("LOWER(short_name) = '#{program_name}'").first
 
       # create course type
@@ -2044,8 +2044,8 @@ class Contact < ActiveRecord::Base
       course_types << ct if !ct.nil? and !course_types.include?(ct)
     else
       program_name = is_completed ? old_student.student_type.strip.downcase.scan(/(.*?)(#{partten})/)[0][0].strip : old_student.student_type.strip.downcase
-      program_name = "ENGLISH" if program_name.strip.downcase == "english for a & f"
-      program_name = "FIA" if program_name.strip.downcase == "cat"
+      #program_name = "ENGLISH" if program_name.strip.downcase == "english for a & f"
+      #program_name = "FIA" if program_name.strip.downcase == "cat"
       ct = CourseType.main_course_types.where("course_types.status IS NOT NULL AND course_types.status NOT LIKE ?", "%[deleted]%").where("LOWER(short_name) = '#{program_name}'").first
       
       # create course type
@@ -2195,7 +2195,7 @@ class Contact < ActiveRecord::Base
   end
   
   def self.migrate_program_from_old_system
-    hash = {"fia" => ["cat"], "english" => ["english for a & f"]}
+    hash = {"fia": ["cat"], "english": ["english for a & f"]}
     hash.each do |row|
       main_ct = CourseType.main_course_types.where("course_types.status IS NOT NULL AND course_types.status NOT LIKE ?", "%[deleted]%").where("LOWER(short_name) = '#{row[0]}'").first
       row[1].each do |old|
