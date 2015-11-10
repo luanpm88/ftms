@@ -560,12 +560,12 @@ class User < ActiveRecord::Base
   end
 
   def self.import_from_old_system(file)
-    dir = "tmp"
-    file_name =  file.original_filename
-    file_path = File.join(dir, file_name)
-    File.open(file_path, "wb") { |f| f.write(file.read) }
+    #dir = "tmp"
+    #file_name =  file.original_filename
+    #file_path = File.join(dir, file_name)
+    #File.open(file_path, "wb") { |f| f.write(file.read) }
     
-    database = Mdb.open(file_path)
+    database = Mdb.open(file)
     
     OldBook.import_old_book(database)
     OldBookDatum.import_old_book_data(database)

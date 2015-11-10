@@ -428,16 +428,23 @@ class Contact < ActiveRecord::Base
       ############### END REVISION #########################
       
       item = [
-              "<div class=\"checkbox check-default\"><input name=\"ids[]\" id=\"checkbox#{item.id}\" type=\"checkbox\" value=\"#{item.id}\"><label for=\"checkbox#{item.id}\"></label></div>",
-              
-              '<div class="text-left"><strong>'+item.contact_link+"</strong></div>"+'<div class="text-left">'+item.html_info_line.html_safe+item.referrer_link+"</div>"+item.picture_link,              
-              '<div class="text-left">'+item.course_types_name_col+"</div>",
-              '<div class="text-center">'+item.course_count_link+item.display_transferred_courses_phrases(params[:courses])+"</div>",
-              '<div class="text-center contact_tag_box" rel="'+item.id.to_s+'">'+ContactsController.helpers.render_contact_tags_selecter(item)+"</div>",
-              '<div class="text-center">'+item.created_at.strftime("%d-%b-%Y")+"<br /><strong>by:</strong><br />"+item.user.staff_col+"</div>",
-              '<div class="text-center">'+item.account_manager_col+"</div>",
-              '<div class="text-center">'+item.display_statuses+item.display_bases("<br />")+"</div>",
-              '',
+              "<div item_id=\"#{item.id.to_s}\" class=\"main_part_info checkbox check-default\"><input name=\"ids[]\" id=\"checkbox#{item.id}\" type=\"checkbox\" value=\"#{item.id}\"><label for=\"checkbox#{item.id}\"></label></div>",
+              '<div class="text-left"><strong>'+item.contact_link+"</strong></div>"+'<div class="text-left">'+item.html_info_line.html_safe+item.referrer_link+"</div>"+item.picture_link,
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              ""
+              #'<div class="text-left"><strong>'+item.contact_link+"</strong></div>"+'<div class="text-left">'+item.html_info_line.html_safe+item.referrer_link+"</div>"+item.picture_link,              
+              #'<div class="text-left">'+item.course_types_name_col+"</div>",
+              #'<div class="text-center">'+item.course_count_link+item.display_transferred_courses_phrases(params[:courses])+"</div>",
+              #'<div class="text-center contact_tag_box" rel="'+item.id.to_s+'">'+ContactsController.helpers.render_contact_tags_selecter(item)+"</div>",
+              #'<div class="text-center">'+item.created_at.strftime("%d-%b-%Y")+"<br /><strong>by:</strong><br />"+item.user.staff_col+"</div>",
+              #'<div class="text-center">'+item.account_manager_col+"</div>",
+              #'<div class="text-center">'+item.display_statuses+item.display_bases("<br />")+"</div>",
+              #'',
             ]
       data << item
       

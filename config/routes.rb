@@ -453,6 +453,8 @@ Hkerp::Application.routes.draw do
       get :undo_remove_related_contact
       
       post :approve_all
+      
+      get :part_info
     end
   end
 

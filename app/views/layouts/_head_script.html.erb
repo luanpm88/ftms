@@ -1403,6 +1403,7 @@
 			"iDisplayLength": 10
 	    });
 		
+		var datatable_contact_hash = {};
 		//Datatable contacts
 	    $('.datatable-contacts').dataTable( {
 			"processing": true,
@@ -1499,7 +1500,36 @@
 			"columnDefs": [ { "targets": [0,2,3,4,6,8], "orderable": false } ],
 			"order": [],
 			"aLengthMenu": [[10, 25, 50, 75, 100], [10, 25, 50, 75, 100]],
-			"iDisplayLength": 10
+			"iDisplayLength": 10,
+			"preDrawCallback": function( settings ) {
+				for (var i=1; i < 20; i++) {
+                    if (typeof(datatable_contact_hash[i]) != "undefined") {
+                        datatable_contact_hash[i].abort()
+                    }
+                }
+			},
+			"drawCallback": function( settings ) {			
+				var count = 0
+				$(".datatable-contacts tr").each(function() {
+					if (count > 0) {
+						var row = $(this)
+                        var iid = row.find(".main_part_info").attr("item_id")
+						datatable_contact_hash[count] = $.ajax({
+						  url: '/contacts/part_info?id='+iid,
+						  success: function(data, textStatus, jqXHR)
+						  {
+							row.find("td").eq(2).html(data.col_2)
+							row.find("td").eq(3).html(data.col_3)
+							row.find("td").eq(4).html(data.col_4)
+							row.find("td").eq(5).html(data.col_5)
+							row.find("td").eq(6).html(data.col_6)
+							row.find("td").eq(7).html(data.col_7)
+						  }
+						})
+                    }
+					count += 1
+				})					
+			}
 	    });
 
 		

@@ -4,7 +4,7 @@ class ContactsController < ApplicationController
   include ContactsHelper
   
   load_and_authorize_resource
-  before_action :set_contact, only: [:remove_related_contact, :related_info_box, :delete, :course_register, :ajax_quick_info, :ajax_tag_box, :ajax_edit, :ajax_update, :show, :edit, :update, :destroy, :ajax_destroy, :ajax_show, :ajax_list_agent, :ajax_list_supplier_agent]
+  before_action :set_contact, only: [:part_info, :remove_related_contact, :related_info_box, :delete, :course_register, :ajax_quick_info, :ajax_tag_box, :ajax_edit, :ajax_update, :show, :edit, :update, :destroy, :ajax_destroy, :ajax_show, :ajax_list_agent, :ajax_list_supplier_agent]
 
   # GET /contacts
   # GET /contacts.json
@@ -551,6 +551,18 @@ class ContactsController < ApplicationController
       @tab = {url: {controller: "contacts", action: "edit", id: @contact.id, tab_page: 1, tab: "old_info"}, title: @contact.display_name+" #"+@contact.id.to_s}
       format.html { render "/home/close_tab", layout: nil }
     end
+  end
+  
+  def part_info
+    render json: {
+      col_1: '<div class="text-left"><strong>'+@contact.contact_link+"</strong></div>"+'<div class="text-left">'+@contact.html_info_line.html_safe+@contact.referrer_link+"</div>"+@contact.picture_link,
+      col_2: '<div class="text-left">'+@contact.course_types_name_col+"</div>",
+      col_3: '<div class="text-center">'+@contact.course_count_link+@contact.display_transferred_courses_phrases(params[:courses])+"</div>",
+      col_4: '<div class="text-center contact_tag_box" rel="'+@contact.id.to_s+'">'+ContactsController.helpers.render_contact_tags_selecter(@contact)+"</div>",
+      col_5: '<div class="text-center">'+@contact.created_at.strftime("%d-%b-%Y")+"<br /><strong>by:</strong><br />"+@contact.user.staff_col+"</div>",
+      col_6: '<div class="text-center">'+@contact.account_manager_col+"</div>",
+      col_7: '<div class="text-center">'+@contact.display_statuses+@contact.display_bases("<br />")+"</div>"
+    }
   end
 
   private
