@@ -55,27 +55,27 @@
 				</div>
 			</div>
 	
-		</div>
-		<% @contact.related_contacts.each do |c| %>
-			<% if c.old_student.present? && !c.old_deliverys.empty? %>
-				<div class="row">
-					<div class="col-md-12">
-		
-						<div class="grid simple ">
-							<div class="grid-title no-border">
-								<h4>Related Book List</h4>
-							</div>
-							<div class="grid-body no-border">
-								<p><span class="semi-bold"><%= c.old_student.student_name + " - " + c.old_student.student_id + " - " + c.old_student.old_consultant.consultant_name %></span></p>
-								<div class="table-box">
-									<%= render 'book_list', book_list: c.old_deliverys %>
-								</div>
+		</div>		
+	<% end %>
+	<% @contact.related_contacts.each do |c| %>
+		<% if c.old_student.present? && !c.old_deliverys.empty? %>
+			<div class="row">
+				<div class="col-md-12">
+	
+					<div class="grid simple ">
+						<div class="grid-title no-border">
+							<h4>Related Book List</h4>
+						</div>
+						<div class="grid-body no-border">
+							<p><span class="semi-bold"><%= c.old_student.student_name + " - " + c.old_student.student_id + " - " + c.old_student.old_consultant.consultant_name %></span></p>
+							<div class="table-box">
+								<%= render 'book_list', book_list: c.old_deliverys %>
 							</div>
 						</div>
 					</div>
-		
 				</div>
-			<% end %>
+	
+			</div>
 		<% end %>
 	<% end %>
 
