@@ -132,7 +132,7 @@
 						 
 		
 						<div class="col-md-2">
-						   <div class="col-md-3">
+						   
 								   <div class="form-group">
 										<label class="form-label"><%= f.label :valid_on %></label>
 										
@@ -146,7 +146,7 @@
 											 <br style="clear: both" />
 										</div>
 								   </div>										
-							  </div>										
+							  									
 						 </div>
 						
 						 
@@ -156,6 +156,33 @@
 					<div class="stock_box_list">
 						 
 					</div>
+					
+					<div class="row">
+						 <div class="col-md-3">													   
+							  <div class="form-group">
+								   <label class="form-label"><label><i class="icon-truck"></i> Preferred mailing</label></label>
+								   <span class="help">(required)</span>								   
+								   <div class="input-with-icon  right">
+										<select name="course_register[preferred_mailing]" class="modern_select width100 required">
+											  <option <%= 'selected="selected"' if @contact.preferred_mailing == "ftms" %> value="ftms">FTMS</option>
+											  <option <%= 'selected="selected"' if @contact.preferred_mailing == "home" %> value="home">Home address</option>
+											  <option <%= 'selected="selected"' if @contact.preferred_mailing == "company" %> value="company">Company address</option>
+											  <option <%= 'selected="selected"' if @contact.preferred_mailing == "other" %> value="other">Other</option>
+										</select>
+								   </div>
+							  </div>																
+						 </div>
+						 <div class="col-md-4 mailing_address_box">
+							  <div class="form-group">
+										<label class="form-label"><label>Delivery Address</label></label>
+										<span class="help">(required)</span>
+										<div class="input-with-iconz right">                                       
+											 <%= f.text_field :mailing_address, value: @contact.default_mailing_address, :class => "form-control required" %>
+										</div>
+							   </div>
+						 </div>
+					</div>
+					
 					
 					
 					<br />
