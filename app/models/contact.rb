@@ -511,7 +511,7 @@ class Contact < ActiveRecord::Base
                 "<div class=\"row-color-#{(index%2 == 0).to_s} checkbox check-default\"><input name=\"ids[]\" id=\"checkbox#{child.id}\" type=\"checkbox\" value=\"#{child.id}\"><label for=\"checkbox#{child.id}\"></label></div>",
                 
                 '<div class="text-left"><strong>'+child.contact_link+"</strong></div>"+'<div class="text-left">'+child.html_info_line.html_safe+child.referrer_link+"</div>"+child.picture_link,              
-                '<div class="text-left">'+item.course_types_name_col+"</div>",
+                '<div class="text-left">'+child.course_types_name_col+"</div>",
                 '<div class="text-center">'+child.course_count_link+"</div>",
                 '<div class="text-center contact_tag_box" rel="'+child.id.to_s+'">'+ContactsController.helpers.render_contact_tags_selecter(child)+"</div>",
                 '<div class="text-center">'+child.created_at.strftime("%d-%b-%Y")+"</div>",
