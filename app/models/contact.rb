@@ -1413,6 +1413,9 @@ class Contact < ActiveRecord::Base
       # Annoucing users
       add_annoucing_users([self.current.user])
       
+      # remove related contacts
+      # self.check_remove_from_merge_list
+      
       self.save_draft(user)
     end
   end
@@ -2292,6 +2295,23 @@ class Contact < ActiveRecord::Base
     return {logs: logs, last: last}
   end
   
-  
+  #def check_remove_from_merge_list
+  #  # find parent merge
+  #  if related_id == 0
+  #    if self.related_contacts.count == 0
+  #      self.update_attribute(:related_id, nil)
+  #      return true
+  #    end
+  #    if self.statuses.include?("deleted")
+  #      
+  #      self.related_contacts.update_all(related_contact: )
+  #    end      
+  #  elsif related_id.to_f > 0
+  #    p = Contact.find(related_id)
+  #    p.remove_from_merge_list
+  #  end
+  #  
+  #  return false
+  #end
 
 end

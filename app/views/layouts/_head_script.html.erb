@@ -1329,7 +1329,7 @@
     }
     
       
-      
+    
     $(document).ready(function() {
   
 		////TABLES
@@ -1404,8 +1404,13 @@
 	    });
 		
 		var datatable_contact_hash = {};
+		var datatable_contact_xhr;
 		//Datatable contacts
-	    $('.datatable-contacts').dataTable( {
+	    datatable_contact_xhr = $('.datatable-contacts').on('preXhr.dt', function ( e, settings, data ) {
+                if(typeof(datatable_contact_xhr) != "undefined" && datatable_contact_xhr.dataTableSettings[0].jqXHR != null) {
+                    datatable_contact_xhr.dataTableSettings[0].jqXHR.abort()
+                }
+            } ).dataTable( {
 			"processing": true,
 			"serverSide": true,
 			"ajax": {
@@ -1820,7 +1825,12 @@
 	    });
 		
 		//Datatable courses
-	    $('.datatable-courses').dataTable( {
+		var datatable_course_xhr;
+	    datatable_course_xhr = $('.datatable-courses').on('preXhr.dt', function ( e, settings, data ) {
+                if(typeof(datatable_course_xhr) != "undefined" && datatable_course_xhr.dataTableSettings[0].jqXHR != null) {
+                    datatable_course_xhr.dataTableSettings[0].jqXHR.abort()
+                }
+            } ).dataTable( {
 			"processing": true,
 			"serverSide": true,
 			"ajax": {
@@ -1884,7 +1894,12 @@
 	    });
 		
 		//Datatable books
-	    $('.datatable-books').dataTable( {
+		var datatable_book_xhr;
+	    datatable_book_xhr = $('.datatable-books').on('preXhr.dt', function ( e, settings, data ) {
+                if(typeof(datatable_book_xhr) != "undefined" && datatable_book_xhr.dataTableSettings[0].jqXHR != null) {
+                    datatable_book_xhr.dataTableSettings[0].jqXHR.abort()
+                }
+            } ).dataTable( {
 			"processing": true,
 			"serverSide": true,
 			"ajax": {
@@ -2065,7 +2080,12 @@
 		
 		//Datatable subjects
 		var datatable_cr_hash = {}
-	    $('.datatable-course-registers').dataTable( {
+		var datatable_cr_xhr;
+	    datatable_cr_xhr = $('.datatable-course-registers').on('preXhr.dt', function ( e, settings, data ) {
+                if(typeof(datatable_cr_xhr) != "undefined" && datatable_cr_xhr.dataTableSettings[0].jqXHR != null) {
+                    datatable_cr_xhr.dataTableSettings[0].jqXHR.abort()
+                }
+            } ).dataTable( {
 			"processing": true,
 			"serverSide": true,
 			"ajax": {
@@ -2196,7 +2216,12 @@
 	    });
 		
 		//Datatable books
-	    $('.datatable-payment-records').dataTable( {
+		var datatable_pr_xhr;
+	    datatable_pr_xhr = $('.datatable-payment-records').on('preXhr.dt', function ( e, settings, data ) {
+                if(typeof(datatable_pr_xhr) != "undefined" && datatable_pr_xhr.dataTableSettings[0].jqXHR != null) {
+                    datatable_pr_xhr.dataTableSettings[0].jqXHR.abort()
+                }
+            } ).dataTable( {
 			"processing": true,
 			"serverSide": true,
 			"ajax": {
@@ -2273,7 +2298,12 @@
 	    });
 		
 		//Datatable subjects
-	    $('.datatable-transfers').dataTable( {
+		var datatable_tf_xhr;
+	    datatable_tf_xhr = $('.datatable-transfers').on('preXhr.dt', function ( e, settings, data ) {
+                if(typeof(datatable_tf_xhr) != "undefined" && datatable_tf_xhr.dataTableSettings[0].jqXHR != null) {
+                    datatable_tf_xhr.dataTableSettings[0].jqXHR.abort()
+                }
+            } ).dataTable( {
 			"processing": true,
 			"serverSide": true,
 			"ajax": {

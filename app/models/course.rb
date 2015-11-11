@@ -126,7 +126,8 @@ class Course < ActiveRecord::Base
     
     
     #@records = @records.search(params["search"]["value"]) if !params["search"]["value"].empty?
-    @records = @records.where("LOWER(course_types.short_name) LIKE ? OR LOWER(subjects.name) LIKE ?", "%#{params["search"]["value"].downcase}%", "%#{params["search"]["value"].downcase}%") if !params["search"]["value"].empty?
+    #@records = @records.where("LOWER(course_types.short_name) LIKE ? OR LOWER(subjects.name) LIKE ?", "%#{params["search"]["value"].downcase}%", "%#{params["search"]["value"].downcase}%") if !params["search"]["value"].empty?
+    @records = @records.where("LOWER(courses.cache_search) LIKE ?", "%#{params["search"]["value"].strip.downcase}%") if params["search"].present? && !params["search"]["value"].empty?
     @records = @records.where("EXTRACT(YEAR FROM courses.intake) = ? ", params["intake_year"]) if params["intake_year"].present?
     @records = @records.where("EXTRACT(MONTH FROM courses.intake) = ? ", params["intake_month"]) if params["intake_month"].present?
     @records = @records.where("courses.course_type_id IN (#{params["course_types"].join(",")})") if params["course_types"].present?
@@ -818,5 +819,24 @@ class Course < ActiveRecord::Base
     ids = self.no_report_contact_ids.split("][").map {|s| s.gsub("[","").gsub("]","") }
     return Contact.where(id: ids)
   end
+  
+  def update_cache_search
+    return false if !self.parent_id.nil?
+  
+    str = []
+    str << display_intake
+    str << program_paper_name
+    str << courses_phrase_list
+    str << display_for_exam
+    str << display_lecturer
+    str << display_lecturer.unaccent
+    str << created_at.strftime("%d-%b-%Y")+" "+user.staff_col
+    str << user.name.unaccent
+    str << display_statuses
+    
+    self.update_attribute(:cache_search, str.join(" "))
+  end
+  
+ 
   
 end

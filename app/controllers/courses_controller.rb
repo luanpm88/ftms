@@ -58,6 +58,8 @@ class CoursesController < ApplicationController
         @course.update_status("create", current_user)        
         @course.save_draft(current_user)
         
+        @course.update_cache_search
+        
         format.html { redirect_to params[:tab_page].present? ? "/home/close_tab" : @course, notice: 'Course was successfully created.' }
         format.json { render action: 'show', status: :created, location: @course }
       else
@@ -82,6 +84,8 @@ class CoursesController < ApplicationController
         
         @course.update_status("update", current_user)        
         @course.save_draft(current_user)
+        
+        @course.update_cache_search
         
         format.html { redirect_to params[:tab_page].present? ? "/home/close_tab" : @course, notice: 'Course was successfully updated.' }
         format.json { head :no_content }
