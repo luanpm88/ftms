@@ -1,4 +1,5 @@
 Hkerp::Application.routes.draw do
+  resources :related_contacts
   resources :stock_types do
     collection do
       get :datatable
@@ -456,6 +457,7 @@ Hkerp::Application.routes.draw do
       post :approve_all
       
       get :part_info
+      post :do_merge
     end
   end
 

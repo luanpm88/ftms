@@ -613,7 +613,8 @@ CREATE TABLE contacts (
     cache_phrases text,
     no_related_ids text,
     old_student_course_type_ids text,
-    cache_transferred_courses_phrases text
+    cache_transferred_courses_phrases text,
+    cache_group_id integer
 );
 
 
@@ -2103,6 +2104,37 @@ ALTER SEQUENCE phrases_subjects_id_seq OWNED BY phrases_subjects.id;
 
 
 --
+-- Name: related_contacts; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE TABLE related_contacts (
+    id integer NOT NULL,
+    contact_ids text,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL
+);
+
+
+--
+-- Name: related_contacts_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE related_contacts_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: related_contacts_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE related_contacts_id_seq OWNED BY related_contacts.id;
+
+
+--
 -- Name: roles; Type: TABLE; Schema: public; Owner: -; Tablespace: 
 --
 
@@ -2886,6 +2918,13 @@ ALTER TABLE ONLY phrases_subjects ALTER COLUMN id SET DEFAULT nextval('phrases_s
 -- Name: id; Type: DEFAULT; Schema: public; Owner: -
 --
 
+ALTER TABLE ONLY related_contacts ALTER COLUMN id SET DEFAULT nextval('related_contacts_id_seq'::regclass);
+
+
+--
+-- Name: id; Type: DEFAULT; Schema: public; Owner: -
+--
+
 ALTER TABLE ONLY roles ALTER COLUMN id SET DEFAULT nextval('roles_id_seq'::regclass);
 
 
@@ -3398,6 +3437,14 @@ ALTER TABLE ONLY phrases
 
 ALTER TABLE ONLY phrases_subjects
     ADD CONSTRAINT phrases_subjects_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: related_contacts_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+--
+
+ALTER TABLE ONLY related_contacts
+    ADD CONSTRAINT related_contacts_pkey PRIMARY KEY (id);
 
 
 --
@@ -4283,4 +4330,8 @@ INSERT INTO schema_migrations (version) VALUES ('20151104114200');
 INSERT INTO schema_migrations (version) VALUES ('20151107085510');
 
 INSERT INTO schema_migrations (version) VALUES ('20151111023451');
+
+INSERT INTO schema_migrations (version) VALUES ('20151111090646');
+
+INSERT INTO schema_migrations (version) VALUES ('20151111094724');
 

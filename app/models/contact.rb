@@ -95,20 +95,8 @@ class Contact < ActiveRecord::Base
   before_validation :check_type
   
   def related_contacts
-    aa = []
-    if related_id == 0
-      aa = Contact.main_contacts.where("contacts.status IS NOT NULL AND contacts.status NOT LIKE ?", "%[deleted]%").where(related_id: self.id)
-    elsif related_id.to_f > 0
-      c = Contact.find(related_id)
-      ids = Contact.main_contacts.where.not(id: self.id).where("contacts.status IS NOT NULL AND contacts.status NOT LIKE ?", "%[deleted]%").where(related_id: c.id).map(&:id)
-      ids << c.id
-      aa = Contact.where(id: ids)
-    end
-    #bb = []
-    #aa.each do |c|
-    #  bb << c if !self.no_related_contacts.include?(c)
-    #end
-    return aa
+    return [] if group.nil?
+    return group.contacts.where.not(id: self.id)
   end
   
   def active_books
@@ -520,7 +508,7 @@ class Contact < ActiveRecord::Base
             ]
       data << row
 
-      item.related_contacts.each do |child|
+      item.find_related_contacts.each do |child|
         row = [
                 "<div item_id=\"#{child.id.to_s}\" class=\"main_part_info row-color-#{(index%2 == 0).to_s} checkbox check-default\"><input name=\"ids[]\" id=\"checkbox#{child.id}\" type=\"checkbox\" value=\"#{child.id}\"><label for=\"checkbox#{child.id}\"></label></div>",
                 '<div class="text-left"><strong>'+child.contact_link+"</strong></div>"+'<div class="text-left">'+child.html_info_line.html_safe+child.referrer_link+"</div>"+child.picture_link,              
@@ -530,7 +518,7 @@ class Contact < ActiveRecord::Base
                 "",
                 "",
                 "",
-                ""                
+                ""
                 #'<div class="text-left">'+child.course_types_name_col+"</div>",
                 #'<div class="text-center">'+child.course_count_link+"</div>",
                 #'<div class="text-center contact_tag_box" rel="'+child.id.to_s+'">'+ContactsController.helpers.render_contact_tags_selecter(child)+"</div>",
@@ -2143,6 +2131,7 @@ class Contact < ActiveRecord::Base
     cond_other = cond_other.join(" OR ")
     return Contact.main_contacts.where("contacts.status IS NOT NULL AND contacts.status NOT LIKE ?","%[deleted]%").where.not(id: self.id)
                                 .where("contacts.related_id IS NULL")
+                                .where("contacts.cache_group_id IS NOT NULL")
                                 .where(cond_other)
                                 .where("contacts.no_related_ids IS NULL OR contacts.no_related_ids NOT LIKE ?", "%[#{self.id}]%")
   end
@@ -2313,5 +2302,28 @@ class Contact < ActiveRecord::Base
   #  
   #  return false
   #end
-
+  
+  def self.merge_contacts(cs)
+    groups = []
+    cs.each do |c|
+      groups << c.group if !groups.include?(c.group) && !c.group.nil?
+    end
+    
+    return false if groups.count > 1
+    
+    # merge
+    group = groups.count == 1 ? groups.first : RelatedContact.create
+    
+    cs.each do |c|
+      group.add_contact(c)
+    end
+    
+    return group
+  end
+  
+  def group
+    return nil if cache_group_id.nil?
+    RelatedContact.where(id: cache_group_id).first
+  end
+  
 end

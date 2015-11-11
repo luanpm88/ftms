@@ -125,6 +125,7 @@ class Ability
       can :remove_related_contact, Contact
       can :undo_remove_related_contact, Contact
       can :part_info, Contact
+      can :do_merge, Contact
       
       can :datatable, Course
       can :read, Course

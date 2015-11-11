@@ -564,6 +564,23 @@ class ContactsController < ApplicationController
       col_7: '<div class="text-center">'+@contact.display_statuses+@contact.display_bases("<br />")+"</div>"
     }
   end
+  
+  def do_merge
+    if !params[:check_all_page].nil?
+      params[:intake_year] = params["filter"]["intake(1i)"] if params["filter"].present?
+      params[:intake_month] = params["filter"]["intake(2i)"] if params["filter"].present?
+      
+      if params[:is_individual] == "false"
+        params[:contact_types] = nil
+      end        
+      
+      @contacts = Contact.filters(params, current_user)
+    else
+      @contacts = Contact.where(id: params[:ids])
+    end
+    
+    render text: "Contacts was successfully merged.!"
+  end
 
   private
     # Use callbacks to share common setup or constraints between actions.
