@@ -145,7 +145,7 @@
 																 <% if !@book.id.nil? %>
 																	  <%= select_tag 'book[stock_type_id]', options_for_select(StockType.active_stock_types.order("name").collect{ |u| [u.name, u.id] }, @book.stock_type_id), {include_blank: "None", class: "modern_select width100 required"} %>
 																 <% else %>
-																	  <%= select_tag 'stock_type_ids[]', options_for_select(StockType.active_stock_types.order("name").collect{ |u| [u.name, u.id] }), {include_blank: "None", class: "modern_select width100 required", multiple: "multiple"} %>
+																	  <%= select_tag 'stock_type_ids[]', options_for_select(StockType.active_stock_types.order("name").collect{ |u| [u.name, u.id] }), {include_blank: "None", class: "width100 required",  size: 10, multiple: "multiple"} %>
 																 <% end %>
 													   </div>
 												  </div>
@@ -267,5 +267,7 @@
 				  vs = JSON.parse($(this).attr('values'))
 				  $(this).select2('data', vs)
 		  });
+		  
+		  $("#stock_type_ids_").select2('destroy');
 	 });
 </script>
