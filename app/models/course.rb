@@ -80,9 +80,9 @@ class Course < ActiveRecord::Base
   
   def self.full_text_search(q, params=nil)
     if params[:main_courses] == "true"
-       result = self.main_courses
+       result = self.main_courses.where("courses.status IS NOT NULL AND courses.status NOT LIKE ?", "%deleted%")
     else
-       result = self.main_courses
+       result = self.main_courses.where("courses.status IS NOT NULL AND courses.status NOT LIKE ?", "%deleted%")
     end
     
     

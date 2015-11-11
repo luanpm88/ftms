@@ -579,6 +579,8 @@ class ContactsController < ApplicationController
       @contacts = Contact.where(id: params[:ids])
     end
     
+    Contact.merge_contacts(@contacts)
+    
     render text: "Contacts was successfully merged.!"
   end
 

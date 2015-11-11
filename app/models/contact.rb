@@ -370,7 +370,7 @@ class Contact < ActiveRecord::Base
       @records = @records.where(city_id: cities_ids)
     end
     
-    @records = @records.where("LOWER(contacts.cache_search) LIKE ? OR LOWER(contacts.name) LIKE ?", "%#{params["search"]["value"].strip.downcase}%", "%#{params["search"]["value"].strip.downcase}%") if params["search"].present? && !params["search"]["value"].empty? #.search(params["search"]["value"])
+    @records = @records.where("LOWER(contacts.cache_search) LIKE ? OR LOWER(contacts.name) LIKE ?", "%#{params["search"]["value"].unaccent.strip.downcase}%", "%#{params["search"]["value"].unaccent.strip.downcase}%") if params["search"].present? && !params["search"]["value"].empty? #.search(params["search"]["value"])
     
     return @records
   end
@@ -447,34 +447,54 @@ class Contact < ActiveRecord::Base
     
     return {result: result, items: @records, actions_col: actions_col}
   end
+  
+  def self.find_related_contacts(params, user)
+    max = params[:length].to_i
+    records = []
+    used_ids = []
+    loop do 
+      record = self.filters(params, user).where(cache_group_id: nil).where.not(id: used_ids).first
+      used_ids << record.id
+      if record.present?
+        row = {}
+        row[:parent] = record        
+        row[:children] = record.find_related_contacts.where.not(id: used_ids)
+        if !row[:children].empty?
+          records << row
+          used_ids += row[:children].map(&:id)
+        end        
+      end
+      
+      break if records.count >= max || record.nil?
+    end
+    
+    return records
+  end
 
   def self.merge_contacts_datatable(params, user)
     ActionView::Base.send(:include, Rails.application.routes.url_helpers)
     link_helper = ActionController::Base.helpers
     
-    @records = self.filters(params, user)
-    @records = @records.where(related_id: 0)
     
-    if !params["order"].nil?
-      case params["order"]["0"]["column"]
-      when "1"
-        order = "contacts.name"
-      when "6"
-        order = "contacts.created_at"
-      when "8"
-        @records = @records.includes(:current_revision)
-        order = "current_revisions_contacts.created_at"
-      else
-        order = "contacts.name"
+    if params["type"] == "merged"
+      @records = []
+      @records = self.filters(params, user).where.not(cache_group_id: nil).order("cache_group_id")
+      total = @records.count
+      @records = @records.limit(params[:length]).offset(params["start"])
+      
+      arr = []
+      @records.each do |c|
+        arr << {parent: c, children: []}
       end
-      order += " "+params["order"]["0"]["dir"]
+      @records = arr
     else
-      order = "contacts.created_at DESC"
+      # find related contacts
+      @records = self.find_related_contacts(params, user)
+      total = @records.count
     end
-    @records = @records.order(order) if !order.nil? && !params["search"].present?
     
-    total = @records.count
-    @records = @records.limit(params[:length]).offset(params["start"])
+      
+    
     data = []
     
     actions_col = 8
@@ -487,10 +507,11 @@ class Contact < ActiveRecord::Base
       end
       ############### END REVISION #########################
       
+      
       row = [
-              "<div item_id=\"#{item.id.to_s}\" class=\"main_part_info row-color-#{(index%2 == 0).to_s} checkbox check-default\"><input name=\"ids[]\" id=\"checkbox#{item.id}\" type=\"checkbox\" value=\"#{item.id}\"><label for=\"checkbox#{item.id}\"></label></div>",
+              "<div item_id=\"#{item[:parent].id.to_s}\" class=\"main_part_info row-color-#{(index%2 == 0).to_s} checkbox check-default\"><input name=\"ids[]\" id=\"checkbox#{item[:parent].id}\" type=\"checkbox\" value=\"#{item[:parent].id}\"><label for=\"checkbox#{item[:parent].id}\"></label></div>",
               
-              '<div class="text-left"><strong>'+item.contact_link+"</strong></div>"+'<div class="text-left">'+item.html_info_line.html_safe+item.referrer_link+"</div>"+item.picture_link,
+              '<div class="text-left"><strong>'+item[:parent].contact_link+"</strong></div>"+'<div class="text-left">'+item[:parent].html_info_line.html_safe+item[:parent].referrer_link+"</div>"+item[:parent].picture_link,
               "",
               "",
               "",
@@ -508,7 +529,7 @@ class Contact < ActiveRecord::Base
             ]
       data << row
 
-      item.find_related_contacts.each do |child|
+      item[:children].each do |child|
         row = [
                 "<div item_id=\"#{child.id.to_s}\" class=\"main_part_info row-color-#{(index%2 == 0).to_s} checkbox check-default\"><input name=\"ids[]\" id=\"checkbox#{child.id}\" type=\"checkbox\" value=\"#{child.id}\"><label for=\"checkbox#{child.id}\"></label></div>",
                 '<div class="text-left"><strong>'+child.contact_link+"</strong></div>"+'<div class="text-left">'+child.html_info_line.html_safe+child.referrer_link+"</div>"+child.picture_link,              
@@ -531,7 +552,7 @@ class Contact < ActiveRecord::Base
         arr << child
         data << row
       end
-      arr << item
+      arr << item[:parent]
     end
     
     result = {
@@ -904,10 +925,10 @@ class Contact < ActiveRecord::Base
       birth = !birthday.nil? ? birthday.strftime("%d-%b-%Y") : ""
       line += "<span class=\"box_mini_info nowrap\"><i class=\"icon-calendar\"></i> " + birth + "</span> " if !mobile.nil? && !mobile.empty?
       line += "<span class=\"box_mini_info nowrap\"><i class=\"icon-envelope\"></i> " + email + "</span> " if !email.nil? && !email.empty?
-      line += "<span class=\"box_mini_info nowrap\"><i class=\"icon-phone\"></i> " + display_mobile + "</span> " if !mobile.nil? && !mobile.empty? 
+      line += "<span class=\"box_mini_info label_mobile nowrap\"><i class=\"icon-phone\"></i> " + display_mobile + "</span> " if !mobile.nil? && !mobile.empty? 
     else
       line += "<span class=\"box_mini_info nowrap\"><i class=\"icon-phone\"></i> " + phone + "</span> " if !phone.nil? && !phone.empty?
-      line += "<span class=\"box_mini_info\"><i class=\"icon-envelope\"></i> " + email + "</span> " if !email.nil? && !email.empty?
+      line += "<span class=\"box_mini_info label_email\"><i class=\"icon-envelope\"></i> " + email + "</span> " if !email.nil? && !email.empty?
       line += "Tax Code " + tax_code + "</span><br />" if tax_code.present?
     end
     line += "<div class=\"address_info_line\"><i class=\"icon-truck\"></i> " + address + "</div>" if address.present?
@@ -2102,7 +2123,7 @@ class Contact < ActiveRecord::Base
     return self
   end
 
-  def self.find_related_contacts
+  def self.find_related_contacts_
     Contact.update_all(related_id: nil)
     Contact.main_contacts.order("contacts.id").where("contacts.status IS NOT NULL AND contacts.status NOT LIKE ?","%[deleted]%").each do |c|
       c = Contact.find(c.id)
@@ -2129,11 +2150,10 @@ class Contact < ActiveRecord::Base
     return [] if cond_other.empty?
     
     cond_other = cond_other.join(" OR ")
-    return Contact.main_contacts.where("contacts.status IS NOT NULL AND contacts.status NOT LIKE ?","%[deleted]%").where.not(id: self.id)
-                                .where("contacts.related_id IS NULL")
-                                .where("contacts.cache_group_id IS NOT NULL")
+    return Contact.main_contacts.where("contacts.status IS NOT NULL AND contacts.status NOT LIKE ?","%[deleted]%")
+                                .where.not(id: self.id)
+                                .where("contacts.cache_group_id IS NULL")
                                 .where(cond_other)
-                                .where("contacts.no_related_ids IS NULL OR contacts.no_related_ids NOT LIKE ?", "%[#{self.id}]%")
   end
   
   def transferred_courses_phrases

@@ -1540,13 +1540,20 @@
 		
 		//Datatable merge contacts
 		var datatable_m_contact_hash = {}
-	    $('.datatable-merge-contacts').dataTable( {
+		var datatable_m_contact_xhr;
+	    datatable_m_contact_xhr = $('.datatable-merge-contacts').on('preXhr.dt', function ( e, settings, data ) {
+                if(typeof(datatable_m_contact_xhr) != "undefined" && datatable_m_contact_xhr.dataTableSettings[0].jqXHR != null) {
+                    datatable_m_contact_xhr.dataTableSettings[0].jqXHR.abort()
+                }
+            } ).dataTable( {
 			"processing": true,
 			"serverSide": true,
 			"ajax": {
 				"url": "<%= merge_contacts_datatable_contacts_path %>",
 				"data": function ( d ) {
-					
+					if($(".merge-contact-filter select[name='type']").val()) {
+						d.type =  $(".merge-contact-filter select[name='type']").val()
+					}
 				}
 			},
 			"columnDefs": [ { "targets": [0,2,3,4,5,7], "orderable": false } ],
@@ -3106,7 +3113,7 @@
 		
 		$('.date-group select').select2();
 		
-		$(document).on("change", '.user-filters select, .user-filters input,.stock-type-filter select, .stock-type-filter input,.payment-list-filter select, .payment-list-filter input,.stock-update-filter select, .stock-update-filter input,.delivery-filter select, .delivery-filter input,.activity-filter select, .activity-filter input,.phrase-filter select, .phrase-filter input,.subject-filter select, .subject-filter input,.seminar-filter select, .seminar-filter input,.contact-tag-filter select, .contact-tag-filter input,.bank-account-filter select, .bank-account-filter input,.discount-program-filter select, .discount-program-filter input,.course-type-filter select, .course-type-filter input,.transfer-filter select, .transfer-filter input,.payment-record-filter select, .payment-record-filter input, .course-filter select, .course-filter input, .book-filter input, .book-filter select, .course-register-filter input, .course-register-filter select', function() {
+		$(document).on("change", '.user-filters select, .merge-contact-filter select, .user-filters input,.stock-type-filter select, .stock-type-filter input,.payment-list-filter select, .payment-list-filter input,.stock-update-filter select, .stock-update-filter input,.delivery-filter select, .delivery-filter input,.activity-filter select, .activity-filter input,.phrase-filter select, .phrase-filter input,.subject-filter select, .subject-filter input,.seminar-filter select, .seminar-filter input,.contact-tag-filter select, .contact-tag-filter input,.bank-account-filter select, .bank-account-filter input,.discount-program-filter select, .discount-program-filter input,.course-type-filter select, .course-type-filter input,.transfer-filter select, .transfer-filter input,.payment-record-filter select, .payment-record-filter input, .course-filter select, .course-filter input, .book-filter input, .book-filter select, .course-register-filter input, .course-register-filter select', function() {
 			if (typeof($(this).attr("name")) == "undefined") {
 				return
 			}
@@ -3133,6 +3140,7 @@
 			$('.datatable-payment-list').dataTable().fnFilter();
 			$('.datatable-stock-types').dataTable().fnFilter();
 			$('.datatable-users').dataTable().fnFilter();
+			$('.datatable-merge-contacts').dataTable().fnFilter();
 		});
 		
 		checkContactType()

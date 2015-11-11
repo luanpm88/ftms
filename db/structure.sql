@@ -2111,7 +2111,8 @@ CREATE TABLE related_contacts (
     id integer NOT NULL,
     contact_ids text,
     created_at timestamp without time zone NOT NULL,
-    updated_at timestamp without time zone NOT NULL
+    updated_at timestamp without time zone NOT NULL,
+    cache_search text
 );
 
 
@@ -4334,4 +4335,6 @@ INSERT INTO schema_migrations (version) VALUES ('20151111023451');
 INSERT INTO schema_migrations (version) VALUES ('20151111090646');
 
 INSERT INTO schema_migrations (version) VALUES ('20151111094724');
+
+INSERT INTO schema_migrations (version) VALUES ('20151111161639');
 

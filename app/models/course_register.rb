@@ -245,7 +245,7 @@ class CourseRegister < ActiveRecord::Base
     
     @records = self.filter(params, user)
     # @records = @records.search(params["search"]["value"]) if !params["search"]["value"].empty?
-    @records = @records.where("LOWER(course_registers.cache_search) LIKE ?", "%#{params["search"]["value"].strip.downcase}%") if params["search"].present? && !params["search"]["value"].empty?
+    @records = @records.where("LOWER(course_registers.cache_search) LIKE ?", "%#{params["search"]["value"].unaccent.strip.downcase}%") if params["search"].present? && !params["search"]["value"].empty?
     
     if !params["order"].nil?
       case params["order"]["0"]["column"]

@@ -11,6 +11,14 @@
     <h3>Find - <span class="semi-bold"> Related Contacts</span></h3>
 </div>
 
+
+                <div class="row order-filters">
+					  <div class="col-md-3 merge-contact-filter">
+						  <h4>Type</h4>							
+						  <%= select_tag 'type', options_for_select([["Related Contacts","related"],["Merged Contacts","merged"]]), class: "modern_select width100" %>
+					  </div>
+				</div>
+
 <%= form_tag("", {class: "listing_form", method: "post", target: "_blank"}) do |f| %>
 
     <div class="row">
