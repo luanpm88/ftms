@@ -1,0 +1,27 @@
+<p id="notice"><%= notice %></p>
+
+<h1>Listing Related Contacts</h1>
+
+<table>
+  <thead>
+    <tr>
+      <th>Contact ids</th>
+      <th colspan="3"></th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% @related_contacts.each do |related_contact| %>
+      <tr>
+        <td><%= related_contact.contact_ids %></td>
+        <td><%= link_to 'Show', related_contact %></td>
+        <td><%= link_to 'Edit', edit_related_contact_path(related_contact) %></td>
+        <td><%= link_to 'Destroy', related_contact, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<br>
+
+<%= link_to 'New Related contact', new_related_contact_path %>

@@ -1,0 +1,9 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <strong>Contact ids:</strong>
+  <%= @related_contact.contact_ids %>
+</p>
+
+<%= link_to 'Edit', edit_related_contact_path(@related_contact) %> |
+<%= link_to 'Back', related_contacts_path %>
