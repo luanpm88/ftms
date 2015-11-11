@@ -244,7 +244,8 @@ class CourseRegister < ActiveRecord::Base
     ActionView::Base.send(:include, Rails.application.routes.url_helpers)
     
     @records = self.filter(params, user)
-    @records = @records.search(params["search"]["value"]) if !params["search"]["value"].empty?
+    # @records = @records.search(params["search"]["value"]) if !params["search"]["value"].empty?
+    @records = @records.where("LOWER(contacts.cache_search) LIKE ?", "%#{params["search"]["value"].strip.downcase}%") if params["search"].present? && !params["search"]["value"].empty?
     
     if !params["order"].nil?
       case params["order"]["0"]["column"]
