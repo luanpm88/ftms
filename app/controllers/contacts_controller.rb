@@ -585,7 +585,7 @@ class ContactsController < ApplicationController
     
     Contact.merge_contacts(@contacts)
     
-    render text: "Contacts was successfully merged.!"
+    render text: "Contacts ware successfully merged.!"
   end
 
   private
