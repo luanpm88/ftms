@@ -33,10 +33,7 @@ class Subject < ActiveRecord::Base
     self.all
   end
   
-  def self.datatable(params, user)
-    ActionView::Base.send(:include, Rails.application.routes.url_helpers)
-    link_helper = ActionController::Base.helpers    
-    
+  def self.filter(params, user)
     @records = self.main_subjects
     
     ########## BEGIN REVISION-FEATURE #########################
@@ -57,13 +54,22 @@ class Subject < ActiveRecord::Base
    
     ########## END REVISION-FEATURE #########################
     
-    @records = @records.search(params["search"]["value"]) if !params["search"]["value"].empty?
+    @records = @records.search(params["search"]["value"]) if params["search"].present? && !params["search"]["value"].empty?
+    
+    return @records
+  end
+  
+  def self.datatable(params, user)
+    ActionView::Base.send(:include, Rails.application.routes.url_helpers)
+    link_helper = ActionController::Base.helpers    
+    
+    @records = self.filter(params, user)
     
     if !params["order"].nil?
       case params["order"]["0"]["column"]
-      when "0"
+      when "1"
         order = "subjects.name"
-      when "2"
+      when "3"
         order = "subjects.created_at"
       else
         order = "subjects.name"
@@ -85,7 +91,7 @@ class Subject < ActiveRecord::Base
     
     data = []
     
-    actions_col = 5
+    actions_col = 6
     @records.each do |item|
       ############### BEGIN REVISION #########################
       # update approved status
@@ -95,6 +101,7 @@ class Subject < ActiveRecord::Base
       ############### END REVISION #########################
       
       item = [
+              "<div item_id=\"#{item.id.to_s}\" class=\"main_part_info checkbox check-default\"><input name=\"ids[]\" id=\"checkbox#{item.id}\" type=\"checkbox\" value=\"#{item.id}\"><label for=\"checkbox#{item.id}\"></label></div>",
               item.name,
               '<div class="text-center">'+item.programs_name+"</div>",
               '<div class="text-center">'+item.created_at.strftime("%Y-%m-%d")+"</div>",              

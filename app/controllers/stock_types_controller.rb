@@ -162,6 +162,27 @@ class StockTypesController < ApplicationController
   
   ########## BEGIN REVISION ###############
   
+  def approve_all
+    if params[:ids].present?
+      if !params[:check_all_page].nil?
+        @items = StockType.filter(params, current_user)
+      else
+        @items = StockType.where(id: params[:ids])
+      end
+    end
+    
+    @items.each do |c|
+      c.approve_delete(current_user) if current_user.can?(:approve_delete, c)
+      c.approve_new(current_user) if current_user.can?(:approve_new, c)
+      c.approve_update(current_user) if current_user.can?(:approve_update, c)
+    end
+    
+    respond_to do |format|
+      format.html { render "/stock_types/approved", layout: nil }
+      format.json { render action: 'show', status: :created, location: @course_type }
+    end
+  end
+  
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_stock_type

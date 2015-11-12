@@ -120,9 +120,9 @@ class Book < ActiveRecord::Base
     
     if !params["order"].nil?
       case params["order"]["0"]["column"]
-      when "1"
-        order = "course_types.short_name #{params["order"]["0"]["dir"]}, subjects.name #{params["order"]["0"]["dir"]}, books.name #{params["order"]["0"]["dir"]}"      
       when "2"
+        order = "course_types.short_name #{params["order"]["0"]["dir"]}, subjects.name #{params["order"]["0"]["dir"]}, books.name #{params["order"]["0"]["dir"]}"      
+      when "3"
         order = "books.publisher"
       else
         order = "books.name"
@@ -140,7 +140,7 @@ class Book < ActiveRecord::Base
     @records = @records.limit(params[:length]).offset(params["start"])
     data = []
     
-    actions_col = 10
+    actions_col = 11
     itemsx = []
     @records.each do |item|
       ############### BEGIN REVISION #########################
@@ -151,6 +151,7 @@ class Book < ActiveRecord::Base
       ############### END REVISION #########################
       
       itemx = [
+              "<div item_id=\"#{item.id.to_s}\" class=\"main_part_info checkbox check-default\"><input name=\"ids[]\" id=\"checkbox#{item.id}\" type=\"checkbox\" value=\"#{item.id}\"><label for=\"checkbox#{item.id}\"></label></div>",
               item.cover_link,                            
               item.book_link, # '<div class="text-center">'+item.stock_type.name+"</div>",
               '<div class="text-left">'+item.publisher.to_s+"</div>",

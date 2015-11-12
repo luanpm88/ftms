@@ -92,17 +92,19 @@ class Transfer < ActiveRecord::Base
       @records = @records.where("cache_payment_status LIKE ?", "%"+params["payment_statuses"]+"%")
     end
     
+    #@records = @records.search(params["search"]["value"]) if !params["search"]["value"].empty?
+    @records = @records.where("LOWER(transfers.cache_search) LIKE ?", "%#{params["search"]["value"].strip.downcase}%") if params["search"].present? && !params["search"]["value"].empty?
+    
     return @records
   end
   
   def self.datatable(params, user)
     @records = self.filter(params, user)
     
-    #@records = @records.search(params["search"]["value"]) if !params["search"]["value"].empty?
-    @records = @records.where("LOWER(transfers.cache_search) LIKE ?", "%#{params["search"]["value"].strip.downcase}%") if params["search"].present? && !params["search"]["value"].empty?
+    
     if !params["order"].nil?
       case params["order"]["0"]["column"]
-      when "7"
+      when "8"
         order = "transfers.created_at"
       else
         order = "transfers.created_at"
@@ -120,7 +122,7 @@ class Transfer < ActiveRecord::Base
     
     data = []
     
-    actions_col = 9
+    actions_col = 10
     
     
     @records.each do |item|
@@ -133,6 +135,7 @@ class Transfer < ActiveRecord::Base
       
       # sign = params["contact"].present? && params["contact"].to_i == item.transferred_contact.id ? "+" : ""
       item = [
+              "<div item_id=\"#{item.id.to_s}\" class=\"main_part_info checkbox check-default\"><input name=\"ids[]\" id=\"checkbox#{item.id}\" type=\"checkbox\" value=\"#{item.id}\"><label for=\"checkbox#{item.id}\"></label></div>",
               '<div class="text-center">'+item.contact.contact_link+"</div>",
               '<div class="text-center">'+item.to_contact.contact_link+"</div>",              
               '<div class="text-left">'+item.diplay_from_course+"</div>",

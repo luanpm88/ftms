@@ -293,6 +293,30 @@ class CoursesController < ApplicationController
     render layout: nil
   end
   
+  def approve_all
+    if params[:ids].present?
+      if !params[:check_all_page].nil?
+        params[:intake_year] = params["filter"]["intake(1i)"] if params["filter"].present?
+        params[:intake_month] = params["filter"]["intake(2i)"] if params["filter"].present?
+        
+        @items = Course.filters(params, current_user)
+      else
+        @items = Course.where(id: params[:ids])
+      end
+    end
+    
+    @items.each do |c|
+      c.approve_delete(current_user) if current_user.can?(:approve_delete, c)
+      c.approve_new(current_user) if current_user.can?(:approve_new, c)
+      c.approve_update(current_user) if current_user.can?(:approve_update, c)
+    end
+    
+    respond_to do |format|
+      format.html { render "/courses/approved", layout: nil }
+      format.json { render action: 'show', status: :created, location: @course }
+    end
+  end
+  
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_course
