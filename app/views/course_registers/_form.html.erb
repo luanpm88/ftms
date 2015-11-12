@@ -125,7 +125,7 @@
 										<div class="input-with-icon date-group right">                                       
 											 <i class=""></i>
 											 <div class="">
-													<%= select_tag 'stock_type_id', options_for_select(StockType.active_stock_types.collect{ |u| [u.name, u.id] }), {include_blank: "None", class: "modern_select width100", multiple: "multiple"} %>
+													<%= select_tag 'stock_type_id', options_for_select(StockType.active_stock_types.collect{ |u| [u.name, u.id] }), {include_blank: "All", class: "modern_select width100", multiple: "multiple"} %>
 											 </div>
 										</div>
 								   </div>	
@@ -410,6 +410,8 @@
 			   total: true,
 			   item_count: true
 		  });
+		  
+		  $("#stock_type_id").select2('destroy');
 	 });
 </script>
 	 

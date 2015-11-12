@@ -46,7 +46,7 @@ class StockUpdatesController < ApplicationController
     
     if params[:stock_type_id].present? || params[:subject_id].present? || params[:program_id].present?
       @books = Book.active_books.order("name")
-      @books = @books.where(stock_type_id: params[:stock_type_id]) if params[:stock_type_id].present?
+      @books = @books.where(stock_type_id: params[:stock_type_id].split(",")) if params[:stock_type_id].present?
       @books = @books.where(course_type_id: params[:program_id].split(",")) if params[:program_id].present?
       @books = @books.where(subject_id: params[:subject_id].split(",")) if params[:subject_id].present?
       @books = @books.where("valid_from <= ?", params[:valid_on].to_datetime.beginning_of_day) if params[:valid_on].present?

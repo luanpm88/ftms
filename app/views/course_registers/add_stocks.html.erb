@@ -59,8 +59,8 @@
 								   <div class="input-with-icon date-group right">                                       
 										<i class=""></i>
 										<div class="input-with_add_but">
-											   <%= link_to '<i class="icon-plus"></i>'.html_safe, new_stock_type_path(tab_page: 1), title: "New Stock Type", :class => 'btn btn-sm btn-small btn-white add-agent-button tab_page' %>
-											   <%= select_tag 'stock_type_id', options_for_select(StockType.active_stock_types.collect{ |u| [u.name, u.id] }), {include_blank: "None", class: "modern_select width100"} %>
+											   
+											   <%= select_tag 'stock_type_id', options_for_select(StockType.active_stock_types.collect{ |u| [u.name, u.id] }), {include_blank: "All", class: "modern_select width100", multiple: "multiple"} %>
 										</div>
 								   </div>
 							  </div>	
@@ -336,5 +336,10 @@
             </div>
 			
       </div>
-
+<script>
+	 $(document).ready(function() {
+		  
+		  $("#stock_type_id").select2('destroy');
+	 });
+</script>
 	 
