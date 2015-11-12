@@ -399,7 +399,10 @@ class Contact < ActiveRecord::Base
     end
     if params[:courses].present?
       order = "cache_transferred_courses_phrases DESC, "+order
-    end    
+    end
+    
+    order = "contacts.name DESC, contacts.email DESC, contacts.mobile DESC" if params["search"]["value"].present?
+    
     @records = @records.order(order) if !order.nil? && !params["search"]["value"].present?
     
     total = @records.count
