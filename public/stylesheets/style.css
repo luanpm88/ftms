@@ -4638,7 +4638,7 @@ border-bottom-right-radius: 3px;
 }
 
 .nav-pills > li > a{
-	padding: 8px 12px;
+	padding: 8px 6px;
 }
 .nav-tabs > li {
 	margin-bottom: -3px;	
@@ -8577,3 +8577,9 @@ h5.list_title {
     background: #0090d9;
     padding: 2px;
 }*/
+.dark_head {
+    margin-bottom: 20px;
+}
+.remove_related_contact_link {
+    margin-top: -5px;
+}

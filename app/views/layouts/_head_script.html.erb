@@ -3738,19 +3738,19 @@
 		});		
 		
 		$(document).on("click", ".remove_related_contact_link", function(e) {
+			e.preventDefault()
 			var message = $(this).attr("confirm-message")
 			var url = $(this).attr("href")
 			
 			if (confirm(message)) {
-				$.ajax({
-					url : url,
-					success:function(data, textStatus, jqXHR)
-					{					
-						location.reload(); 
-					}
-				});
-			} else {
-				e.preventDefault()
+				//$.ajax({
+				//	url : url,
+				//	success:function(data, textStatus, jqXHR)
+				//	{
+				//		location = url; 
+				//	}
+				//});
+				window.location = url; 
 			}
 		})
 		

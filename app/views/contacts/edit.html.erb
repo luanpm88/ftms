@@ -86,11 +86,10 @@
 														
 												</a>
 										</li>
-										<% if @contact.old_student.present? %>
+										<% if @contact.old_student.present? || !@contact.related_contacts.empty? %>
 												<li class="<%= "active" if ["old_info"].include?(params[:tab]) %>">
 														<a href="#old_info">
-																Old Information
-																
+																Old Information																
 														</a>
 												</li>
 										<% end %>
@@ -180,7 +179,7 @@
 										<%= render "activity" %>
 								</div>
 								
-								<% if @contact.old_student.present? %>
+								<% if @contact.old_student.present? || !@contact.related_contacts.empty? %>
 										<div class="tab-pane <%= "active" if ["old_info"].include?(params[:tab]) %>" id="old_info">
 												<%= render "old_info" %>
 										</div>

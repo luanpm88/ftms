@@ -2,25 +2,37 @@
 	<h3><span class="semi-bold"><%= @contact.old_student.student_name + " - " + @contact.old_student.student_id + " - " + @contact.old_student.old_consultant.consultant_name %></span></h3>
 	<%= render "old_info_group", old_student: @contact.old_student %>
 	
+	<hr />
+<% end %>
+
+<% if !@contact.related_contacts.empty? %>
+	<h3 class="semi-bold dark_head">Related Contacts</h3>
 	<% @contact.related_contacts.each do |c| %>
 		<% if c.old_student.present? %>
-			<h3><span class="semi-bold"><%= c.old_student.student_name + " - " + c.old_student.student_id + " - " + c.old_student.old_consultant.consultant_name %></span>
-			<a confirm-message="Are you sure you want to remove this connection?" href="<%= remove_related_contact_contacts_path(id: @contact.id, remove_id: c.id) %>" class="btn btn-small btn-warning remove_related_contact_link">This is not the same contact!</a>
-			</h3>
+			<h4><i class="icon-user"></i> <span class="semi-bold"><%= c.old_student.student_name + " - " + c.old_student.student_id + " - " + c.old_student.old_consultant.consultant_name %></span>
+				<a confirm-message="Remove from this related group?" href="<%= remove_related_contact_contacts_path(id: @contact.id, remove_id: c.id) %>" class="btn btn-small btn-warning remove_related_contact_link pull-right">This is not the same contact!</a>
+			</h4>
 		
 			<%= render "old_info_group", old_student: c.old_student %>
+		<% else %>
+			<h4><i class="icon-user"></i> <span class="semi-bold"><%= c.contact_link + " - " + c.account_manager.name %> - From New System</span>
+				<a confirm-message="Remove from this related group?" href="<%= remove_related_contact_contacts_path(id: @contact.id, remove_id: c.id) %>" class="btn btn-small btn-warning remove_related_contact_link pull-right">This is not the same contact!</a>
+			</h4>
+			
 		<% end %>
+		<hr />
 	<% end %>
 <% end %>
 
-<% if !@contact.no_related_contacts.empty? %>
-	<h3 class="semi-bold">Removed Related Contact</h3>
-	<% @contact.no_related_contacts.each do |c| %>
+
+<% if !@contact.group.nil? && !@contact.group.removed_contacts.empty? %>
+	<h3 class="semi-bold dark_head">Removed Related Contact</h3>
+	<% @contact.group.removed_contacts.each do |c| %>
 		
-		<h4><span class="semi-bold"><%= c.name + c.account_manager.name %></span>
-		<a confirm-message="Are you sure you want to remove this connection?" href="<%= undo_remove_related_contact_contacts_path(id: @contact.id, remove_id: c.id) %>" class="btn btn-small btn-white">Reconnect!</a>
+		<h4><i class="icon-user"></i> <span class="semi-bold"><%= c.contact_link + " - " + c.account_manager.name %></span>
+		<a style="margin-top: -5px" confirm-message="Are you sure you want to remove this connection?" href="<%= undo_remove_related_contact_contacts_path(id: @contact.id, remove_id: c.id) %>" class="btn btn-small btn-white pull-right">Reconnect!</a>
 		</h4>
-	
+	<hr />
 	<% end %>
 <% end %>
 

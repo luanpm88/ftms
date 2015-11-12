@@ -454,7 +454,7 @@ class Contact < ActiveRecord::Base
     used_ids = []
     loop do 
       record = self.filters(params, user).where(cache_group_id: nil).where.not(id: used_ids).first
-      used_ids << record.id
+      used_ids << record.id if record.present?
       if record.present?
         row = {}
         row[:parent] = record        
@@ -477,16 +477,16 @@ class Contact < ActiveRecord::Base
     
     
     if params["type"] == "merged"
-      @records = []
-      @records = self.filters(params, user).where.not(cache_group_id: nil).order("cache_group_id")
-      total = @records.count
-      @records = @records.limit(params[:length]).offset(params["start"])
       
-      arr = []
-      @records.each do |c|
-        arr << {parent: c, children: []}
+      groups = RelatedContact.all
+      groups = groups.where("LOWER(related_contacts.cache_search) LIKE ?", "%#{params["search"]["value"].unaccent.strip.downcase}%") if params["search"].present? && !params["search"]["value"].empty?
+      total = groups.count
+      groups = groups.limit(params[:length]).offset(params["start"])
+      
+      @records = []
+      groups.each do |g|
+        @records << {parent: g.contacts.first, children: g.contacts.first.related_contacts}
       end
-      @records = arr
     else
       # find related contacts
       @records = self.find_related_contacts(params, user)
