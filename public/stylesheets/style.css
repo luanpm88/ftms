@@ -1806,7 +1806,7 @@ display:none;
 	display:inline-block;
 	top:-5px;
 	position:relative;
-	width: 70%;
+	width: auto;
 }
 .page-title p{
 	color:#63696d;
@@ -8598,6 +8598,6 @@ h5.list_title {
     color: #fff;
     padding: 2px;
 }
-.label_color_grey a {
+.label_color_greyz a {
     color: #fff !important;
 }
