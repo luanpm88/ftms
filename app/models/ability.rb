@@ -133,7 +133,9 @@ class Ability
       can :undo_delete, Contact do |c|
         c.statuses.include?("delete_pending") || c.statuses.include?("deleted")
       end
-      can :print, Contact
+      can :print, Contact do |c|
+        c.is_individual?
+      end
       
       can :datatable, Course
       can :read, Course
