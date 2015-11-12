@@ -130,6 +130,9 @@ class Ability
       can :undo_remove_related_contact, Contact
       can :part_info, Contact
       can :do_merge, Contact
+      can :undo_delete, Contact do |c|
+        c.statuses.include?("delete_pending") || c.statuses.include?("deleted")
+      end   
       
       can :datatable, Course
       can :read, Course
