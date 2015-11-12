@@ -1587,7 +1587,21 @@
 						})
                     }
 					count += 1
-				})					
+				})
+				
+				var color = ["blue", "gray", "green"]
+				$(".label_email").each(function() {
+				  if($(".label_email[val='"+$(this).attr("val")+"']").length > 1) {
+					$(".label_email[val='"+$(this).attr("val")+"']").addClass("label_color_blue")
+				  }
+				  
+				})
+				$(".label_mobile").each(function() {
+				  if($(".label_mobile[val='"+$(this).attr("val")+"']").length > 1) {
+					$(".label_mobile[val='"+$(this).attr("val")+"']").addClass("label_color_green")
+				  }
+				  
+				})
 			}
 	    });
 		

@@ -8583,3 +8583,13 @@ h5.list_title {
 .remove_related_contact_link {
     margin-top: -5px;
 }
+.label_color_blue {
+    background: #0aa699;
+    color: #fff;
+    padding: 0 2px;
+}
+.label_color_green {
+    background: #0090d9;
+    color: #fff;
+    padding: 0 2px;
+}

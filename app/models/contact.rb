@@ -460,6 +460,9 @@ class Contact < ActiveRecord::Base
         row[:parent] = record        
         row[:children] = record.find_related_contacts.where.not(id: used_ids)
         if !row[:children].empty?
+          rcs = Contact.where(id: ([row[:parent].id]+row[:children].map(&:id))).order("name DESC,email DESC,mobile DESC")
+          row[:parent] = rcs.first
+          row[:children] = rcs.where.not(id: row[:parent].id)
           records << row
           used_ids += row[:children].map(&:id)
         end        
@@ -924,11 +927,11 @@ class Contact < ActiveRecord::Base
     if is_individual
       birth = !birthday.nil? ? birthday.strftime("%d-%b-%Y") : ""
       line += "<span class=\"box_mini_info nowrap\"><i class=\"icon-calendar\"></i> " + birth + "</span> " if !mobile.nil? && !mobile.empty?
-      line += "<span class=\"box_mini_info nowrap\"><i class=\"icon-envelope\"></i> " + email + "</span> " if !email.nil? && !email.empty?
-      line += "<span class=\"box_mini_info label_mobile nowrap\"><i class=\"icon-phone\"></i> " + display_mobile + "</span> " if !mobile.nil? && !mobile.empty? 
+      line += "<span class=\"box_mini_info label_email nowrap\" val=\"#{email}\"><i class=\"icon-envelope\"></i> " + email + "</span> " if !email.nil? && !email.empty?
+      line += "<span class=\"box_mini_info label_mobile nowrap\" val=\"#{display_mobile}\"><i class=\"icon-phone\"></i> " + display_mobile + "</span> " if !mobile.nil? && !mobile.empty? 
     else
       line += "<span class=\"box_mini_info nowrap\"><i class=\"icon-phone\"></i> " + phone + "</span> " if !phone.nil? && !phone.empty?
-      line += "<span class=\"box_mini_info label_email\"><i class=\"icon-envelope\"></i> " + email + "</span> " if !email.nil? && !email.empty?
+      line += "<span class=\"box_mini_info \"><i class=\"icon-envelope\"></i> " + email + "</span> " if !email.nil? && !email.empty?
       line += "Tax Code " + tax_code + "</span><br />" if tax_code.present?
     end
     line += "<div class=\"address_info_line\"><i class=\"icon-truck\"></i> " + address + "</div>" if address.present?
@@ -2155,6 +2158,7 @@ class Contact < ActiveRecord::Base
                                 .where.not(id: self.id)
                                 .where("contacts.cache_group_id IS NULL")
                                 .where(cond_other)
+                                .order("name DESC,email DESC,mobile DESC")
   end
   
   def transferred_courses_phrases
