@@ -26,7 +26,7 @@
 
 
 <% if !@contact.group.nil? && !@contact.group.removed_contacts.empty? %>
-	<h3 class="semi-bold dark_head">Removed Related Contact</h3>
+	<h3 class="semi-bold dark_head">Removed Related Contacts</h3>
 	<% @contact.group.removed_contacts.each do |c| %>
 		
 		<h4><i class="icon-user"></i> <span class="semi-bold"><%= c.contact_link + " - " + c.account_manager.name %></span>
