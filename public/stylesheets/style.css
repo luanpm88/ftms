@@ -8593,3 +8593,11 @@ h5.list_title {
     color: #fff;
     padding: 0 2px;
 }
+.label_color_grey {
+    background: #aaa;
+    color: #fff;
+    padding: 2px;
+}
+.label_color_grey a {
+    color: #fff !important;
+}

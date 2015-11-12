@@ -1602,6 +1602,12 @@
 				  }
 				  
 				})
+				$(".label_name").each(function() {
+				  if($(".label_name[val='"+$(this).attr("val")+"']").length > 1) {
+					$(".label_name[val='"+$(this).attr("val")+"']").addClass("label_color_grey")
+				  }
+				  
+				})
 			}
 	    });
 		

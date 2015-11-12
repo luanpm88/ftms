@@ -514,7 +514,7 @@ class Contact < ActiveRecord::Base
       row = [
               "<div item_id=\"#{item[:parent].id.to_s}\" class=\"main_part_info row-color-#{(index%2 == 0).to_s} checkbox check-default\"><input name=\"ids[]\" id=\"checkbox#{item[:parent].id}\" type=\"checkbox\" value=\"#{item[:parent].id}\"><label for=\"checkbox#{item[:parent].id}\"></label></div>",
               
-              '<div class="text-left"><strong>'+item[:parent].contact_link+"</strong></div>"+'<div class="text-left">'+item[:parent].html_info_line.html_safe+item[:parent].referrer_link+"</div>"+item[:parent].picture_link,
+              '<div class="text-left"><strong class="label_name" val="'+item[:parent].name.unaccent.to_s+'">'+item[:parent].contact_link+"</strong></div>"+'<div class="text-left">'+item[:parent].html_info_line.html_safe+item[:parent].referrer_link+"</div>"+item[:parent].picture_link,
               "",
               "",
               "",
@@ -535,7 +535,7 @@ class Contact < ActiveRecord::Base
       item[:children].each do |child|
         row = [
                 "<div item_id=\"#{child.id.to_s}\" class=\"main_part_info row-color-#{(index%2 == 0).to_s} checkbox check-default\"><input name=\"ids[]\" id=\"checkbox#{child.id}\" type=\"checkbox\" value=\"#{child.id}\"><label for=\"checkbox#{child.id}\"></label></div>",
-                '<div class="text-left"><strong>'+child.contact_link+"</strong></div>"+'<div class="text-left">'+child.html_info_line.html_safe+child.referrer_link+"</div>"+child.picture_link,              
+                '<div class="text-left"><strong class="label_name" val="'+child.name.unaccent.to_s+'">'+child.contact_link+"</strong></div>"+'<div class="text-left">'+child.html_info_line.html_safe+child.referrer_link+"</div>"+child.picture_link,              
                 "",
                 "",
                 "",
