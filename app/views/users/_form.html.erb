@@ -139,7 +139,7 @@
 								<span class="help">(required)</span>
 								<div class="input-with-icon  right">                                       
 									<i class=""></i>
-										<%= f.password_field :password_confirmation, :class => "form-control" %>
+										<%= f.password_field :password_confirmation, :class => "form-control", autocomplete: "off" %>
 								</div>
 							  </div>
 							  
@@ -256,7 +256,7 @@
 										<div class="col-md-12">												
 											 <div class="row-fluid user-role sales_admin">
 											   <div class="checkbox check-info">
-												 <input type="checkbox" <%= 'checked="checked"'.html_safe if @user.has_role?("export_contact_information") || @user.has_role?("manager") || @user.has_role?("admin") %> value="<%= Role.get("export_contact_information").id %>" id="role_<%= Role.get("export_contact_information").id %>" name="user[role_ids][]">
+												 <input type="checkbox" <%= 'checked="checked"'.html_safe if @user.has_role?("export_contact_information") %> value="<%= Role.get("export_contact_information").id %>" id="role_<%= Role.get("export_contact_information").id %>" name="user[role_ids][]">
 												 <label for="role_<%= Role.get("export_contact_information").id %>">Export Contact Mobiles/Emails</label>
 											   </div>
 											 </div>
