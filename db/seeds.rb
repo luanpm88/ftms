@@ -24,6 +24,8 @@ Role.create(name: "education_consultant")
 Role.create(name: "accountant")
 Role.create(name: "storage_manager")
 
+Role.create(name: "export_contact_information")
+
 
 # Default role for user
 User.all.each do |user|

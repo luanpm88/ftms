@@ -118,8 +118,12 @@ class Ability
       can :delete, Contact do |c|
         !c.statuses.include?("delete_pending")
       end
-      can :export_mobiles, Contact
-      can :export_emails, Contact
+      
+      if user.has_role? "export_contact_information"
+        can :export_mobiles, Contact
+        can :export_emails, Contact
+      end
+        
       can :merge_contacts, Contact
       can :merge_contacts_datatable, Contact
       can :remove_related_contact, Contact

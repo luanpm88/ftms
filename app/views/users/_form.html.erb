@@ -248,6 +248,21 @@
 								   <% end %>-->
 								</div>
 							  </div>
+							  
+							  <div class="form-group">
+								   <label class="form-label"><%= f.label :other_abilities %></label>
+								   <span class="help"></span>
+								   <div class="row">
+										<div class="col-md-12">												
+											 <div class="row-fluid user-role sales_admin">
+											   <div class="checkbox check-info">
+												 <input type="checkbox" <%= 'checked="checked"'.html_safe if @user.has_role?("export_contact_information") %> value="<%= Role.get("export_contact_information").id %>" id="role_<%= Role.get("export_contact_information").id %>" name="user[role_ids][]">
+												 <label for="role_<%= Role.get("export_contact_information").id %>">Export Contact Mobiles/Emails</label>
+											   </div>
+											 </div>
+										</div>
+								   </div>
+							  </div>
 						 </div>
 						 
 					</div>
