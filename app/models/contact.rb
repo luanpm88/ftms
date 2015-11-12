@@ -531,7 +531,8 @@ class Contact < ActiveRecord::Base
               #'',
             ]
       data << row
-
+      arr << item[:parent]
+      
       item[:children].each do |child|
         row = [
                 "<div item_id=\"#{child.id.to_s}\" class=\"main_part_info row-color-#{(index%2 == 0).to_s} checkbox check-default\"><input name=\"ids[]\" id=\"checkbox#{child.id}\" type=\"checkbox\" value=\"#{child.id}\"><label for=\"checkbox#{child.id}\"></label></div>",
@@ -555,7 +556,7 @@ class Contact < ActiveRecord::Base
         arr << child
         data << row
       end
-      arr << item[:parent]
+      
     end
     
     result = {
