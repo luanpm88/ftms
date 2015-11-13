@@ -163,6 +163,27 @@ class BankAccountsController < ApplicationController
   
   ########## BEGIN REVISION ###############
 
+  def approve_all
+    if params[:ids].present?
+      if !params[:check_all_page].nil?
+        @items = BankAccount.filter(params, current_user)
+      else
+        @items = BankAccount.where(id: params[:ids])
+      end
+    end
+    
+    @items.each do |c|
+      c.approve_delete(current_user) if current_user.can?(:approve_delete, c)
+      c.approve_new(current_user) if current_user.can?(:approve_new, c)
+      c.approve_update(current_user) if current_user.can?(:approve_update, c)
+    end
+    
+    respond_to do |format|
+      format.html { render "/bank_accounts/approved", layout: nil }
+      format.json { render action: 'show', status: :created, location: @bank_account }
+    end
+  end
+
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_bank_account

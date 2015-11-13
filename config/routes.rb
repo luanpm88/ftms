@@ -16,6 +16,8 @@ Hkerp::Application.routes.draw do
       get :undo_delete
       
       ####################
+      
+      post :approve_all
     end
   end
   resources :course_types_discount_programs
@@ -42,6 +44,9 @@ Hkerp::Application.routes.draw do
       
       get :transfer_hour
       patch :do_transfer_hour
+      
+      post :approve_all
+      
     end
   end
   resources :activities do
@@ -109,6 +114,8 @@ Hkerp::Application.routes.draw do
       ####################
       
       get :undo_delete
+      
+      post :approve_all
     end
   end
   resources :course_prices
@@ -130,6 +137,8 @@ Hkerp::Application.routes.draw do
       get :undo_delete
       
       ####################
+      
+      post :approve_all
     end
   end
   resources :courses_phrases do
@@ -154,6 +163,7 @@ Hkerp::Application.routes.draw do
       ####################
       
       get :undo_delete
+      post :approve_all
     end
   end
   resources :contacts_course_types
@@ -184,6 +194,7 @@ Hkerp::Application.routes.draw do
       ####################
       
       patch :do_import_list
+      post :approve_all
     end
   end
   resources :contacts_courses do
@@ -233,6 +244,8 @@ Hkerp::Application.routes.draw do
       get :field_history
       
       ####################
+      
+      post :approve_all
     end
   end
   resources :books do
@@ -264,6 +277,7 @@ Hkerp::Application.routes.draw do
       post :delivery_counting
       get :stock_statistics
       get :undo_delete
+      post :approve_all
     end
   end
   
@@ -289,6 +303,7 @@ Hkerp::Application.routes.draw do
       
       get :report_toggle
       get :undo_delete
+      post :approve_all
     end
   end
   
@@ -309,6 +324,7 @@ Hkerp::Application.routes.draw do
       ####################
       
       get :undo_delete
+      post :approve_all
     end
   end
   
@@ -328,6 +344,7 @@ Hkerp::Application.routes.draw do
       ####################
       
       get :undo_delete
+      post :approve_all
     end
   end
   
@@ -458,6 +475,8 @@ Hkerp::Application.routes.draw do
       
       get :part_info
       post :do_merge
+      
+      get :print
     end
   end
 

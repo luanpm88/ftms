@@ -1,0 +1,185 @@
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<style>
+  * {
+    font-family: arial;
+    font-size: 12px;
+  }
+  .page {
+    padding: 20px;
+  }
+  .logo img {
+    width: 300px;
+  }
+  .heading {
+    text-align: center;
+  }
+  .text-left {
+    text-align: left;
+  }
+  .text-center {
+    text-align: center;
+  }
+  .list {
+    width: 100%;
+    margin-top: 20px;
+    border-left: 1px solid #000000;
+    border-top: 1px solid #000000;
+    border-bottom: none;
+    border-right: none;
+  }
+  .list th {
+      background: none repeat scroll 0 0 #EFEFEF;
+      border-bottom: 1px solid #000000;
+      border-right: 1px solid #000000;
+      border-top: none;
+      border-left: none;
+      padding: 5px;
+  }
+  .list td {
+      border-bottom: 1px solid #000000;
+      border-right: 1px solid #000000;
+      border-top: none;
+      border-left: none;
+      padding: 5px;
+  }
+  .contact_type_line {
+    display: inline
+  }
+</style>
+
+<div class="page">
+  <!--<div class="logo">
+    <img src="<%= params[:action] == "print" ? "file://"+File.join(Rails.root, 'public', 'img', 'FTMSGlobalNew_transparent.png') : url_for("/img/FTMSGlobalNew_transparent.png") %>" class="login-logo" />
+  </div>-->
+  
+  <div class="heading">
+    <table cellpadding="5" width="100%">
+    <tr>    
+      <td valign="center" align="center" width="100%">
+        <img style="float: left; margin-right: -60px" src="<%= "file://"+@contact.logo_path(:thumb) %>" class="login-logo" />
+        <h1 style="font-size: 22px; margin-bottom: 0"><%= @contact.name %></h1>
+        <p style="margin-top: 3px;">(Printed on: <%= Time.now.strftime("%d-%b-%Y") %>)</p>
+      </td>
+    </tr>
+    </table>
+  </div>
+  
+  
+  <table style="margin-top: 20px" cellpadding="5" width="100%">
+    <tr>
+      <td valign="top" width="18%">
+        <strong>Name:</strong>
+      </td>
+      <td valign="top" width="32%">
+        <%= @contact.display_name %>
+      </td>
+      <td valign="top" width="18%">
+        <strong>Contact Type:</strong>
+      </td>
+      <td valign="top" width="">
+        <%= @contact.course_types_name_col.html_safe %>
+      </td>
+    </tr>
+    <tr>
+      <td valign="top" width="">
+        <strong>Birthday:</strong>
+      </td>
+      <td valign="top" width="">
+        <%= !@contact.birthday.nil? ? @contact.birthday.strftime("%d-%b-%Y") : "" %>
+      </td>
+      <td valign="top" width="">
+        <strong>Address:</strong>
+      </td>
+      <td valign="top" width="">
+        <%= @contact.address %>
+      </td>
+    </tr>
+    <tr>
+      <td valign="top" width="">
+        <strong>Email:</strong>
+      </td>
+      <td valign="top" width="">
+        <%= @contact.email %>
+        <%= @contact.email_2.present? ? "; "+@contact.email_2 : "" %>
+      </td>
+      <td valign="top" width="">
+        <strong>Mobile/Phone:</strong>
+      </td>
+      <td valign="top" width="">
+        +<%= @contact.mobile %>
+        <%= @contact.mobile_2.present? ? "; +"+@contact.mobile_2 : "" %>
+      </td>
+    </tr>
+    <tr>
+      <td valign="top" width="">
+        <strong>Company:</strong>
+      </td>
+      <td valign="top" width="">
+        <%= @contact.referrer.present? ? @contact.referrer.display_name : "" %>
+      </td>
+      <td valign="top" width="">
+        <strong>Payment Type:</strong>
+      </td>
+      <td valign="top" width="">
+        <%= @contact.payment_type %>
+      </td>
+    </tr>
+    <tr>
+      <td valign="top" width="">
+        <strong>Preferred mailing:</strong>
+      </td>
+      <td valign="top" width="">
+        <%= @contact.default_mailing_address %>
+      </td>
+      <td valign="top" width="">
+        <strong>EC:</strong>
+      </td>
+      <td valign="top" width="">
+        <%= @contact.account_manager.name %>
+      </td>
+    </tr>
+    <tr>
+      <td valign="top" width="">
+        <strong>Online #ID:</strong>
+      </td>
+      <td valign="top" width="">
+        <%= @contact.display_bases %>
+      </td>
+      <td valign="top" width="">
+        <strong>Tag(s):</strong>
+      </td>
+      <td valign="top" width="">
+        <%= @contact.contact_tags.map(&:name).join("; ") %>
+      </td>
+    </tr>
+    <tr>
+      <td valign="top" width="">
+        <strong>Invoice required:</strong>
+      </td>
+      <td valign="top" width="">
+        <%= @contact.invoice_required ? "yes" : "no" %>
+      </td>
+      <td valign="top" width="">
+        <strong>Invoice info:</strong>
+      </td>
+      <td valign="top" width="">
+        <%= @contact.invoice_info.nil? ? "" : @contact.invoice_info.name %>
+      </td>
+    </tr>
+    <tr>
+      <td valign="top" width="">
+        <strong>Background:</strong>
+      </td>
+      <td colspan="3">
+        <%= @contact.note %>
+      </td>
+    </tr>
+  </table>
+  
+  
+  <p></p>
+  <br />
+  
+
+  
+</div>

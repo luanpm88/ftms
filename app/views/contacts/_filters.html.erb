@@ -162,7 +162,7 @@
 						</div>
 							
 						<div class="row">
-								<div class="col-md-3">
+								<div class="col-md-3 personal-box">
 												<h4>ApproveStatus</h4>							
 												<%= select_tag 'status', options_for_select(Contact.status_options, params[:status]), class: "modern_select width100" %>
 								</div>	
@@ -171,14 +171,14 @@
 								<h4>Tag</h4>
 								<%= select_tag 'tags[]', options_for_select(ContactTag.active_contact_tags.collect{ |u| [u.name, u.id] }), class: "modern_select width100", multiple: "multiple" %>
 							</div>
-							<div class="col-md-3">
+							<div class="col-md-3 personal-box">
 								<h4>Old Tag</h4>                        
 								<div class="lecturers-filter-box">
 									<input style="width:100%;margin-bottom: 5px;" name="old_tag" data="<%= old_tags_path(format: "json") %>" class="select2-ajax-old-tags" />
 								</div>
 							</div>
 
-							<div class="col-md-3">
+							<div class="col-md-3 personal-box">
 								<h4>Old Course</h4>                        
 								<div class="lecturers-filter-box">
 									<input style="width:100%;margin-bottom: 5px;" name="old_course" data="<%= old_link_students_path(format: "json") %>" class="select2-ajax-old-link-students" />

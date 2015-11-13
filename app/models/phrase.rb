@@ -26,10 +26,7 @@ class Phrase < ActiveRecord::Base
                       }
                   }
   
-  def self.datatable(params, user)
-    ActionView::Base.send(:include, Rails.application.routes.url_helpers)
-    link_helper = ActionController::Base.helpers    
-    
+  def self.filter(params, user)
     @records = self.main_phrases
     
     ########## BEGIN REVISION-FEATURE #########################
@@ -50,13 +47,22 @@ class Phrase < ActiveRecord::Base
    
     ########## END REVISION-FEATURE #########################
     
-    @records = @records.search(params["search"]["value"]) if !params["search"]["value"].empty?
+    @records = @records.search(params["search"]["value"]) if params["search"].present? && !params["search"]["value"].empty?
+    
+    return @records
+  end
+  
+  def self.datatable(params, user)
+    ActionView::Base.send(:include, Rails.application.routes.url_helpers)
+    link_helper = ActionController::Base.helpers    
+    
+    @records = self.filter(params, user)
     
     if !params["order"].nil?
       case params["order"]["0"]["column"]
-      when "0"
+      when "1"
         order = "phrases.name"
-      when "3"
+      when "4"
         order = "phrases.created_at"
       else
         order = "phrases.name"
@@ -86,7 +92,7 @@ class Phrase < ActiveRecord::Base
     
     data = []
     
-    actions_col = 6
+    actions_col = 7
     @records.each do |item|
       ############### BEGIN REVISION #########################
       # update approved status
@@ -95,6 +101,7 @@ class Phrase < ActiveRecord::Base
       end
       ############### END REVISION #########################
       item = [
+              "<div item_id=\"#{item.id.to_s}\" class=\"main_part_info checkbox check-default\"><input name=\"ids[]\" id=\"checkbox#{item.id}\" type=\"checkbox\" value=\"#{item.id}\"><label for=\"checkbox#{item.id}\"></label></div>",
               item.name,
               '<div class="text-center">'+item.course_types_name+"</div>",
               '<div class="text-center">'+item.subjecs_name+"</div>",

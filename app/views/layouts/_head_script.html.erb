@@ -1846,7 +1846,7 @@
 					}
 				}
 			},
-			"columnDefs": [ { "targets": [3,4,5], "orderable": false } ],
+			"columnDefs": [ { "targets": [0,4,5,6], "orderable": false } ],
 			"order": [],
 			"aLengthMenu": [[10, 25, 50, 75, 100], [10, 25, 50, 75, 100]],
 			"iDisplayLength": 10
@@ -1865,7 +1865,7 @@
 					}
 				}
 			},
-			"columnDefs": [ { "targets": [1,3,4,5], "orderable": false } ],
+			"columnDefs": [ { "targets": [0,2,3,5,6], "orderable": false } ],
 			"order": [],
 			"aLengthMenu": [[10, 25, 50, 75, 100], [10, 25, 50, 75, 100]],
 			"iDisplayLength": 10
@@ -1902,7 +1902,7 @@
 					}
 				}
 			},
-			"columnDefs": [ { "targets": [2,4,5,6,8,9], "orderable": false } ],
+			"columnDefs": [ { "targets": [0,3,5,6,7,9,10], "orderable": false } ],
 			"order": [],
 			"aLengthMenu": [[10, 25, 50, 75, 100], [10, 25, 50, 75, 100]],
 			"iDisplayLength": 10
@@ -1973,7 +1973,7 @@
 					
 				}
 			},
-			"columnDefs": [ { "targets": [0,2,3,4,5,6,7,8,9,10], "orderable": false } ],
+			"columnDefs": [ { "targets": [0,1,4,5,6,7,8,9,10,11], "orderable": false } ],
 			"order": [],
 			"aLengthMenu": [[10, 25, 50, 75, 100], [10, 25, 50, 75, 100]],
 			"iDisplayLength": 10
@@ -2037,7 +2037,7 @@
 					}
 				}
 			},
-			"columnDefs": [ { "targets": [1,2,3,4,5], "orderable": false } ],
+			"columnDefs": [ { "targets": [0,2,3,4,5,6], "orderable": false } ],
 			"order": [],
 			"aLengthMenu": [[10, 25, 50, 75, 100], [10, 25, 50, 75, 100]],
 			"iDisplayLength": 10
@@ -2059,7 +2059,7 @@
 					}
 				}
 			},
-			"columnDefs": [ { "targets": [1,2,3,5,6], "orderable": false } ],
+			"columnDefs": [ { "targets": [0,2,3,5,6,7], "orderable": false } ],
 			"order": [],
 			"aLengthMenu": [[10, 25, 50, 75, 100], [10, 25, 50, 75, 100]],
 			"iDisplayLength": 10
@@ -2101,7 +2101,7 @@
 					}
 				}
 			},
-			"columnDefs": [ { "targets": [1,2,4,5,6], "orderable": false } ],
+			"columnDefs": [ { "targets": [0,2,3,5,6,7], "orderable": false } ],
 			"order": [],
 			"aLengthMenu": [[10, 25, 50, 75, 100], [10, 25, 50, 75, 100]],
 			"iDisplayLength": 10
@@ -2119,7 +2119,7 @@
 					}
 				}
 			},
-			"columnDefs": [ { "targets": [1,2,3,5,6,7], "orderable": false } ],
+			"columnDefs": [ { "targets": [0,2,3,4,6,7,8], "orderable": false } ],
 			"order": [],
 			"aLengthMenu": [[10, 25, 50, 75, 100], [10, 25, 50, 75, 100]],
 			"iDisplayLength": 10
@@ -2378,7 +2378,7 @@
 					
 				}
 			},
-			"columnDefs": [ { "targets": [0,1,2,3,4,5,6,8,9], "orderable": false } ],
+			"columnDefs": [ { "targets": [0,1,2,3,4,5,6,7,9,10], "orderable": false } ],
 			"order": [],
 			"aLengthMenu": [[10, 25, 50, 75, 100], [10, 25, 50, 75, 100]],
 			"iDisplayLength": 10
@@ -2527,7 +2527,7 @@
 					}
 				}
 			},
-			"columnDefs": [ { "targets": [0,1,2,3,4,5], "orderable": false } ],
+			"columnDefs": [ { "targets": [0,2,4,5,6], "orderable": false } ],
 			"order": [],
 			"aLengthMenu": [[10, 25, 50, 75, 100], [10, 25, 50, 75, 100]],
 			"iDisplayLength": 10
@@ -2971,7 +2971,7 @@
 					}
 				}
 			},
-			"columnDefs": [ { "targets": [1,2,6,7,8], "orderable": false } ],
+			"columnDefs": [ { "targets": [0,2,3,7,8,9], "orderable": false } ],
 			"order": [],
 			"aLengthMenu": [[10, 25, 50, 75, 100], [10, 25, 50, 75, 100]],
 			"iDisplayLength": 10
@@ -3630,11 +3630,11 @@
 		})
 		
 		$(document).on("change", ".stock_form_filter input, .stock_form_filter select", function() {
-			updateStockFormList($(".stock_form_filter select[name='stock_type_id']").select2("val"),$(".stock_form_filter select[name='program_id']").select2("val"),$(".stock_form_filter select[name='subject_id']").select2("val"),$(".stock_form_filter input[name='valid_on']").val())
+			updateStockFormList($(".stock_form_filter select[name='stock_type_id']").val(),$(".stock_form_filter select[name='program_id']").select2("val"),$(".stock_form_filter select[name='subject_id']").select2("val"),$(".stock_form_filter input[name='valid_on']").val())
 		})
 		
 		$(document).on("change", ".import_export_form_filter select[name=stock_type_id], .import_export_form_filter select[name=program_id], .import_export_form_filter select[name=subject_id], .import_export_form_filter input[name=valid_on]", function() {
-			updateImportExportList($(".import_export_form_filter select[name='stock_type_id']").select2("val"),$(".import_export_form_filter select[name='program_id']").select2("val"),$(".import_export_form_filter select[name='subject_id']").select2("val"),$(".import_export_form_filter input[name='valid_on']").val())
+			updateImportExportList($(".import_export_form_filter select[name='stock_type_id']").val(),$(".import_export_form_filter select[name='program_id']").select2("val"),$(".import_export_form_filter select[name='subject_id']").select2("val"),$(".import_export_form_filter input[name='valid_on']").val())
 		})
 		
 		$(document).on("change", ".phrase_box .price_course", function() {

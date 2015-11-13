@@ -42,10 +42,7 @@ class DiscountProgram < ActiveRecord::Base
     "[#{self.display_rate}] " + self.name
   end
   
-  def self.datatable(params, user)
-    ActionView::Base.send(:include, Rails.application.routes.url_helpers)
-    link_helper = ActionController::Base.helpers    
-    
+  def self.filter(params, user)
     @records = self.main_discount_programs
     
     ########## BEGIN REVISION-FEATURE #########################
@@ -71,17 +68,28 @@ class DiscountProgram < ActiveRecord::Base
       @records = @records.where("course_types.id IN (#{params["course_types"].join(",")})")
     end
     
-    @records = @records.search(params["search"]["value"]) if !params["search"]["value"].empty?
+    @records = @records.search(params["search"]["value"]) if params["search"].present? && !params["search"]["value"].empty?
+    
+    return @records
+  end
+  
+  def self.datatable(params, user)
+    ActionView::Base.send(:include, Rails.application.routes.url_helpers)
+    link_helper = ActionController::Base.helpers    
+    
+    
+    @records = self.filter(params, user)
+    
     
     if !params["order"].nil?
       case params["order"]["0"]["column"]
-      when "0"
+      when "1"
         order = "discount_programs.name"
-      when "3"
-        order = "discount_programs.rate"
       when "4"
-        order = "discount_programs.start_at"
+        order = "discount_programs.rate"
       when "5"
+        order = "discount_programs.start_at"
+      when "6"
         order = "discount_programs.end_at"
       else
         order = "discount_programs.start_at"
@@ -98,7 +106,7 @@ class DiscountProgram < ActiveRecord::Base
     
     data = []
     
-    actions_col = 8
+    actions_col = 9
     @records.each do |item|
       ############### BEGIN REVISION #########################
       # update approved status
@@ -108,6 +116,7 @@ class DiscountProgram < ActiveRecord::Base
       ############### END REVISION #########################
       
       item = [
+              "<div item_id=\"#{item.id.to_s}\" class=\"main_part_info checkbox check-default\"><input name=\"ids[]\" id=\"checkbox#{item.id}\" type=\"checkbox\" value=\"#{item.id}\"><label for=\"checkbox#{item.id}\"></label></div>",
               item.name,
               item.description,
               '<div class="text-center">'+item.programs_name+"</div>",

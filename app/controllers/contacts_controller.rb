@@ -4,7 +4,7 @@ class ContactsController < ApplicationController
   include ContactsHelper
   
   load_and_authorize_resource
-  before_action :set_contact, only: [:part_info, :remove_related_contact, :delete, :course_register, :ajax_quick_info, :ajax_tag_box, :ajax_edit, :ajax_update, :show, :edit, :update, :destroy, :ajax_destroy, :ajax_show, :ajax_list_agent, :ajax_list_supplier_agent]
+  before_action :set_contact, only: [:print, :part_info, :remove_related_contact, :delete, :course_register, :ajax_quick_info, :ajax_tag_box, :ajax_edit, :ajax_update, :show, :edit, :update, :destroy, :ajax_destroy, :ajax_show, :ajax_list_agent, :ajax_list_supplier_agent]
 
   # GET /contacts
   # GET /contacts.json
@@ -586,6 +586,23 @@ class ContactsController < ApplicationController
     Contact.merge_contacts(@contacts)
     
     render text: "Contacts ware successfully merged.!"
+  end
+  
+  def print
+    #render layout: nil
+    render  :pdf => "delivery_"+@contact.name.unaccent.gsub(" ","_"),
+            :template => 'contacts/print.html.erb',
+            :layout => nil,
+            :footer => {
+               :center => "",
+               :left => "",
+               :right => "",
+               :page_size => "A4",
+               :margin  => {:top    => 0, # default 10 (mm)
+                          :bottom => 0,
+                          :left   => 0,
+                          :right  => 0},
+            }
   end
 
   private

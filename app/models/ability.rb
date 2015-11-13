@@ -133,6 +133,9 @@ class Ability
       can :undo_delete, Contact do |c|
         c.statuses.include?("delete_pending") || c.statuses.include?("deleted")
       end
+      can :print, Contact do |c|
+        c.is_individual?
+      end
       
       can :datatable, Course
       can :read, Course
@@ -152,6 +155,7 @@ class Ability
       can :course_phrases_list, Course
       can :report_toggle, Course
       can :transfer_to_box, Course
+      can :approve_all, Course
       
       
       
@@ -165,6 +169,7 @@ class Ability
         !ct.statuses.include?("delete_pending") && !ct.statuses.include?("deleted")
       end
       can :field_history, CourseType
+      can :approve_all, CourseType
       
       
       ## STOCK TYPE
@@ -179,6 +184,7 @@ class Ability
         !ct.statuses.include?("delete_pending") && !ct.statuses.include?("deleted")
       end
       can :field_history, StockType
+      can :approve_all, StockType
       
       
       
@@ -195,6 +201,7 @@ class Ability
         !ct.statuses.include?("delete_pending") && !ct.statuses.include?("deleted")
       end
       can :field_history, Subject
+      can :approve_all, Subject
       
       
       can :datatable, Book
@@ -219,6 +226,7 @@ class Ability
       can :delivery_counting, Book
       can :stock_statistics, Book
       can :statistics, Book
+      can :approve_all, Book
       
       
       can :datatable, BooksContact
@@ -237,6 +245,7 @@ class Ability
         !c.statuses.include?("delete_pending") && !c.statuses.include?("deleted")
       end
       can :field_history, ContactTag
+      can :approve_all, ContactTag
       
       
       can :datatable, Seminar
@@ -257,6 +266,7 @@ class Ability
         !c.statuses.include?("delete_pending") && !c.statuses.include?("deleted")
       end
       can :field_history, Seminar
+      can :approve_all, Seminar
       
       
       # Phrase
@@ -272,6 +282,7 @@ class Ability
         !c.statuses.include?("delete_pending") && !c.statuses.include?("deleted")
       end
       can :field_history, Phrase
+      can :approve_all, Phrase
       
       
       can :datatable, DiscountProgram
@@ -285,11 +296,13 @@ class Ability
         !c.statuses.include?("delete_pending") && !c.statuses.include?("deleted")
       end
       can :field_history, DiscountProgram
+      can :approve_all, DiscountProgram
       
       
       can :datatable, BankAccount
       can :read, BankAccount      
       can :field_history, BankAccount
+      can :approve_all, BankAccount
       
       can :courses_phrases_select, CoursesPhrase
       
@@ -311,6 +324,7 @@ class Ability
       can :create, StockUpdate
       can :import_export_form_list, StockUpdate
       can :import_export, StockUpdate
+      can :approve_all, StockUpdate
       
       can :datatable, PaymentRecord
       can :read, PaymentRecord
@@ -344,6 +358,7 @@ class Ability
       end
       can :transfer_hour, Transfer
       can :do_transfer_hour, Transfer
+      can :approve_all, Transfer
       
       can :datatable, CourseRegister
       can :student_course_registers, CourseRegister

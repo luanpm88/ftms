@@ -27,10 +27,7 @@ class ContactTag < ActiveRecord::Base
     self.active_contact_tags.search(q).limit(50).map {|model| {:id => model.id, :text => model.name} }
   end
   
-  def self.datatable(params, user)
-    ActionView::Base.send(:include, Rails.application.routes.url_helpers)
-    link_helper = ActionController::Base.helpers    
-    
+  def self.filter(params, user)
     @records = self.main_contact_tags
     
     ########## BEGIN REVISION-FEATURE #########################
@@ -48,12 +45,22 @@ class ContactTag < ActiveRecord::Base
     if !params[:status].present? || params[:status] != "deleted"
       @records = @records.where("contact_tags.status NOT LIKE ?","%[deleted]%")
     end
-   
+    @records = @records.search(params["search"]["value"]) if params["search"].present? && !params["search"]["value"].empty?
+    
+    return @records
+  end
+  
+  def self.datatable(params, user)
+    ActionView::Base.send(:include, Rails.application.routes.url_helpers)
+    link_helper = ActionController::Base.helpers    
+    
+    @records = self.filter(params, user)
+    
     ########## END REVISION-FEATURE #########################
     
     if !params["order"].nil?
       case params["order"]["0"]["column"]
-      when "0"
+      when "1"
         order = "contact_tags.name"      
       else
         order = "contact_tags.name"
@@ -64,13 +71,13 @@ class ContactTag < ActiveRecord::Base
     end    
     @records = @records.order(order) if !order.nil?
     
-    @records = @records.search(params["search"]["value"]) if !params["search"]["value"].empty?
+   
     
     total = @records.count
     @records = @records.limit(params[:length]).offset(params["start"])
     data = []
     
-    actions_col = 5
+    actions_col = 6
     @records.each do |item|
       ############### BEGIN REVISION #########################
       # update approved status
@@ -79,6 +86,7 @@ class ContactTag < ActiveRecord::Base
       end
       ############### END REVISION #########################
       item = [
+              "<div item_id=\"#{item.id.to_s}\" class=\"main_part_info checkbox check-default\"><input name=\"ids[]\" id=\"checkbox#{item.id}\" type=\"checkbox\" value=\"#{item.id}\"><label for=\"checkbox#{item.id}\"></label></div>",
               '<div class="text-left nowrap">'+item.name+"</div>",
               '<div class="text-left">'+item.description+"</div>",
               '<div class="text-center">'+item.created_at.strftime("%d-%b-%Y")+"</div>",

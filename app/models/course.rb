@@ -178,13 +178,13 @@ class Course < ActiveRecord::Base
     
     if !params["order"].nil?
       case params["order"]["0"]["column"]
-      when "0"
-        order = "courses.intake #{params["order"]["0"]["dir"]}, course_types.short_name, subjects.name"
       when "1"
+        order = "courses.intake #{params["order"]["0"]["dir"]}, course_types.short_name, subjects.name"
+      when "2"
         order = "course_types.short_name #{params["order"]["0"]["dir"]}, subjects.name"
-      when "3"
+      when "4"
         order = "courses.for_exam_year #{params["order"]["0"]["dir"]}, courses.for_exam_month #{params["order"]["0"]["dir"]}"
-      when "7"
+      when "8"
         order = "courses.created_at"
       else
         order = "courses.created_at"
@@ -200,7 +200,7 @@ class Course < ActiveRecord::Base
     @records = @records.limit(params[:length]).offset(params["start"])
     data = []
     
-    actions_col = 9
+    actions_col = 10
     @records.each do |item|
       ############### BEGIN REVISION #########################
       # update approved status
@@ -210,6 +210,7 @@ class Course < ActiveRecord::Base
       ############### END REVISION #########################
       
       item = [
+              "<div item_id=\"#{item.id.to_s}\" class=\"main_part_info checkbox check-default\"><input name=\"ids[]\" id=\"checkbox#{item.id}\" type=\"checkbox\" value=\"#{item.id}\"><label for=\"checkbox#{item.id}\"></label></div>",
               '<div class="text-left nowrap">'+item.display_intake+"</div>",
               '<div class="text-left nowrap">'+item.program_paper_name+"</div>",
               '<div class="text-left">'+item.courses_phrase_list+"</div>",

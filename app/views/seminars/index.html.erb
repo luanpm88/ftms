@@ -8,6 +8,8 @@
                         <i class="icon-facetime-video"></i>
                     	<h3>Seminar - <span class="semi-bold"> Management</span></h3>	
                 </div>
+			
+			<%= form_tag("", {class: "listing_form", method: "post", target: "_blank"}) do |f| %>
 				
 				<%= render "filter" %>
                 
@@ -19,11 +21,33 @@
                                 <h4>Listing  <span class="semi-bold">Seminar</span></h4>
                                 
                             </div>
+							
+							<div class="listing_box_actions">
+									<div class="btn-group listing_actions"> <a href="#" data-toggle="dropdown" class="btn btn-white dropdown-toggle btn-demo-space"> List Actions (<span class="listing_checked_count">0</span>)<span class="caret"></span> </a>
+										<ul class="dropdown-menu">									
+											<li><a href="#" rel="<%= approve_all_seminars_path %>" type="ajax">Approve All</a></li>									
+										</ul>
+									</div>
+									<div class="checkbox check-default check_all_page_but" style="display: inline-block">
+										<input name="check_all_page" id="checkbox_all_page" type="checkbox" value="all_page" class="check_all_page">
+										<label for="checkbox_all_page">Select All Pages</label>
+									</div>
+									
+									
+									
+								</div>
+							
                             <div class="grid-body no-border">
                                  
                                     <table class="table table-striped no-more-tables datatable-seminars no-filter">
                                         <thead>
-                                            <tr>                                                
+                                            <tr>
+												<th>
+													<div class="checkbox check-default">
+														<input id="checkbox_all" type="checkbox" value="all" class="checkall">
+														<label for="checkbox_all"></label>
+													</div>
+												</th>
 												<th>Name</th>
                                                 <th>Description</th>
 												<th class="text-center">Program</th>
@@ -41,4 +65,4 @@
                     </div>
 		    
                 </div>
-
+<% end %>

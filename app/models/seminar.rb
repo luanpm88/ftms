@@ -68,7 +68,7 @@ class Seminar < ActiveRecord::Base
    
     ########## END REVISION-FEATURE #########################
     
-     @records = @records.search(params["search"]["value"]) if !params["search"]["value"].empty?
+     @records = @records.search(params["search"]["value"]) if params["search"].present? && !params["search"]["value"].empty?
      
      
     
@@ -85,7 +85,7 @@ class Seminar < ActiveRecord::Base
     
     if !params["order"].nil?
       case params["order"]["0"]["column"]
-      when "1"
+      when "2"
         order = "seminars.name"
       else
         order = "seminars.name"
@@ -102,7 +102,7 @@ class Seminar < ActiveRecord::Base
     @records = @records.limit(params[:length]).offset(params["start"])
     data = []
     
-    actions_col = 7
+    actions_col = 8
     @records.each do |item|
       ############### BEGIN REVISION #########################
       # update approved status
@@ -112,6 +112,7 @@ class Seminar < ActiveRecord::Base
       ############### END REVISION #########################
       
       item = [
+              "<div item_id=\"#{item.id.to_s}\" class=\"main_part_info checkbox check-default\"><input name=\"ids[]\" id=\"checkbox#{item.id}\" type=\"checkbox\" value=\"#{item.id}\"><label for=\"checkbox#{item.id}\"></label></div>",
               item.seminar_link,
               item.description,
               '<div class="text-center">'+item.course_type_name+"</div>",

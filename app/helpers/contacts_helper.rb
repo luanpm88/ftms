@@ -58,6 +58,12 @@ module ContactsHelper
         actions += '<li>'+ActionController::Base.helpers.link_to('Undo Delete', {controller: "contacts", action: "undo_delete", id: item.id, tab_page: 1}, title: "#{item.display_name}: Undo Delete", class: "approve_link")+'</li>'
       end
       
+      actions += '<li class="divider"></li>'
+      
+      if can? :print, item
+        actions += '<li>'+ActionController::Base.helpers.link_to('<i class="icon-print"></i> Print Info'.html_safe, {controller: "contacts", action: "print", id: item.id}, target: "_blank")+'</li>'
+      end
+      
       actions += '</ul></div></div>'
       
       return actions.html_safe
