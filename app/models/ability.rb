@@ -429,6 +429,36 @@ class Ability
     
     if user.has_role?("storage_manager") || user.has_role?("manager") || user.has_role?("admin")
       can :deliver_all, Book
+      
+      ## STOCK TYPE
+      can :approved, StockType
+      can :approve_new, StockType do |c|
+        c.statuses.include?("new_pending")
+      end
+      can :approve_update, StockType do |c|
+        c.statuses.include?("update_pending")
+      end
+      can :approve_delete, StockType do |c|
+        c.statuses.include?("delete_pending")
+      end
+      can :undo_delete, StockType do |c|
+        c.statuses.include?("delete_pending")
+      end
+      
+      ## BOOK
+      can :approved, Book
+      can :approve_new, Book do |c|
+        c.statuses.include?("new_pending")
+      end
+      can :approve_update, Book do |c|
+        c.statuses.include?("update_pending")
+      end
+      can :approve_delete, Book do |c|
+        c.statuses.include?("delete_pending")
+      end
+      can :undo_delete, Book do |c|
+        c.statuses.include?("delete_pending")
+      end
     end
     
     if user.has_role?("accountant") || user.has_role?("manager") || user.has_role?("admin")
@@ -460,22 +490,6 @@ class Ability
     if user.has_role?("manager") || user.has_role?("admin")
       can :create, User
       can :update, User
-      
-      ## STOCK TYPE
-      can :approved, StockType
-      can :approve_new, StockType do |c|
-        c.statuses.include?("new_pending")
-      end
-      can :approve_update, StockType do |c|
-        c.statuses.include?("update_pending")
-      end
-      can :approve_delete, StockType do |c|
-        c.statuses.include?("delete_pending")
-      end
-      can :undo_delete, StockType do |c|
-        c.statuses.include?("delete_pending")
-      end
-      
       
       ## COURSE TYPE
       can :approved, Subject
@@ -545,20 +559,7 @@ class Ability
       can :approve_all, Contact
       
       
-      ## BOOK
-      can :approved, Book
-      can :approve_new, Book do |c|
-        c.statuses.include?("new_pending")
-      end
-      can :approve_update, Book do |c|
-        c.statuses.include?("update_pending")
-      end
-      can :approve_delete, Book do |c|
-        c.statuses.include?("delete_pending")
-      end
-      can :undo_delete, Book do |c|
-        c.statuses.include?("delete_pending")
-      end
+      
       
       
       ## CONTACT TAG

@@ -1384,8 +1384,7 @@ class Contact < ActiveRecord::Base
           (image.file.nil? ^ older.image.file.nil? || (!image.file.nil? && !older.image.file.nil? &&image.file.size != older.image.file.size)) ||
           name != older.name ||
           account_manager_id != account_manager_id ||
-          bases != older.bases ||
-          contact_tags.order("id").map(&:id).join(",") != older.contact_tags.order("id").map(&:id).join(",") ||
+          bases != older.bases ||       # contact_tags.order("id").map(&:id).join(",") != older.contact_tags.order("id").map(&:id).join(",") ||
           (contact_types.include?(ContactType.inquiry) && course_types.order("id").map(&:id).join(",") != older.course_types.order("id").map(&:id).join(",")) ||
           (contact_types.include?(ContactType.lecturer) && lecturer_course_types.order("id").map(&:id).join(",") != older.lecturer_course_types.order("id").map(&:id).join(","))
         is_changed = true
@@ -2373,6 +2372,30 @@ class Contact < ActiveRecord::Base
   def group
     return nil if cache_group_id.nil?
     RelatedContact.where(id: cache_group_id).first
+  end
+  
+  def self.update_company_info_from_old_system
+    # Find all
+    contacts = Contact.main_contacts.where.not(tmp_StudentID: nil)
+    
+    contacts.each do |c|
+      old_com = c.old_student.student_company
+      if old_com.present?
+        com = Contact.main_contacts.where(is_individual: false).where("LOWER(name) LIKE ?", "%#{old_com.strip.downcase}%").first
+        if com.nil?
+          com = Contact.create(name: old_com, is_individual: false)
+          com.add_status("new_pending")
+          uu = User.where(:email => "support@hoangkhang.com.vn").first
+          uu = User.first if uu.nil?
+          com.save_draft(uu)
+          com.update_info
+          
+          c.update_attribute(:referrer_id, com.id)
+        else
+          c.update_attribute(:referrer_id, com.id)
+        end        
+      end
+    end
   end
   
 end

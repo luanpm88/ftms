@@ -590,6 +590,9 @@ class User < ActiveRecord::Base
     # import contact
     Contact.import_contact_from_old_student
     
+    # update company
+    Contact.update_company_info_from_old_system
+    
     return true
   end
 
