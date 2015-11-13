@@ -247,9 +247,9 @@ class Seminar < ActiveRecord::Base
       row = Hash[[header, spreadsheet.row(i)].transpose]
       
       # Background: "University: #{row["University"]}\nMajor: #{row["Major"]}\nYear: #{row["Year"]}"
-      bg = "Imported Date: #{Time.now.strftime("%d-%b-%Y")}\n"
-      bg += "Creator: #{user.name.to_s}\n"
-      bg += "University: #{row["University"].to_s.strip}\n" if row["University"].present?
+      #bg = "Imported Date: #{Time.now.strftime("%d-%b-%Y")}\n"
+      #bg += "Creator: #{user.name.to_s}\n"
+      bg = "University: #{row["University"].to_s.strip}\n" if row["University"].present?
       bg += "Major: #{row["Major"].to_s.strip}\n" if row["Major"].present?
       bg += "Major: #{row["Major "].to_s.strip}\n" if row["Major "].present?
       bg += "Year: #{row["Year"].to_s.strip}\n" if row["Year"].present?

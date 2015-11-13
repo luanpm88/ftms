@@ -161,6 +161,17 @@ class SeminarsController < ApplicationController
             
             @seminar.add_contacts([contact])
             contact.set_present_in_seminar(@seminar, row[1]["present"])
+            
+            # import company
+            if row[1]["company"].present?
+              com = Contact.create(name: row[1]["company"].strip, is_individual: false, user_id: current_user.id)
+              com.account_manager_id = contact.account_manager_id
+              com.save
+              
+              com.add_status("new_pending")
+              com.save_draft(current_user)
+              com.update_info
+            end
           end
         end
       end
