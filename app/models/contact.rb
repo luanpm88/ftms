@@ -456,8 +456,7 @@ class Contact < ActiveRecord::Base
     records = []
     used_ids = []
     
-    # session[:merge_next_id] = nil
-    
+    # PAGE SESSION
     if !session[:merge_next_id].present?
       current_id = 0
       session[:merge_previous_id] = 0
@@ -467,6 +466,9 @@ class Contact < ActiveRecord::Base
     end
     
     session[:merge_pages] = session[:merge_pages].present? ? (session[:merge_pages] << session[:merge_previous_id]) : [session[:merge_previous_id]]
+    ########
+    
+    current_id = 0
 
     loop do     
       record = self.filters(params, user).where(cache_group_id: nil).where("id > ?", current_id).order("id").first
