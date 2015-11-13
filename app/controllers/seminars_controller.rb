@@ -171,6 +171,8 @@ class SeminarsController < ApplicationController
               com.add_status("new_pending")
               com.save_draft(current_user)
               com.update_info
+              
+              contact.update_attribute(:referrer_id, com.id)
             end
           end
         end
