@@ -2383,10 +2383,11 @@ class Contact < ActiveRecord::Base
       if old_com.present?
         com = Contact.main_contacts.where(is_individual: false).where("LOWER(name) LIKE ?", "%#{old_com.strip.downcase}%").first
         if com.nil?
-          com = Contact.create(name: old_com, is_individual: false)
-          com.add_status("new_pending")
           uu = User.where(:email => "support@hoangkhang.com.vn").first
           uu = User.first if uu.nil?
+          
+          com = Contact.create(name: old_com, is_individual: false, user_id: uu.id)
+          com.add_status("new_pending")          
           com.save_draft(uu)
           com.update_info
           
