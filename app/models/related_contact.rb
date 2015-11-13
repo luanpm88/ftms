@@ -26,7 +26,7 @@ class RelatedContact < ActiveRecord::Base
   def contacts
     return [] if contact_ids.nil?
     c_ids = self.contact_ids.split("][").map {|s| s.gsub("[","").gsub("]","") }
-    return Contact.main_contacts.where("contacts.status NOT LIKE ?", "%deleted%").where(id: c_ids).order("email DESC,mobile DESC,name DESC")
+    return Contact.main_contacts.where("contacts.status NOT LIKE ?", "%deleted%").where(id: c_ids).order("name DESC,email DESC,mobile DESC")
   end
   
   def update_cache_search
@@ -57,7 +57,7 @@ class RelatedContact < ActiveRecord::Base
   def removed_contacts
     return [] if removed_contact_ids.nil?
     c_ids = self.removed_contact_ids.split("][").map {|s| s.gsub("[","").gsub("]","") }
-    return Contact.main_contacts.where("contacts.status NOT LIKE ?", "%deleted%").where(id: c_ids).order("email DESC,mobile DESC,name DESC")
+    return Contact.main_contacts.where("contacts.status NOT LIKE ?", "%deleted%").where(id: c_ids).order("name DESC,email DESC,mobile DESC")
   end
   
   

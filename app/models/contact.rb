@@ -408,7 +408,7 @@ class Contact < ActiveRecord::Base
       order = "cache_transferred_courses_phrases DESC, "+order
     end
     
-    order = "contacts.email DESC, contacts.mobile DESC, contacts.name DESC" if params["search"]["value"].present?
+    order = "contacts.name DESC, contacts.email DESC, contacts.mobile DESC" if params["search"]["value"].present?
     
     @records = @records.order(order) if !order.nil? && !params["search"]["value"].present?
     
@@ -2186,8 +2186,11 @@ class Contact < ActiveRecord::Base
 
   def find_related_contacts
     cond_other = []
-    cond_other << "LOWER(contacts.cache_search) LIKE '%[search_name: #{name.unaccent.downcase} ]%'"    
-    cond_other << "LOWER(contacts.email) LIKE '%#{self.email.to_s.strip.downcase}%'" if self.email.to_s.strip.present? && self.email.to_s.length > 6
+    cond_other << "LOWER(contacts.cache_search) LIKE '%[search_name: #{name.unaccent.downcase} ]%'"
+    emails_like = ([email.to_s.downcase]+email_2s).select { |h| !h.to_s.strip.empty? and h.to_s.length > 6 }
+    emails_like = emails_like.empty? ? nil : emails_like.join("|")
+    cond_other << "LOWER(contacts.email) SIMILAR TO '%(#{emails_like})%'" if emails_like.present?
+    cond_other << "LOWER(contacts.email_2) SIMILAR TO '%(#{emails_like})%'" if emails_like.present?
     cond_other << "LOWER(contacts.mobile) LIKE '%#{self.mobile.to_s.strip.downcase}%'" if self.mobile.to_s.strip.present? && self.mobile.to_s.length > 6
 
     return [] if cond_other.empty?

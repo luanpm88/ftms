@@ -158,6 +158,7 @@ class ContactsController < ApplicationController
     
     #base
     @contact.update_bases(params[:bases])
+    @contact.email_2 = params[:email_2s]
     
     respond_to do |format|
       if @contact.update(s_params)
