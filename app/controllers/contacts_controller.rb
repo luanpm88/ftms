@@ -295,7 +295,7 @@ class ContactsController < ApplicationController
 
   def merge_contacts_datatable
     
-    result = Contact.merge_contacts_datatable(params, current_user)
+    result = Contact.merge_contacts_datatable(params, current_user, session)
     
     result[:items].each_with_index do |item, index|
       actions = render_contacts_actions(item)

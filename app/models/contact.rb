@@ -451,12 +451,26 @@ class Contact < ActiveRecord::Base
     return {result: result, items: @records, actions_col: actions_col}
   end
   
-  def self.find_related_contacts(params, user)
+  def self.find_related_contacts(params, user, session)
     max = params[:length].to_i
     records = []
     used_ids = []
-    loop do 
-      record = self.filters(params, user).where(cache_group_id: nil).where.not(id: used_ids).first
+    
+    # session[:merge_next_id] = nil
+    
+    if !session[:merge_next_id].present?
+      current_id = 0
+      session[:merge_previous_id] = 0
+    else
+      current_id = session[:merge_next_id]
+      session[:merge_previous_id] = current_id
+    end
+    
+    session[:merge_pages] = session[:merge_pages].present? ? (session[:merge_pages] << session[:merge_previous_id]) : [session[:merge_previous_id]]
+
+    loop do     
+      record = self.filters(params, user).where(cache_group_id: nil).where("id > ?", current_id).order("id").first
+      current_id = record.id if record.present?
       used_ids << record.id if record.present?
       if record.present?
         row = {}
@@ -471,13 +485,17 @@ class Contact < ActiveRecord::Base
         end        
       end
       
-      break if records.count >= max || record.nil?
+      session[:merge_next_id] = record.id if !record.nil?
+      
+      if records.count >= max || record.nil?
+        break
+      end
     end
     
     return records
   end
 
-  def self.merge_contacts_datatable(params, user)
+  def self.merge_contacts_datatable(params, user, session)
     ActionView::Base.send(:include, Rails.application.routes.url_helpers)
     link_helper = ActionController::Base.helpers
     
@@ -495,8 +513,8 @@ class Contact < ActiveRecord::Base
       end
     else
       # find related contacts
-      @records = self.find_related_contacts(params, user)
-      total = @records.count
+      @records = self.find_related_contacts(params, user, session)
+      total = 9999 #@records.count
     end
     
       
@@ -515,7 +533,7 @@ class Contact < ActiveRecord::Base
       
       
       row = [
-              "<div item_id=\"#{item[:parent].id.to_s}\" class=\"main_part_info row-color-#{(index%2 == 0).to_s} checkbox check-default\"><input name=\"ids[]\" id=\"checkbox#{item[:parent].id}\" type=\"checkbox\" value=\"#{item[:parent].id}\"><label for=\"checkbox#{item[:parent].id}\"></label></div>",
+              "#{session[:merge_pages].to_s}-#{session[:merge_previous_id]}-#{session[:merge_next_id]}<div item_id=\"#{item[:parent].id.to_s}\" class=\"main_part_info row-color-#{(index%2 == 0).to_s} checkbox check-default\"><input name=\"ids[]\" id=\"checkbox#{item[:parent].id}\" type=\"checkbox\" value=\"#{item[:parent].id}\"><label for=\"checkbox#{item[:parent].id}\"></label></div>",
               
               '<div class="text-left"><strong class="label_name" val="'+item[:parent].name.unaccent.to_s+'">'+item[:parent].contact_link+"</strong></div>"+'<div class="text-left">'+item[:parent].html_info_line.html_safe+item[:parent].referrer_link+"</div>"+item[:parent].picture_link,
               "",
@@ -1430,7 +1448,7 @@ class Contact < ActiveRecord::Base
       add_annoucing_users([self.current.user])
       
       # remove related contacts
-      # self.check_remove_from_merge_list
+      self.group.remove_contact(self)
       
       self.save_draft(user)
     end
