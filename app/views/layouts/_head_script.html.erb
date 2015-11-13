@@ -3813,6 +3813,17 @@
 				});
 			}
 		})
+		
+		$(document).on("click", ".more_field", function(e) {
+			var box = $(this).parents(".more_field_box")
+			
+			box.find(".more_field_item").each(function() {
+				if ($(this).hasClass("hidden")) {
+                    $(this).removeClass("hidden")
+					return false;
+                }
+			})
+		});
 	})
 	
 

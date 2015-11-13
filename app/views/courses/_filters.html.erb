@@ -1,7 +1,7 @@
                 <div class="grid simple ">
                   <div class="grid-body no-border filters course-filter">
                   <div class="row order-filters">
-						<div class="col-md-3">
+						<div class="col-md-3 year_bigger">
 						  <h4>Intake</h4>  
 						  <div class="date_select_filter">
 							  <div class="input-with-icon date-group-my right">                                       
@@ -9,7 +9,7 @@
 							  </div>
 						  </div>
 						</div>
-						<div class="col-md-3">
+						<div class="col-md-3 year_bigger">
 							<h4>For exam</h4>							
 							<div class="date_select_filter date_mbe">
 								<%= select_tag 'for_exam_year', options_for_select(((Time.now.year-10)..(Time.now.year+10)).each { |u| [u, u] }), {:include_blank => '', class: "modern_select"} %>

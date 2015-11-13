@@ -433,16 +433,21 @@
 																</div>
 														   </div>						
 													  </div>
-													  <div class="col-md-6">
-														   <div class="form-group">
-																<label class="form-label"><%= f.label :email_2 %></label>
-																<%= render "field_history", drafts: @contact.field_history("email_2"), type: "email_2" %>
-																<span class="help"></span>
-																<div class="input-with-icon  right">                                       
-																		<i class=""></i>
-																		<%= f.text_field :email_2, :class => "form-control email" %>
-																</div>
-														   </div>					
+													  <div class="col-md-6 more_field_box">
+															
+																  <div class="form-group">
+																	  <label class="form-label"><%= f.label :email_2 %></label>
+																	  <%= render "field_history", drafts: @contact.field_history("email_2"), type: "email_2" %>
+																		<span class="help"></span>
+																		<% (num..9).each do |number| %>
+																			  <div class="input-with-icon more_field_item right <%= "hidden" if number > 0 && !@contact.email_2s[number].present? %>">                                       
+																					<%= text_field_tag "email_2s[]", @contact.email_2s[number], :class => "form-control email" %>
+																			  </div>
+																		<% end %>
+																		<a href="#more_field" class="more_field pull-right">Add more <i class="icon-plus"></i></a>
+																  </div>																  
+															
+															
 													  </div>
 												 </div>
 											

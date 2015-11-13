@@ -193,9 +193,16 @@ class Contact < ActiveRecord::Base
   def email=(str)
     self[:email] = str.strip
   end
-  #def email_2=(str)
-  #  self[:email_2] = str.strip
-  #end
+  def email_2=(value)
+    if value.kind_of?(Array)
+      self[:email_2] = ((value.select { |h| !h.to_s.strip.empty? }).map {|x| x.strip.downcase}).join(",")
+    else
+      self[:email_2] = value.strip
+    end
+  end
+  def email_2s
+    email_2.present? ? email_2.split(",") : []
+  end
   def mobile=(value)
     self[:mobile] = Contact.format_mobile(value)
   end
@@ -946,16 +953,18 @@ class Contact < ActiveRecord::Base
   def html_info_line
     line = "";
     
-    
+    display_email_2 = (email_2s.map {|e| "<span class=\"box_mini_info label_email nowrap\" val=\"#{e}\"><i class=\"icon-envelope\"></i> " + e + "</span> "}).join(" ")
     
     if is_individual
       birth = !birthday.nil? ? birthday.strftime("%d-%b-%Y") : ""
       line += "<span class=\"box_mini_info nowrap\"><i class=\"icon-calendar\"></i> " + birth + "</span> " if !mobile.nil? && !mobile.empty?
       line += "<span class=\"box_mini_info label_email nowrap\" val=\"#{email}\"><i class=\"icon-envelope\"></i> " + email + "</span> " if !email.nil? && !email.empty?
+      line += display_email_2
       line += "<span class=\"box_mini_info label_mobile nowrap\" val=\"#{display_mobile}\"><i class=\"icon-phone\"></i> " + display_mobile + "</span> " if !mobile.nil? && !mobile.empty? 
     else
       line += "<span class=\"box_mini_info nowrap\"><i class=\"icon-phone\"></i> " + phone + "</span> " if !phone.nil? && !phone.empty?
       line += "<span class=\"box_mini_info \"><i class=\"icon-envelope\"></i> " + email + "</span> " if !email.nil? && !email.empty?
+      line += display_email_2
       line += "Tax Code " + tax_code + "</span><br />" if tax_code.present?
     end
     line += "<div class=\"address_info_line\"><i class=\"icon-truck\"></i> " + address + "</div>" if address.present?
@@ -1988,7 +1997,7 @@ class Contact < ActiveRecord::Base
     str << phone.to_s.gsub(/^84/,"")
     str << "0" + phone.to_s.gsub(/^84/,"")
     str << email.to_s
-    str << email_2.to_s
+    str << email_2s.join(" ")
     str << address.to_s
     str << birthday.strftime("%d-%b-%Y") if birthday.present?
     str << referrer.name if !referrer.nil?
@@ -2053,6 +2062,13 @@ class Contact < ActiveRecord::Base
         contact.preferred_mailing = item.student_preffer_mailing.to_s
         contact.email = item.student_email_1.to_s
         contact.email_2 = item.student_email_2.to_s
+        
+        
+        contact.email = item.student_email_1.to_s.split(/[\,\;]/)[0].strip if item.student_email_1.present?        
+        other_emails = []
+        other_emails = item.student_email_1.to_s.split(/[\,\;]/)[1..-1] if item.student_email_1.to_s.split(/[\,\;]/).count > 1
+        contact.email_2 = other_emails+item.student_email_2.to_s.split(/[\,\;]/)
+        
         #contact. = item.student_off_phone
         contact.mobile = item.student_hand_phone.to_s
         contact.fax = item.student_fax.to_s
@@ -2397,6 +2413,27 @@ class Contact < ActiveRecord::Base
         end        
       end
     end
+  end
+  
+  def self.update_emails_info_from_old_system
+    # Find all
+    contacts = Contact.main_contacts.where.not(tmp_StudentID: nil)
+    
+    contacts.each do |c|
+      c.update_email_from_old_student
+    end
+  end
+
+  def update_email_from_old_student
+    if self.old_student.present?
+      self.email = self.old_student.student_email_1.to_s.split(/[\,\;]/)[0].strip if self.old_student.student_email_1.present?        
+      other_emails = []
+      other_emails = self.old_student.student_email_1.to_s.split(/[\,\;]/)[1..-1] if self.old_student.student_email_1.to_s.split(/[\,\;]/).count > 1
+      self.email_2 = other_emails+self.old_student.student_email_2.to_s.split(/[\,\;]/)
+      
+      self.save
+    end
+    return self
   end
   
 end

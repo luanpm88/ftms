@@ -8601,3 +8601,6 @@ h5.list_title {
 .label_color_greyz a {
     color: #fff !important;
 }
+.year_bigger .date_mbe #s2id_course_for_exam_year, .year_bigger .date_mbe #s2id_for_exam_year, .year_bigger .date_mbe #s2id_year {
+    width: 100px;
+}
