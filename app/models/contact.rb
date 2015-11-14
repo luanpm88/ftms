@@ -409,7 +409,7 @@ class Contact < ActiveRecord::Base
     end
     
     order = "contacts.name DESC, contacts.email DESC, contacts.mobile DESC" if params["search"]["value"].present?
-    
+    @records = @records.order(order) if !order.nil?
     #@records = @records.order(order) if !order.nil? && !params["search"]["value"].present?
     
     total = @records.count
