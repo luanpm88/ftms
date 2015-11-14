@@ -2433,7 +2433,7 @@ class Contact < ActiveRecord::Base
   end
 
   def update_email_from_old_student
-    if self.old_student.present?
+    if self.old_student.present? && self.email == self.old_student.student_email_1 && self.email_2 == self.old_student.student_email_2
       self.email = self.old_student.student_email_1.to_s.split(/[\,\;]/)[0].strip if self.old_student.student_email_1.present?        
       other_emails = []
       other_emails = self.old_student.student_email_1.to_s.split(/[\,\;]/)[1..-1] if self.old_student.student_email_1.to_s.split(/[\,\;]/).count > 1
