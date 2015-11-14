@@ -377,7 +377,7 @@ class Contact < ActiveRecord::Base
       @records = @records.where(city_id: cities_ids)
     end
     
-    @records = @records.where("LOWER(contacts.cache_search) LIKE ? OR LOWER(contacts.name) LIKE ?", "%#{params["search"]["value"].unaccent.strip.downcase}%", "%#{params["search"]["value"].unaccent.strip.downcase}%") if params["search"].present? && !params["search"]["value"].empty? #.search(params["search"]["value"])
+    @records = @records.where("LOWER(contacts.cache_search) LIKE ? OR LOWER(contacts.name) LIKE ?", "%#{params["search"]["value"].strip.downcase}%", "%#{params["search"]["value"].strip.downcase}%") if params["search"].present? && !params["search"]["value"].empty? #.search(params["search"]["value"])
     
     return @records
   end
@@ -408,7 +408,7 @@ class Contact < ActiveRecord::Base
       order = "cache_transferred_courses_phrases DESC, "+order
     end
     
-    order = "contacts.name DESC, contacts.email DESC, contacts.mobile DESC" if params["search"]["value"].present?
+    order = "contacts.name, contacts.email DESC, contacts.mobile DESC" if params["search"]["value"].present?
     
     @records = @records.order(order) if !order.nil? && !params["search"]["value"].present?
     
@@ -459,24 +459,30 @@ class Contact < ActiveRecord::Base
   end
   
   def self.find_related_contacts(params, user, session)
+    # PAGE SESSION
+    if params[:last_id].present?
+      page = (params["start"].to_i/params[:length].to_i)
+      
+      # check next ori previous
+      if !session[:current_page].present? || session[:current_page] < page
+        current_id = params[:last_id].to_i
+        session[:merge_pages][page] = params[:last_id].to_i
+      else
+        current_id = session[:merge_pages][page]
+      end     
+      
+      # store pages page
+      session[:current_page] = page      
+      
+    else
+      current_id = 0
+      session[:merge_pages] = {0 => 0}
+      session[:current_page] = 0
+    end
+    
     max = params[:length].to_i
     records = []
     used_ids = []
-    
-    # PAGE SESSION
-    if !session[:merge_next_id].present?
-      current_id = 0
-      session[:merge_previous_id] = 0
-    else
-      current_id = session[:merge_next_id]
-      session[:merge_previous_id] = current_id
-    end
-    
-    session[:merge_pages] = session[:merge_pages].present? ? (session[:merge_pages] << session[:merge_previous_id]) : [session[:merge_previous_id]]
-    ########
-    
-    current_id = 0
-
     loop do     
       record = self.filters(params, user).where(cache_group_id: nil).where("id > ?", current_id).order("id").first
       current_id = record.id if record.present?
@@ -486,18 +492,18 @@ class Contact < ActiveRecord::Base
         row[:parent] = record        
         row[:children] = record.find_related_contacts.where.not(id: used_ids)
         if !row[:children].empty?
-          rcs = Contact.where(id: ([row[:parent].id]+row[:children].map(&:id))).order("name DESC,email DESC,mobile DESC")
+          rcs = Contact.where(id: ([row[:parent].id]+row[:children].map(&:id))).order("name,email DESC,mobile DESC")
           row[:parent] = rcs.first
           row[:children] = rcs.where.not(id: row[:parent].id)
           records << row
           used_ids += row[:children].map(&:id)
         end        
-      end
+      end      
       
-      session[:merge_next_id] = record.id if !record.nil?
-      
-      if records.count >= max || record.nil?
+      if records.count >= max || record.nil?        
         break
+      else
+        session[:last_id] = record.id
       end
     end
     
@@ -542,8 +548,7 @@ class Contact < ActiveRecord::Base
       
       
       row = [
-              "#{session[:merge_pages].to_s}-#{session[:merge_previous_id]}-#{session[:merge_next_id]}<div item_id=\"#{item[:parent].id.to_s}\" class=\"main_part_info row-color-#{(index%2 == 0).to_s} checkbox check-default\"><input name=\"ids[]\" id=\"checkbox#{item[:parent].id}\" type=\"checkbox\" value=\"#{item[:parent].id}\"><label for=\"checkbox#{item[:parent].id}\"></label></div>",
-              
+              "#{session[:current_page]} / #{session[:merge_pages].to_s}<div item_id=\"#{item[:parent].id.to_s}\" last_id=\"#{session[:last_id]}\" class=\"main_part_info main_merge_row row-color-#{(index%2 == 0).to_s} checkbox check-default\"><input name=\"ids[]\" id=\"checkbox#{item[:parent].id}\" type=\"checkbox\" value=\"#{item[:parent].id}\"><label for=\"checkbox#{item[:parent].id}\"></label></div>",              
               '<div class="text-left"><strong class="label_name" val="'+item[:parent].name.unaccent.to_s+'">'+item[:parent].contact_link+"</strong></div>"+'<div class="text-left">'+item[:parent].html_info_line.html_safe+item[:parent].referrer_link+"</div>"+item[:parent].picture_link,
               "",
               "",
@@ -2439,4 +2444,11 @@ class Contact < ActiveRecord::Base
     return self
   end
   
+  def remove_redundant_bases
+    if contact_types.include?(ContactType.inquiry) && !contact_types.include?(ContactType.student)
+      puts contact_types.map(&:name).join(",") + "/" + (base_items.map{|b| b["status"]}).to_s
+      self.update_attribute(:bases, nil)
+    end
+  end
+
 end

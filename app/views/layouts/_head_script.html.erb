@@ -1573,6 +1573,9 @@
 				"data": function ( d ) {
 					if($(".merge-contact-filter select[name='type']").val()) {
 						d.type =  $(".merge-contact-filter select[name='type']").val()
+						if($(".main_merge_row").length) {
+							d.last_id =  $(".main_merge_row").last().attr("last_id")
+						}
 					}
 				}
 			},
