@@ -548,7 +548,7 @@ class Contact < ActiveRecord::Base
       
       
       row = [
-              "#{session[:current_page]} / #{session[:merge_pages].to_s}<div item_id=\"#{item[:parent].id.to_s}\" last_id=\"#{session[:last_id]}\" class=\"main_part_info main_merge_row row-color-#{(index%2 == 0).to_s} checkbox check-default\"><input name=\"ids[]\" id=\"checkbox#{item[:parent].id}\" type=\"checkbox\" value=\"#{item[:parent].id}\"><label for=\"checkbox#{item[:parent].id}\"></label></div>",              
+              "<div item_id=\"#{item[:parent].id.to_s}\" last_id=\"#{session[:last_id]}\" class=\"main_part_info main_merge_row row-color-#{(index%2 == 0).to_s} checkbox check-default\"><input name=\"ids[]\" id=\"checkbox#{item[:parent].id}\" type=\"checkbox\" value=\"#{item[:parent].id}\"><label for=\"checkbox#{item[:parent].id}\"></label></div>",              
               '<div class="text-left"><strong class="label_name" val="'+item[:parent].name.unaccent.to_s+'">'+item[:parent].contact_link+"</strong></div>"+'<div class="text-left">'+item[:parent].html_info_line.html_safe+item[:parent].referrer_link+"</div>"+item[:parent].picture_link,
               "",
               "",
