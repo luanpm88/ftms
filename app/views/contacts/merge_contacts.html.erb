@@ -19,6 +19,14 @@
 			display: inline-block !important;
 		}
 	</style>
+	<script>
+		function clearTotalCount() {
+            if ($(".dataTables_info").length) {
+                $(".dataTables_info").html($(".dataTables_info").html().replace("of 9,999 entries", ""))
+            }
+        }
+		setInterval("clearTotalCount()", 500)
+	</script>
 <% end %>
 <div class="top_buttons">
 							<%= link_to 'Merged Contacts', merge_contacts_contacts_path(tab_page: 1, type: "merged"),title: "Merged Contacts", :class => 'btn btn-info btn-cons tab_page pull-right' %>
