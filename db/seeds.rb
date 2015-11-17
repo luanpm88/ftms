@@ -10,7 +10,7 @@ ContactType.create(name: "Student", display_order: 1)
 ContactType.create(name: "Inquiry", display_order: 2)
 ContactType.create(name: "Lecturer", display_order: 3)
 
-User.create(name: "Hoang Khang - Support", :email => "support@hoangkhang.com.vn", :password => "aA456321@", :password_confirmation => "aA456321@", :name => "Hoang Khang - Support")
+User.create(name: "Hoang Khang - Support", :email => "soft.support@hoangkhang.com.vn", :password => "aA456321@", :password_confirmation => "aA456321@", :name => "Hoang Khang - Support")
 #User.create(name: "Manager", :email => "manager@ftmsglobal.edu.vn", :password => "aA456321@", :password_confirmation => "aA456321@",:first_name => "System",:last_name => "Manager")
 #User.create(name: "Education Consultant", :email => "education_consultant@ftmsglobal.edu.vn", :password => "aA456321@", :password_confirmation => "aA456321@",:first_name => "",:last_name => "")
 #User.create(name: "Sales Admin", :email => "sales_admin@ftmsglobal.edu.vn", :password => "aA456321@", :password_confirmation => "aA456321@",:first_name => "",:last_name => "")
@@ -33,7 +33,7 @@ User.all.each do |user|
 end
 
 # Default Role for Admin
-user = User.where(:email => "support@hoangkhang.com.vn").first
+user = User.where(:email => "soft.support@hoangkhang.com.vn").first
 user.add_role Role.where(name: "admin").first
 
 #user = User.where(:email => "manager@ftmsglobal.edu.vn").first
