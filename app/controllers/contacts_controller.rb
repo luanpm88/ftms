@@ -91,6 +91,7 @@ class ContactsController < ApplicationController
     @contact = Contact.new(s_params)
     @contact.user_id = current_user.id
     @contact.email_2 = params[:email_2s]
+    @contact.mobile_2 = params[:mobile_2s]
     
     
     #base
@@ -159,6 +160,7 @@ class ContactsController < ApplicationController
     #base
     @contact.update_bases(params[:bases])
     @contact.email_2 = params[:email_2s]
+    @contact.mobile_2 = params[:mobile_2s]
     
     respond_to do |format|
       if @contact.update(s_params)

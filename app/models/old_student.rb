@@ -1,6 +1,7 @@
 class OldStudent < ActiveRecord::Base
 
 	belongs_to :old_consultant, foreign_key: 'consultant_id', primary_key: 'consultant_id'
+	has_one :contact, foreign_key: 'tmp_StudentID', primary_key: 'student_id'
 
 	def self.import_old_student(database)
 		

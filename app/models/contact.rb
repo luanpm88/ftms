@@ -206,9 +206,16 @@ class Contact < ActiveRecord::Base
   def mobile=(value)
     self[:mobile] = Contact.format_mobile(value)
   end
-  #def mobile_2=(value)
-  #  self[:mobile_2] = Contact.format_mobile(value)
-  #end
+  def mobile_2=(value)
+    if value.kind_of?(Array)
+      self[:mobile_2] = ((value.select { |h| !h.to_s.strip.empty? }).map {|x| Contact.format_mobile(x.strip.downcase)}).join(",")
+    else
+      self[:mobile_2] = value.strip
+    end
+  end
+  def mobile_2s
+    mobile_2.present? ? mobile_2.split(",") : []
+  end
   def not_exist
     return true if self.draft?
     
@@ -959,13 +966,15 @@ class Contact < ActiveRecord::Base
     line = "";
     
     display_email_2 = (email_2s.map {|e| "<span class=\"box_mini_info label_email nowrap\" val=\"#{e}\"><i class=\"icon-envelope\"></i> " + e + "</span> "}).join(" ")
+    display_mobile_2 = (mobile_2s.map {|e| "<span class=\"box_mini_info label_mobile nowrap\" val=\"#{e}\"><i class=\"icon-phone\"></i> +" + e + "</span> "}).join(" ")
     
     if is_individual
       birth = !birthday.nil? ? birthday.strftime("%d-%b-%Y") : ""
       line += "<span class=\"box_mini_info nowrap\"><i class=\"icon-calendar\"></i> " + birth + "</span> " if !mobile.nil? && !mobile.empty?
       line += "<span class=\"box_mini_info label_email nowrap\" val=\"#{email}\"><i class=\"icon-envelope\"></i> " + email + "</span> " if !email.nil? && !email.empty?
       line += display_email_2
-      line += "<span class=\"box_mini_info label_mobile nowrap\" val=\"#{display_mobile}\"><i class=\"icon-phone\"></i> " + display_mobile + "</span> " if !mobile.nil? && !mobile.empty? 
+      line += "<span class=\"box_mini_info label_mobile nowrap\" val=\"#{display_mobile}\"><i class=\"icon-phone\"></i> " + display_mobile + "</span> " if !mobile.nil? && !mobile.empty?
+      line += display_mobile_2
     else
       line += "<span class=\"box_mini_info nowrap\"><i class=\"icon-phone\"></i> " + phone + "</span> " if !phone.nil? && !phone.empty?
       line += "<span class=\"box_mini_info \"><i class=\"icon-envelope\"></i> " + email + "</span> " if !email.nil? && !email.empty?
@@ -1998,11 +2007,12 @@ class Contact < ActiveRecord::Base
     str << "[tag:"+(contact_tags.map {|ct| ct.name}).join("][tag:")+"]"
     str << mobile.to_s
     str << mobile.to_s.gsub(/^84/,"")
+    str << mobile_2s.join(" ")
     str << "0" + mobile.to_s.gsub(/^84/,"")
     str << phone.to_s.gsub(/^84/,"")
     str << "0" + phone.to_s.gsub(/^84/,"")
     str << email.to_s
-    str << email_2s.join(" ")
+    str << email_2s.join(" ")    
     str << address.to_s
     str << birthday.strftime("%d-%b-%Y") if birthday.present?
     str << referrer.name if !referrer.nil?
@@ -2074,8 +2084,16 @@ class Contact < ActiveRecord::Base
         other_emails = item.student_email_1.to_s.split(/[\,\;]/)[1..-1] if item.student_email_1.to_s.split(/[\,\;]/).count > 1
         contact.email_2 = other_emails+item.student_email_2.to_s.split(/[\,\;]/)
         
-        #contact. = item.student_off_phone
+        
+        # Mobiles
         contact.mobile = item.student_hand_phone.to_s
+        contact.mobile = item.student_hand_phone.to_s.split(/[\,\;]/)[0].strip if item.student_hand_phone.present?        
+        other_mobiles = []
+        other_mobiles = item.student_hand_phone.to_s.split(/[\,\;]/)[1..-1] if item.student_hand_phone.to_s.split(/[\,\;]/).count > 1
+        contact.mobile_2 = other_mobiles+item.student_off_phone.to_s.split(/[\,\;]/)+item.student_home_phone.to_s.split(/[\,\;]/)
+         
+         
+        #contact. = item.student_off_phone       
         contact.fax = item.student_fax.to_s
         contact.contact_type_id = item.student_type.to_s
         #contact. = item.student_tags
@@ -2196,7 +2214,11 @@ class Contact < ActiveRecord::Base
     emails_like = emails_like.empty? ? nil : emails_like.join("|")
     cond_other << "LOWER(contacts.email) SIMILAR TO '%(#{emails_like})%'" if emails_like.present?
     cond_other << "LOWER(contacts.email_2) SIMILAR TO '%(#{emails_like})%'" if emails_like.present?
-    cond_other << "LOWER(contacts.mobile) LIKE '%#{self.mobile.to_s.strip.downcase}%'" if self.mobile.to_s.strip.present? && self.mobile.to_s.length > 6
+    
+    mobiles_like = ([mobile.to_s.downcase]+mobiles).select { |h| !h.to_s.strip.empty? and h.to_s.length > 6 }
+    mobiles_like = mobiles_like.empty? ? nil : mobiles_like.join("|")
+    cond_other << "LOWER(contacts.mobile) LIKE '%#{mobiles_like}%'" if mobiles_like.present?
+    cond_other << "LOWER(contacts.mobile_2) LIKE '%#{mobiles_like}%'" if mobiles_like.present?
 
     return [] if cond_other.empty?
     
@@ -2438,6 +2460,18 @@ class Contact < ActiveRecord::Base
       other_emails = []
       other_emails = self.old_student.student_email_1.to_s.split(/[\,\;]/)[1..-1] if self.old_student.student_email_1.to_s.split(/[\,\;]/).count > 1
       self.email_2 = other_emails+self.old_student.student_email_2.to_s.split(/[\,\;]/)
+      
+      self.save
+    end
+    return self
+  end
+  
+  def update_mobile_from_old_student
+    if self.old_student.present? && self.mobile == Contact.format_mobile(self.old_student.student_hand_phone) && self.email_2 == Contact.format_mobile(self.old_student.student_off_phone)
+      self.mobile = self.old_student.student_hand_phone.to_s.split(/[\,\;]/)[0].strip if self.old_student.student_hand_phone.present?        
+      other_mobiles = []
+      other_mobiles = self.old_student.student_hand_phone.to_s.split(/[\,\;]/)[1..-1] if self.old_student.student_hand_phone.to_s.split(/[\,\;]/).count > 1
+      self.mobile_2 = other_mobiles+self.old_student.student_off_phone.to_s.split(/[\,\;]/)+self.old_student.student_home_phone.to_s.split(/[\,\;]/)
       
       self.save
     end
