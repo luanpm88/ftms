@@ -8616,3 +8616,7 @@ h5.list_title {
     width: 100%;
     height: 100px;
 }
+.note_content {
+    display: block;
+    width: 330px;
+}

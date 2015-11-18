@@ -1811,6 +1811,10 @@ class Contact < ActiveRecord::Base
     activities.where(deleted: 0).count
   end
   
+  def active_activities
+    activities.where(deleted: 0).order("created_at DESC")
+  end
+  
   def seminar_count
     seminars.count
   end

@@ -352,7 +352,11 @@
 					</li>
 				<% end %>
 				<li>
-					<%= link_to 'Note Log', activities_url(tab_page:1), class: "tab_page" %>
+						<a title="Note Log (pending)" href="<%= url_for(activities_path(tab_page:1, status: 1)) %>" class="tab_page noti">
+							<span class="badge badge-important pull-right alert-level2"><%= Notification.activity_pending_count(current_user) %></span>
+						</a>
+						
+						<%= link_to 'Note Log', activities_url(tab_page:1), class: "tab_page" %>
 				</li>
 			  </ul>
 			</li>

@@ -112,7 +112,7 @@ class Notification < ActiveRecord::Base
   
   
   def self.contact_menu_count(user)
-    total = self.contact_pending_count(user).to_i + self.contact_tag_pending_count(user).to_i
+    total = self.contact_pending_count(user).to_i + self.contact_tag_pending_count(user).to_i + self.activity_pending_count(user)
     
     return total > 0 ? total : ""
   end
