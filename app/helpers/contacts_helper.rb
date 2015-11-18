@@ -1,6 +1,6 @@
 module ContactsHelper
   
-  def render_contacts_actions(item, size=nil)
+  def render_contacts_actions(item, size=nil, params=nil)
     size = size.nil? ? "mini" : size
     actions = '<div class="text-right but"><div class="btn-group actions">
                     <button class="btn btn-'+size+' btn-white btn-demo-space dropdown-toggle" data-toggle="dropdown">Actions <span class="caret"></span></button>'
@@ -28,6 +28,10 @@ module ContactsHelper
         group_1 += 1
       end
       
+      if params.present? and params[:type] == "merged"
+        #actions += '<a confirm-message="Remove from this related group?" href="<%= remove_related_contact_contacts_path(id: @contact.id, remove_id: c.id) %>" class="btn btn-small btn-warning remove_related_contact_link pull-right">This is not the same contact!</a>'
+        actions += '<li>'+ActionController::Base.helpers.link_to('Not related contact!', {controller: "contacts", action: "remove_related_contact", id: item.id, remove_id: item.id, tab_page: 1, redirect: "ajax"}, title: "Not related contact!", class: "approve_link")+'</li>'
+      end
       
       
       actions += '<li class="divider"></li>' if group_1 > 0

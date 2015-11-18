@@ -2215,7 +2215,7 @@ class Contact < ActiveRecord::Base
     cond_other << "LOWER(contacts.email) SIMILAR TO '%(#{emails_like})%'" if emails_like.present?
     cond_other << "LOWER(contacts.email_2) SIMILAR TO '%(#{emails_like})%'" if emails_like.present?
     
-    mobiles_like = ([mobile.to_s.downcase]+mobiles).select { |h| !h.to_s.strip.empty? and h.to_s.length > 6 }
+    mobiles_like = ([mobile.to_s.downcase]+mobile_2s).select { |h| !h.to_s.strip.empty? and h.to_s.length > 6 }
     mobiles_like = mobiles_like.empty? ? nil : mobiles_like.join("|")
     cond_other << "LOWER(contacts.mobile) LIKE '%#{mobiles_like}%'" if mobiles_like.present?
     cond_other << "LOWER(contacts.mobile_2) LIKE '%#{mobiles_like}%'" if mobiles_like.present?
@@ -2303,6 +2303,17 @@ class Contact < ActiveRecord::Base
     end
     str << "</div>"
     return str.join("")
+  end
+  def print_bases(divider="-")
+    return "" if base_items.empty?
+    str = []
+    base_items.each do |item|
+      prodgram_name = item["course_type"].id.nil? ? "" : item["course_type"].short_name+divider
+      pass = !item["password"].present? ? "" : item["password"].to_s+divider
+      vname = !item["name"].present? ? "" : item["name"].to_s+divider
+      str << prodgram_name+vname+pass+item["status"].to_s
+    end
+    return str.join("<br />")
   end
   
   def self.migrate_program_from_old_system

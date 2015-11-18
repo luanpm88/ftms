@@ -195,7 +195,7 @@
 															<div class="col-md-12">													   
 																<div class="form-group">
 																	 <label class="form-label"><%= f.label :education_consultant %></label>
-																	 <span class="help">(required)</span>
+																	 <span class="help personal-box">(required)</span>
 																	 <%= render "field_history", drafts: @contact.field_history("account_manager_id"), type: "account_manager_id" %>
 																	 <div class="input-with-icon right">                                       
 																		  <i class=""></i>
@@ -498,7 +498,7 @@
 														   </div>
 														   <div class="col-md-6 more_field_box">
 																<div class="form-group">
-																	 <label class="form-label"><%= f.label :mobile_2 %></label>
+																	 <label class="form-label"><%= f.label :other_mobile %></label>
 																	 <%= render "field_history", drafts: @contact.field_history("mobile_2"), type: "mobile_2" %>
 																	 <span class="help"></span>
 																	 <div class="input-with-iconz  right">                                       

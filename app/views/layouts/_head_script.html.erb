@@ -1106,10 +1106,12 @@
 			$(".personal-box").show();
 			$(".company-box").hide();
 			$("input[name='contact[email]']").addClass("required");
+			$("input[name='contact[account_manager_id]']").addClass("required");
 		} else {
 			$(".personal-box").hide();
 			$(".company-box").show();
 			$("input[name='contact[email]']").removeClass("required");
+			$("input[name='contact[account_manager_id]']").removeClass("required");
 		}
 	}
 	
@@ -3356,8 +3358,7 @@
 		$('select[name="course_register[preferred_mailing]"]').trigger("change")
 		
 		
-		$(document).on("change",".phrase_boxx select.main_input", function() {
-			
+		$(document).on("change, keyup",".phrase_boxx select.main_input, .phrase_boxx input.main_input", function() {			
 			var value = $(this).val()
 			var next_box = $(this).parents(".phrase_boxx").next()
 			if (value != "") {

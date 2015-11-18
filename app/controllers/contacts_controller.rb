@@ -162,6 +162,12 @@ class ContactsController < ApplicationController
     @contact.email_2 = params[:email_2s]
     @contact.mobile_2 = params[:mobile_2s]
     
+    # remove tag if empty
+    if !s_params[:contact_tag_ids].present?
+      @contact.contact_tags = []
+    end
+    
+    
     respond_to do |format|
       if @contact.update(s_params)
         #if params[:contact_tag].present?
@@ -301,7 +307,7 @@ class ContactsController < ApplicationController
     result = Contact.merge_contacts_datatable(params, current_user, session)
     
     result[:items].each_with_index do |item, index|
-      actions = render_contacts_actions(item)
+      actions = render_contacts_actions(item,nil,params)
       
       result[:result]["data"][index][result[:actions_col]] = actions
     end
@@ -545,10 +551,14 @@ class ContactsController < ApplicationController
   def remove_related_contact
     group = @contact.group
     group.remove_contact(Contact.find(params[:remove_id]))
-    respond_to do |format|
-      @tab = {url: {controller: "contacts", action: "edit", id: @contact.id, tab_page: 1, tab: "old_info"}, title: @contact.display_name+" #"+@contact.id.to_s}
-      format.html { render "/home/close_tab", layout: nil }
-    end
+    if params[:redirect] == "ajax"
+      render text: "Contact was removed from related contacts"
+    else
+      respond_to do |format|
+        @tab = {url: {controller: "contacts", action: "edit", id: @contact.id, tab_page: 1, tab: "old_info"}, title: @contact.display_name+" #"+@contact.id.to_s}
+        format.html { render "/home/close_tab", layout: nil }
+      end
+    end      
   end
   
   def undo_remove_related_contact
