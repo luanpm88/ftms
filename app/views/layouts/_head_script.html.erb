@@ -3358,7 +3358,19 @@
 		$('select[name="course_register[preferred_mailing]"]').trigger("change")
 		
 		
-		$(document).on("change, keyup",".phrase_boxx select.main_input, .phrase_boxx input.main_input", function() {			
+		$(document).on("keyup",".phrase_boxx input.main_input", function() {			
+			var value = $(this).val()
+			var next_box = $(this).parents(".phrase_boxx").next()
+			if (value != "") {
+				next_box.removeClass("hidden")
+				next_box.show()
+			} else if (next_box.find(".main_input").val() == "") {
+				next_box.addClass("hidden")
+				next_box.hide()
+			}
+		})
+		
+		$(document).on("change",".phrase_boxx select.main_input", function() {			
 			var value = $(this).val()
 			var next_box = $(this).parents(".phrase_boxx").next()
 			if (value != "") {
