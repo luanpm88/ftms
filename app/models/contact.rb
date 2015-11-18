@@ -338,10 +338,10 @@ class Contact < ActiveRecord::Base
     end
 
     if params["created_from"].present?
-      @records = @records.where("created_at >= ?", params["created_from"].to_date.beginning_of_day)
+      @records = @records.where("contacts.created_at >= ?", params["created_from"].to_date.beginning_of_day)
     end
     if params["created_to"].present?
-      @records = @records.where("created_at <= ?", params["created_to"].to_date.end_of_day)
+      @records = @records.where("contacts.created_at <= ?", params["created_to"].to_date.end_of_day)
     end
     if params["payment_type"].present?      
       @records = @records.where(payment_type: params["payment_type"])
@@ -2478,7 +2478,7 @@ class Contact < ActiveRecord::Base
   end
   
   def update_mobile_from_old_student
-    if self.old_student.present? && self.mobile == Contact.format_mobile(self.old_student.student_hand_phone) && self.email_2 == Contact.format_mobile(self.old_student.student_off_phone)
+    if self.old_student.present? # && self.mobile == Contact.format_mobile(self.old_student.student_hand_phone) && self.email_2 == Contact.format_mobile(self.old_student.student_off_phone)
       self.mobile = self.old_student.student_hand_phone.to_s.split(/[\,\;]/)[0].strip if self.old_student.student_hand_phone.present?        
       other_mobiles = []
       other_mobiles = self.old_student.student_hand_phone.to_s.split(/[\,\;]/)[1..-1] if self.old_student.student_hand_phone.to_s.split(/[\,\;]/).count > 1

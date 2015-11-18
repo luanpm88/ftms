@@ -26,50 +26,7 @@
             <% end %>
 </div>
 
-<div class="grid simple ">
-    <div class="grid-body no-border filters activity-filter">
-        <div class="row order-filters">
-            <!--<div class="col-md-2">
-                <h4>From Date</h4>
-                <div class="date_select_filter">
-                    <div class="input-with-icon  right">
-                        <div class="input-append success date col-md-10 no-padding">
-                            <%= text_field_tag :from_date, @from_date.nil? ? "" : @from_date.strftime("%d-%b-%Y"), :class => "datetime form-control" %>
-                                <span class="add-on"><span class="arrow"></span><i class="icon-th"></i></span>
-                        </div>
-                        <br style="clear: both" />
 
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-2">
-                <h4>To Date</h4>
-                <div class="date_select_filter">
-                    <div class="input-with-icon  right">
-                        <div class="input-append success date col-md-10 no-padding">
-                            <%= text_field_tag :to_date, @to_date.strftime("%d-%b-%Y"), :class => "datetime form-control" %>
-                                <span class="add-on"><span class="arrow"></span><i class="icon-th"></i></span>
-                        </div>
-                        <br style="clear: both" />
-                    </div>
-                </div>
-            </div>-->
-
-            <div class="col-md-3">
-                <h4>Education Consultant</h4>
-                <div class="">
-                    <%= select_tag 'user', options_for_select(User.main_users.collect{ |u| [u.name, u.id] }) , {:include_blank => 'All', class: "modern_select width100"} %>
-                </div>
-            </div>
-
-            <div class="col-md-3 activity-filter">
-                <h4>Status</h4>
-                <%= select_tag 'status', options_for_select(Activity.status_options, params[:status]), class: "modern_select width100" %>
-            </div>
-
-        </div>
-    </div>
-</div>
 
 
 <div class="row">

@@ -342,6 +342,9 @@ class Ability
       can :destroy, Activity do |a|
         a.user == user && a.deleted == 0
       end
+      can :change, Activity do |a|
+        a.user == user
+      end
       
       can :datatable, Transfer
       can :read, Transfer

@@ -8604,3 +8604,15 @@ h5.list_title {
 .year_bigger .date_mbe #s2id_course_for_exam_year, .year_bigger .date_mbe #s2id_for_exam_year, .year_bigger .date_mbe #s2id_year {
     width: 100px;
 }
+.note_log_edit_box {
+    display: none;
+}
+.note_edit_button {
+    display: block;
+    margin-top: 5px;
+    text-align: right;
+}
+.note_log_edit_box textarea {
+    width: 100%;
+    height: 100px;
+}

@@ -3829,6 +3829,37 @@
                 }
 			})
 		});
+		
+		$(document).on("click", ".note_edit_button", function(e) {
+			var edit_box = $(this).parent().find(".note_log_edit_box")
+			if (edit_box.css("display") == "none") {
+                edit_box.show()
+				$(this).parent().find(".note_content").hide()
+				$(this).hide()
+            }
+		});
+		$(document).on("click", ".note_cancel_button", function(e) {
+			var edit_box = $(this).parents("td").find(".note_log_edit_box")
+			if (edit_box.css("display") != "none") {
+                edit_box.hide()
+				$(this).parents("td").find(".note_content").show()
+				$(this).parents("td").find(".note_edit_button").show()
+            }
+		});
+		$(document).on("click", ".note_save_button", function(e) {
+			var box = $(this).parents("td")
+			var text = box.find("textarea").val()
+			var iid = box.find(".note_log_edit_box").attr("item-id")
+			$.ajax({
+				url : '<%= change_activities_path %>?id='+iid+'&text='+text,
+				success:function(data, textStatus, jqXHR)
+				{
+					window.parent.modernAlert(data)
+					box.parents("table").dataTable().fnFilter();
+				}
+			});
+		});
+		
 	})
 	
 
