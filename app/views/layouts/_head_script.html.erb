@@ -3355,8 +3355,7 @@
 			changeMailingPreferred($(this))
 		})
 		$('select[name="contact[preferred_mailing]"]').trigger("change")
-		$('select[name="course_register[preferred_mailing]"]').trigger("change")
-		
+		$('select[name="course_register[preferred_mailing]"]').trigger("change")		
 		
 		$(document).on("keyup",".phrase_boxx input.main_input", function() {			
 			var value = $(this).val()
@@ -3725,17 +3724,13 @@
 		$(document).on("change", ".transfer_hour_from .input_hour", function() {
 			calculateTransferHourFrom()
 		});
-		
 		$(document).on("click", ".approve_link", function(e) {
 			e.preventDefault()
 			approve_ajax($(this))
 		});
-
 		if($(".datatable-merge-contacts").length) {
 			setInterval('$(".datatable-merge-contacts .row-color-true").each(function() {$(this).parents("tr").addClass("color_dark")})', 500)
 		}
-		
-		
 		if($("input.upfront_radio").length) {
 			checkUpfrontButton($("input.upfront_radio:checked"))
 		}
@@ -3797,7 +3792,6 @@
 			e.preventDefault()
 			var message = $(this).attr("confirm-message")
 			var url = $(this).attr("href")
-			
 			if (confirm(message)) {
 				//$.ajax({
 				//	url : url,
@@ -3809,14 +3803,11 @@
 				window.location = url; 
 			}
 		})
-		
 		$(document).on("click", ".destroy-old-tag", function(e) {
 			e.preventDefault()
-			
 			var message = "Sure you want to destroy this tag?"
 			var url = $(this).attr("href")
 			var id = $(this).attr("rel")
-			
 			if (confirm(message)) {
 				$.ajax({
 					url : url,
@@ -3829,10 +3820,8 @@
 				});
 			}
 		})
-		
 		$(document).on("click", ".more_field", function(e) {
 			var box = $(this).parents(".more_field_box")
-			
 			box.find(".more_field_item").each(function() {
 				if ($(this).hasClass("hidden")) {
                     $(this).removeClass("hidden")
