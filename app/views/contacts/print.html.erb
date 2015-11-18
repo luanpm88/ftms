@@ -180,7 +180,7 @@
       </td>
       <td colspan="3">
         <% @contact.active_activities.each do |a| %>
-          <%= a.note %>, on <%= a.created_at.strftime("%d-%b-%Y") %>
+          <%= a.note %>; created on <%= a.created_at.strftime("%d-%b-%Y") %>
           <br />
         <% end %>
       </td>
