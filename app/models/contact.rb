@@ -979,7 +979,7 @@ class Contact < ActiveRecord::Base
       line += "<span class=\"box_mini_info nowrap\"><i class=\"icon-phone\"></i> " + phone + "</span> " if !phone.nil? && !phone.empty?
       line += "<span class=\"box_mini_info \"><i class=\"icon-envelope\"></i> " + email + "</span> " if !email.nil? && !email.empty?
       line += display_email_2
-      line += "Tax Code " + tax_code + "</span><br />" if tax_code.present?
+      line += "Tax Code: " + tax_code + "</span><br />" if tax_code.present?
     end
     line += "<div class=\"address_info_line\"><i class=\"icon-truck\"></i> " + address + "</div>" if address.present?
     
@@ -2442,8 +2442,9 @@ class Contact < ActiveRecord::Base
     contacts.each do |c|
       old_com = c.old_student.student_company
       if old_com.present?
-        com = Contact.main_contacts.where(is_individual: false).where("LOWER(name) LIKE ?", "%#{old_com.strip.downcase}%").first
-        if com.nil?
+        com = Contact.main_contacts.where(is_individual: false).where("name = ?", "#{old_com.strip}").first
+        puts com
+        if !com.present?
           uu = User.where(:email => "support@hoangkhang.com.vn").first
           uu = User.first if uu.nil?
           
@@ -2458,6 +2459,21 @@ class Contact < ActiveRecord::Base
         end        
       end
     end
+  end
+  
+  def self.update_company_info_from_old_system_2
+    count = 0
+    Contact.main_contacts.where(is_individual: false).each do |c|
+      os = OldStudent.where(student_company: c.name).first
+      if os.present?
+        contact = os.contact
+        c.tax_code = os.student_vat_code
+        c.address = os.student_office
+        c.save
+      end
+    end
+    
+    count
   end
   
   def self.update_emails_info_from_old_system
