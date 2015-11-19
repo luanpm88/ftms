@@ -2457,7 +2457,8 @@ class Contact < ActiveRecord::Base
                                   is_individual: false,
                                   user_id: uu.id,
                                   tax_code: self.old_student.student_vat_code,
-                                  address: self.old_student.student_office
+                                  address: self.old_student.student_office,
+                                  phone: self.old_student.student_off_phone
                                 )
         new_com.add_status("new_pending")          
         new_com.save_draft(uu)
@@ -2466,7 +2467,10 @@ class Contact < ActiveRecord::Base
         self.update_attribute(:referrer_id, new_com.id) if self.referrer_id.nil?
       else
         self.update_attribute(:referrer_id, com.id) if self.referrer_id.nil?
-      end        
+      end
+      
+      self.update_attribute(:preferred_mailing, "other")
+      self.update_attribute(:mailing_address, self.old_student.student_preffer_mailling)
     end
   end
   
