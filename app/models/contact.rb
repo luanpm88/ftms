@@ -2464,13 +2464,13 @@ class Contact < ActiveRecord::Base
         new_com.save_draft(uu)
         new_com.update_info
         
-        self.update_attribute(:referrer_id, new_com.id) if self.referrer_id.nil?
+        self.update_attribute(:referrer_id, new_com.id) if !self.referrer_id.present?
       else
-        self.update_attribute(:referrer_id, com.id) if self.referrer_id.nil?
+        self.update_attribute(:referrer_id, com.id) if !self.referrer_id.present?
       end
       
       self.update_attribute(:preferred_mailing, "other")
-      self.update_attribute(:mailing_address, self.old_student.student_preffer_mailling)
+      self.update_attribute(:mailing_address, self.old_student.student_preffer_mailing)
     end
   end
   
