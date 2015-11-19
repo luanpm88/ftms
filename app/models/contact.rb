@@ -1212,7 +1212,7 @@ class Contact < ActiveRecord::Base
   end
   
   def contacts_link
-    ActionController::Base.helpers.link_to("["+contacts.count.to_s+"]", {controller: "contacts", action: "index", company_id: self.id, tab_page: 1}, title: "#{display_name}: Contact List", class: "tab_page")
+    ActionController::Base.helpers.link_to("["+contacts.where(draft_for: nil).count.to_s+"]", {controller: "contacts", action: "index", company_id: self.id, tab_page: 1}, title: "#{display_name}: Contact List", class: "tab_page")
   end
   
   def json_encode_course_type_ids_names
