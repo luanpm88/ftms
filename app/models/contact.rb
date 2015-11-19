@@ -2440,24 +2440,28 @@ class Contact < ActiveRecord::Base
     contacts = Contact.main_contacts.where.not(tmp_StudentID: nil)
     
     contacts.each do |c|
-      old_com = c.old_student.student_company
-      if old_com.present?
-        com = Contact.main_contacts.where(is_individual: false).where("name = ?", "#{old_com.strip}").first
-        puts com
-        if !com.present?
-          uu = User.where(:email => "support@hoangkhang.com.vn").first
-          uu = User.first if uu.nil?
-          
-          com = Contact.create(name: old_com.strip, is_individual: false, user_id: uu.id)
-          com.add_status("new_pending")          
-          com.save_draft(uu)
-          com.update_info
-          
-          c.update_attribute(:referrer_id, com.id)
-        else
-          c.update_attribute(:referrer_id, com.id)
-        end        
-      end
+      
+    end
+  end
+  
+  def update_company_info_from_old_system
+    old_com = self.old_student.student_company
+    if old_com.present?
+      com = Contact.main_contacts.where(is_individual: false).where("name = ?", "#{old_com.strip}").first
+      puts com
+      if !com.present?
+        uu = User.where(:email => "support@hoangkhang.com.vn").first
+        uu = User.first if uu.nil?
+        
+        new_com = Contact.create(name: old_com.strip, is_individual: false, user_id: uu.id)
+        new_com.add_status("new_pending")          
+        new_com.save_draft(uu)
+        new_com.update_info
+        
+        self.update_attribute(:referrer_id, new_com.id)
+      else
+        self.update_attribute(:referrer_id, com.id)
+      end        
     end
   end
   
