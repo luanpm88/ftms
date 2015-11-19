@@ -2447,8 +2447,9 @@ class Contact < ActiveRecord::Base
   def update_company_info_from_old_system
     old_com = self.old_student.student_company
     if old_com.present?
-      com = Contact.main_contacts.where(is_individual: false).where("name = ?", "#{old_com.strip}").first
-      puts com
+      com = Contact.main_contacts.where(is_individual: false).where("LOWER(name) = ?", "#{old_com.mb_chars.strip.downcase}").first
+      #puts com.nil?
+      #puts com
       if !com.present?
         uu = User.where(:email => "support@hoangkhang.com.vn").first
         uu = User.first if uu.nil?

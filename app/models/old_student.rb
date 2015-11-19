@@ -19,7 +19,7 @@ class OldStudent < ActiveRecord::Base
 			student.student_office = row[:StudentOffice]
 			student.student_location = row[:StudentLocation]
 			student.student_home_add = row[:StudentHomeAdd]
-			student.student_preffer_mailing = row[:StudentPrefferMailing]
+			student.student_preffer_mailing = row[:StudentPrefferMailling]
 			student.student_email_1 = row[:StudentEmail1]
 			student.student_email_2 = row[:StudentEmail2]
 			student.student_off_phone = row[:StudentOffPhone]
