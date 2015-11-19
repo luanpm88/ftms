@@ -2094,7 +2094,7 @@ class Contact < ActiveRecord::Base
         contact.mobile = item.student_hand_phone.to_s.split(/[\,\;]/)[0].strip if item.student_hand_phone.present?        
         other_mobiles = []
         other_mobiles = item.student_hand_phone.to_s.split(/[\,\;]/)[1..-1] if item.student_hand_phone.to_s.split(/[\,\;]/).count > 1
-        contact.mobile_2 = other_mobiles+item.student_off_phone.to_s.split(/[\,\;]/)+item.student_home_phone.to_s.split(/[\,\;]/)
+        contact.mobile_2 = other_mobiles+item.student_home_phone.to_s.split(/[\,\;]/)
          
          
         #contact. = item.student_off_phone       
@@ -2440,7 +2440,7 @@ class Contact < ActiveRecord::Base
     contacts = Contact.main_contacts.where.not(tmp_StudentID: nil)
     
     contacts.each do |c|
-      
+      c.update_company_info_from_old_system
     end
   end
   
@@ -2453,14 +2453,19 @@ class Contact < ActiveRecord::Base
         uu = User.where(:email => "support@hoangkhang.com.vn").first
         uu = User.first if uu.nil?
         
-        new_com = Contact.create(name: old_com.strip, is_individual: false, user_id: uu.id)
+        new_com = Contact.create(name: old_com.strip,
+                                  is_individual: false,
+                                  user_id: uu.id,
+                                  tax_code: self.old_student.student_vat_code,
+                                  address: self.old_student.student_office
+                                )
         new_com.add_status("new_pending")          
         new_com.save_draft(uu)
         new_com.update_info
         
-        self.update_attribute(:referrer_id, new_com.id)
+        self.update_attribute(:referrer_id, new_com.id) if self.referrer_id.nil?
       else
-        self.update_attribute(:referrer_id, com.id)
+        self.update_attribute(:referrer_id, com.id) if self.referrer_id.nil?
       end        
     end
   end
