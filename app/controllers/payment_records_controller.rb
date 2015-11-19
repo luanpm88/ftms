@@ -211,7 +211,7 @@ class PaymentRecordsController < ApplicationController
         
                
         
-        @tab = {url: {controller: "payment_records", action: "index", tab_page: 1, tab: "course_registration"}}
+        @tab = {url: {controller: "payment_records", action: "index", tab_page: 1, tab: "course_registration"}, title: "Payment Record"}
         format.html { render "/home/close_tab", layout: nil }
         format.json { render action: 'show', status: :created, location: @payment_record }
       else

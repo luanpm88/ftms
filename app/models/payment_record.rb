@@ -88,9 +88,19 @@ class PaymentRecord < ActiveRecord::Base
     end
     
     
-    if params["receivable"].present?
-      @records = @records.where("payment_records.cache_payment_status LIKE ?", "%#{params["receivable"]}%")
+    if params["receivable"].present? && params["payment_for"] == "company"
+      @records = @records.where.not(company_id: nil).where("payment_records.cache_payment_status LIKE ?", "%#{params["receivable"]}%")
     end
+    
+    if params["payment_for"].present?
+      if params["payment_for"] == "company"
+        @records = @records.where.not(company_id: nil)
+      elsif params["payment_for"] == "transfer"
+        @records = @records.where.not(transfer_id: nil)
+      else
+        @records = @records.where(company_id: nil).where(transfer_id: nil)
+      end      
+    end    
     
     if params["status"].present?
       @records = @records.where(status: params["status"])
@@ -143,7 +153,7 @@ class PaymentRecord < ActiveRecord::Base
               item.contact.contact_link,
               '<div class="text-left">'+item.description+"</div>",
               '<div class="text-right">'+ApplicationController.helpers.format_price(item.ordered_total)+"</div>",
-              '<div class="text-right">'+ApplicationController.helpers.format_price(item.paid_amount)+'</div>',
+              '<div class="text-right">'+item.display_paid_amount+'</div>',
               '<div class="text-right">'+item.paid_on+"<br /><strong>by:</strong><br />"+item.user.staff_col+"</div>",
               '<div class="text-center">'+item.bank_account_name+"</div>",
               '<div class="text-right">'+ApplicationController.helpers.format_price(item.remain)+"</div>",
@@ -289,6 +299,13 @@ class PaymentRecord < ActiveRecord::Base
     return result
   end
   
+  def display_paid_amount
+    if !company.nil?
+      (company_records.map {|r| ApplicationController.helpers.format_price(r.total)}).join("<br />")
+    else
+      ApplicationController.helpers.format_price(paid_amount)
+    end
+  end
   
   def payment_status
     if !company.nil?

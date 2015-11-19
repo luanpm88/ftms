@@ -2305,6 +2305,7 @@
 					if($(".payment-record-filter select[name='status']").val()) {
 						d.status =  $(".payment-record-filter select[name='status']").val()
 					}
+					d.payment_for = $(".payment-record-filter input[name='payment_for']:checked").val()
 				}
 			},
 			"columnDefs": [ { "targets": [0,1,2,3,5,6,7,8,9], "orderable": false } ],
@@ -3860,6 +3861,14 @@
 			});
 		});
 		
+		
+		$(document).on("click", "input[name='payment_for']", function(e) {
+			if ($(this).val() == "company") {
+                $(".company_receivable_box").show()
+            } else {
+				$(".company_receivable_box").hide()
+			}
+		});
 	})
 	
 

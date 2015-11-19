@@ -71,7 +71,27 @@
 						</div>
 						
 						<div class="col-md-3">
-							<h4>Receivable?</h4>
+							<h4>Payment For/By</h4>
+							<div class="form-group" style="margin-bottom: 5px;">								 
+								 <div class="input-with-icon right">                                       
+									  <div class="radio radio-success" style="padding: 5px">
+											<input class="required" id="paymentfor_all" type="radio" name="payment_for" value="" checked="checked">
+											<label style="display: inline-block; width: 100px" for="paymentfor_all">All</label>
+											<input class="required" id="paymentfor_student" type="radio" name="payment_for" value="student">
+											<label style="display: inline-block; width: 100px" for="paymentfor_student">Student</label>
+											<input class="required" id="paymentfor_company" type="radio" name="payment_for" value="company">
+											<label style="display: inline-block; width: 100px" for="paymentfor_company">Company</label>
+											<input class="required" id="paymentfor_transfer" type="radio" name="payment_for" value="transfer">
+											<label style="display: inline-block; width: 100px" for="paymentfor_transfer">Defer/Transfer</label>
+									  </div>
+								 </div>
+							</div>
+							
+						</div>
+						
+						<div class="col-md-3">
+						  <div class="company_receivable_box" style="display: none">
+							<h4>Company Receivable?</h4>
 							<div class="form-group" style="margin-bottom: 5px;">								 
 								 <div class="input-with-icon right">                                       
 									  <div class="radio radio-success" style="padding: 5px">
@@ -84,9 +104,7 @@
 									  </div>
 								 </div>
 							</div>
-						</div>
-						
-						<div class="col-md-3">
+						  </div>
 						  <h4>Status</h4>							
 						  <%= select_tag 'status', options_for_select(PaymentRecord.status_options, params[:status]), class: "modern_select width100" %>
 						</div>
