@@ -2470,8 +2470,8 @@ class Contact < ActiveRecord::Base
         self.update_attribute(:referrer_id, com.id) if !self.referrer_id.present?
       end
       
-      self.update_attribute(:preferred_mailing, "other")
-      self.update_attribute(:mailing_address, self.old_student.student_preffer_mailing)
+      self.update_attribute(:preferred_mailing, "other") if self.old_student.student_preffer_mailing.present?
+      self.update_attribute(:mailing_address, self.old_student.student_preffer_mailing) if self.old_student.student_preffer_mailing.present?
     end
   end
   
