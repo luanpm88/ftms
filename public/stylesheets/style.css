@@ -8613,7 +8613,7 @@ h5.list_title {
     text-align: right;
 }
 .note_log_edit_box textarea {
-    width: 100%;
+    width: 350px;
     height: 100px;
 }
 .note_content {
