@@ -84,7 +84,7 @@ class Activity < ActiveRecord::Base
     
     actions_col = 5
     @records.each do |item|
-      edit_box = user == item.user ? "<a class=\"note_edit_button\" href=\"#edit\"><i class=\"icon-pencil\"></i> Edit</a><div class=\"note_log_edit_box\" item-id=\"#{item.id.to_s}\"><textarea class=>#{item.note}</textarea><button class=\"btn btn-small btn-primary note_save_button\">Save</button><button class=\"btn btn-small btn-white note_cancel_button\">Cancel</button></div>" : ""
+      edit_box = user == item.user ? "<a class=\"note_edit_button\" href=\"#edit\"><i class=\"icon-pencil\"></i> Edit</a><div class=\"note_log_edit_box\" item-id=\"#{item.id.to_s}\"><textarea class=>#{item.note}</textarea><br /><button class=\"btn btn-small btn-primary note_save_button\">Save</button><button class=\"btn btn-small btn-white note_cancel_button\">Cancel</button></div>" : ""
       item = [
               "<span class=\"note_content\">"+item.note.gsub("\n","<br />").html_safe+"</span>"+edit_box,
               "<div class=\"text-center nowrap\">#{item.created_at.strftime("%d-%b-%Y, %I:%M %p")}<br /><strong>by:</strong><br />#{item.user.staff_col}</div>",
