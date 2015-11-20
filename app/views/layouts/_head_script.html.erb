@@ -433,6 +433,9 @@
 
 	
 	function calculatePhraseHour() {
+		if($(".new_course_register").length > 0) {
+			return
+		}
 		var count = 0.0
 		$(".phrase_hour").each(function () {
 			if ($(this).val() != "" && $(this).parents(".phrase_boxx").find("select.main_input").val() != "") {
@@ -3358,7 +3361,7 @@
 		$('select[name="contact[preferred_mailing]"]').trigger("change")
 		$('select[name="course_register[preferred_mailing]"]').trigger("change")		
 		
-		$(document).on("keyup",".phrase_boxx input.main_input", function() {			
+		$(document).on("change",".phrase_boxx input.main_input", function() {			
 			var value = $(this).val()
 			var next_box = $(this).parents(".phrase_boxx").next()
 			if (value != "") {

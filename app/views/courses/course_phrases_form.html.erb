@@ -19,8 +19,8 @@
 								   <% num = 0 %>
 								   <% @course.courses_phrases.joins(:phrase).order("courses_phrases.start_at").each do |courses_phrase| %>
 												<%= hidden_field_tag "courses_phrases["+num.to_s+"][courses_phrase_id]", courses_phrase.id %>
-										<div class="row phrase_boxx phrase_box_<%= num %>">												
-											 <div title="<%= "This phrase can't be changed because it is in use!" if CoursesPhrase.find(courses_phrase.id).used? %>" class="col-md-5 <%= 'cp_unchangable' if CoursesPhrase.find(courses_phrase.id).used? %>">
+										<div class="row phrase_boxx phrase_box_<%= num %> <%= 'cp_unchangable' if CoursesPhrase.find(courses_phrase.id).used? %>">												
+											 <div title="<%= "Be careful! if you change/remove this phrase-date, the course/defer/transfer registrations that contain it will be changed too. This cannot be undone!" if CoursesPhrase.find(courses_phrase.id).used? %>" class="col-md-5">
 												<%= '<div class="cp_unchangable_cover"></div>'.html_safe if CoursesPhrase.find(courses_phrase.id).used? %>
 												  <div class="input-with-icon  right">                                       
 													   <i class=""></i>

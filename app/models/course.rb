@@ -428,7 +428,7 @@ class Course < ActiveRecord::Base
                           start_at: row[1]["start_at"],
                           hour: row[1]["hour"])
           else
-              CoursesPhrase.find(row[1]["courses_phrase_id"]).destroy
+              CoursesPhrase.find(row[1]["courses_phrase_id"]).release
           end
         else
           if row[1]["phrase_id"].present?

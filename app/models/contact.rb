@@ -2495,7 +2495,7 @@ class Contact < ActiveRecord::Base
     contacts = Contact.main_contacts.where.not(tmp_StudentID: nil)
     
     contacts.each do |c|
-      #c.update_email_from_old_student
+      c.update_email_from_old_student
       c.update_mobile_from_old_student
     end
   end

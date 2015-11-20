@@ -8536,12 +8536,12 @@ h5.list_title {
 .cp_unchangable {
     opacity: 0.8;
 }
-.cp_unchangable_cover {
+/*.cp_unchangable_cover {
     height: 48px;
     position: absolute;
     width: 100%;
     z-index: 1000;
-}
+}*/
 .input-append.date .add-on {
     position: absolute !important;
     right: 0 !important;
@@ -8619,4 +8619,7 @@ h5.list_title {
 .note_content {
     display: block;
     width: 330px;
+}
+.cp_unchangable * {
+    color: red;
 }
