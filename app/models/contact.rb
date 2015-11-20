@@ -2445,31 +2445,31 @@ class Contact < ActiveRecord::Base
   end
   
   def update_company_info_from_old_system
-    #old_com = self.old_student.student_company
-    #if old_com.present?
-    #  com = Contact.main_contacts.where(is_individual: false).where("LOWER(name) = ?", "#{old_com.mb_chars.strip.downcase}").first
-    #  #puts com.nil?
-    #  #puts com
-    #  if !com.present?
-    #    uu = User.where(:email => "support@hoangkhang.com.vn").first
-    #    uu = User.first if uu.nil?
-    #    
-    #    new_com = Contact.create(name: old_com.strip,
-    #                              is_individual: false,
-    #                              user_id: uu.id,
-    #                              tax_code: self.old_student.student_vat_code,
-    #                              address: self.old_student.student_office,
-    #                              phone: self.old_student.student_off_phone
-    #                            )
-    #    new_com.add_status("new_pending")          
-    #    new_com.save_draft(uu)
-    #    new_com.update_info
-    #    
-    #    self.update_attribute(:referrer_id, new_com.id) if !self.referrer_id.present?
-    #  else
-    #    self.update_attribute(:referrer_id, com.id) if !self.referrer_id.present?
-    #  end
-    #end
+    old_com = self.old_student.student_company
+    if old_com.present?
+      com = Contact.main_contacts.where(is_individual: false).where("LOWER(name) = ?", "#{old_com.mb_chars.strip.downcase}").first
+      #puts com.nil?
+      #puts com
+      if !com.present?
+        uu = User.where(:email => "support@hoangkhang.com.vn").first
+        uu = User.first if uu.nil?
+        
+        new_com = Contact.create(name: old_com.strip,
+                                  is_individual: false,
+                                  user_id: uu.id,
+                                  tax_code: self.old_student.student_vat_code,
+                                  address: self.old_student.student_office,
+                                  phone: self.old_student.student_off_phone
+                                )
+        new_com.add_status("new_pending")          
+        new_com.save_draft(uu)
+        new_com.update_info
+        
+        self.update_attribute(:referrer_id, new_com.id) if !self.referrer_id.present?
+      else
+        self.update_attribute(:referrer_id, com.id) if !self.referrer_id.present?
+      end
+    end
     self.update_attribute(:preferred_mailing, "other") if self.old_student.student_preffer_mailing.present?
     self.update_attribute(:preferred_mailing, "ftms") if self.old_student.student_preffer_mailing.to_s.downcase == "ftms"
     self.update_attribute(:mailing_address, self.old_student.student_preffer_mailing) if self.old_student.student_preffer_mailing.present?
@@ -2490,12 +2490,13 @@ class Contact < ActiveRecord::Base
     count
   end
   
-  def self.update_emails_info_from_old_system
+  def self.update_emails_mobiles_info_from_old_system
     # Find all
     contacts = Contact.main_contacts.where.not(tmp_StudentID: nil)
     
     contacts.each do |c|
-      c.update_email_from_old_student
+      #c.update_email_from_old_student
+      c.update_mobile_from_old_student
     end
   end
 
@@ -2516,7 +2517,7 @@ class Contact < ActiveRecord::Base
       self.mobile = self.old_student.student_hand_phone.to_s.split(/[\,\;]/)[0].strip if self.old_student.student_hand_phone.present?        
       other_mobiles = []
       other_mobiles = self.old_student.student_hand_phone.to_s.split(/[\,\;]/)[1..-1] if self.old_student.student_hand_phone.to_s.split(/[\,\;]/).count > 1
-      self.mobile_2 = other_mobiles+self.old_student.student_off_phone.to_s.split(/[\,\;]/)+self.old_student.student_home_phone.to_s.split(/[\,\;]/)
+      self.mobile_2 = other_mobiles+self.old_student.student_home_phone.to_s.split(/[\,\;]/)
       
       self.save
     end
