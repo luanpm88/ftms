@@ -63,20 +63,17 @@ class CoursesPhrase < ActiveRecord::Base
   def release
     # Remove from contacts courses
     ContactsCourse.where("courses_phrase_ids LIKE ?", "%[#{self.id.to_s}]%").each do |c|
-      c.courses_phrase_ids = c.courses_phrase_ids.gsub("[#{self.id.to_s}]","")
-      c.save
+      c.update_attribute(:courses_phrase_ids, c.courses_phrase_ids.gsub("[#{self.id.to_s}]",""))
     end
     
     # Remove from transfer-from
     Transfer.where("courses_phrase_ids LIKE ?", "%[#{self.id.to_s}]%") do |c|
-      c.courses_phrase_ids = c.courses_phrase_ids.gsub("[#{self.id.to_s}]","")
-      c.save
+      c.update_attribute(:courses_phrase_ids, c.courses_phrase_ids.gsub("[#{self.id.to_s}]",""))
     end
     
     # Remove from transfer-to
     Transfer.where("to_courses_phrase_ids LIKE ?", "%[#{self.id.to_s}]%") do |c|
-      c.to_courses_phrase_ids = c.to_courses_phrase_ids.gsub("[#{self.id.to_s}]","")
-      c.save
+      c.update_attribute(:to_courses_phrase_ids, c.to_courses_phrase_ids.gsub("[#{self.id.to_s}]",""))
     end
   end
   
