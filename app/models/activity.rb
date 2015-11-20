@@ -62,6 +62,7 @@ class Activity < ActiveRecord::Base
     
     @records = @records.search(params["search"]["value"]) if !params["search"]["value"].empty?
     
+    order = "activities.created_at DESC"
     if !params["order"].nil?
       case params["order"]["0"]["column"]
       when "1"

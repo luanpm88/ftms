@@ -64,6 +64,10 @@ class Ability
         
         can :system_setting, User
         can :system_setting, User
+        
+        can :destroy, Activity do |a|
+          a.deleted == 0
+        end
     end
     
     if user.has_role? "user"

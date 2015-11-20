@@ -3852,7 +3852,7 @@
 		});
 		$(document).on("click", ".note_save_button", function(e) {
 			var box = $(this).parents("td")
-			var text = box.find("textarea").val()
+			var text = encodeURIComponent(box.find("textarea").val())
 			var iid = box.find(".note_log_edit_box").attr("item-id")
 			$.ajax({
 				url : '<%= change_activities_path %>?id='+iid+'&text='+text,
