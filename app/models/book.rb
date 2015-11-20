@@ -118,6 +118,7 @@ class Book < ActiveRecord::Base
     #@records = @records.search(params["search"]["value"]) if !params["search"]["value"].empty?
     @records = @records.where("LOWER(books.cache_search) LIKE ?", "%#{params["search"]["value"].strip.downcase}%") if params["search"].present? && !params["search"]["value"].empty?
     
+    order = "course_types.short_name, subjects.name, stock_types.display_order, books.created_at"
     if !params["order"].nil?
       case params["order"]["0"]["column"]
       when "2"
@@ -129,7 +130,7 @@ class Book < ActiveRecord::Base
       end
       order += " "+params["order"]["0"]["dir"] if params["order"]["0"]["column"] != "1"
     else
-      order = "books.created_at"
+      order = "course_types.short_name, subjects.name, stock_types.display_order, books.created_at"
     end
     
     

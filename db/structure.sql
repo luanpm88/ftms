@@ -2291,7 +2291,8 @@ CREATE TABLE stock_types (
     parent_id integer,
     status character varying,
     created_at timestamp without time zone NOT NULL,
-    updated_at timestamp without time zone NOT NULL
+    updated_at timestamp without time zone NOT NULL,
+    display_order integer
 );
 
 
@@ -4340,4 +4341,6 @@ INSERT INTO schema_migrations (version) VALUES ('20151111094724');
 INSERT INTO schema_migrations (version) VALUES ('20151111161639');
 
 INSERT INTO schema_migrations (version) VALUES ('20151112004810');
+
+INSERT INTO schema_migrations (version) VALUES ('20151120040816');
 

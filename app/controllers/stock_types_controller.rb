@@ -2,7 +2,7 @@ class StockTypesController < ApplicationController
   include StockTypesHelper
   load_and_authorize_resource
   
-  before_action :set_stock_type, only: [:delete, :show, :edit, :update, :destroy]
+  before_action :set_stock_type, only: [:update_order, :delete, :show, :edit, :update, :destroy]
 
   # GET /stock_types
   # GET /stock_types.json
@@ -181,6 +181,12 @@ class StockTypesController < ApplicationController
       format.html { render "/stock_types/approved", layout: nil }
       format.json { render action: 'show', status: :created, location: @course_type }
     end
+  end
+  
+  def update_order
+    @stock_type.update_attribute(:display_order, params[:value])
+    
+    render text: "Display order was updated!"
   end
   
   private

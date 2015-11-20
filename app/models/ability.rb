@@ -186,6 +186,7 @@ class Ability
       end
       can :field_history, StockType
       can :approve_all, StockType
+      can :update_order, StockType
       
       
       

@@ -57,18 +57,21 @@ class StockType < ActiveRecord::Base
     
     @records = self.filter(params, user)
     
+    order = "stock_types.display_order"
     if !params["order"].nil?
       case params["order"]["0"]["column"]
       when "1"
         order = "stock_types.name"
       when "3"
+        order = "stock_types.display_order"
+      when "4"
         order = "stock_types.created_at"
       else
         order = "stock_types.name"
       end
       order += " "+params["order"]["0"]["dir"]
     else
-      order = "stock_types.name"
+      order = "stock_types.display_order"
     end
     
     @records = @records.order(order) if !order.nil?
@@ -77,7 +80,7 @@ class StockType < ActiveRecord::Base
     @records = @records.limit(params[:length]).offset(params["start"])
     data = []
     
-    actions_col = 6
+    actions_col = 7
     @records.each do |item|
       ############### BEGIN REVISION #########################
       # update approved status
@@ -90,6 +93,7 @@ class StockType < ActiveRecord::Base
               "<div item_id=\"#{item.id.to_s}\" class=\"main_part_info checkbox check-default\"><input name=\"ids[]\" id=\"checkbox#{item.id}\" type=\"checkbox\" value=\"#{item.id}\"><label for=\"checkbox#{item.id}\"></label></div>",
               item.name,
               item.description,
+              "<div class=\"text-center\"><input type=\"text\" rel=\"#{item.id.to_s}\" class=\"display_order_input\" value=\"#{item.display_order}\" /></div>",
               '<div class="text-center">'+item.created_at.strftime("%Y-%m-%d")+"</div>",
               '<div class="text-center">'+item.staff_col+"</div>",
               '<div class="text-center">'+item.display_statuses+"</div>",

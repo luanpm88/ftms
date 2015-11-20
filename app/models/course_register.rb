@@ -505,7 +505,7 @@ class CourseRegister < ActiveRecord::Base
   
   def books
     arr = []
-    books_contacts.each do |bc|
+    books_contacts.joins(:book => [:course_type, :subject, :stock_type]).order("course_types.short_name, subjects.name, stock_types.display_order, books.created_at").each do |bc|
       item = {}
       item[:books_contact] = bc
       item[:book] = bc.book

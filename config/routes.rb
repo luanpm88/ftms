@@ -18,6 +18,7 @@ Hkerp::Application.routes.draw do
       ####################
       
       post :approve_all
+      get :update_order
     end
   end
   resources :course_types_discount_programs

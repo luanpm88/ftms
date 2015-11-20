@@ -8623,3 +8623,7 @@ h5.list_title {
 .cp_unchangable * {
     color: red;
 }
+.display_order_input {
+    width: 50px;
+    text-align: center;
+}
