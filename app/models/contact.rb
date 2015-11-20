@@ -2471,7 +2471,7 @@ class Contact < ActiveRecord::Base
     #  end
     #end
     self.update_attribute(:preferred_mailing, "other") if self.old_student.student_preffer_mailing.present?
-    self.update_attribute(:preferred_mailing, "ftms") if self.old_student.student_preffer_mailing.downcase == "ftms"
+    self.update_attribute(:preferred_mailing, "ftms") if self.old_student.student_preffer_mailing.to_s.downcase == "ftms"
     self.update_attribute(:mailing_address, self.old_student.student_preffer_mailing) if self.old_student.student_preffer_mailing.present?
   end
   
