@@ -136,6 +136,7 @@ class Ability
       can :print, Contact do |c|
         c.is_individual?
       end
+      can :not_related_contacts, Contact
       
       can :datatable, Course
       can :read, Course

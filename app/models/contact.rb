@@ -2231,6 +2231,7 @@ class Contact < ActiveRecord::Base
                                 .where.not(id: self.id)
                                 .where("contacts.cache_group_id IS NULL")
                                 .where(cond_other)
+                                .where("contacts.no_related_ids IS NULL OR contacts.no_related_ids NOT LIKE ?", "%[#{self.id.to_s}]%")                                
                                 .order("name DESC,email DESC,mobile DESC")
   end
   
@@ -2294,6 +2295,14 @@ class Contact < ActiveRecord::Base
     end
     
     self.update_attribute(:no_related_ids, "["+aa.join("][")+"]")
+  end
+  
+  def self.add_no_related_contacts(cs)
+    cs.each do |x|
+      cs.where.not(id: x.id).each do |y|
+        x.add_no_related_contact(y)
+      end
+    end
   end
   
   def display_bases(divider="-")

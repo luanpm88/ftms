@@ -478,6 +478,8 @@ Hkerp::Application.routes.draw do
       post :do_merge
       
       get :print
+      
+      post :not_related_contacts
     end
   end
 

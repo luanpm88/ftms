@@ -570,6 +570,27 @@ class ContactsController < ApplicationController
     end
   end
   
+  def not_related_contacts
+    if params[:ids].present?
+      if !params[:check_all_page].nil?
+        params[:intake_year] = params["filter"]["intake(1i)"] if params["filter"].present?
+        params[:intake_month] = params["filter"]["intake(2i)"] if params["filter"].present?
+        
+        if params[:is_individual] == "false"
+          params[:contact_types] = nil
+        end        
+        
+        @contacts = Contact.filters(params, current_user)
+      else
+        @contacts = Contact.where(id: params[:ids])
+      end
+    end
+    
+    Contact.add_no_related_contacts(@contacts)
+    
+    render text: "Done! Contacts were checked as not the same contact."
+  end
+  
   def part_info
     render json: {
       col_1: '<div class="text-left"><strong>'+@contact.contact_link+"</strong></div>"+'<div class="text-left">'+@contact.html_info_line.html_safe+@contact.referrer_link+"</div>"+@contact.picture_link,
