@@ -447,6 +447,10 @@ class Course < ActiveRecord::Base
     course_prices.order("created_at DESC").first
   end
   
+  def all_prices
+    course_prices
+  end
+  
   def prices
     course_prices.where("course_prices.deadline IS NULL OR course_prices.deadline >= ?", Time.now.beginning_of_day)
   end

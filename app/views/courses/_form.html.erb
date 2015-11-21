@@ -111,8 +111,8 @@
                                          <div class="input-with-iconz date-group left">                                       
 											 <i class=""></i>
 											 <% num = 0 %>
-											 <% @course.prices.each do |price| %>
-												  <div class="price_line line_<%= num %>">
+											 <% @course.all_prices.each do |price| %>
+												  <div class="price_line line_<%= num %> <%= "price_old_box" if price.deadline.present? and price.deadline <= Time.now.end_of_day %>">
 													   <div class="row">
 															<div class="col-md-5">
 																 <div class="form-group">

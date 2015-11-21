@@ -8627,3 +8627,6 @@ h5.list_title {
     width: 50px;
     text-align: center;
 }
+.price_old_box {
+    opacity: 0.6
+}
