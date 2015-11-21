@@ -502,7 +502,7 @@ class Book < ActiveRecord::Base
     self.where(parent_id: nil)
   end
   def self.active_books
-    self.main_books.where("status IS NOT NULL AND status LIKE ? AND status NOT LIKE ?", "%[active]%", "%[out_of_date]%")
+    self.main_books.joins(:course_type, :subject, :stock_type).where("books.status IS NOT NULL AND books.status LIKE ? AND books.status NOT LIKE ?", "%[active]%", "%[out_of_date]%").order("course_types.short_name, subjects.name, stock_types.display_order, books.created_at")
   end
   
   def draft?

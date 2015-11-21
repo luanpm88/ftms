@@ -24,7 +24,7 @@ class StockType < ActiveRecord::Base
                   }
                   
   def self.full_text_search(q)
-    self.active_stock_types.order("name").search(q).limit(50).map {|model| {:id => model.id, :text => model.name} }
+    self.active_stock_types.order("stock_types.display_order").search(q).limit(50).map {|model| {:id => model.id, :text => model.name} }
   end
   
   def self.filter(params, user)
@@ -138,7 +138,7 @@ class StockType < ActiveRecord::Base
     self.where(parent_id: nil)
   end
   def self.active_stock_types
-    self.main_stock_types.where("stock_types.status IS NOT NULL AND stock_types.status LIKE ?", "%[active]%")
+    self.main_stock_types.where("stock_types.status IS NOT NULL AND stock_types.status LIKE ?", "%[active]%").order("stock_types.display_order")
   end
   
   def draft?

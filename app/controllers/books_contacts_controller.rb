@@ -89,6 +89,7 @@ class BooksContactsController < ApplicationController
   
   def remove
     @books_contact.delivery_details.destroy_all
+    @books_contact.update_statuses
     
     respond_to do |format|
       format.html { render "/books_contacts/deleted", layout: nil }

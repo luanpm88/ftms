@@ -222,7 +222,8 @@ class BooksContact < ActiveRecord::Base
   def self.datatable(params, user)
     @records = self.filter(params, user)
     
-    @records = @records.includes(:course_register).where("course_registers.status IS NOT NULL AND course_registers.status LIKE ?", "%[active]%")
+    @records = @records.joins(:course_register, :book => [:course_type, :subject, :stock_type])
+                        .where("course_registers.status IS NOT NULL AND course_registers.status LIKE ?", "%[active]%")
     
     if !params["search"]["value"].empty?
       @records = @records.includes(:contact, :book => [:course_type, :subject, :stock_type])
@@ -230,19 +231,19 @@ class BooksContact < ActiveRecord::Base
       @records = @records.where("LOWER(contacts.cache_search) LIKE ? OR LOWER(contacts.name) LIKE ? OR LOWER(books.name) LIKE ? OR LOWER(stock_types.name) LIKE ? OR LOWER(course_types.short_name) LIKE ? OR LOWER(subjects.name) LIKE ?",q,q,q,q,q,q)
     end
     
-    if !params["order"].nil?
-      case params["order"]["0"]["column"]
-      when "1"
-        order = "contacts.name"
-      else
-        order = "books_contacts.created_at"
-      end
-      order += " "+params["order"]["0"]["dir"]
-    else
-      order = "contacts.name, books.name"
-    end
     
-    @records = @records.order(order) if !order.nil? && !params["search"].present?
+    order = "contacts.name, course_types.short_name, subjects.name, stock_types.display_order, books.created_at"
+    #if !params["order"].nil?
+    #  case params["order"]["0"]["column"]
+    #  when "1"
+    #    order = "contacts.name"
+    #  else
+    #    order = "books_contacts.created_at"
+    #  end
+    #  order += " "+params["order"]["0"]["dir"]
+    #end
+    
+    @records = @records.order(order) # if !order.nil? && !params["search"].present?
     
     
     ## STATISTICS
