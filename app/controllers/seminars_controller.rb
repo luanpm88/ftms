@@ -150,6 +150,7 @@ class SeminarsController < ApplicationController
           contact.course_types << @seminar.course_type if !contact.course_types.include?(@seminar.course_type)
       
           contact.account_manager_id = params[:user].to_i if params[:user].present?
+          contact.account_manager_id = row[1]["ec"].to_i if row[1]["ec"].present?
           contact.preferred_mailing = "other"
           
           if contact.save          
