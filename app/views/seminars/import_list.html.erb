@@ -120,10 +120,14 @@
 																			<%= contact.referrer_link %>																		
 																	</td>
 																	<td>
-																			<%= contact.mobile %>
+																		<span class="<%= "label_color_green" if Contact.format_mobile(row[:mobile].to_i) == contact.mobile %>">
+																				<%= contact.mobile %>
+																		</span>
 																	</td>
 																	<td>
+																		<span class="<%= "label_color_blue" if row[:email].strip.downcase == contact.email.strip.downcase %>">
 																			<%= contact.email %>
+																		</span>
 																	</td>
 																	<td>
 																				<%= contact.display_note %>
