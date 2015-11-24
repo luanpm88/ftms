@@ -8633,3 +8633,6 @@ h5.list_title {
 .raw_rol.main_row td {
     background: #bbb !important;
 }
+.row_not_sure td:first-child {
+    border-left: solid 4px red;
+}
