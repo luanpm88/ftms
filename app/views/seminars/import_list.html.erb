@@ -63,7 +63,7 @@
 																<%= text_area_tag "rows["+index.to_s+"][company]", row[:company], class: "form-control" %>
 														</td>
 														<td>
-																<%= text_field_tag "rows["+index.to_s+"][mobile]", Contact.format_mobile(row[:mobile]), class: "form-control" %>
+																<%= text_field_tag "rows["+index.to_s+"][mobile]", Contact.format_mobile(row[:mobile].to_i), class: "form-control" %>
 														</td>
 														<td>
 																<%= text_field_tag "rows["+index.to_s+"][email]", row[:email], class: "form-control" %>
