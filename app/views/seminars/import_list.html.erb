@@ -141,9 +141,9 @@
 
 																	</td>
 																	<td>
-																		<% if !["new_imported","old_imported"].include?(row[:status]) %>
+																		<% if !["new_imported"].include?(row[:status]) %>
 																			<div class="checkbox check-success pull-right">
-																				<input <%= 'checked=checked' if !contact.seminars.include?(@seminar) %> group="<%= index %>" name="contacts[<%= contact.id %>][check]" id="checkbox_c_<%= contact.id %>" type="checkbox" value="true" class="checkall">
+																				<input <%= 'checked=checked' if !contact.seminars.include?(@seminar) && ["old_imported"].include?(row[:status]) %> group="<%= index %>" name="contacts[<%= contact.id %>][check]" id="checkbox_c_<%= contact.id %>" type="checkbox" value="true" class="checkall">
 																				<label for="checkbox_c_<%= contact.id %>"></label>
 																			</div>
 																		<% end %>
