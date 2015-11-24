@@ -55,7 +55,7 @@
 												</th>
 										</tr>
 										<% @list[:list].each_with_index do |row,index| %>
-												<tr class="<%= 'row_selected' if row[:contacts].empty? %>  raw_rol row_<%= row[:status] %> main_row seminar_import_row seminar_group seminar_group_<%= index %>">
+												<tr class=" raw_rol row_<%= row[:status] %> main_row seminar_import_row seminar_group seminar_group_<%= index %>">
 														<td>
 																<%= text_area_tag "rows["+index.to_s+"][name]", row[:name], class: "form-control" %>
 														</td>
@@ -109,8 +109,9 @@
 														</td>
 												</tr>
 												<% row[:contacts].each do |contact| %>
+														
 													<% if true %>
-															<tr class="<%= 'row_selected' if !contact.seminars.include?(@seminar) %> dark_row row_<%= row[:status] %> seminar_group seminar_group_<%= index %>" >
+															<tr class="dark_row row_<%= row[:status] %> seminar_group seminar_group_<%= index %>" >
 																	<td>
 																			<i class="icon-long-arrow-right"></i> <%= contact.contact_link %>
 																			<%= hidden_field_tag "contacts["+contact.id.to_s+"][id]", contact.id, class: "form-control" %>
@@ -149,9 +150,9 @@
 
 																	</td>
 																	<td>
-																		<% if !["new_imported"].include?(row[:status]) %>
+																		<% if !["new_imported"].include?(row[:status]) && !contact.seminars.include?(@seminar) %>
 																			<div class="checkbox check-success pull-right">
-																				<input <%= 'checked=checked' if !contact.seminars.include?(@seminar) && (row[:name].mb_chars.strip.downcase == contact.name.mb_chars.strip.downcase && row[:email].strip.downcase == contact.email.strip.downcase && Contact.format_mobile(row[:mobile]) == contact.mobile) %> group="<%= index %>" name="contacts[<%= contact.id %>][check]" id="checkbox_c_<%= index %>_<%= contact.id %>" type="checkbox" value="true" class="checkall">
+																				<input <%= 'checked=checked' if !contact.seminars.include?(@seminar) && (row[:name].mb_chars.strip.downcase == contact.name.mb_chars.strip.downcase && row[:email].strip.downcase == contact.email.strip.downcase && Contact.format_mobile(row[:mobile].to_i) == contact.mobile) %> group="<%= index %>" name="contacts[<%= contact.id %>][check]" id="checkbox_c_<%= index %>_<%= contact.id %>" type="checkbox" value="true" class="checkall">
 																				<label for="checkbox_c_<%= index %>_<%= contact.id %>"></label>
 																			</div>
 																		<% end %>

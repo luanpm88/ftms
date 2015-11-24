@@ -8630,6 +8630,6 @@ h5.list_title {
 .price_old_box {
     opacity: 0.6
 }
-.main_row td {
+.raw_rol.main_row td {
     background: #bbb !important;
 }
