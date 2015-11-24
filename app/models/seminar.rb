@@ -272,7 +272,7 @@ class Seminar < ActiveRecord::Base
       if !row[:contacts].empty?
         row[:status] = "not_sure"
         row[:contacts].each do |contact|
-          if row[:name].mb_chars.strip.downcase == contact.name.mb_chars.strip.downcase && row[:email].strip.downcase == contact.email.strip.downcase && Contact.format_mobile(row[:mobile].to_i) == contact.mobile
+          if row[:name].unaccent.strip.downcase == contact.name.unaccent.strip.downcase && row[:email].strip.downcase == contact.email.strip.downcase && Contact.format_mobile(row[:mobile].to_i) == contact.mobile
             row[:selected_id] = contact.id
             
             row[:status] = "old_imported"
