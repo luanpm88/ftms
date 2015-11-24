@@ -143,7 +143,7 @@
 																	<td>
 																		<% if !["new_imported"].include?(row[:status]) %>
 																			<div class="checkbox check-success pull-right">
-																				<input <%= 'checked=checked' if !contact.seminars.include?(@seminar) && (row[:name].strip.downcase == contact.name.downcase && row[:email].strip.downcase == contact.email.downcase && Contact.format_mobile(row[:mobile]) == contact.mobile) %> group="<%= index %>" name="contacts[<%= contact.id %>][check]" id="checkbox_c_<%= contact.id %>" type="checkbox" value="true" class="checkall">
+																				<input <%= 'checked=checked' if !contact.seminars.include?(@seminar) && (row[:name].mb_chars.strip.downcase == contact.name.mb_chars.strip.downcase && row[:email].strip.downcase == contact.email.strip.downcase && Contact.format_mobile(row[:mobile]) == contact.mobile) %> group="<%= index %>" name="contacts[<%= contact.id %>][check]" id="checkbox_c_<%= contact.id %>" type="checkbox" value="true" class="checkall">
 																				<label for="checkbox_c_<%= contact.id %>"></label>
 																			</div>
 																		<% end %>
