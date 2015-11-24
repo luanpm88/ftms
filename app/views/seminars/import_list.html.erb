@@ -55,7 +55,7 @@
 												</th>
 										</tr>
 										<% @list[:list].each_with_index do |row,index| %>
-												<tr class="<%= 'row_selected' if row[:contacts].empty? %>  raw_rol row_<%= row[:status] %> seminar_import_row seminar_group seminar_group_<%= index %>">
+												<tr class="<%= 'row_selected' if row[:contacts].empty? %>  raw_rol row_<%= row[:status] %> main_row seminar_import_row seminar_group seminar_group_<%= index %>">
 														<td>
 																<%= text_area_tag "rows["+index.to_s+"][name]", row[:name], class: "form-control" %>
 														</td>
