@@ -384,7 +384,7 @@ class Contact < ActiveRecord::Base
       @records = @records.where(city_id: cities_ids)
     end
     
-    @records = @records.where("LOWER(contacts.cache_search) LIKE ? OR LOWER(contacts.name) LIKE ?", "%#{params["search"]["value"].mb_chars.strip.downcase}%", "%#{params["search"]["value"].strip.mb_chars.downcase}%") if params["search"].present? && !params["search"]["value"].empty? #.search(params["search"]["value"])
+    @records = @records.where("LOWER(contacts.cache_search) LIKE ? OR LOWER(contacts.name) LIKE ? OR UPPER(contacts.name) LIKE ?", "%#{params["search"]["value"].mb_chars.strip.downcase}%", "%#{params["search"]["value"].mb_chars.strip.downcase}%", "%#{params["search"]["value"].mb_chars.strip.upcase}%") if params["search"].present? && !params["search"]["value"].empty? #.search(params["search"]["value"])
     
     return @records
   end
