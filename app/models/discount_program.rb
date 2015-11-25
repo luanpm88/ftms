@@ -183,9 +183,9 @@ class DiscountProgram < ActiveRecord::Base
   def self.main_discount_programs
     self.where(parent_id: nil)
   end
-  def self.active_discount_programs(course_type_id=nil)
+  def self.active_discount_programs(course_type_id=nil, valid_on=Time.now)
     result = self.main_discount_programs.where("discount_programs.status IS NOT NULL AND discount_programs.status LIKE ?", "%[active]%")
-        .where("start_at <= ? AND end_at >= ?", Time.now.end_of_day, Time.now.beginning_of_day)
+        .where("start_at <= ? AND end_at >= ?", valid_on.end_of_day, valid_on.beginning_of_day)
     if course_type_id.present?
       result = result.includes(:course_types).where(course_types: {id: course_type_id})
     end

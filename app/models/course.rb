@@ -451,8 +451,8 @@ class Course < ActiveRecord::Base
     course_prices
   end
   
-  def prices
-    course_prices.where("course_prices.deadline IS NULL OR course_prices.deadline >= ?", Time.now.beginning_of_day)
+  def prices(valid_on=Time.now)
+    course_prices.where("course_prices.deadline IS NULL OR course_prices.deadline >= ?", valid_on.beginning_of_day)
   end
   
   def display_prices

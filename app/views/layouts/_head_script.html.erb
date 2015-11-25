@@ -757,6 +757,7 @@
 			var number = $(this).attr("rel")
 			var box = $(this)
 			if (!$(this).hasClass("hidden") && box.find('input[name="contacts_courses['+number+'][course_id]"]').val() != "") {
+				
 				if (box.find(".price_course").select2("val") != "no_price") {
 					var line_total = 0
 					var list_price = 0
@@ -836,7 +837,6 @@
 					
 					
 					total = total + line_total
-				
 				}	
 				
 				count = count + 1

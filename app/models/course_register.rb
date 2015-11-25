@@ -72,9 +72,9 @@ class CourseRegister < ActiveRecord::Base
   def update_contacts_courses(cids)
     contact = self.contact
     
-    cids.each do |row|
+    cids.each do |row|      
       if row[1]["course_id"].present?
-        cc = self.contacts_courses.new
+        cc = row[1]["id"].present? ? ContactsCourse.find(row[1]["id"]) : self.contacts_courses.new
         cc.course_id = row[1]["course_id"]
         cc.contact_id = contact.id
         
@@ -106,6 +106,8 @@ class CourseRegister < ActiveRecord::Base
           cc.hour = row[1]["hour"]
           cc.money = row[1]["money"]
           cc.additional_money = row[1]["additional_money"]
+          
+          cc.save if row[1]["id"].present?
         end
       end
     end

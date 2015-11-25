@@ -1,6 +1,394 @@
-<h1>Editing Course Register</h1>
 
-<%= render 'form' %>
+      <div class="page-title"> <i class="icon-edit"></i>
+				<h3>Edit Course/Stock <span class="semi-bold">Registration</span></h3>
+      </div>
+      
 
-<%= link_to 'Show', @course_register %> |
-<%= link_to 'Back', course_registers_path %>
+	  
+	  <div class="row new_course_register_page">
+            <div class="col-md-12">
+              <div class="grid simple">
+                <div class="grid-title no-border">
+                  
+                  
+                </div>     
+                
+                <div class="budget_values hidden">
+					<div class="budget_money"><%= @contact.budget_money %></div>
+					<% if @contact.budget_money <= 0 %>
+						 <style>
+							  .transfer_money_form {
+								   display: none;
+							  }
+						 </style>
+					<% end %>
+					<% @contact.budget_hour.each do |val| %>
+						 <div class="budget_hour budget_hour_<%= val[0] %>" rel="<%= val[0] %>"><%= val[1] %></div>
+						 <% if val[1] <= 0 %>
+							  <style>
+								   .transfer_hour_form_<%= val[0] %> {
+										display: none;
+								   }
+							  </style>
+						 <% end %>
+					<% end %>
+				</div>
+				<% if @contact.budget_money + @contact.budget_hour_sum <= 0 %>
+					<style>
+						 .transfer_form {
+							  display: none;
+						 }
+					</style>
+			   <% end %>
+                
+                
+               <div class="grid-body no-border <%= "draft_form" if @course_register.draft? %>">
+                  
+                  
+                  <% if @course_register.errors.any? %>
+                    <div class="alert alert-error">
+                      <button data-dismiss="alert" class="close"></button>
+                      <div id="error_explanation">
+                        <h5><%= pluralize(@course_register.errors.count, "error") %> prohibited this course register from being saved:</h5>
+                  
+                        <ul>
+                        <% @course_register.errors.full_messages.each do |msg| %>
+                          <li><%= msg %></li>
+                        <% end %>
+                        </ul>
+                      </div>
+                    </div>
+                  <% end %>
+                    
+                 
+                  
+                  
+                  <%= form_for(@course_register) do |f| %>
+					
+					<%= hidden_field_tag("tab_page", 1) if params[:tab_page] %>
+                    
+					
+					
+					 
+					<h3 class="dark_head">Course Registration</h3> 
+					
+					 
+					<div class="phrase_box_list">
+						 <% @course_register.contacts_courses.each_with_index do |cc, number| %>
+							  <div class="row column-seperation item_box phrase_box phrase_box_<%= cc.id.to_s %>" rel="<%= number.to_s %>">
+								   <div class="phrase_box_label">Course #<%= number+1 %></div>
+								   <!--<div class="phrase_box_close" rel="<%= number.to_s %>"><i class="icon icon-remove"></i></div>-->
+								   <div class="col-md-12">
+										<hr />
+								   </div>
+								   <div class="col-md-6">
+										<div class="row">
+											 <div class="col-md-12">
+												  <div class="form-group">
+														<label class="form-label"><%= f.label :course %></label>
+														<span class="help">(required)</span>
+														<div class="input-with-icon  right">                                       
+															 <i class=""></i>
+															 <div class="input-with_add_but">																  
+																  <strong><%= cc.course.display_name %></strong>
+                                                                  <%= hidden_field_tag "contacts_courses["+number.to_s+"][course_id]", cc.course_id, { box_number: number} %>
+                                                                  <%= hidden_field_tag "contacts_courses["+number.to_s+"][id]", cc.id %>
+															 </div>
+														</div>
+												  </div>
+											 </div>
+										</div>
+										
+										<div class="registration_course_price_box_<%= number %>">
+                                          
+                                          <div class="row">
+                                            <div class="col-md-5">
+                                                 <div class="form-group">
+                                                   <label class="form-label"><label>Price</label></label>
+                                                   <span class="help"></span>
+                                                   <div class="input-with-icon  right">                                       
+                                                        <i class=""></i>
+                                                        <div class="input-with-iconz right">
+                                                             <select name="contacts_courses[<%= number.to_s %>][price]" class="text-right modern_select width100 required price_course">
+                                                               <% cc.course.prices(cc.created_at).each do |price| %>
+                                                                   <option <%= 'selected=selected' if cc.price == price.amount %> value="<%= price.amount %>" class="text-right"><%= format_price(price.amount) %></option>
+                                                               <% end %>
+                                                                     <option <%= 'selected=selected' if cc.price == -1 %> value="no_price" class="text-right">No Price</option>
+                                                             </select>
+                                                        </div>
+                                                   </div>
+                                                 </div>	                                                                                                                          
+                                            </div>
+                                            <div class="col-md-7 no_price_group">
+                                                 <div class="form-group">
+                                                       <label class="form-label"><label>Total</label></label>
+                                                       <span class="help"></span>
+                                                       <div class="input-with-iconz right">                                       
+                                                           <h4 class="text-right" style="margin: 0">
+                                                                <strong class="total_course total_course_<%= number %>"></strong>
+                                                                
+                                                           </h4>
+                                                           <input type="text" value="<%= number %>" name="total_course" style="color: #fff;height: 1px;border: none;background: none;padding: 0;margin-top: -20px;" />
+                                                       </div>
+                                                 </div>
+                                            </div>
+                                       </div>
+                                       <div class="row no_price_group">
+                                            <div class="col-md-12">
+                                                 <div class="form-group">
+                                                       <label class="form-label"><label>Discount Program</label></label>
+                                                       <span class="help"></span>
+                                                       <div class="input-with-icon right">                                       
+                                                                <i class=""></i>
+                                                                
+                                                                <% cc.all_discount_programs.each_with_index do |discount_program, num| %>
+                                                                     <div class="row discount_program_box phrase_boxx"  <%= 'style="display: none"'.html_safe if num > 0 %>>
+                                                                          <div class="col-md-6">                                   
+                                                                               <div class="input-with_add_but">
+                                                                                 <%= link_to '<i class="icon-plus"></i>'.html_safe, new_discount_program_path(tab_page: 1), title: "New Discount Program", :class => 'btn btn-sm btn-small btn-white tab_page' %>                                          
+                                                                                 <%= select_tag "contacts_courses["+number.to_s+"][discount_programs]["+num.to_s+"][id]", options_for_select(DiscountProgram.active_discount_programs(cc.course.course_type_id, cc.created_at).collect { |dp| [dp.display_name, dp.id] }, discount_program["id"]), {:include_blank => 'None', class: "modern_select width100 main_input price_discount_program"} %>
+                                                                               </div>
+                                                                          </div>
+                                                                          <div class="col-md-6">
+                                                                               <div class="input-with-icon right">                                       
+                                                                                    <div class="radio radio-success" style="">
+                                                                                         <input class="required discount_program_type" id="discount_program_<%= number.to_s %>_<%= num.to_s %>_true" type="radio" name="contacts_courses[<%= number.to_s %>][discount_programs][<%= num.to_s %>][discount_program_type]" value="list_price" <%= "checked" if discount_program["discount_program_type"] == "list_price" %>>
+                                                                                         <label for="discount_program_<%= number.to_s %>_<%= num.to_s %>_true">List price</label>
+                                                                                         <input class="required discount_program_type" id="discount_program_<%= number.to_s %>_<%= num.to_s %>_false" type="radio" name="contacts_courses[<%= number.to_s %>][discount_programs][<%= num.to_s %>][discount_program_type]" value="reducing_balance" <%= "checked" if discount_program["discount_program_type"] == "reducing_balance" %>>
+                                                                                         <label for="discount_program_<%= number.to_s %>_<%= num.to_s %>_false">Reducing balance</label>
+                                                                                    </div>
+                                                                               </div>
+                                                                          </div>
+                                                                     </div>
+                                                                <% end %>
+                                                                     
+                                                       </div>
+                                                 </div>
+                                            </div>
+                                       </div>
+                                       <div class="row no_price_group">
+                                            <div class="col-md-12">
+                                                 <div class="form-group">
+                                                      <div class="row">
+                                                           <div class="col-md-6">
+                                                                <label class="form-label"><label>Other discount</label></label>
+                                                           </div>
+                                                           <div class="col-md-6">
+                                                                <label class="form-label"><label>Description</label></label>
+                                                           </div>
+                                                      </div>
+                                                       <span class="help"></span>
+                                                       
+                                                      <% cc.all_other_discounts.each_with_index do |od, num| %>
+                                                           <div class="row other_discount_box phrase_boxx" <%= 'style="display: none"'.html_safe if num > 0 %>>
+                                                                <div class="col-md-6">              
+                                                                     <div class="input-with-iconz right">                                       
+                                                                         <%= text_field_tag "contacts_courses["+number.to_s+"][other_discounts]["+num.to_s+"][amount]", format_price(od["amount"]), class: "form-control price_input main_input price_other_discount" %>
+                                                                     </div>
+                                                                </div>
+                                                                <div class="col-md-6">
+                                                                     <div class="input-with-iconz right">                                       
+                                                                         <%= text_field_tag "contacts_courses["+number.to_s+"][other_discounts]["+num.to_s+"][description]", od["description"], class: "form-control" %>
+                                                                     </div>
+                                                                </div>
+                                                           </div>
+                                                      <% end %>
+                                                 </div>
+                                            </div>
+                                            
+                                       </div>
+                                                 
+                                       <div class="transfer_form">
+                                            <h5><strong>Transfer Hour/Money</strong></h5>
+                                            <div class="row no_price_group column-seperation">
+                                                 <div class="col-md-6 transfer_hour_form_<%= cc.course.course_type_id %>-<%= cc.course.subject_id %>">
+                                                      <div class="row">
+                                                           <div class="col-md-8">
+                                                                <div class="form-group">
+                                                                     <label class="form-label"><label>Hour</label></label>
+                                                                     <div class="input-with-iconz right">                                       
+                                                                          <%= text_field_tag "contacts_courses["+number.to_s+"][hour]", cc.hour, class: "form-control price_input input_budget_hour input_budget_hour_"+cc.course.course_type_id.to_s+"-"+cc.course.subject_id.to_s, rel: cc.course.course_type_id.to_s+"-"+cc.course.subject_id.to_s %>
+                                                                     </div>
+                                                                </div>
+                                                                <div class="form-group">
+                                                                     <label class="form-label"><label>Additional Money</label></label>
+                                                                     <div class="input-with-iconz right">                                       
+                                                                          <%= text_field_tag "contacts_courses["+number.to_s+"][additional_money]", format_price(cc.additional_money), class: "form-control price_input" %>
+                                                                     </div>
+                                                                </div>
+                                                           </div>
+                                                           <div class="col-md-4">
+                                                                <div class="form-group">
+                                                                     <label class="form-label"><label>Remain</label></label>
+                                                                     <div class="input-with-iconz text-right">                                       
+                                                                          <strong class="item_budget_hour_<%= cc.course.course_type_id %>-<%= cc.course.subject_id %>">0</strong>
+                                                                     </div>
+                                                                </div>
+                                                           </div>
+                                                      </div>
+                                                 </div>
+                                                 <div class="col-md-6 transfer_money_form">
+                                                      <div class="row">
+                                                           <div class="col-md-8">
+                                                                <div class="form-group">
+                                                                     <label class="form-label"><label>Money</label></label>
+                                                                     <div class="input-with-iconz right">                                       
+                                                                          <%= text_field_tag "contacts_courses["+number.to_s+"][money]", format_price(cc.money), class: "form-control price_input input_budget_money" %>
+                                                                     </div>
+                                                                </div>
+                                                           </div>
+                                                           <div class="col-md-4">
+                                                                <div class="form-group">
+                                                                     <label class="form-label"><label>Remain</label></label>
+                                                                     <div class="input-with-iconz text-right">                                       
+                                                                          <strong class="item_budget_money">0</strong>
+                                                                     </div>
+                                                                </div>
+                                                           </div>
+                                                      </div>
+                                                      
+                                                 </div>
+                                            </div>
+                                       </div>
+                                          
+                                        </div>
+								   
+										
+								   </div>
+								  <div class="col-md-6">
+									   
+											 
+											 <div class="registration_phrase_box_<%= number %>">                                       
+												  
+                                                  <% if !cc.course.upfront %>
+                                                      <div class="form-group from_phrase_list_box_hour_money">
+                                                          
+                                                          <h4 style="margin-top: 0">
+                                                              Total Hour: <strong class="total_phrase_hour"></strong>
+                                                          </h4>
+                                                      
+                                                          <label class="form-label"><label>Phrase List</label></label>
+                                                          <div class="input-with-icon right">
+                                                          
+                                                              <% group_name = "" %>
+                                                              <div>
+                                                                  <% cc.course.courses_phrases.includes(:phrase).order("phrases.name, courses_phrases.start_at").each do |courses_phrase| %>
+                                                                      
+                                                                          <% if group_name != courses_phrase.phrase.name %>
+                                                                              <% if group_name != "" %><br style="clear: both" /><% end %>
+                                                                              <% group_name = courses_phrase.phrase.name %>
+                                                                              
+                                                                              <h5 style="margin-top: 0;"><strong><%= group_name %></strong></h5>
+                                                                          <% end %>
+                                                                          
+                                                                          <% if !cc.course.upfront %>
+																					<% if !cc.contact.courses_phrase_registered?(CoursesPhrase.find(courses_phrase.id)) || cc.courses_phrases.include?(CoursesPhrase.find(courses_phrase.id)) %>
+																						  <div class="row-fluid phrase_checkbox">
+																									<div class="checkbox check-success">
+																										<%= check_box_tag "contacts_courses["+number.to_s+"][courses_phrase_ids][]", courses_phrase.id, cc.courses_phrases.include?(CoursesPhrase.find(courses_phrase.id)), {id: "checkbox_"+number.to_s+ "_"+courses_phrase.id.to_s, class: "courses_phrase_item", hour: CoursesPhrase.find(courses_phrase.id).hour} %>
+																										<label for="checkbox_<%= number %>_<%= courses_phrase.id %>">
+																											   <span>
+																												   <%= CoursesPhrase.find(courses_phrase.id).display_name if courses_phrase.start_at.present? %>
+																											   </span>
+																										</label>
+																									</div>
+																						  </div>  
+																					  <% else %>
+																						  <div class="row-fluid phrase_checkbox" title="Registered">
+																							   <div class="checkbox check-default">
+																								   <%= check_box_tag "disabled", courses_phrase.id, true, {id: "checkbox_"+number.to_s+ "_"+courses_phrase.id.to_s, disabled: "disabled", class: "courses_phrase_item", hour: CoursesPhrase.find(courses_phrase.id).hour} %>
+																								   <label for="checkbox_<%= number.to_s %>_<%= courses_phrase.id %>">
+																										<span>
+																											  <%= CoursesPhrase.find(courses_phrase.id).display_name if courses_phrase.start_at.present? %>
+																										  </span>
+																								   </label>
+																							   </div>
+																						  </div>
+																					  <% end %>
+                                                                                                                                                              
+                                                                          <% end %>
+                                                                  <% end %>
+                                                                  
+                                                              </div>
+                                                          </div>
+                                                      
+                                                      </div>
+                                                  <% end %>
+												  
+											</div>
+									   	
+								  </div>						 
+							  </div>
+							  
+						 <% end %>
+						 
+						 
+						 
+					</div>
+					
+					
+					<br />
+					
+					<h3 class="dark_head">Student Information</h3> 
+					
+					<div class="row column-seperation">
+						 <div class="col-md-12">
+							  <div class="row">
+								   <div class="col-md-3">
+										<div class="form-group">
+										  <label class="form-label"><%= f.label :student %></label>
+										  <span class="help">(required)</span>
+										  <div class="input-with-iconz right">
+											 <input disabled="disabled" style="width:100%;margin-bottom: 5px;" name="course_register[contact_id]" data="<%= contacts_path(is_individual: true, format: "json") %>" class="select2-ajax-contacts required" value="<%= @contact.id %>" text="<%= @contact.display_name %>" />
+											 <!--<div style="margin: 0;font-size: 18px;font-weight: bold"><strong><%= @contact.display_name %></strong></div>-->
+										  </div>
+										</div>
+										
+								   </div>								   
+							  </div>
+						 </div>
+					 </div>
+					
+					
+						 
+					<div class="form-actions">  
+						 <div class="pull-right">
+						 <button type="submit" class="btn btn-success btn-cons"><i class="icon-ok"></i> Save</button>
+						  <%= link_to 'Cancel', users_path, :class => "btn btn-white btn-cons cancel-but" %>
+					   </div>
+					</div>
+							  
+						<% end %>
+			   </div>
+			 </div>
+            </div>
+			
+      </div>
+
+<script>
+	 $(document).ready(function() {
+		  jQuery.validator.addMethod("total", function(value, element) {
+			   var total = parseFloat($('.total_registration_price').html().replace(/,/g,""))
+			   return total >= 0.0
+		  }, "Total amount is not valid. Please check again.");
+		  
+		  jQuery.validator.addMethod("total_course", function(value, element) {
+			   var total = parseFloat($('.total_course_'+value).html().replace(/,/g,""))
+			   return total >= 0.0
+		  }, "Total amount is not valid. Please check again.");
+		  
+		  jQuery.validator.addMethod("item_count", function(value, element) {
+			   var course_count = $(".total_course_count").html()
+			   var stock_count = $(".total_stock_count").html()
+			   
+			   return course_count != "0" || stock_count != "0"
+		  }, "You must register at least one course/stock. Please check again.");
+		  
+		  $("input[name='total_valid']").rules('add', {
+			   total: true,
+			   item_count: true
+		  });
+		  
+		  $("#stock_type_id").select2('destroy');
+	 });
+</script>

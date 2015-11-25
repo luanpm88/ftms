@@ -388,9 +388,7 @@ class Ability
       can :transfer_course, Contact do |contact|
         contact.statuses.include?("active") && contact.contact_types.include?(ContactType.student)
       end
-      can :update, CourseRegister do |c|
-        c.all_deliveries.empty? && c.all_payment_records.empty?
-      end
+      can :update, CourseRegister
       can :delete, CourseRegister do |c|
         !c.transferred? && !c.statuses.include?("delete_pending") && !c.statuses.include?("deleted")
       end

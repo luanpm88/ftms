@@ -32,6 +32,7 @@ class CourseRegistersController < ApplicationController
 
   # GET /course_registers/1/edit
   def edit
+    @contact = @course_register.contact
   end
 
   # POST /course_registers
@@ -66,13 +67,18 @@ class CourseRegistersController < ApplicationController
   # PATCH/PUT /course_registers/1
   # PATCH/PUT /course_registers/1.json
   def update
+    @course_register.update_contacts_courses(params[:contacts_courses])
+    
     respond_to do |format|
-      if @course_register.update(course_register_params)
+      if @course_register.save
+        
+        @course_register.update_statuses
         
         @course_register.update_status("update", current_user)        
         @course_register.save_draft(current_user)
         
-        format.html { redirect_to params[:tab_page].present? ? "/home/close_tab" : @course_register, notice: 'Course register was successfully updated.' }
+        @tab = {url: {controller: "contacts", action: "edit", id: @course_register.contact.id, tab_page: 1, tab: "course_registration"}, title: @course_register.contact.display_name+(@course_register.contact.related_contacts.empty? ? "" : " #"+@course_register.contact.id.to_s)}
+        format.html { render "/home/close_tab", layout: nil }
         format.json { head :no_content }
       else
         format.html { render action: 'edit', tab_page: params[:tab_page] }
