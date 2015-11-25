@@ -107,7 +107,9 @@ class CourseRegister < ActiveRecord::Base
           cc.money = row[1]["money"]
           cc.additional_money = row[1]["additional_money"]
           
-          cc.save if row[1]["id"].present?
+          if row[1]["id"].present?
+            cc.save            
+          end
         end
       end
     end
@@ -117,8 +119,12 @@ class CourseRegister < ActiveRecord::Base
   def update_books_contacts(cids)
     contact = self.contact    
     cids.each do |row|
+      # remove 
+      if !row[1]["selected"].present? && row[1]["id"].present?
+        BooksContact.find(row[1]["id"]).destroy
+      end
       if row[1]["book_id"].present? && row[1]["selected"].present?
-        cc = self.books_contacts.new
+        cc = row[1]["id"].present? ? BooksContact.find(row[1]["id"]) : self.books_contacts.new
         cc.book_id = row[1]["book_id"]
         cc.quantity = row[1]["quantity"]
         cc.contact_id = contact.id
@@ -143,6 +149,10 @@ class CourseRegister < ActiveRecord::Base
         
         cc.upfront = row[1]["upfront"]
         #cc.intake = Date.new row[1]["intake(1i)"].to_i, row[1]["intake(2i)"].to_i
+        
+        if row[1]["id"].present?
+          cc.save            
+        end
       end
     end
   end
@@ -505,9 +515,13 @@ class CourseRegister < ActiveRecord::Base
     return arr.join("")
   end
   
+  def ordered_books_contacts
+    books_contacts.joins(:book => [:course_type, :subject, :stock_type]).order("course_types.short_name, subjects.name, stock_types.display_order, books.created_at")
+  end
+  
   def books
     arr = []
-    books_contacts.joins(:book => [:course_type, :subject, :stock_type]).order("course_types.short_name, subjects.name, stock_types.display_order, books.created_at").each do |bc|
+    ordered_books_contacts.each do |bc|
       item = {}
       item[:books_contact] = bc
       item[:book] = bc.book

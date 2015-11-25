@@ -617,9 +617,12 @@ class ContactsController < ApplicationController
       @contacts = Contact.where(id: params[:ids])
     end
     
-    Contact.merge_contacts(@contacts)
-    
-    render text: "Contacts ware successfully merged.!"
+    if @contacts.count > 20
+      render text: "<span style=\"color: red\">Too many contacts.!</span>"
+    else
+      Contact.merge_contacts(@contacts)    
+      render text: "Contacts ware successfully merged.!"
+    end      
   end
   
   def print

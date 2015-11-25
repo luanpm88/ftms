@@ -74,7 +74,7 @@
 					
 					 
 					<div class="phrase_box_list">
-						 <% @course_register.contacts_courses.each_with_index do |cc, number| %>
+						 <% @course_register.contacts_courses.order("contacts_courses.id").each_with_index do |cc, number| %>
 							  <div class="row column-seperation item_box phrase_box phrase_box_<%= cc.id.to_s %>" rel="<%= number.to_s %>">
 								   <div class="phrase_box_label">Course #<%= number+1 %></div>
 								   <!--<div class="phrase_box_close" rel="<%= number.to_s %>"><i class="icon icon-remove"></i></div>-->
@@ -140,27 +140,49 @@
                                                        <span class="help"></span>
                                                        <div class="input-with-icon right">                                       
                                                                 <i class=""></i>
-                                                                
-                                                                <% cc.all_discount_programs.each_with_index do |discount_program, num| %>
-                                                                     <div class="row discount_program_box phrase_boxx"  <%= 'style="display: none"'.html_safe if num > 0 %>>
-                                                                          <div class="col-md-6">                                   
-                                                                               <div class="input-with_add_but">
-                                                                                 <%= link_to '<i class="icon-plus"></i>'.html_safe, new_discount_program_path(tab_page: 1), title: "New Discount Program", :class => 'btn btn-sm btn-small btn-white tab_page' %>                                          
-                                                                                 <%= select_tag "contacts_courses["+number.to_s+"][discount_programs]["+num.to_s+"][id]", options_for_select(DiscountProgram.active_discount_programs(cc.course.course_type_id, cc.created_at).collect { |dp| [dp.display_name, dp.id] }, discount_program["id"]), {:include_blank => 'None', class: "modern_select width100 main_input price_discount_program"} %>
-                                                                               </div>
-                                                                          </div>
-                                                                          <div class="col-md-6">
-                                                                               <div class="input-with-icon right">                                       
-                                                                                    <div class="radio radio-success" style="">
-                                                                                         <input class="required discount_program_type" id="discount_program_<%= number.to_s %>_<%= num.to_s %>_true" type="radio" name="contacts_courses[<%= number.to_s %>][discount_programs][<%= num.to_s %>][discount_program_type]" value="list_price" <%= "checked" if discount_program["discount_program_type"] == "list_price" %>>
-                                                                                         <label for="discount_program_<%= number.to_s %>_<%= num.to_s %>_true">List price</label>
-                                                                                         <input class="required discount_program_type" id="discount_program_<%= number.to_s %>_<%= num.to_s %>_false" type="radio" name="contacts_courses[<%= number.to_s %>][discount_programs][<%= num.to_s %>][discount_program_type]" value="reducing_balance" <%= "checked" if discount_program["discount_program_type"] == "reducing_balance" %>>
-                                                                                         <label for="discount_program_<%= number.to_s %>_<%= num.to_s %>_false">Reducing balance</label>
-                                                                                    </div>
-                                                                               </div>
-                                                                          </div>
-                                                                     </div>
-                                                                <% end %>
+																	  <% num = 0 %>
+																	  <% cc.all_discount_programs.each do |discount_program| %>
+																		   <div class="row discount_program_box phrase_boxx"  <%= 'style="display: none"'.html_safe if num > 0 %>>
+																				<div class="col-md-6">                                   
+																					 <div class="input-with_add_but">
+																					   <%= link_to '<i class="icon-plus"></i>'.html_safe, new_discount_program_path(tab_page: 1), title: "New Discount Program", :class => 'btn btn-sm btn-small btn-white tab_page' %>                                          
+																					   <%= select_tag "contacts_courses["+number.to_s+"][discount_programs]["+num.to_s+"][id]", options_for_select(DiscountProgram.active_discount_programs(cc.course.course_type_id, cc.created_at).collect { |dp| [dp.display_name, dp.id] }, discount_program["id"]), {:include_blank => 'None', class: "modern_select width100 main_input price_discount_program"} %>
+																					 </div>
+																				</div>
+																				<div class="col-md-6">
+																					 <div class="input-with-icon right">                                       
+																						  <div class="radio radio-success" style="">
+																							   <input class="required discount_program_type" id="discount_program_<%= number.to_s %>_<%= num.to_s %>_true" type="radio" name="contacts_courses[<%= number.to_s %>][discount_programs][<%= num.to_s %>][discount_program_type]" value="list_price" <%= "checked" if discount_program["discount_program_type"] == "list_price" %>>
+																							   <label for="discount_program_<%= number.to_s %>_<%= num.to_s %>_true">List price</label>
+																							   <input class="required discount_program_type" id="discount_program_<%= number.to_s %>_<%= num.to_s %>_false" type="radio" name="contacts_courses[<%= number.to_s %>][discount_programs][<%= num.to_s %>][discount_program_type]" value="reducing_balance" <%= "checked" if discount_program["discount_program_type"] == "reducing_balance" %>>
+																							   <label for="discount_program_<%= number.to_s %>_<%= num.to_s %>_false">Reducing balance</label>
+																						  </div>
+																					 </div>
+																				</div>
+																		   </div>
+																	  <% num += 1 %>
+																	  <% end %>
+																	  
+																	  <% (num..9).each do |num2| %>
+																				<div class="row discount_program_box phrase_boxx"  <%= 'style="display: none"'.html_safe if num2 > num %>>
+																					 <div class="col-md-6">                                   
+																						  <div class="input-with_add_but">
+																							<%= link_to '<i class="icon-plus"></i>'.html_safe, new_discount_program_path(tab_page: 1), title: "New Discount Program", :class => 'btn btn-sm btn-small btn-white tab_page' %>                                          
+																							<%= select_tag "contacts_courses["+number.to_s+"][discount_programs]["+num2.to_s+"][id]", options_for_select(DiscountProgram.active_discount_programs(cc.course.course_type_id).collect { |dp| [dp.display_name, dp.id] }), {:include_blank => 'None', class: "modern_select width100 main_input price_discount_program"} %>
+																						  </div>
+																					 </div>
+																					 <div class="col-md-6">
+																						  <div class="input-with-icon right">                                       
+																							   <div class="radio radio-success" style="">
+																									<input class="required discount_program_type" id="discount_program_<%= number.to_s %>_<%= num2.to_s %>_true" type="radio" name="contacts_courses[<%= number.to_s %>][discount_programs][<%= num2.to_s %>][discount_program_type]" value="list_price" checked>
+																									<label for="discount_program_<%= number.to_s %>_<%= num2.to_s %>_true">List price</label>
+																									<input class="required discount_program_type" id="discount_program_<%= number.to_s %>_<%= num2.to_s %>_false" type="radio" name="contacts_courses[<%= number.to_s %>][discount_programs][<%= num2.to_s %>][discount_program_type]" value="reducing_balance">
+																									<label for="discount_program_<%= number.to_s %>_<%= num2.to_s %>_false">Reducing balance</label>
+																							   </div>
+																						  </div>
+																					 </div>
+																				</div>
+																	  <% end %>
                                                                      
                                                        </div>
                                                  </div>
@@ -178,21 +200,37 @@
                                                            </div>
                                                       </div>
                                                        <span class="help"></span>
-                                                       
-                                                      <% cc.all_other_discounts.each_with_index do |od, num| %>
-                                                           <div class="row other_discount_box phrase_boxx" <%= 'style="display: none"'.html_safe if num > 0 %>>
-                                                                <div class="col-md-6">              
-                                                                     <div class="input-with-iconz right">                                       
-                                                                         <%= text_field_tag "contacts_courses["+number.to_s+"][other_discounts]["+num.to_s+"][amount]", format_price(od["amount"]), class: "form-control price_input main_input price_other_discount" %>
-                                                                     </div>
-                                                                </div>
-                                                                <div class="col-md-6">
-                                                                     <div class="input-with-iconz right">                                       
-                                                                         <%= text_field_tag "contacts_courses["+number.to_s+"][other_discounts]["+num.to_s+"][description]", od["description"], class: "form-control" %>
-                                                                     </div>
-                                                                </div>
-                                                           </div>
-                                                      <% end %>
+															<% num = 0 %>
+															<% cc.all_other_discounts.each_with_index do |od, num| %>
+																 <div class="row other_discount_box phrase_boxx">
+																	  <div class="col-md-6">              
+																		   <div class="input-with-iconz right">                                       
+																			   <%= text_field_tag "contacts_courses["+number.to_s+"][other_discounts]["+num.to_s+"][amount]", format_price(od["amount"]), class: "form-control price_input main_input price_other_discount" %>
+																		   </div>
+																	  </div>
+																	  <div class="col-md-6">
+																		   <div class="input-with-iconz right">                                       
+																			   <%= text_field_tag "contacts_courses["+number.to_s+"][other_discounts]["+num.to_s+"][description]", od["description"], class: "form-control" %>
+																		   </div>
+																	  </div>
+																 </div>
+															<% num += 1 %>
+															<% end %>
+                                                      
+															<% (num..9).each do |num2| %>
+																	  <div class="row other_discount_box phrase_boxx" <%= 'style="display: none"'.html_safe if num2 > num %>>
+																		   <div class="col-md-6">              
+																				<div class="input-with-iconz right">                                       
+																					<%= text_field_tag "contacts_courses["+number.to_s+"][other_discounts]["+num2.to_s+"][amount]", "", class: "form-control price_input main_input price_other_discount" %>
+																				</div>
+																		   </div>
+																		   <div class="col-md-6">
+																				<div class="input-with-iconz right">                                       
+																					<%= text_field_tag "contacts_courses["+number.to_s+"][other_discounts]["+num2.to_s+"][description]", "", class: "form-control" %>
+																				</div>
+																		   </div>
+																	  </div>
+															<% end %>
                                                  </div>
                                             </div>
                                             
@@ -329,6 +367,208 @@
 					
 					<br />
 					
+					<% if !@course_register.ordered_books_contacts.empty? %>
+							  <h3 class="dark_head">Stock Registration</h3>					
+							  
+							  
+							  <div class="stock_box_list">
+								   
+								   
+								   
+								   <% @course_register.ordered_books_contacts.each_with_index do |bc,number| %>
+										<div class="row  intake_box column-seperation item_box stock_box stock_box_<%= number %>" rel="<%= number %>">
+											  <div class="stock_box_label">Stock #<%= number+1 %></div>
+											  <!--<div class="stock_box_close" rel="<%= number.to_s %>"><i class="icon icon-remove"></i></div>-->
+											 <div class="col-md-12">
+												  <hr />
+											 </div>								   
+											 <div class="col-md-12">
+												  <div class="row">
+														<div class="col-md-1">
+															<div class="text-center">
+															  <%= bc.book.cover_link %>
+															</div>
+														</div>
+														<div class="col-md-2">
+															<div class="">
+															  <strong><%= bc.book.display_name %></strong>
+															  <div class="nowrap"><%= bc.book.display_valid_time %></div>
+															  <%= hidden_field_tag "books_contacts["+number.to_s+"][id]", bc.id %>
+															  <%= hidden_field_tag "books_contacts["+number.to_s+"][book_id]", bc.book.id %>
+															</div>
+														</div>
+														<div class="col-md-1">
+															 <div class="form-group">
+																  <label class="form-label"><label>Quantity</label></label>
+																  <span class="help"></span>
+																  <div class="input-with-iconz date-group right">                                       
+																	   <i class=""></i>
+																	   <div class="input-with_add_but">
+																			<%= text_field_tag "books_contacts["+number.to_s+"][quantity]", bc.quantity.to_i, class: "form-control number_input_0 required text-center" %>
+																	   </div>
+																  </div>
+															 </div>
+														</div>
+														<div class="col-md-2">
+														  <div class="form-group" style="margin-bottom: 5px;">
+																<label class="form-label">Upfront?</label>
+																<span class="help"></span>
+																<div class="input-with-icon right">                                       
+																	 <div class="radio radio-success" style="padding: 5px">
+																		  <input <%= "checked=checked" if bc.upfront %> class="upfront_radio required" id="<%= number %>_upfront_true" type="radio" name="books_contacts[<%= number.to_s %>][upfront]" value="true">
+																		  <label for="<%= number %>_upfront_true">Yes</label>
+																		  <input <%= "checked=checked" if !bc.upfront %> checked="checked" class="upfront_radio required" id="<%= number %>_upfront_false" type="radio" name="books_contacts[<%= number.to_s %>][upfront]" value="false">
+																		  <label for="<%= number %>_upfront_false">No</label>
+																	 </div>
+																</div>
+														   </div>
+														   <!--<div class="intake_group">
+															   <h4>Intake</h4>
+															   <div class="date_select_filter">
+																   <div class="input-with-icon date-group-my right">                                       
+																   <%= date_select("books_contacts["+number.to_s+"]", :intake, default: 3.days.from_now, use_short_month: true, discard_day: true) %>
+																   </div>
+															   </div>
+														   </div>-->
+														</div>
+														<div class="col-md-3">
+															  <div class="form-group">
+																<label class="form-label"><label>Price</label></label>
+																<span class="help"></span>
+																<div class="input-with-icon  right">                                       
+																	 <i class=""></i>
+																	 <div class="input-with-iconz right">
+																		  <select name="books_contacts[<%= number.to_s %>][price]" class="text-right modern_select width100 required price_stock">
+																			<% bc.book.prices.each do |price| %>
+																				<option <%= "selected=selected" if bc.price == price %> value="<%= price %>" class="text-right"><%= format_price(price) %></option>
+																			<% end %>
+																			  <option <%= "selected=selected" if bc.price == -1 %> value="no_price" class="text-right">No Price</option>
+																		  </select>
+																	 </div>
+																</div>
+															  </div>	                                                                                                                          
+		  
+															  
+															  
+														 </div>
+														 <div class="col-md-2">
+															  <div class="form-group no_price_group">
+																	<label class="form-label"><label>Total</label></label>
+																	<span class="help"></span>
+																	<div class="input-with-iconz right">                                       
+																		<h4 class="text-right" style="margin: 0">
+																			 <strong class="total_stock total_stock_<%= number %>"></strong>
+																		</h4>
+																	</div>
+															  </div>
+															  
+														 </div>
+														 <div class="col-md-1">
+															  <div class="form-group">
+																	<label class="form-label"><label></label></label>
+																	<span class="help"></span>
+																	<div class="input-with-iconz t">                                       
+																		<div class="checkbox check-success" style="margin-top: 15px">
+																			<%= check_box_tag "books_contacts["+number.to_s+"][selected]", true, true, {id: "stock_check_"+number.to_s, class: "stock_check" } %>
+																			<label for="stock_check_<%= number %>"></label>
+																		</div>
+																	</div>
+															  </div>
+														 </div>
+												  </div>
+														 
+												  <div class="row">
+														<div class="col-md-3">
+															  <div class="form-group no_price_group">
+																	<label class="form-label"><label>Discount Program</label></label>
+																	<span class="help"></span>
+																	<div>
+																	  <% num = 0 %>
+																	  <% bc.all_discount_programs.each do |discount_program| %>
+																				<div  class="discount_program_box input-with-icon right item_box phrase_boxx item_box_<%= num.to_s %> <%= 'hidden'.html_safe if num > 0 %>">                                       
+																					 <i class=""></i>
+																					  <div class="input-with_add_but">
+																						<%= link_to '<i class="icon-plus"></i>'.html_safe, new_discount_program_path(tab_page: 1), title: "New Discount Program", :class => 'btn btn-sm btn-small btn-white tab_page' %>
+																						<%= select_tag "books_contacts["+number.to_s+"][discount_programs]["+num.to_s+"][id]", options_for_select(DiscountProgram.active_discount_programs(nil, bc.created_at).collect { |dp| [dp.display_name, dp.id] }, discount_program["id"]), {:include_blank => 'None', class: "modern_select width100 main_input price_discount_program"} %>
+																					  </div>
+																				</div>
+																	  <% num += 1 %>
+																	  <% end %>
+																	  
+																	  <% (num..9).each do |num2| %>
+																				<div  class="discount_program_box input-with-icon right item_box phrase_boxx item_box_<%= num.to_s %> <%= 'hidden'.html_safe if num2 > num %>">                                       
+																					 <i class=""></i>
+																					  <div class="input-with_add_but">
+																						<%= link_to '<i class="icon-plus"></i>'.html_safe, new_discount_program_path(tab_page: 1), title: "New Discount Program", :class => 'btn btn-sm btn-small btn-white tab_page' %>
+																						<%= select_tag "books_contacts["+number.to_s+"][discount_programs]["+num2.to_s+"][id]", options_for_select(DiscountProgram.active_discount_programs(nil, bc.created_at).collect { |dp| [dp.display_name, dp.id] }), {:include_blank => 'None', class: "modern_select width100 main_input price_discount_program"} %>
+																					  </div>
+																				</div>
+																	  <% end %>
+																	</div>
+															  </div>
+														</div>
+														<div class="col-md-3">
+															  <div class="form-group no_price_group">
+																	<label class="form-label"><label>Other discount/credit</label></label>
+																	<span class="help"></span>
+																	<div class="input-with-iconz right">                                       
+																		<%= text_field_tag "books_contacts["+number.to_s+"][discount]", format_price(bc.discount), class: "form-control price_input price_discount" %>
+																	</div>
+															  </div>
+														</div>
+														<div class="col-md-3">
+															  <div class="form-group no_price_group">
+																	<label class="form-label"><label>Description</label></label>
+																	<span class="help"></span>
+																	<div class="input-with-iconz">                                       
+																		<%= text_area_tag "books_contacts["+number.to_s+"][description]", bc.description, class: "form-control width100" %>
+																	</div>
+															  </div>
+														</div>
+												  </div>
+											 </div>
+											 <div class="col-md-5">
+												  <div class="form_volumn_list_<%= number %>"></div>
+											 </div>
+										</div>
+									  
+								   <% end %>
+								   
+								   
+								   
+							  </div>
+							  
+							  <div class="row">
+								   <div class="col-md-3">													   
+										<div class="form-group">
+											 <label class="form-label"><label><i class="icon-truck"></i> Preferred mailing</label></label>
+											 <span class="help">(required)</span>								   
+											 <div class="input-with-icon  right">
+												  <select name="course_register[preferred_mailing]" class="modern_select width100 required">
+														<option <%= 'selected="selected"' if @course_register.preferred_mailing == "ftms" %> value="ftms">FTMS</option>
+														<option <%= 'selected="selected"' if @course_register.preferred_mailing == "home" %> value="home">Home address</option>
+														<option <%= 'selected="selected"' if @course_register.preferred_mailing == "company" %> value="company">Company address</option>
+														<option <%= 'selected="selected"' if @course_register.preferred_mailing == "other" %> value="other">Other</option>
+												  </select>
+											 </div>
+										</div>																
+								   </div>
+								   <div class="col-md-4 mailing_address_box">
+										<div class="form-group">
+												  <label class="form-label"><label>Delivery Address</label></label>
+												  <span class="help">(required)</span>
+												  <div class="input-with-iconz right">                                       
+													   <%= f.text_field :mailing_address, value: @course_register.mailing_address, :class => "form-control required" %>
+												  </div>
+										 </div>
+								   </div>
+							  </div>
+							  
+							  <br />
+					
+					<% end %>
+					
+					
 					<h3 class="dark_head">Student Information</h3> 
 					
 					<div class="row column-seperation">
@@ -349,6 +589,114 @@
 						 </div>
 					 </div>
 					
+					<br />
+					
+					<h3 class="dark_head">Summary</h3> 
+					
+					
+					<div class="row column-seperation">
+						 <div class="col-md-3">
+							  <div class="row">								   	   
+								   <div class="col-md-12">										
+										<div class="form-group">
+											 <label class="form-label"><label>Payment type</label></label>
+											 <span class="help">(required)</span>
+											 <div class="input-with-icon right">                                       
+												  <select name="course_register[payment_type]" class="modern_select width100 required">
+													   <option value="self-financed" <%= 'selected="selected"' if @contact.payment_type == 'self-financed' %>>Self-financed</option>
+													   <option value="company-sponsored" <%= 'selected="selected"' if @contact.payment_type == 'company-sponsored' %>>Company-sponsored</option>
+												  </select>
+											 </div>
+										</div>										
+								   </div>
+							  </div>
+							  <div class="row company_sponsored_group">
+								   <div class="col-md-12">													   
+										<div class="form-group">
+											 <label class="form-label"><%= f.label :company %></label>											 
+											 <span class="help">(required)</span>
+											 <div class="input-with-icon  right">                                       
+												  <i class=""></i>
+												  <div class="input-with_add_but">
+													   <%= link_to '<i class="icon-plus"></i>'.html_safe, new_contact_path(:is_individual => false, tab_page: 1), title: "New Company", :class => 'btn btn-sm btn-small btn-white add-agent-button tab_page' %>
+													   <input style="width:100%;margin-bottom: 5px;" name="course_register[sponsored_company_id]" data="<%= contacts_path(is_individual: false, format: "json") %>" class="select2-ajax-contacts required" value="<%= @contact.referrer_id %>" text="<%= @contact.referrer.name if !@contact.referrer.nil? %>" />
+												  </div>
+											 </div>
+										</div>
+								   </div>
+							  </div>							  
+						 </div>
+						 <div class="col-md-9">
+	 						  <div class="form-group">
+								   <label class="form-label"><label>Total Price</label></label>
+								   <span class="help"></span>
+								   <div class="input-with-icon right">
+										<table style="" class="table">
+											 <tr>
+												  <th>Type</th>
+												  <th class="text-center">Count</th>
+												  <th class="text-right">List Price</th>
+												  <th class="text-right">Discount Program</th>
+												  <th class="text-right">Other discount / credit</th>
+												  <th class="text-right">Total</th>
+											 </tr>
+											 <tr>
+												  <td class="text-left">Course</td>
+												  <th class="text-center">
+													   <strong class="total_course_count"></strong>
+												  </th>
+												  <td class="text-right">
+													   <strong class="total_course_list_price"></strong>
+												  </td>
+												  <td class="text-right">
+													   <strong class="total_course_discount_program_price"></strong>
+												  </td>
+												  <td class="text-right">
+													   <strong class="total_course_other_discount_price"></strong>
+												  </td>
+
+												  <td class="text-right">
+													   <strong class="total_course_price"></strong>
+												  </td>
+												  
+											 </tr>
+											 <tr>
+												  <td class="text-left">Stock</td>
+												  <th class="text-center">
+													   <strong class="total_stock_count"></strong>
+												  </th>
+												  <td class="text-right">
+													   <strong class="total_stock_list_price"></strong>
+												  </td>
+												  <td class="text-right">
+													   <strong class="total_stock_discount_program_price"></strong>
+												  </td>
+												  <td class="text-right">
+													   <strong class="total_stock_other_discount_price"></strong>
+												  </td>
+
+												  <td class="text-right">
+													   <strong class="total_stock_price"></strong>
+												  </td>
+											 </tr>											 
+											 <tr>
+												  <td class="text-right" colspan="5">Deferred/Transferred Amount</td>
+												  <td class="text-right">
+													   <strong class="total_registration_transfer"></strong>
+												  </td>
+											 </tr>
+											 <tr>
+												  <td class="text-right" colspan="5">Total</td>
+												  <td class="text-right">
+													   <strong class="total_registration_price"></strong>													   
+												  </td>
+											 </tr>
+										</table>
+										<input type="text" name="total_valid" style="height: 1px;border: none;background: none;padding: 0;margin-top: -40px;" />
+								   </div>
+							  </div>										
+						 </div>
+					 </div>
 					
 						 
 					<div class="form-actions">  
