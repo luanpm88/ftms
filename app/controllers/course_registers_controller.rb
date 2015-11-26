@@ -148,8 +148,6 @@ class CourseRegistersController < ApplicationController
   def approve_update
     authorize! :approve_update, @course_register
     
-    @course_register.approve_update(current_user)
-    
     respond_to do |format|
       if @course_register.approve_update(current_user)      
         format.html { render "/course_registers/approved", layout: nil }
