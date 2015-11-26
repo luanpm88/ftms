@@ -672,7 +672,8 @@ CREATE TABLE contacts_courses (
     cache_payment_status text,
     hour numeric,
     money numeric,
-    additional_money numeric
+    additional_money numeric,
+    full_course boolean
 );
 
 
@@ -4393,4 +4394,6 @@ INSERT INTO schema_migrations (version) VALUES ('20151112004810');
 INSERT INTO schema_migrations (version) VALUES ('20151120040816');
 
 INSERT INTO schema_migrations (version) VALUES ('20151126052648');
+
+INSERT INTO schema_migrations (version) VALUES ('20151126231828');
 

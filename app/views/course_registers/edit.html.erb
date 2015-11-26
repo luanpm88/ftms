@@ -294,7 +294,7 @@
 								  <div class="col-md-6">
 									   
 											 
-											 <div class="registration_phrase_box_<%= number %>">                                       
+											 <div class="phrase_list_container registration_phrase_box_<%= number %>">                                       
 												  
                                                   <% if !cc.course.upfront %>
                                                       <div class="form-group from_phrase_list_box_hour_money">
@@ -303,7 +303,17 @@
                                                               Total Hour: <strong class="total_phrase_hour"></strong>
                                                           </h4>
                                                       
-                                                          <label class="form-label"><label>Phrase List</label></label>
+                                                          <label class="form-label"><label>PHRASE LIST</label></label>
+															
+															<div class="checkbox check-success" style="display: inline-block; margin-bottom: -3px">
+																	  <%= check_box_tag "contacts_courses["+number.to_s+"][full_course]", true, cc.full_course == true, {id: "checkbox_"+number.to_s+"_full_course", class: "full_course_checkbox"} %>
+																	  <label for="checkbox_<%= number %>_full_course" style="margin: 0; font-weight: bold">
+																		  <span>
+																				 Learn Full Course
+																		  </span>
+																	  </label>
+															</div>
+														  
                                                           <div class="input-with-icon right">
                                                           
                                                               <% group_name = "" %>
@@ -321,7 +331,7 @@
 																					<% if !cc.contact.courses_phrase_registered?(CoursesPhrase.find(courses_phrase.id)) || cc.courses_phrases.include?(CoursesPhrase.find(courses_phrase.id)) %>
 																						  <div class="row-fluid phrase_checkbox">
 																									<div class="checkbox check-success">
-																										<%= check_box_tag "contacts_courses["+number.to_s+"][courses_phrase_ids][]", courses_phrase.id, cc.courses_phrases.include?(CoursesPhrase.find(courses_phrase.id)), {id: "checkbox_"+number.to_s+ "_"+courses_phrase.id.to_s, class: "courses_phrase_item", hour: CoursesPhrase.find(courses_phrase.id).hour} %>
+																										<%= check_box_tag "contacts_courses["+number.to_s+"][courses_phrase_ids][]", courses_phrase.id, cc.courses_phrases.include?(CoursesPhrase.find(courses_phrase.id)), {id: "checkbox_"+number.to_s+ "_"+courses_phrase.id.to_s, class: "courses_phrase_item  phrase_checkable", hour: CoursesPhrase.find(courses_phrase.id).hour} %>
 																										<label for="checkbox_<%= number %>_<%= courses_phrase.id %>">
 																											   <span>
 																												   <%= CoursesPhrase.find(courses_phrase.id).display_name if courses_phrase.start_at.present? %>

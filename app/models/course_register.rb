@@ -76,9 +76,14 @@ class CourseRegister < ActiveRecord::Base
       if row[1]["course_id"].present?
         cc = row[1]["id"].present? ? ContactsCourse.find(row[1]["id"]) : self.contacts_courses.new
         cc.course_id = row[1]["course_id"]
-        cc.contact_id = contact.id
+        cc.contact_id = contact.id        
+        cc.full_course = row[1]["full_course"]
         
-        cc.courses_phrase_ids = "["+row[1]["courses_phrase_ids"].join("][")+"]" if !row[1]["courses_phrase_ids"].nil?
+        if cc.full_course == true
+          cc.courses_phrase_ids = "["+cc.course.courses_phrases.map(&:id).join("][")+"]" if !cc.course.courses_phrases.nil? and !cc.course.upfront
+        else
+          cc.courses_phrase_ids = "["+row[1]["courses_phrase_ids"].join("][")+"]" if !row[1]["courses_phrase_ids"].nil?
+        end
         
         if row[1]["price"] == "no_price"
           cc.price = -1

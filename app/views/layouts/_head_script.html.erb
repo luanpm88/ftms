@@ -1,5 +1,23 @@
 <script>
 	
+	function fullCourseCheck() {
+		$(".full_course_checkbox").each(function() {
+			var container = $(this).parents(".phrase_list_container")
+			var checked = $(this).attr("checked") == "checked"			
+			var inputs = container.find("input.phrase_checkable")
+			
+			if(checked) {
+				inputs.attr("checked", true)
+				inputs.attr("disabled", true)
+				$(this).attr("disabled", false)
+				inputs.eq(1).trigger("change")
+			} else {
+				inputs.attr("disabled", false)
+				inputs.eq(1).trigger("change")
+			}
+		})
+    }
+	
 	function main_menu() {
 		$.ajax({
 			url: '<%= url_for("/home/main_menu") %>',
@@ -929,6 +947,7 @@
 			{
 				box.html(data)
 				updatePhraseListBoxHour()
+				fullCourseCheck()
 			}
 		});
 	}
@@ -3916,6 +3935,12 @@
 		});
 		
 		$("input[type=search]").attr("name", "datatable_search_keyword")
+		
+		// FULL COURSE
+		fullCourseCheck()
+		$(document).on("change", ".full_course_checkbox", function(e) {
+			fullCourseCheck()
+		});
 	})
 	
 

@@ -1,11 +1,21 @@
 <% if !@course.upfront %>
-    <div class="form-group from_phrase_list_box_hour_money">
+    <div class="phrase_list_container form-group from_phrase_list_box_hour_money">
         
         <h4 style="margin-top: 0">
             Total Hour: <strong class="total_phrase_hour"></strong>
         </h4>
     
         <label class="form-label"><label>Phrase List</label></label>
+        
+        <div class="checkbox check-success" style="display: inline-block; margin-bottom: -3px">
+            <%= check_box_tag "contacts_courses["+params[:number].to_s+"][full_course]", true, true, {id: "checkbox_"+params[:number].to_s+"_full_course", class: "full_course_checkbox"} %>
+            <label for="checkbox_<%= params[:number] %>_full_course" style="margin: 0; font-weight: bold">
+                <span>
+                       Learn Full Course
+                </span>
+            </label>
+        </div>
+        
         <div class="input-with-icon right">
         
             <% group_name = "" %>
@@ -23,7 +33,7 @@
                             <% if !Contact.find(params[:contact_id]).courses_phrase_registered?(CoursesPhrase.find(courses_phrase.id)) %>
                                 <div class="row-fluid phrase_checkbox">
                                      <div class="checkbox check-success">
-                                         <%= check_box_tag "contacts_courses["+params[:number].to_s+"][courses_phrase_ids][]", courses_phrase.id, true, {id: "checkbox_"+params[:number]+ "_"+courses_phrase.id.to_s, class: "courses_phrase_item", hour: CoursesPhrase.find(courses_phrase.id).hour} %>
+                                         <%= check_box_tag "contacts_courses["+params[:number].to_s+"][courses_phrase_ids][]", courses_phrase.id, true, {id: "checkbox_"+params[:number]+ "_"+courses_phrase.id.to_s, class: "courses_phrase_item phrase_checkable", hour: CoursesPhrase.find(courses_phrase.id).hour} %>
                                          <label for="checkbox_<%= params[:number] %>_<%= courses_phrase.id %>">
                                                 <span>
                                                     <%= CoursesPhrase.find(courses_phrase.id).display_name if courses_phrase.start_at.present? %>
