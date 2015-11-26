@@ -77,4 +77,13 @@ class CoursesPhrase < ActiveRecord::Base
     end
   end
   
+  def update_new
+    # Remove from contacts courses
+    ccs = ContactsCourse.where("course_id = ?", course.id) #.map(&:course_register_id)
+    #crs = CourseRegister.main_course_registers.where(id: )
+    ccs.each do |cc|
+      puts cc.courses_phrases.count.to_s+" "+course.courses_phrases.count.to_s+" "+cc.course_register.contact.name
+    end
+  end
+  
 end
