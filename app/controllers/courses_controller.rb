@@ -237,7 +237,7 @@ class CoursesController < ApplicationController
       @tab = {url: {controller: "contacts", action: "edit", id: @contact.id, tab_page: 1, tab: "transfer"}, title: @contact.display_name}
       flash[:alert] = 'Error: Previous transfer(s) must be approved first.!'
       render "/home/close_tab", layout: nil
-    elsif @contact.active_course(@course.id)[:money].to_f == 0
+    elsif false and @contact.active_course(@course.id)[:money].to_f == 0
       @tab = {url: {controller: "contacts", action: "edit", id: @contact.id, tab_page: 1, tab: "course"}, title: @contact.display_name}
       flash[:alert] = "Error: Course's money cannot be zero. Student need to pay first.!"
       render "/home/close_tab", layout: nil
