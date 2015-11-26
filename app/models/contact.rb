@@ -1136,7 +1136,7 @@ class Contact < ActiveRecord::Base
   end
   
   def pending_transfer_course_ids
-    pending_transfers.map(&:course_id)
+    pending_transfers.map(&:course_id) + pending_received_transfers.map(&:to_course_id)
   end
   
   def active_transfers
@@ -1866,11 +1866,11 @@ class Contact < ActiveRecord::Base
     end
     
     # transferred to others
-    if type == "main"
+    #if type == "main"
       transfers = main_all_transfers
-    else
-      transfers = active_all_transfers
-    end
+    #else
+    #  transfers = active_all_transfers
+    #end
     transfers = transfers.where("transfers.created_at <= ?", datetime) if !datetime.nil?
     transfers.each do |transfer|
       
