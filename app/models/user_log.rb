@@ -21,6 +21,17 @@ class UserLog < ActiveRecord::Base
       @records = @records.where(user_id: params["user"])
     end
     
+    if params["created_from"].present?
+      @records = @records.where("user_logs.created_at >= ?", params["created_from"].to_date.beginning_of_day)
+    end
+    if params["created_to"].present?
+      @records = @records.where("user_logs.created_at <= ?", params["created_to"].to_date.end_of_day)
+    end
+    
+    if params["title"].present?
+      @records = @records.where("title = ?", params["title"])
+    end
+    
     
     @records = @records.search(params["search"]["value"]) if !params["search"]["value"].empty?
     
@@ -95,6 +106,12 @@ class UserLog < ActiveRecord::Base
       str << 
       
       self.content = str.join("<br />")
+  end
+  
+  def self.select_options
+    result = UserLog.all.map(&:title).uniq.map {|item| [item, item]}
+    
+    return result
   end
                   
 end

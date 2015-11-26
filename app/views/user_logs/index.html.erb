@@ -1,6 +1,6 @@
                 <div class="page-title">
                         <i class="icon-briefcase"></i>
-                    	<h3>User <span class="semi-bold">Activity</span></h3>	
+                    	<h3>Activity <span class="semi-bold">Log</span></h3>	
                 </div>
 				
 				
@@ -13,7 +13,40 @@
                                 <%= select_tag 'user', options_for_select(User.main_users.collect{ |u| [u.name, u.id] }) , {:include_blank => 'All', class: "modern_select width100"} %>
                             </div>
                         </div>
-
+						<div class="col-md-3">
+								<h4>Created From</h4>							
+								<div class="input-with-icon  right">                                       
+									<i class=""></i>
+									<div class="input-append success date col-md-10 no-padding">
+									  <%= text_field_tag :created_from, "", :class => "form-control" %>
+									  <span class="add-on"><span class="arrow"></span><i class="icon-th"></i></span>
+									</div>
+									<br style="clear: both" />
+							   </div>
+							</div>			
+						<div class="col-md-3">
+								<h4>Created To</h4>							
+								<div class="input-with-icon  right">                                       
+									<i class=""></i>
+									<div class="input-append success date col-md-10 no-padding">
+									  <%= text_field_tag :created_to, "", :class => "form-control" %>
+									  <span class="add-on"><span class="arrow"></span><i class="icon-th"></i></span>
+									</div>
+									<br style="clear: both" />
+							   </div>
+						</div>
+						
+						<div class="col-md-3">
+								<h4>Log Type</h4>							
+								<div class="input-with-icon  right">                                       
+									<i class=""></i>
+									<div class="">
+									  <%= select_tag 'title', options_for_select(UserLog.select_options) , {:include_blank => 'All', class: "modern_select width100"} %>
+									</div>
+									
+							   </div>
+						</div>
+						
                   </div>
                   </div>		    
 				</div>

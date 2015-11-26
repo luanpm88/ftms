@@ -2552,6 +2552,15 @@
 					if($(".user-log-filter select[name='user']").val()) {
 						d.user =  $(".user-log-filter select[name='user']").val()
 					}
+					if($(".user-log-filter input[name='created_from']").val()) {
+						d.created_from =  $(".user-log-filter input[name='created_from']").val()
+					}					
+					if($(".user-log-filter input[name='created_to']").val()) {
+						d.created_to =  $(".user-log-filter input[name='created_to']").val()
+					}
+					if($(".user-log-filter select[name='title']").val()) {
+						d.title =  $(".user-log-filter select[name='title']").val()
+					}
 				}
 			},
 			"columnDefs": [ { "targets": [0,1,2,3], "orderable": false } ],

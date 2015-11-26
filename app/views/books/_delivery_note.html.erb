@@ -45,9 +45,10 @@
   }
 </style>
 
+<% num = 0 %>
 <% @list.each_with_index do |row,index| %>
     <% if !row[:list].empty? %>
-          <div class="page" style="top: <%= 1020*index %>px; position: absolute" >
+          <div class="page" style="top: <%= 1020*num %>px; position: absolute" >
             <div class="logo">
               <img src="<%= ["deliver_all","delivery_note","delivery_print"].include?(params[:action]) ? "file://"+File.join(Rails.root, 'public', 'img', 'FTMSGlobalNew_transparent.png') : url_for("/img/FTMSGlobalNew_transparent.png") %>" class="login-logo" />
             </div>
@@ -148,6 +149,6 @@
             </table>
             
           </div>
-
+      <% num += 1 %>
     <% end %>
 <% end %>
