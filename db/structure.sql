@@ -2477,6 +2477,39 @@ ALTER SEQUENCE transfers_id_seq OWNED BY transfers.id;
 
 
 --
+-- Name: user_logs; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE TABLE user_logs (
+    id integer NOT NULL,
+    user_id integer,
+    title character varying,
+    content text,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL
+);
+
+
+--
+-- Name: user_logs_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE user_logs_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: user_logs_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE user_logs_id_seq OWNED BY user_logs.id;
+
+
+--
 -- Name: users; Type: TABLE; Schema: public; Owner: -; Tablespace: 
 --
 
@@ -2985,6 +3018,13 @@ ALTER TABLE ONLY transfer_details ALTER COLUMN id SET DEFAULT nextval('transfer_
 --
 
 ALTER TABLE ONLY transfers ALTER COLUMN id SET DEFAULT nextval('transfers_id_seq'::regclass);
+
+
+--
+-- Name: id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY user_logs ALTER COLUMN id SET DEFAULT nextval('user_logs_id_seq'::regclass);
 
 
 --
@@ -3520,6 +3560,14 @@ ALTER TABLE ONLY transfer_details
 
 ALTER TABLE ONLY transfers
     ADD CONSTRAINT transfers_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: user_logs_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+--
+
+ALTER TABLE ONLY user_logs
+    ADD CONSTRAINT user_logs_pkey PRIMARY KEY (id);
 
 
 --
@@ -4343,4 +4391,6 @@ INSERT INTO schema_migrations (version) VALUES ('20151111161639');
 INSERT INTO schema_migrations (version) VALUES ('20151112004810');
 
 INSERT INTO schema_migrations (version) VALUES ('20151120040816');
+
+INSERT INTO schema_migrations (version) VALUES ('20151126052648');
 

@@ -500,6 +500,9 @@ class Ability
       can :create, User
       can :update, User
       
+      can :read, UserLog
+      can :datatable, UserLog
+      
       ## COURSE TYPE
       can :approved, Subject
       can :approve_new, Subject do |c|

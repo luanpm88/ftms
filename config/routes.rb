@@ -1,4 +1,9 @@
 Hkerp::Application.routes.draw do
+  resources :user_logs do
+    collection do
+      get :datatable
+    end
+  end
   resources :related_contacts
   resources :stock_types do
     collection do

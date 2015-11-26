@@ -1,0 +1,51 @@
+                <div class="page-title">
+                        <i class="icon-briefcase"></i>
+                    	<h3>User Activities - <span class="semi-bold"> Management</span></h3>	
+                </div>
+				
+				
+				<div class="grid simple ">
+                  <div class="grid-body no-border filters user-log-filter">
+                  <div class="row order-filters">                            
+                        <div class="col-md-3">
+                            <h4>User</h4>
+                            <div class="">
+                                <%= select_tag 'user', options_for_select(User.main_users.collect{ |u| [u.name, u.id] }) , {:include_blank => 'All', class: "modern_select width100"} %>
+                            </div>
+                        </div>
+
+                  </div>
+                  </div>		    
+				</div>
+				
+				
+                <div class="row">
+                  <div class="col-md-12">
+                      
+                      <div class="grid simple ">
+                          <div class="grid-title no-border">
+                              <h4>Activity  <span class="semi-bold">Log</span></h4>
+                              
+                          </div>
+                          <div class="grid-body no-border">
+                               
+                                  <table class="table table-striped no-more-tables datatable-user-logs no-filter">
+                                          <thead>
+                                              <tr>                                                
+                                                  <th width="">Activity</th>
+                                                  <th width="40%">Details</th>
+                                                  <th class="text-center" width="1%">Created At</th>
+                                                  <th class="text-center">User</th>
+                                              </tr>
+                                          </thead>                                        
+                                      </table>
+                                  
+                          </div>
+                      </div>
+          
+                  </div>
+          
+              </div>
+
+
+

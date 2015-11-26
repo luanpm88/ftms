@@ -390,6 +390,11 @@ class ContactsController < ApplicationController
       end
       
       
+      log = UserLog.new(user_id: current_user.id, title: "Export Contact List")
+      log.render_content(@contacts, params)
+      log.save
+      
+      
       respond_to do |format|
         format.html
         format.xls
@@ -526,7 +531,15 @@ class ContactsController < ApplicationController
       else
         @contacts = Contact.where(id: params[:ids])
       end
-    end      
+    end
+    
+    
+    
+    log = UserLog.new(user_id: current_user.id, title: "Export Contact Mobiles")
+    log.render_content(@contacts, params)
+    log.save
+    
+    
     render layout: "content"
   end
   
@@ -544,7 +557,12 @@ class ContactsController < ApplicationController
       else
         @contacts = Contact.where(id: params[:ids])
       end
-    end      
+    end
+    
+    log = UserLog.new(user_id: current_user.id, title: "Export Contact Emails")
+    log.render_content(@contacts, params)
+    log.save
+    
     render layout: "content"
   end
   
@@ -620,7 +638,12 @@ class ContactsController < ApplicationController
     if @contacts.count > 15
       render text: "<span style=\"color: red\">Too many items! Make sure selected items are the same contact.</span>"
     else
-      Contact.merge_contacts(@contacts)    
+      Contact.merge_contacts(@contacts)
+      
+      log = UserLog.new(user_id: current_user.id, title: "Merge Contacts")
+      log.render_content(@contacts, params)
+      log.save
+      
       render text: "Contacts ware successfully merged.!"
     end      
   end
