@@ -667,12 +667,12 @@
 						  price_discount = parseFloat(box.find('input[name="books_contacts['+number+'][discount]"]').val().replace(/,/g,""))
 						}
 						box.find(".discount_program_box").each(function() {
-							if($(this).find('input.main_input').length && $(this).find('input.main_input').val() != "") {
+							if($(this).find('select.main_input').length && $(this).find('select.main_input').val() != "") {
 								var dp = 0
-								var text = $(this).find('input.main_input').select2("data").text
+								var text = $(this).find('select.main_input').select2("data").text
 								var dd_v = parseFloat(text.split("[")[1].split("]")[0].split(" ")[0].replace(/,/g,""))
 								var pp_type = text.split("[")[1].split("]")[0].split(" ")[1]
-								dp = parseFloat( $(this).find('input.main_input').select2("data").text.split("[")[1].split("]")[0].replace(/,/g,""))
+								dp = parseFloat( $(this).find('select.main_input').select2("data").text.split("[")[1].split("]")[0].replace(/,/g,""))
 								if(pp_type=="%") {
 									dp = (dp/100)*price
 								}

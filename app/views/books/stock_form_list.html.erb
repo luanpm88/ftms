@@ -112,7 +112,8 @@
 																   <i class=""></i>
 																	<div class="input-with_add_but">
 																	  <%= link_to '<i class="icon-plus"></i>'.html_safe, new_discount_program_path(tab_page: 1), title: "New Discount Program", :class => 'btn btn-sm btn-small btn-white tab_page' %>
-																	  <input style="width:100%;margin-bottom: 5px;" name="books_contacts[<%= number.to_s %>][discount_programs][<%= num.to_s %>][id]" data="<%= discount_programs_path(format: "json") %>" class="select2-ajax-discount-programs price_discount_program main_input" /> 
+																	  
+																	  <%= select_tag "books_contacts["+number.to_s+"][discount_programs]["+num.to_s+"][id]", options_for_select(DiscountProgram.active_discount_programs.collect { |dp| [dp.display_name, dp.id] }), {:include_blank => 'None', class: "modern_select width100 main_input price_discount_program"} %>
 																	</div>
 															  </div>
 															<% end %>

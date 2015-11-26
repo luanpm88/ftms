@@ -68,6 +68,7 @@ class CourseRegistersController < ApplicationController
   # PATCH/PUT /course_registers/1.json
   def update
     @course_register.update_contacts_courses(params[:contacts_courses])
+    @course_register.update_books_contacts(params[:books_contacts]) if !params[:books_contacts].nil?
     
     respond_to do |format|
       if @course_register.save
@@ -76,6 +77,12 @@ class CourseRegistersController < ApplicationController
         
         @course_register.update_status("update", current_user)        
         @course_register.save_draft(current_user)
+        
+        # update payment status
+        @course_register.all_payment_records.each do |pr|
+          pr.update_statuses
+          pr.update_cache_search
+        end
         
         @tab = {url: {controller: "contacts", action: "edit", id: @course_register.contact.id, tab_page: 1, tab: "course_registration"}, title: @course_register.contact.display_name+(@course_register.contact.related_contacts.empty? ? "" : " #"+@course_register.contact.id.to_s)}
         format.html { render "/home/close_tab", layout: nil }
