@@ -233,9 +233,9 @@ class CoursesController < ApplicationController
     @contact = Contact.find(params[:contact_id])
     #@contacts_course = ContactsCourse.find(@transfer.contact.active_contacts_courses.where(course_id: @course.id).first.id)
     
-    if false and @contact.pending_transfer_count > 0
+    if @contact.pending_transfer_course_ids.include?(@course.id)
       @tab = {url: {controller: "contacts", action: "edit", id: @contact.id, tab_page: 1, tab: "transfer"}, title: @contact.display_name}
-      flash[:alert] = 'Error: Previous transfer(s) must be approved first.!'
+      flash[:alert] = 'Error: Previous transfer(s) for this course must be approved first.!'
       render "/home/close_tab", layout: nil
     elsif false and @contact.active_course(@course.id)[:money].to_f == 0
       @tab = {url: {controller: "contacts", action: "edit", id: @contact.id, tab_page: 1, tab: "course"}, title: @contact.display_name}

@@ -1135,6 +1135,10 @@ class Contact < ActiveRecord::Base
     pending_transfers.count + pending_received_transfers.count
   end
   
+  def pending_transfer_course_ids
+    pending_transfers.map(&:course_id)
+  end
+  
   def active_transfers
     transfers.where("transfers.parent_id IS NULL AND transfers.status IS NOT NULL AND transfers.status LIKE ?", "%[active]%")
   end
@@ -1862,7 +1866,7 @@ class Contact < ActiveRecord::Base
     end
     
     # transferred to others
-    if type = "main"
+    if type == "main"
       transfers = main_all_transfers
     else
       transfers = active_all_transfers
