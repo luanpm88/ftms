@@ -10,6 +10,7 @@ class ContactsCourse < ActiveRecord::Base
   after_create :update_statuses
   after_create :enable_report
   
+  
   def enable_report
     self.course.remove_no_report_contact(self.contact)
   end

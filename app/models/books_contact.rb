@@ -12,6 +12,11 @@ class BooksContact < ActiveRecord::Base
   has_many :payment_record_details
   
   after_create :update_statuses
+  before_destroy :remove_delivery_details
+  
+  def remove_delivery_details
+    delivery_details.destroy_all
+  end
   
   #def volumns
   #  b_ids = self.volumn_ids.split("][").map {|s| s.gsub("[","").gsub("]","") }
@@ -121,7 +126,7 @@ class BooksContact < ActiveRecord::Base
   end
   
   def delivered?
-    remain == 0
+    remain <= 0
   end
   
   def paid_amount
