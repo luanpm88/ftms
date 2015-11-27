@@ -9,6 +9,7 @@ class CourseRegistersController < ApplicationController
   # GET /course_registers.json
   def index
     @course_registers = CourseRegister.all
+    @course = Course.find(params[:course_id]) if params[:course_id].present?
   end
 
   # GET /course_registers/1
@@ -83,7 +84,7 @@ class CourseRegistersController < ApplicationController
         @course_register.all_payment_records.each do |pr|
           pr.update_statuses
           pr.update_cache_search
-        end
+        end        
         
         @tab = {url: {controller: "contacts", action: "edit", id: @course_register.contact.id, tab_page: 1, tab: "course_registration"}, title: @course_register.contact.display_name+(@course_register.contact.related_contacts.empty? ? "" : " #"+@course_register.contact.id.to_s)}
         format.html { render "/home/close_tab", layout: nil }

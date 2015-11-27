@@ -57,11 +57,11 @@
 								  <div class="form-group" style="margin-bottom: 5px;">								 
 									   <div class="input-with-icon right">                                       
 											<div class="radio radio-success" style="padding: 5px">
-												  <input class="required" id="full_course_all" type="radio" name="full_course" value="" checked="checked">
+												  <input <%= "checked=checked" if !params[:full_course].present? %> class="required" id="full_course_all" type="radio" name="full_course" value="">
 												 <label for="full_course_all">All</label>
-												 <input class="required" id="full_course_true" type="radio" name="full_course" value="true">
+												 <input <%= "checked=checked" if params[:full_course] == "true" %> class="required" id="full_course_true" type="radio" name="full_course" value="true">
 												 <label for="full_course_true">Yes</label>
-												 <input class="required" id="full_course_false" type="radio" name="full_course" value="false">
+												 <input <%= "checked=checked" if params[:full_course] == "false" %> class="required" id="full_course_false" type="radio" name="full_course" value="false">
 												 <label for="full_course_false">No</label>
 											</div>
 									   </div>
