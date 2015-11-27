@@ -210,6 +210,14 @@ class CourseRegister < ActiveRecord::Base
       @records = @records.where(payment_type: "company-sponsored").where(sponsored_company_id: params["company"])
     end
     
+    if params["full_course"].present?
+      if params["full_course"] == "true"
+        @records = @records.joins(:contacts_courses).where(contacts_courses: {full_course: true})
+      else
+        @records = @records.joins(:contacts_courses).where("contacts_courses.full_course IS NULL OR contacts_courses.full_course = false")
+      end
+    end
+    
     course_ids = nil
     if params["upfront"].present?
       u_course_ids = Course.where(upfront: params["upfront"]).map(&:id)
@@ -263,7 +271,7 @@ class CourseRegister < ActiveRecord::Base
   def self.datatable(params, user)
     ActionView::Base.send(:include, Rails.application.routes.url_helpers)
     
-    @records = self.filter(params, user)
+    @records = self.filter(params, user).uniq
     
     
     if !params["order"].nil?
