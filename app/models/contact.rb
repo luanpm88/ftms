@@ -269,7 +269,7 @@ class Contact < ActiveRecord::Base
       if params["course_types"].present?
         conds = []
         params["course_types"].each do |ctid|          
-          conds << "bases SIMILAR TO '%_id\":#{ctid},\"status\":\"#{params[:base_status]}%'"
+          conds << "bases SIMILAR TO '%_id\":\"#{ctid}\",\"status\":\"#{params[:base_status]}%'"
         end
         @records = @records.where(conds.join(" OR "))
       else
