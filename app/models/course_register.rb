@@ -513,7 +513,7 @@ class CourseRegister < ActiveRecord::Base
     contacts_courses.each do |cc|
       item = {}
       item[:course] = cc.course
-      item[:courses_phrases] = cc.courses_phrases
+      item[:courses_phrases] = cc.courses_phrases.joins(:phrase).order("phrases.name, courses_phrases.start_at")
       item[:contacts_course] = cc
       arr << item
     end
