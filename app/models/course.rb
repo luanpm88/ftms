@@ -430,6 +430,7 @@ class Course < ActiveRecord::Base
                           hour: row[1]["hour"])
           else
               CoursesPhrase.find(row[1]["courses_phrase_id"]).release
+              CoursesPhrase.find(row[1]["courses_phrase_id"]).destroy
           end
         else
           if row[1]["phrase_id"].present?
@@ -438,10 +439,13 @@ class Course < ActiveRecord::Base
                           hour: row[1]["hour"]
                       )
               
-          #alert_course_register_list += CoursesPhrase.find(row[1]["courses_phrase_id"]).update_new
+          #alert_course_register_ids += CoursesPhrase.find(row[1]["courses_phrase_id"]).update_new
           end
         end
       end
+      
+      # update full course related
+      self.update_full_course_info
     end
     
     #return alert_course_register_ids
@@ -851,6 +855,12 @@ class Course < ActiveRecord::Base
     self.update_attribute(:cache_search, str.join(" "))
   end
   
- 
+  def update_full_course_info
+    contacts_courses.where(full_course: true).each do |cc|
+      cc.update_attribute(:courses_phrase_ids, "["+self.courses_phrases.map(&:id).join("][")+"]")
+    end
+  end
+  
+  
   
 end
