@@ -493,8 +493,8 @@ class Course < ActiveRecord::Base
   def self.main_courses
     self.where(parent_id: nil)
   end
-  def self.active_courses(filter=nil)
-    result = self.main_courses.where("courses.status IS NOT NULL AND courses.status LIKE ?", "%[active]%")
+  def self.main_courses(filter=nil)
+    result = self.where(parent_id: nil)
     if !filter.nil?
       if filter[:course_type_id].present?
         result = result.where(course_type_id: filter[:course_type_id])
@@ -506,6 +506,11 @@ class Course < ActiveRecord::Base
         result = result.where(upfront: filter[:upfront])
       end
     end    
+    return result
+  end
+  def self.active_courses(filter=nil)
+    result = self.main_courses(filter).where("courses.status IS NOT NULL AND courses.status LIKE ?", "%[active]%")
+  
     return result
   end
   
