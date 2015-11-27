@@ -72,6 +72,7 @@ class CourseRegistersController < ApplicationController
     
     respond_to do |format|
       if @course_register.save
+        Contact.find(@course_register.contact.id).update_info
         
         @course_register.update_statuses
         
