@@ -22,7 +22,7 @@ class ContactsCourse < ActiveRecord::Base
   def courses_phrases
     return [] if self.courses_phrase_ids.nil?
     cp_ids = self.courses_phrase_ids.split("][").map {|s| s.gsub("[","").gsub("]","") }
-    return CoursesPhrase.where(id: cp_ids)
+    return CoursesPhrase.where(id: cp_ids).includes(:phrase).order("phrases.name, courses_phrases.start_at")
   end
   
   def courses_phrase_list
