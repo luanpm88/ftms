@@ -418,7 +418,7 @@ class Course < ActiveRecord::Base
   end
   
   def update_courses_phrases(params)
-    alert_course_register_ids = []
+    #alert_course_register_ids = []
     if !self.upfront
       params.each do |row|
         
@@ -438,13 +438,13 @@ class Course < ActiveRecord::Base
                           hour: row[1]["hour"]
                       )
               
-          alert_course_register_list += CoursesPhrase.find(row[1]["courses_phrase_id"]).update_new
+          #alert_course_register_list += CoursesPhrase.find(row[1]["courses_phrase_id"]).update_new
           end
         end
       end
     end
     
-    return alert_course_register_ids
+    #return alert_course_register_ids
   end
   
   def course_price
