@@ -490,9 +490,9 @@ class Course < ActiveRecord::Base
   
   ############### BEGIN REVISION #########################
   
-  def self.main_courses
-    self.where(parent_id: nil)
-  end
+  #def self.main_courses
+  #  self.where(parent_id: nil)
+  #end
   def self.main_courses(filter=nil)
     result = self.where(parent_id: nil)
     if !filter.nil?
