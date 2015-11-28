@@ -166,7 +166,7 @@ class Transfer < ActiveRecord::Base
   def courses_phrases
     return [] if courses_phrase_ids.nil?
     ids = self.courses_phrase_ids.split("][").map {|s| s.gsub("[","").gsub("]","") }
-    return CoursesPhrase.where(id: ids)
+    return CoursesPhrase.where(id: ids).joins(:phrase).order("phrases.name, courses_phrases.start_at")
   end
   
   def to_courses_phrases
@@ -176,7 +176,7 @@ class Transfer < ActiveRecord::Base
   end
   
   def ordered_courses_phrases
-    courses_phrases.joins(:phrase).order("phrases.name, courses_phrases.start_at")
+    courses_phrases
   end
   
   def diplay_from_course
