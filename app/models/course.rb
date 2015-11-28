@@ -725,8 +725,8 @@ class Course < ActiveRecord::Base
         arr << c if c.for_exam_year.to_s+"="+c.for_exam_month.to_s != value
         value = c.for_exam_year.to_s+"="+c.for_exam_month.to_s
       elsif type == "course_price"
-        arr << c if c.course_prices.order("amount").map(&:id).join(",") != value
-        value = c.course_prices.order("amount").map(&:id).join(",")
+        arr << c if c.course_prices.order("amount").map(&:amount).join(",") != value
+        value = c.course_prices.order("amount").map(&:amount).join(",")
       elsif type == "phrases"
         arr << c if c.ordered_courses_phrases.map(&:id).join(",") != value
         value = c.ordered_courses_phrases.map(&:id).join(",")
