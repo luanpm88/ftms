@@ -1932,12 +1932,12 @@ class Contact < ActiveRecord::Base
             if row[:course] == transfer.to_course
               row[:courses_phrases] += transfer.to_courses_phrases
               row[:courses_phrases] = row[:courses_phrases].uniq
-              row[:full_course] = transfer.full_course
+              row[:full_course] = transfer.to_full_course
               
               exist = true
             end           
           end
-          origin << {full_course: transfer.full_course,remain: 0,contacts_courses: [],course: course, courses_phrases: courses_phrases, hour: transfer.to_course_hour, money: transfer.to_course_money, created_at: transfer.created_at} if exist == false
+          origin << {full_course: transfer.to_full_course,remain: 0,contacts_courses: [],course: course, courses_phrases: courses_phrases, hour: transfer.to_course_hour, money: transfer.to_course_money, created_at: transfer.created_at} if exist == false
           
           
         end
@@ -1997,8 +1997,10 @@ class Contact < ActiveRecord::Base
   def display_active_course(course_id)
     course = Course.find(course_id)
     
+    full_course_subfix = (active_course(course_id)[:full_course] == true && course.upfront != true) ? " <span class=\"active\">[full]</span>" : ""
+    
     arr = []
-    arr << "<div class=\"nowrap\"><strong>"+active_course(course_id)[:course].display_name+"</strong> <span>#{course.report_toggle(self)}</span></div>"
+    arr << "<div class=\"nowrap\"><strong>"+active_course(course_id)[:course].display_name+full_course_subfix+"</strong> <span>#{course.report_toggle(self)}</span></div>"
     arr << "<div class=\"courses_phrases_list\">"+Course.render_courses_phrase_list(active_course(course_id)[:courses_phrases])+"</div>" if !active_course(course_id)[:courses_phrases].empty?
     arr << "<br /><div>Hour: <strong>#{self.active_course(course_id)[:hour]}</strong> <br /> Money: <strong>#{ApplicationController.helpers.format_price(self.active_course(course_id)[:money])}</trong></div>"
     return arr.join("")
