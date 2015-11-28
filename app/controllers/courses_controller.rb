@@ -87,7 +87,7 @@ class CoursesController < ApplicationController
         
         @course.update_cache_search
         
-        if !new_added.empty?
+        if new_added.present? && !new_added.empty?
           flash[:alert] = "Course was successfully updated. Course/stock registrations below need to be checked for new phrase-date added: #{new_added.join(", ")}."
           @tab = {url: {controller: "course_registers", action: "index", course_id: @course.id, full_course: false, tab_page: 1}, title: "Check Course Registrations with New Phrase-Date"}
           format.html { render "/home/close_tab", layout: nil }
