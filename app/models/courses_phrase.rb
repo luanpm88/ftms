@@ -77,12 +77,24 @@ class CoursesPhrase < ActiveRecord::Base
     end
   end
   
+  #def update_new
+  #  # Remove from contacts courses
+  #  ccs = ContactsCourse.where("course_id = ?", course.id) #.map(&:course_register_id)
+  #  #crs = CourseRegister.main_course_registers.where(id: )
+  #  ccs.each do |cc|
+  #    puts cc.courses_phrases.count.to_s+" "+course.courses_phrases.count.to_s+" "+cc.course_register.contact.name
+  #  end
+  #end
+  
   def update_new
-    # Remove from contacts courses
-    ccs = ContactsCourse.where("course_id = ?", course.id) #.map(&:course_register_id)
-    #crs = CourseRegister.main_course_registers.where(id: )
-    ccs.each do |cc|
-      puts cc.courses_phrases.count.to_s+" "+course.courses_phrases.count.to_s+" "+cc.course_register.contact.name
+    # Course Res
+    course.contacts_courses.where(full_course: true).each do |cc|
+      cc.update_attribute(:courses_phrase_ids, (cc.courses_phrase_ids+"[#{self.id.to_s}]"))
+    end
+    
+    # Remove from transfer-from
+    course.transfers.where(full_course: true).each do |c|
+      c.update_attribute(:courses_phrase_ids, (c.courses_phrase_ids+"[#{self.id.to_s}]"))
     end
   end
   

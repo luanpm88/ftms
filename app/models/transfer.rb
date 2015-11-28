@@ -175,13 +175,20 @@ class Transfer < ActiveRecord::Base
     return CoursesPhrase.where(id: ids)
   end
   
+  def ordered_courses_phrases
+    courses_phrases.joins(:phrase).order("phrases.name, courses_phrases.start_at")
+  end
+  
   def diplay_from_course
     if !course.nil?
-      arr = []
-      arr << "<div class=\"nowrap\"><strong>"+course.display_name+"</strong></div>"
-      arr << "<div class=\"courses_phrases_list\">"+Course.render_courses_phrase_list(courses_phrases)+"</div>" if courses_phrases
-      
       active_course = contact.active_course(course.id, self.created_at-1.second)
+      
+      full_course_subfix = active_course[:full_course] == true ? " <span class=\"active\">[full]</span>" : ""
+      
+      arr = []
+      arr << "<div class=\"nowrap\"><strong>"+course.display_name+full_course_subfix+"</strong></div>"
+      arr << "<div class=\"courses_phrases_list\">"+Course.render_courses_phrase_list(ordered_courses_phrases)+"</div>" if courses_phrases
+      
       hour = active_course[:hour]
       money = active_course[:money]
       

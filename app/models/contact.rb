@@ -1959,6 +1959,7 @@ class Contact < ActiveRecord::Base
       if merged_courses[item[:course].id].nil?
         merged_courses[item[:course].id] = {}
         merged_courses[item[:course].id][:contacts_courses] = item[:contacts_courses]
+        merged_courses[item[:course].id][:full_course] = item[:full_course]
         merged_courses[item[:course].id][:course] = item[:course]
         merged_courses[item[:course].id][:hour] = item[:hour]
         merged_courses[item[:course].id][:money] = item[:money]

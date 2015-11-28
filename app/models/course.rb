@@ -434,18 +434,20 @@ class Course < ActiveRecord::Base
           end
         else
           if row[1]["phrase_id"].present?
-              courses_phrases.create(phrase_id: row[1]["phrase_id"],
+              new_cp = courses_phrases.create(phrase_id: row[1]["phrase_id"],
                           start_at: row[1]["start_at"],
                           hour: row[1]["hour"]
                       )
               
-              new_added << "<strong>#{Phrase.find(row[1]["phrase_id"]).name} [#{row[1]["start_at"]}]</strong>"
+              # update full course related
+              CoursesPhrase.find(new_cp.id).update_new
+              
+              new_added << "#{Phrase.find(row[1]["phrase_id"]).name} [#{row[1]["start_at"]}]"
           end
         end
       end
       
-      # update full course related
-      self.update_full_course_info
+      
       
       return new_added
     end
@@ -857,11 +859,17 @@ class Course < ActiveRecord::Base
     self.update_attribute(:cache_search, str.join(" "))
   end
   
-  def update_full_course_info
-    contacts_courses.where(full_course: true).each do |cc|
-      cc.update_attribute(:courses_phrase_ids, "["+self.courses_phrases.map(&:id).join("][")+"]")
-    end
-  end
+  #def update_full_course_info
+  #  # Course Res
+  #  contacts_courses.where(full_course: true).each do |cc|
+  #    cc.update_attribute(:courses_phrase_ids, "["+self.courses_phrases.map(&:id).join("][")+"]")
+  #  end
+  #  
+  #  # Remove from transfer-from
+  #  transfers.where(full_course: true) do |c|
+  #    c.update_attribute(:courses_phrase_ids, "["+self.courses_phrases.map(&:id).join("][")+"]")
+  #  end
+  #end
   
   
   
