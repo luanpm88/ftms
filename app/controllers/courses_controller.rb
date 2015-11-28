@@ -265,6 +265,7 @@ class CoursesController < ApplicationController
             @disable[cp.id] = @to_contact.courses_phrase_registered?(cp)
         end
       end
+      @full_course = true
     else
       # to ==>  from
       @to_contact = Contact.find(params[:contact_id])

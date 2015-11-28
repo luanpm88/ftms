@@ -1932,11 +1932,12 @@ class Contact < ActiveRecord::Base
             if row[:course] == transfer.to_course
               row[:courses_phrases] += transfer.to_courses_phrases
               row[:courses_phrases] = row[:courses_phrases].uniq
+              row[:full_course] = transfer.full_course
               
               exist = true
             end           
           end
-          origin << {full_course: nil,remain: 0,contacts_courses: [],course: course, courses_phrases: courses_phrases, hour: transfer.to_course_hour, money: transfer.to_course_money, created_at: transfer.created_at} if exist == false
+          origin << {full_course: transfer.full_course,remain: 0,contacts_courses: [],course: course, courses_phrases: courses_phrases, hour: transfer.to_course_hour, money: transfer.to_course_money, created_at: transfer.created_at} if exist == false
           
           
         end

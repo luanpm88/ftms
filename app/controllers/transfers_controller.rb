@@ -33,12 +33,23 @@ class TransfersController < ApplicationController
   def create
     @transfer = Transfer.new(transfer_params)
     @transfer.user = current_user
+    
+    # if course -> ...
+      if @transfer.full_course == true
+        @transfer.courses_phrase_ids = "["+@transfer.course.courses_phrases.map(&:id).join("][")+"]" if !@transfer.course.courses_phrases.empty?
+      else
+        @transfer.courses_phrase_ids = "["+params[:from_courses_phrases].join("][")+"]" if params[:from_courses_phrases].present?
+      end
+    
+    # if upfront -> course
+      if @transfer.to_full_course == true
+        @transfer.to_courses_phrase_ids = "["+@transfer.to_course.courses_phrases.map(&:id).join("][")+"]" if !@transfer.to_course.courses_phrases.empty?
+      else
+        @transfer.to_courses_phrase_ids = "["+params[:to_courses_phrases].join("][")+"]" if params[:to_courses_phrases].present?
+      end
 
-    if @transfer.full_course == true
-      @transfer.courses_phrase_ids = "["+@transfer.course.courses_phrases.map(&:id).join("][")+"]" if !@transfer.course.courses_phrases.empty?
-    else
-      @transfer.courses_phrase_ids = "["+params[:from_courses_phrases].join("][")+"]" if params[:from_courses_phrases].present?
-    end    
+    
+        
     
     @transfer.to_courses_phrase_ids = "["+params[:to_courses_phrases].join("][")+"]" if params[:to_courses_phrases].present?
     
@@ -228,6 +239,6 @@ class TransfersController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def transfer_params
-      params.require(:transfer).permit(:full_course, :note, :hour_money, :from_hour, :to_type, :to_course_hour, :to_course_money, :to_course_id, :course_id, :admin_fee, :transfer_for, :contact_id, :to_contact_id, :user_id, :transfer_date, :hour, :money, :courses_phrase_ids => [])
+      params.require(:transfer).permit(:full_course, :to_full_course, :note, :hour_money, :from_hour, :to_type, :to_course_hour, :to_course_money, :to_course_id, :course_id, :admin_fee, :transfer_for, :contact_id, :to_contact_id, :user_id, :transfer_date, :hour, :money, :courses_phrase_ids => [])
     end
 end

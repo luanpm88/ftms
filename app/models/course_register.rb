@@ -496,7 +496,7 @@ class CourseRegister < ActiveRecord::Base
     arr = []
     courses.each do |row|
       
-      full_course = row[:contacts_course].full_course == true ? " <span class=\"active\">[full]</span>" : ""
+      full_course = (row[:contacts_course].full_course == true and row[:course].upfront != true) ? " <span class=\"active\">[full]</span>" : ""
       
       arr << "<div class=\"#{(row[:contacts_course].is_write_off? ? "write_off" : "")}\" title=\"#{(row[:contacts_course].is_write_off? ? "write-off: #{ApplicationController.helpers.format_price(row[:contacts_course].write_off_amount)} #{Setting.get("currency_code")}" : "")}\">"
       arr << "<div class=\"nowrap\"><strong>"+row[:course].display_name+full_course+"</strong></div>"

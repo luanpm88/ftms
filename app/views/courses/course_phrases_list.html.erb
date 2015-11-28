@@ -68,9 +68,20 @@
 												<% end %>
 											</label></label>
 											
-											<% if @remain == 0 && @full_course == true %>
+											<% if @type == "from" && @remain == 0 && @full_course == true %>
 												<div class="checkbox check-success" style="display: inline-block; margin-bottom: -3px">
 														<%= check_box_tag "transfer[full_course]", true, true, {id: "checkbox_full_course", class: "full_course_checkbox"} %>
+														<label for="checkbox_full_course" style="margin: 0; font-weight: bold">
+															<span>
+																   Defer/Transfer Full Course
+															</span>
+														</label>
+												</div>
+											<% end %>
+											
+											<% if @type == "to" %>
+												<div class="checkbox check-success" style="display: inline-block; margin-bottom: -3px">
+														<%= check_box_tag "transfer[to_full_course]", true, true, {id: "checkbox_full_course", class: "full_course_checkbox"} %>
 														<label for="checkbox_full_course" style="margin: 0; font-weight: bold">
 															<span>
 																   Defer/Transfer Full Course

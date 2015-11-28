@@ -183,7 +183,7 @@ class Transfer < ActiveRecord::Base
     if !course.nil?
       active_course = contact.active_course(course.id, self.created_at-1.second)
       
-      full_course_subfix = active_course[:full_course] == true ? " <span class=\"active\">[full]</span>" : ""
+      full_course_subfix = (active_course[:full_course] == true && course.upfront != true) ? " <span class=\"active\">[full]</span>" : ""
       
       arr = []
       arr << "<div class=\"nowrap\"><strong>"+course.display_name+full_course_subfix+"</strong></div>"
@@ -232,8 +232,10 @@ class Transfer < ActiveRecord::Base
   def diplay_to_course
     if to_type == "course"
       if !to_course.nil?
+        full_course_subfix = (self.to_full_course == true && to_course.upfront != true) ? " <span class=\"active\">[full]</span>" : ""
+        
         arr = []
-        arr << "<div class=\"nowrap\"><strong>"+to_course.display_name+"</strong></div>"
+        arr << "<div class=\"nowrap\"><strong>"+to_course.display_name+full_course_subfix+"</strong></div>"
         arr << "<div class=\"courses_phrases_list\">"+Course.render_courses_phrase_list(to_courses_phrases)+"</div>" if to_courses_phrases
         arr << "<br /><div>Hour: <strong>#{to_course_hour}</strong> <br /> Money: <strong>#{ApplicationController.helpers.format_price(to_course_money)}</trong></div>"
         return arr.join("")

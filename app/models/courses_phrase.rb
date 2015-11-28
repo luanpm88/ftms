@@ -96,6 +96,11 @@ class CoursesPhrase < ActiveRecord::Base
     course.transfers.where(full_course: true).each do |c|
       c.update_attribute(:courses_phrase_ids, (c.courses_phrase_ids+"[#{self.id.to_s}]"))
     end
+    
+    # Remove from transfer-from
+    course.received_transfers.where(to_full_course: true).each do |c|
+      c.update_attribute(:to_courses_phrase_ids, (c.to_courses_phrase_ids+"[#{self.id.to_s}]"))
+    end
   end
   
 end

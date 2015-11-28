@@ -2455,7 +2455,8 @@ CREATE TABLE transfers (
     cache_search text,
     hour_money numeric,
     note text,
-    full_course boolean
+    full_course boolean,
+    to_full_course boolean
 );
 
 
@@ -4399,4 +4400,6 @@ INSERT INTO schema_migrations (version) VALUES ('20151126052648');
 INSERT INTO schema_migrations (version) VALUES ('20151126231828');
 
 INSERT INTO schema_migrations (version) VALUES ('20151128023453');
+
+INSERT INTO schema_migrations (version) VALUES ('20151128041642');
 
