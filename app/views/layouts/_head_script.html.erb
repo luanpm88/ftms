@@ -2204,6 +2204,8 @@
 					if($(".course-register-filter select[name='user']").val()) {
 						d.user =  $(".course-register-filter select[name='user']").val()
 					}
+					
+					d.full_course = $(".course-register-filter input[name='full_course']:checked").val()
 				}
 			},
 			"columnDefs": [ { "targets": [0,1,2,3,4,6,7,8], "orderable": false } ],

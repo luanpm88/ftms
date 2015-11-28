@@ -79,7 +79,7 @@ class CoursesController < ApplicationController
     
     respond_to do |format|
       if @course.save        
-        @course.update_courses_phrases(params[:courses_phrases]) if !params[:courses_phrases].nil?
+        new_added = @course.update_courses_phrases(params[:courses_phrases]) if !params[:courses_phrases].nil?
         @course.update_course_prices(params[:course_prices]) if !params[:course_prices].nil?
         
         @course.update_status("update", current_user)        
@@ -87,8 +87,15 @@ class CoursesController < ApplicationController
         
         @course.update_cache_search
         
-        format.html { redirect_to params[:tab_page].present? ? "/home/close_tab" : @course, notice: 'Course was successfully updated.' }
-        format.json { head :no_content }
+        if !new_added.empty?
+          flash[:alert] = "Course was successfully updated. Course/stock registrations below need to be checked for new phrase-date added: #{new_added.join(", ")}."
+          @tab = {url: {controller: "course_registers", action: "index", course_id: @course.id, full_course: false, tab_page: 1}, title: "Check Course Registrations with New Phrase-Date"}
+          format.html { render "/home/close_tab", layout: nil }
+          format.json { head :no_content }
+        else
+          format.html { redirect_to params[:tab_page].present? ? "/home/close_tab" : @course, notice: 'Course was successfully updated.' }
+          format.json { head :no_content }
+        end        
       else
         format.html { render action: 'edit', tab_page: params[:tab_page] }
         format.json { render json: @course.errors, status: :unprocessable_entity }

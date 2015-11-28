@@ -210,6 +210,14 @@ class CourseRegister < ActiveRecord::Base
       @records = @records.where(payment_type: "company-sponsored").where(sponsored_company_id: params["company"])
     end
     
+    if params["full_course"].present?
+      if params["full_course"] == "true"
+        @records = @records.joins(:contacts_courses).where(contacts_courses: {full_course: true})
+      else
+        @records = @records.joins(:contacts_courses).where("contacts_courses.full_course IS NULL OR contacts_courses.full_course = false")
+      end
+    end
+    
     course_ids = nil
     if params["upfront"].present?
       u_course_ids = Course.where(upfront: params["upfront"]).map(&:id)
@@ -263,7 +271,7 @@ class CourseRegister < ActiveRecord::Base
   def self.datatable(params, user)
     ActionView::Base.send(:include, Rails.application.routes.url_helpers)
     
-    @records = self.filter(params, user)
+    @records = self.filter(params, user).uniq
     
     
     if !params["order"].nil?
@@ -421,8 +429,8 @@ class CourseRegister < ActiveRecord::Base
   end
   def description
     str = []
-    str << "<h5 class=\"list_title\">Courses: </h5>#{course_list}" if !contacts_courses.empty?
-    str << "<h5 class=\"list_title\">Stocks: </h5>#{book_list}" if !books_contacts.empty?
+    str << "<h5 class=\"list_title\"><i class=\"icon-suitcase\"></i> Courses: </h5>#{course_list}" if !contacts_courses.empty?
+    str << "<h5 class=\"list_title\"><i class=\"icon-book\"></i> Stocks: </h5>#{book_list}" if !books_contacts.empty?
     
     return str.join("<br />")
   end
@@ -488,8 +496,10 @@ class CourseRegister < ActiveRecord::Base
     arr = []
     courses.each do |row|
       
+      full_course = row[:contacts_course].full_course == true ? " <span class=\"active\">[full]</span>" : ""
+      
       arr << "<div class=\"#{(row[:contacts_course].is_write_off? ? "write_off" : "")}\" title=\"#{(row[:contacts_course].is_write_off? ? "write-off: #{ApplicationController.helpers.format_price(row[:contacts_course].write_off_amount)} #{Setting.get("currency_code")}" : "")}\">"
-      arr << "<div class=\"nowrap\"><strong>"+row[:course].display_name+"</strong></div>"
+      arr << "<div class=\"nowrap\"><strong>"+row[:course].display_name+full_course+"</strong></div>"
       arr << "<div class=\"courses_phrases_list\">"+Course.render_courses_phrase_list(row[:courses_phrases],row[:contacts_course])+"</div>" if phrase_list
       arr << "</div>"
       

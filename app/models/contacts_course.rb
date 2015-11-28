@@ -22,7 +22,7 @@ class ContactsCourse < ActiveRecord::Base
   def courses_phrases
     return [] if self.courses_phrase_ids.nil?
     cp_ids = self.courses_phrase_ids.split("][").map {|s| s.gsub("[","").gsub("]","") }
-    return CoursesPhrase.where(id: cp_ids)
+    return CoursesPhrase.where(id: cp_ids).includes(:phrase).order("phrases.name, courses_phrases.start_at")
   end
   
   def courses_phrase_list
@@ -210,6 +210,19 @@ class ContactsCourse < ActiveRecord::Base
       end
     end
     return self.remain > 0.0 ? true : false
+  end
+  
+  # for old course res: run 1 time
+  def self.check_full_course
+    self.all.each do |cc|
+      cc.check_full_course
+    end
+  end
+  # for old course res: run 1 time
+  def check_full_course
+    if self.courses_phrases.count == self.course.courses_phrases.count
+      self.update_attribute(:full_course, true)
+    end
   end
   
 end

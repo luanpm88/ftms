@@ -418,7 +418,7 @@ class Course < ActiveRecord::Base
   end
   
   def update_courses_phrases(params)
-    #alert_course_register_ids = []
+    new_added = []
     if !self.upfront
       params.each do |row|
         
@@ -430,6 +430,7 @@ class Course < ActiveRecord::Base
                           hour: row[1]["hour"])
           else
               CoursesPhrase.find(row[1]["courses_phrase_id"]).release
+              CoursesPhrase.find(row[1]["courses_phrase_id"]).destroy
           end
         else
           if row[1]["phrase_id"].present?
@@ -438,10 +439,15 @@ class Course < ActiveRecord::Base
                           hour: row[1]["hour"]
                       )
               
-          #alert_course_register_list += CoursesPhrase.find(row[1]["courses_phrase_id"]).update_new
+              new_added << "<strong>#{Phrase.find(row[1]["phrase_id"]).name} [#{row[1]["start_at"]}]</strong>"
           end
         end
       end
+      
+      # update full course related
+      self.update_full_course_info
+      
+      return new_added
     end
     
     #return alert_course_register_ids
@@ -490,11 +496,11 @@ class Course < ActiveRecord::Base
   
   ############### BEGIN REVISION #########################
   
-  def self.main_courses
-    self.where(parent_id: nil)
-  end
-  def self.active_courses(filter=nil)
-    result = self.main_courses.where("courses.status IS NOT NULL AND courses.status LIKE ?", "%[active]%")
+  #def self.main_courses
+  #  self.where(parent_id: nil)
+  #end
+  def self.main_courses(filter=nil)
+    result = self.where(parent_id: nil)
     if !filter.nil?
       if filter[:course_type_id].present?
         result = result.where(course_type_id: filter[:course_type_id])
@@ -506,6 +512,11 @@ class Course < ActiveRecord::Base
         result = result.where(upfront: filter[:upfront])
       end
     end    
+    return result
+  end
+  def self.active_courses(filter=nil)
+    result = self.main_courses(filter).where("courses.status IS NOT NULL AND courses.status LIKE ?", "%[active]%")
+  
     return result
   end
   
@@ -846,6 +857,12 @@ class Course < ActiveRecord::Base
     self.update_attribute(:cache_search, str.join(" "))
   end
   
- 
+  def update_full_course_info
+    contacts_courses.where(full_course: true).each do |cc|
+      cc.update_attribute(:courses_phrase_ids, "["+self.courses_phrases.map(&:id).join("][")+"]")
+    end
+  end
+  
+  
   
 end
