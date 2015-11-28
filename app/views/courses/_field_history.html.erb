@@ -19,7 +19,7 @@
         <li><%= (c.all_prices.map{|p| "["+format_price(p.amount)+"/"+p.deadline.strftime("%d-%b-%Y")+"]"}).join("; ") %> <span class="nowrap time-span"><%= c.created_at.strftime("%d-%b-%Y, %I:%M %p") %>, by <%= c.user.name if c.user.present? %></span></li>
       <% end %>
       <% if ["phrases"].include?(type) %>
-        <li><%= c.courses_phrase_list.html_safe %> <span class="nowrap time-span"><%= c.created_at.strftime("%d-%b-%Y, %I:%M %p") %>, by <%= c.user.name if c.user.present? %></span></li>
+        <li>(<%= c.total_hour %> hours) <%= c.courses_phrase_list.html_safe %> <span class="nowrap time-span"><%= c.created_at.strftime("%d-%b-%Y, %I:%M %p") %>, by <%= c.user.name if c.user.present? %></span></li>
       <% end %>
       
     <% end %>
