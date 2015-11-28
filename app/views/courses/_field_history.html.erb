@@ -16,7 +16,7 @@
         <li><%= c.for_exam_year %>/<%= c.for_exam_month %> <span class="nowrap time-span"><%= c.created_at.strftime("%d-%b-%Y, %I:%M %p") %>, by <%= c.user.name if c.user.present? %></span></li>
       <% end %>
       <% if ["course_price"].include?(type) %>
-        <li><%= (c.prices.map{|p| format_price(p)}).join(" / ") %> <span class="nowrap time-span"><%= c.created_at.strftime("%d-%b-%Y, %I:%M %p") %>, by <%= c.user.name if c.user.present? %></span></li>
+        <li><%= (c.all_prices.map{|p| "["+format_price(p.amount)+"/"+p.deadline.strftime("%d-%b-%Y")+"]"}).join("; ") %> <span class="nowrap time-span"><%= c.created_at.strftime("%d-%b-%Y, %I:%M %p") %>, by <%= c.user.name if c.user.present? %></span></li>
       <% end %>
       <% if ["phrases"].include?(type) %>
         <li><%= c.courses_phrase_list.html_safe %> <span class="nowrap time-span"><%= c.created_at.strftime("%d-%b-%Y, %I:%M %p") %>, by <%= c.user.name if c.user.present? %></span></li>
