@@ -259,11 +259,13 @@ class CoursesController < ApplicationController
         end
       end
     else
+      # to ==>  from
       @to_contact = Contact.find(params[:contact_id])
       @courses_phrases = @to_contact.active_course(@course.id)[:courses_phrases]
       @hour = @to_contact.active_course(@course.id)[:hour]
       @money = @to_contact.active_course(@course.id)[:money]
       @remain = @to_contact.active_course(@course.id)[:remain]
+      @full_course = @to_contact.active_course(@course.id)[:full_course]
       @type = "from"
     end
     

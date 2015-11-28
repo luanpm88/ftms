@@ -1852,6 +1852,7 @@ class Contact < ActiveRecord::Base
     accs.each do |cc|
       row = {}
       row[:contacts_courses] = [cc]
+      row[:full_course] = cc.full_course
       row[:course] = cc.course
       th = 0
       ContactsCourse.find(cc.id).courses_phrases.each do |cp|
@@ -1898,8 +1899,12 @@ class Contact < ActiveRecord::Base
                     row[:hour] -= cp.hour
                     row[:money] -= (remain_money/remain_hour)*cp.hour if remain_hour > 0
                   end
+                  # not full course any more
+                  row[:full_course] = false
                 end
               end
+              
+              
               
               remove_course = true if row[:courses_phrases].empty?
             end
@@ -1930,7 +1935,7 @@ class Contact < ActiveRecord::Base
               exist = true
             end           
           end
-          origin << {remain: 0,contacts_courses: [],course: course, courses_phrases: courses_phrases, hour: transfer.to_course_hour, money: transfer.to_course_money, created_at: transfer.created_at} if exist == false
+          origin << {full_course: nil,remain: 0,contacts_courses: [],course: course, courses_phrases: courses_phrases, hour: transfer.to_course_hour, money: transfer.to_course_money, created_at: transfer.created_at} if exist == false
           
           
         end
