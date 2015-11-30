@@ -84,7 +84,7 @@ module CoursesHelper
     return "" if item.revisions.empty?
     
       actions = '<div class="text-right but"><div class="btn-group actions">
-                    <button class="btn btn-big btn-white btn-demo-space dropdown-toggle" data-toggle="dropdown">Histories <span class="caret"></span></button>'
+                    <button class="btn btn-big btn-white btn-demo-space dropdown-toggle" data-toggle="dropdown"><i class="icon-time"></i> Histories <span class="caret"></span></button>'
       actions += '<ul class="dropdown-menu">'
       
       item.revisions.order("created_at DESC").each do |d|
