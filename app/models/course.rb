@@ -279,7 +279,7 @@ class Course < ActiveRecord::Base
               '<div class="text-left">'+@student.display_active_course(item[:course].id)+"</div>",
               '<div class="text-center">'+item[:course].display_for_exam+"</div>",
               '<div class="text-center nowrap">'+item[:course].display_lecturer+"</div>",             
-              '<div class="text-center">'+created_at_col+by_staff+"</div>",              
+              '<div class="text-center">'+created_at_col+by_staff+"</div>",
               "", 
             ]     
 
