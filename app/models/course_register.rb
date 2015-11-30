@@ -214,7 +214,7 @@ class CourseRegister < ActiveRecord::Base
       if params["full_course"] == "true"
         @records = @records.joins(:contacts_courses).where(contacts_courses: {full_course: true})
       else
-        @records = @records.joins(:contacts_courses).where("contacts_courses.full_course IS NULL OR contacts_courses.full_course = false")
+        @records = @records.joins(:contacts_courses => :course).where(courses: {upfront: false}).where("contacts_courses.full_course IS NULL OR contacts_courses.full_course = false")
       end
     end
     
