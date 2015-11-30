@@ -1,7 +1,20 @@
 
-      <div class="page-title"> <i class="icon-edit"></i>
-				<h3>Edit Course/Stock <span class="semi-bold">Registration</span></h3>
-      </div>
+      <div class="page-title <%= "draft" if @course_register.draft? %>""> <i class="icon-briefcase"></i>
+		  <h3 class="">Registration: <span class="semi-bold"><%= @course_register.contact.name %></span>
+		  <br /><%= "Changed at: #{@course_register.created_at.strftime("%d-%b-%Y %I:%M %p")} / By: #{@course_register.user.name}" if @course_register.draft? %>
+		  </h3>
+		</div>
+	  
+		<div class="top-buts">
+				<%= render_course_register_actions(@course_register, "big") if !@course_register.draft? %>
+				<%= render_course_register_history_actions(@course_register) %>
+		</div>
+		<div>
+				<%= @course_register.display_statuses if !@course_register.draft? %>
+		</div>
+		<br style="clear:both" />
+	  
+	  
       
 	  <div class="row new_course_register_page">
             <div class="col-md-12">
