@@ -92,6 +92,10 @@ class Transfer < ActiveRecord::Base
       @records = @records.where("cache_payment_status LIKE ?", "%"+params["payment_statuses"]+"%")
     end
     
+    if params["user"].present?
+      @records = @records.where("transfers.user_id = ?", params["user"])
+    end
+    
     #@records = @records.search(params["search"]["value"]) if !params["search"]["value"].empty?
     @records = @records.where("LOWER(transfers.cache_search) LIKE ?", "%#{params["search"]["value"].strip.downcase}%") if params["search"].present? && !params["search"]["value"].empty?
     

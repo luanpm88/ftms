@@ -106,6 +106,11 @@ class PaymentRecord < ActiveRecord::Base
       @records = @records.where(status: params["status"])
     end
     
+    if params["user"].present?
+        @records = @records.joins(:transfer, :course_register)
+                          .where("transfers.user_id = ? OR payment_records.account_manager_id = ? OR course_registers.account_manager_id = ?",params["user"],params["user"],params["user"])
+    end
+    
     ## role
     #if !user.has_role?("manager") && !user.has_role?("admin") && !user.has_role?("accountant")
     #  @records = @records.joins(:course_register => :contact)

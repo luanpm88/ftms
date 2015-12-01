@@ -2331,6 +2331,10 @@
 						d.status =  $(".payment-record-filter select[name='status']").val()
 					}
 					d.payment_for = $(".payment-record-filter input[name='payment_for']:checked").val()
+					
+					if($(".payment-record-filter select[name='user']").val()) {
+						d.user =  $(".payment-record-filter select[name='user']").val()
+					}
 				}
 			},
 			"columnDefs": [ { "targets": [0,1,2,3,5,6,7,8,9], "orderable": false } ],
@@ -2407,6 +2411,9 @@
 					}
 					d.payment_statuses = $(".transfer-filter select[name='payment_statuses']").val()
 					
+					if($(".transfer-filter select[name='user']").val()) {
+						d.user =  $(".transfer-filter select[name='user']").val()
+					}
 				}
 			},
 			"columnDefs": [ { "targets": [0,1,2,3,4,5,6,7,9,10], "orderable": false } ],
@@ -2538,6 +2545,10 @@
 					
 					d.payment_statuses = $(".payment-list-filter select[name='payment_statuses']").val()
 					d.upfront = $(".payment-list-filter input[name='upfront']:checked").val()
+					
+					if($(".payment-list-filter select[name='user']").val()) {
+						d.user =  $(".payment-list-filter select[name='user']").val()
+					}
 				}
 			},
 			"columnDefs": [ { "targets": [0,1,2,3,4,5,6,7,8], "orderable": false } ],

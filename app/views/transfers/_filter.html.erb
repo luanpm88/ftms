@@ -65,6 +65,12 @@
 									  </select>
 								  </div>
 							</div>
+							<div class="col-md-3">
+												<h4>Creator</h4>
+												<div class="">
+													<%= select_tag 'user', options_for_select(User.main_users.collect{ |u| [u.name, u.id] }) , {:include_blank => 'All', class: "modern_select width100"} %>
+												</div>
+											</div>
 						</div>
 						
                   </div>		    

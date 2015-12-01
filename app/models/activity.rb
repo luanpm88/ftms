@@ -23,6 +23,8 @@ class Activity < ActiveRecord::Base
                       }
                   }
   
+  after_create :update_cache_search
+  
   def self.main_activities
     self.where(deleted: 0)
   end
@@ -60,7 +62,8 @@ class Activity < ActiveRecord::Base
     
     @records = self.filter(params, user)
     
-    @records = @records.search(params["search"]["value"]) if !params["search"]["value"].empty?
+    #@records = @records.search(params["search"]["value"]) if !params["search"]["value"].empty?
+    @records = @records.where("LOWER(activities.cache_search) LIKE ?", "%#{params["search"]["value"].strip.downcase}%") if params["search"].present? && !params["search"]["value"].empty?
     
     order = "activities.created_at DESC"
     if !params["order"].nil?
@@ -134,5 +137,20 @@ class Activity < ActiveRecord::Base
       ["Deleted",2]
     ]
   end
+  
+  def update_cache_search
+    
+    str = []
+    str << note.to_s
+    str << note.to_s.unaccent
+    str << created_at.strftime("%d-%b-%Y, %I:%M %p")
+    str << contact.display_name
+    str << contact.display_name.unaccent
+    str << staff_col
+    str << display_statuses
+    
+    self.update_attribute(:cache_search, str.join(" "))
+  end
+
 
 end
