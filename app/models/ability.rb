@@ -152,7 +152,7 @@ class Ability
       can :courses_phrases_checkboxs, Course
       can :course_price_select, Course
       can :delete, Course do |c|
-        !c.statuses.include?("delete_pending") && !c.statuses.include?("deleted")
+        c.contacts_courses.empty? && !c.statuses.include?("delete_pending") && !c.statuses.include?("deleted")
       end
       can :field_history, Course
       can :course_phrases_form, Course
@@ -527,7 +527,7 @@ class Ability
         c.statuses.include?("update_pending")
       end
       can :approve_delete, Course do |c|
-        c.statuses.include?("delete_pending")
+        c.contacts_courses.empty? && c.statuses.include?("delete_pending")
       end      
       can :undo_delete, Course do |c|
         c.statuses.include?("delete_pending")
