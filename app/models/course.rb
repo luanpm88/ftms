@@ -513,6 +513,8 @@ class Course < ActiveRecord::Base
       if !filter[:upfront].nil?
         result = result.where(upfront: filter[:upfront])
       end
+      
+      result = result.where("courses.status IS NOT NULL AND courses.status NOT LIKE ?", "%[deleted]%")
     end    
     return result
   end
