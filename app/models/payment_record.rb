@@ -107,8 +107,7 @@ class PaymentRecord < ActiveRecord::Base
     end
     
     if params["user"].present?
-        @records = @records.joins(:transfer, :course_register)
-                          .where("transfers.user_id = ? OR payment_records.account_manager_id = ? OR course_registers.account_manager_id = ?",params["user"],params["user"],params["user"])
+        @records = @records.where("payment_records.cache_search LIKE ?", "%EC[#{params["user"]}]%")
     end
     
     ## role
@@ -518,6 +517,14 @@ class PaymentRecord < ActiveRecord::Base
     str << ordered_total.to_s
     str << paid_amount.to_s
     str << remain.to_s
+    
+    if !company.nil?
+      str << "EC["+account_manager_id.to_s+"]"
+    elsif !transfer.nil?
+      str << "EC["+transfer.user_id.to_s+"]"
+    else
+      str << "EC["+course_register.account_manager_id.to_s+"]"      
+    end 
     
     update_attribute(:cache_search, str.join(" "))
   end
