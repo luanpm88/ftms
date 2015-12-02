@@ -524,8 +524,8 @@ class PaymentRecord < ActiveRecord::Base
     str << contact.display_name.unaccent
     str << staff_col
     str << staff_col.unaccent
-    str << user.display_name
-    str << user.display_name.unaccent
+    str << user.name
+    str << user.name.unaccent
     str << ordered_total.to_s
     str << paid_amount.to_s
     str << remain.to_s
