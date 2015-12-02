@@ -61,12 +61,12 @@
 									<%= select_tag 'user', options_for_select(User.main_users.collect{ |u| [u.name, u.id] }) , {:include_blank => 'All', class: "modern_select width100"} %>
 								</div>
 							</div>
-                        <!--<div class="col-md-3 student-payment-filter">
+                        <div class="col-md-3 student-payment-filter" style="position: absolute;top: -900000px">
 							<h4>Student</h4>
 							<div class="students-filter-box">
 								<input style="width:100%;margin-bottom: 5px;" name="filter[students[]]" data="<%= contacts_path(is_individual: true, contact_type_id: ContactType.student.id,format: "json") %>" class="select2-ajax-students multiple" value="<%= @student.id if !@student.nil? %>" text="<%= @student.display_name if !@student.nil? %>" />
 							</div>
-						</div>-->
+						</div>
 						
 						<div class="col-md-3">
 							<h4>Company</h4>
