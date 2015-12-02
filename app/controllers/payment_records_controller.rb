@@ -4,7 +4,21 @@ class PaymentRecordsController < ApplicationController
   
   load_and_authorize_resource
   
-  before_action :set_payment_record, only: [:show, :edit, :update, :destroy]
+  before_action :set_payment_record, only: [:part_info, :show, :edit, :update, :destroy]
+  
+  def part_info
+    item = @payment_record
+    render json: {
+      col_1: '<div class="text-left">'+item.description+"</div>",
+      col_2: '<div class="text-right">'+ApplicationController.helpers.format_price(item.ordered_total)+"</div>",
+      col_3: '<div class="text-right">'+item.display_paid_amount+'</div>',
+      col_4: '<div class="text-right">'+item.paid_on+"<br /><strong>by:</strong><br />"+item.user.staff_col+"</div>",
+      col_5: '<div class="text-center">'+item.bank_account_name+"</div>",
+      col_6: '<div class="text-right">'+ApplicationController.helpers.format_price(item.remain)+"</div>",
+      col_7: '<div class="text-center">'+item.staff_col+"</div>",
+      col_8: '<div class="text-center">'+item.display_statuses+"</div>",
+    }
+  end
 
   # GET /payment_records
   # GET /payment_records.json

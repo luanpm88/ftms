@@ -154,16 +154,25 @@ class PaymentRecord < ActiveRecord::Base
     actions_col = 9
     @records.each do |item|
       item = [
-              item.contact.contact_link,
-              '<div class="text-left">'+item.description+"</div>",
-              '<div class="text-right">'+ApplicationController.helpers.format_price(item.ordered_total)+"</div>",
-              '<div class="text-right">'+item.display_paid_amount+'</div>',
-              '<div class="text-right">'+item.paid_on+"<br /><strong>by:</strong><br />"+item.user.staff_col+"</div>",
-              '<div class="text-center">'+item.bank_account_name+"</div>",
-              '<div class="text-right">'+ApplicationController.helpers.format_price(item.remain)+"</div>",
-              '<div class="text-center">'+item.staff_col+"</div>",
-              '<div class="text-center">'+item.display_statuses+"</div>",
+              "<span item_id=\"#{item.id.to_s}\" class=\"main_part_info\"></span>"+item.contact.contact_link,
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
               ""
+              #'<div class="text-left">'+item.description+"</div>",
+              #'<div class="text-right">'+ApplicationController.helpers.format_price(item.ordered_total)+"</div>",
+              #'<div class="text-right">'+item.display_paid_amount+'</div>',
+              #'<div class="text-right">'+item.paid_on+"<br /><strong>by:</strong><br />"+item.user.staff_col+"</div>",
+              #'<div class="text-center">'+item.bank_account_name+"</div>",
+              #'<div class="text-right">'+ApplicationController.helpers.format_price(item.remain)+"</div>",
+              #'<div class="text-center">'+item.staff_col+"</div>",
+              #'<div class="text-center">'+item.display_statuses+"</div>",
+              #""
               #'<div class="text-right">'+ApplicationController.helpers.format_price(item.amount)+"</div>",
               #'<div class="text-center">'+item.payment_date.strftime("%d-%b-%Y")+"</div>",
               #'<div class="text-left">'+item.note+"</div>",
@@ -243,7 +252,7 @@ class PaymentRecord < ActiveRecord::Base
     elsif !transfer.nil?
       "Defer/Transfer at [#{transfer.created_at.strftime("%d-%b-%Y")}]"
     else
-      course_register.course_list(false)
+      course_register.course_list(false)+course_register.book_list(false)
     end
   end
   
