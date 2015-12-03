@@ -74,17 +74,17 @@ class Phrase < ActiveRecord::Base
     
     @records = @records.order(order) if !order.nil?
     
-    if params["subjects"].present?
+    if params["subjects"].present? and params["search"]["value"].empty?
       @records = @records.joins(:subjects)
-      @records = @records.where("subjects.id IN (#{params["subjects"].join(",")})")
+      @records = @records.where("subjects.id IN (#{params["subjects"].join(",")})").uniq
     end
     
-    if params["course_types"].present?
+    if params["course_types"].present? and params["search"]["value"].empty?
       
       subject_ids = Subject.joins(:course_types).where(course_types: {id: params["course_types"]}).map(&:id)
       
       @records = @records.joins(:subjects)
-      @records = @records.where("subjects.id IN (#{subject_ids.join(",")})") if !subject_ids.empty?
+      @records = @records.where("subjects.id IN (#{subject_ids.join(",")})").uniq if !subject_ids.empty?
     end
     
     total = @records.count
