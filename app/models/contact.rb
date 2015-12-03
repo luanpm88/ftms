@@ -1803,6 +1803,34 @@ class Contact < ActiveRecord::Base
     active_received_transfers.where(to_type: "money").sum(:money) - active_contacts_courses.sum(:money)
   end
   
+  def budget_money_logs
+    logs = []
+    active_received_transfers.where(to_type: "money").each do |t|
+      row = {}
+      row[:datetime] = t.created_at
+      row[:content] = "Deferred/Transferred courses:"
+      row[:content] += t.diplay_from_course(true)
+      row[:sign] = "+"
+      row[:money] = t.money
+      logs << row
+    end
+    
+    active_contacts_courses.where("money > 0").each do |t|
+      t = ContactsCourse.find(t.id)
+      row = {}
+      row[:datetime] = t.created_at
+      row[:content] = "Registered Course:"
+      full_course = (t.full_course == true and t.course.upfront != true) ? " <span class=\"active\">[full]</span>" : ""
+      row[:content] += "<div class=\"nowrap\"><strong>"+t.course.display_name+full_course+"</strong></div>"
+      row[:content] += "<div class=\"courses_phrases_list\">"+Course.render_courses_phrase_list(t.courses_phrases.joins(:phrase).order("phrases.name, courses_phrases.start_at"),t)+"</div>" if !t.courses_phrases.empty?
+      row[:sign] = "-"
+      row[:money] = t.money
+      logs << row
+    end
+    
+    return (logs.sort! { |a,b| a[:datetime] <=> b[:datetime] })
+  end
+  
   def active_transferred_records
     transferred_records.where("transfers.parent_id IS NULL AND transfers.status IS NOT NULL AND transfers.status LIKE ?", "%[active]%")
   end

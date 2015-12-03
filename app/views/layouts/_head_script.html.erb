@@ -3987,6 +3987,18 @@
 		$(document).on("change", ".full_course_checkbox", function(e) {
 			fullCourseCheck()
 		});
+		
+		// money transfer history
+		$('.transfer_money_log_button').on('click', function(){
+			var iid = $(this).attr("contact-id");
+			window.parent.$.fancybox({
+				width: "70%",
+				height: "70%",
+				autoSize: false,
+				href: '<%= transfer_money_history_contacts_path %>?id='+iid,
+				type: 'ajax'
+			});
+		});
 	})
 	
 

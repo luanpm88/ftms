@@ -183,7 +183,7 @@ class Transfer < ActiveRecord::Base
     courses_phrases
   end
   
-  def diplay_from_course
+  def diplay_from_course(short=false)
     if !course.nil?
       active_course = contact.active_course(course.id, self.created_at-1.second)
       
@@ -207,9 +207,13 @@ class Transfer < ActiveRecord::Base
         end
       end
       
-      arr << "<br /><div>Hour: <strong>#{hour}</strong> <br /> Money: <strong>#{ApplicationController.helpers.format_price(money)}</trong></div>"
+      if !short
+        arr << "<br /><div>Hour: <strong>#{hour}</strong> <br /> Money: <strong>#{ApplicationController.helpers.format_price(money)}</trong></div>"
+        
+        arr << "<br /><div style=\"font-weight: normal\">Note: #{note}</div>" if note.present?
+      end
       
-      arr << "<br /><div style=\"font-weight: normal\">Note: #{note}</div>" if note.present?
+        
       return arr.join("")
     
     elsif !from_hour.nil?

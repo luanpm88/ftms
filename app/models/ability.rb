@@ -122,6 +122,7 @@ class Ability
       can :delete, Contact do |c|
         !c.statuses.include?("delete_pending")
       end
+      can :transfer_money_history, Contact
       
       if user.has_role? "export_contact_information"
         can :export_mobiles, Contact
