@@ -252,7 +252,8 @@ class BooksController < ApplicationController
     # @intake = Time.now.beginning_of_month
     
     if params[:subject_id].present?
-      records = Book.joins(:course_type, :subject, :stock_type).main_books.order("course_types.short_name, subjects.name, stock_types.display_order, books.created_at")
+      records = Book.main_books.where("books.status IS NOT NULL AND books.status NOT LIKE ? AND books.status NOT LIKE ?", "%[deleted]%", "%[out_of_date]%")
+      records = records.joins(:course_type, :subject, :stock_type).main_books.order("course_types.short_name, subjects.name, stock_types.display_order, books.created_at")
       records = records.where(stock_type_id: params[:stock_type_id].split(",")) if params[:stock_type_id].present?
       records = records.where(course_type_id: params[:program_id].split(",")) if params[:program_id].present?
       records = records.where(subject_id: params[:subject_id].split(",")) if params[:subject_id].present?
