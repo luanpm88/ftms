@@ -572,7 +572,7 @@ class CourseRegister < ActiveRecord::Base
   end
   
   def total
-    price - transfer.to_f - write_off_amount - budget_money
+    price - transfer.to_f - write_off_amount
   end
   
   def budget_money

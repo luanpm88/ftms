@@ -70,7 +70,7 @@ class ContactsCourse < ActiveRecord::Base
         end
       end
       
-      return pricing - other_discount_amount.to_f
+      return pricing - other_discount_amount.to_f - money.to_f
     else     
       return no_price_payment_record_detail.nil? ? 0 : no_price_payment_record_detail.total.to_f
     end
