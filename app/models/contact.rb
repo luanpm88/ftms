@@ -1808,7 +1808,8 @@ class Contact < ActiveRecord::Base
     active_received_transfers.where(to_type: "money").each do |t|
       row = {}
       row[:datetime] = t.created_at
-      row[:content] = "Deferred/Transferred courses:"
+      by = t.contact != t.to_contact ? " of #{t.contact.contact_link}" : ""
+      row[:content] = "Deferred/Transferred course#{by}:"
       row[:content] += t.diplay_from_course(true)
       row[:sign] = "+"
       row[:money] = t.money

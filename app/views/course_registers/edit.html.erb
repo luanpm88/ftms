@@ -25,7 +25,7 @@
                 </div>     
                 
                 <div class="budget_values hidden">
-					<div class="budget_money"><%= @contact.budget_money %></div>
+					<div class="budget_money"><%= @contact.budget_money+@course_register.budget_money %></div>
 					<% if @contact.budget_money <= 0 %>
 						 <style>
 							  .transfer_money_form {
@@ -250,7 +250,7 @@
                                        <div class="transfer_form">
                                             <h5><strong>Transfer Hour/Money</strong></h5>
                                             <div class="row no_price_group column-seperation">
-                                                 <div class="col-md-6 transfer_hour_form_<%= cc.course.course_type_id %>-<%= cc.course.subject_id %>">
+                                                <div class="col-md-6 transfer_hour_form_<%= cc.course.course_type_id %>-<%= cc.course.subject_id %>">
                                                       <div class="row">
                                                            <div class="col-md-8">
                                                                 <div class="form-group">
@@ -291,6 +291,9 @@
                                                                      <label class="form-label"><label>Remain</label></label>
                                                                      <div class="input-with-iconz text-right">                                       
                                                                           <strong class="item_budget_money">0</strong>
+																		  <a contact-id="<%= @contact.id %>" title="View Derferred/Tranferred history" href="#" class="transfer_money_log_button">
+																				<i class="icon-time"></i>
+																		</a>
                                                                      </div>
                                                                 </div>
                                                            </div>
