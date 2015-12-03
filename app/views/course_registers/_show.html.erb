@@ -77,6 +77,13 @@
 																			  <% end %>
 																	</div>
 															<% end %>
+															<% if cc.money.to_f > 0 %>
+																	<div class="form-group">
+																			  <label class="form-label">Used Credit</label>
+																			  <span class="help"></span>
+																			  <div><strong><%= format_price(cc.money.to_f) %></strong>
+																	</div>
+															<% end %>
 											 </div>
                                              <div class="col-md-2">
 												<div class="form-group">
