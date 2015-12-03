@@ -79,7 +79,7 @@
 															<% end %>
 															<% if cc.money.to_f > 0 %>
 																	<div class="form-group">
-																			  <label class="form-label">Used Credit</label>
+																			  <label class="form-label">Used Deferred/Transferred Money</label>
 																			  <span class="help"></span>
 																			  <div class="input-with-iconz  text-right">
 																					<strong><%= format_price(cc.money.to_f) %></strong>
@@ -326,7 +326,7 @@
 										  <% end %>
 										  <% if @course_register.budget_money > 0 %>
 												<div class="form-group">
-													  <label class="form-label">Used Credit</label>
+													  <label class="form-label">Used Deferred/Transferred Money</label>
 													  <span class="help"></span>
 													  <div class="input-with-iconz text-right" style="font-size: 20px;" width="100%">                                       
 															<strong>-<%= format_price(@course_register.budget_money) %></strong>
