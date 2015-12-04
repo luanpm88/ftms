@@ -39,7 +39,7 @@ class CourseRegister < ActiveRecord::Base
   
   after_create :update_statuses
   after_create :update_cache_search
-  after_create :add_note_log
+  # after_create :add_note_log
   
   def note_log
     str = ["Registered Course(s):"]

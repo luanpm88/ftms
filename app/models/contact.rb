@@ -411,12 +411,14 @@ class Contact < ActiveRecord::Base
       order += " "+params["order"]["0"]["dir"]
     else
       order = "contacts.name"
-    end
+    end    
+    
+    order = "contacts.name, contacts.email DESC, contacts.mobile DESC" if params["search"]["value"].present?
+    
     if params[:courses].present?
       order = "cache_transferred_courses_phrases DESC, "+order
     end
     
-    order = "contacts.name, contacts.email DESC, contacts.mobile DESC" if params["search"]["value"].present?
     @records = @records.order(order) if !order.nil?
     #@records = @records.order(order) if !order.nil? && !params["search"]["value"].present?
     
