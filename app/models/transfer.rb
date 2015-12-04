@@ -407,7 +407,7 @@ class Transfer < ActiveRecord::Base
       
       # remote note log
       note_logs.each do |a|
-        a.delete
+        a.destroy
       end      
       
       self.save_draft(user)

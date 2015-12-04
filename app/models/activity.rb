@@ -88,9 +88,9 @@ class Activity < ActiveRecord::Base
     
     actions_col = 5
     @records.each do |item|
-      edit_box = user == item.user ? "<a class=\"note_edit_button\" href=\"#edit\"><i class=\"icon-pencil\"></i> Edit</a><div class=\"note_log_edit_box\" item-id=\"#{item.id.to_s}\"><textarea class=>#{item.note}</textarea><br /><button class=\"btn btn-small btn-primary note_save_button\">Save</button><button class=\"btn btn-small btn-white note_cancel_button\">Cancel</button></div>" : ""
+      
       item = [
-              item.content,
+              item.content(user),
               "<div class=\"text-center nowrap\">#{item.created_at.strftime("%d-%b-%Y, %I:%M %p")}<br /><strong>by:</strong><br />#{item.user.staff_col}</div>",
               "<div class=\"text-center\">#{item.contact.contact_link}</div>",
               "<div class=\"text-center\">#{item.staff_col}</div>",
@@ -112,7 +112,7 @@ class Activity < ActiveRecord::Base
     
   end
   
-  def content
+  def content(u)
     if item_code.present?
       type = item_code.split("_")[0]
       code = item_code.split("_")[1]
@@ -124,7 +124,8 @@ class Activity < ActiveRecord::Base
         "<span class=\"note_content\">"+CourseRegister.find(code).note_log.html_safe+"</span>"
       end
     else
-      "<span class=\"note_content\">"+item.note.gsub("\n","<br />").html_safe+"</span>"+edit_box
+      edit_box = u == user ? "<a class=\"note_edit_button\" href=\"#edit\"><i class=\"icon-pencil\"></i> Edit</a><div class=\"note_log_edit_box\" item-id=\"#{id.to_s}\"><textarea class=>#{note}</textarea><br /><button class=\"btn btn-small btn-primary note_save_button\">Save</button><button class=\"btn btn-small btn-white note_cancel_button\">Cancel</button></div>" : ""
+      "<span class=\"note_content\">"+note.gsub("\n","<br />").html_safe+"</span>"+edit_box
     end    
   end
   

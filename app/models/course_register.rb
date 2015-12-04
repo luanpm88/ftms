@@ -54,13 +54,13 @@ class CourseRegister < ActiveRecord::Base
   end
   
   def add_note_log
-    if !contacts_courses.empty? and note_logs.empty?
+    if !contacts_courses.empty? and note_logs.empty? and parent_id == nil
       contact.activities.create(user_id: user.id, note: "auto", item_code: "registration_#{self.id.to_s}")
     end
   end
   
   def note_logs
-    CourseRegister.where(item_code: "registration_#{self.id.to_s}")
+    Activity.where(item_code: "registration_#{self.id.to_s}")
   end
   
   def all_deliveries
@@ -906,7 +906,7 @@ class CourseRegister < ActiveRecord::Base
       
       # remote note log
       note_logs.each do |a|
-        a.delete
+        a.destroy
       end  
       
       self.save_draft(user)
