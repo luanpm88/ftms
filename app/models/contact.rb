@@ -1799,8 +1799,12 @@ class Contact < ActiveRecord::Base
     return str.join("<br >").html_safe
   end
   
-  def budget_money
-    active_received_transfers.where(to_type: "money").sum(:money) - active_contacts_courses.sum(:money)
+  def budget_money(datetime=nil)
+    if datetime.present?
+      active_received_transfers.where("transfers.created_at <= ?", datetime).where(to_type: "money").sum(:money) - active_contacts_courses.where("contacts_courses.created_at <= ?", datetime).sum(:money)
+    else
+      active_received_transfers.where(to_type: "money").sum(:money) - active_contacts_courses.sum(:money)
+    end
   end
   
   def budget_money_logs

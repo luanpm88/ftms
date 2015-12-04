@@ -90,7 +90,7 @@ class Activity < ActiveRecord::Base
     @records.each do |item|
       edit_box = user == item.user ? "<a class=\"note_edit_button\" href=\"#edit\"><i class=\"icon-pencil\"></i> Edit</a><div class=\"note_log_edit_box\" item-id=\"#{item.id.to_s}\"><textarea class=>#{item.note}</textarea><br /><button class=\"btn btn-small btn-primary note_save_button\">Save</button><button class=\"btn btn-small btn-white note_cancel_button\">Cancel</button></div>" : ""
       item = [
-              "<span class=\"note_content\">"+item.note.gsub("\n","<br />").html_safe+"</span>"+edit_box,
+              item.content,
               "<div class=\"text-center nowrap\">#{item.created_at.strftime("%d-%b-%Y, %I:%M %p")}<br /><strong>by:</strong><br />#{item.user.staff_col}</div>",
               "<div class=\"text-center\">#{item.contact.contact_link}</div>",
               "<div class=\"text-center\">#{item.staff_col}</div>",
@@ -110,6 +110,22 @@ class Activity < ActiveRecord::Base
     
     return {result: result, items: @records, actions_col: actions_col}
     
+  end
+  
+  def content
+    if item_code.present?
+      type = item_code.split("_")[0]
+      code = item_code.split("_")[1]
+      
+      if type == "transfer"
+        "<span class=\"note_content\">"+Transfer.find(code).note_log(contact).html_safe+"</span>"
+      end
+      if type == "registration"
+        "<span class=\"note_content\">"+CourseRegister.find(code).note_log.html_safe+"</span>"
+      end
+    else
+      "<span class=\"note_content\">"+item.note.gsub("\n","<br />").html_safe+"</span>"+edit_box
+    end    
   end
   
   def staff_col

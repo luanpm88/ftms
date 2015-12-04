@@ -39,6 +39,29 @@ class CourseRegister < ActiveRecord::Base
   
   after_create :update_statuses
   after_create :update_cache_search
+  after_create :add_note_log
+  
+  def note_log
+    str = ["Registered Course(s):"]
+    str << course_list(false)
+    
+    if budget_money > 0
+      str << "<div>Used Credit: #{ApplicationController.helpers.format_price(self.budget_money)}</div>"
+      str << "<div>Credit note: #{ApplicationController.helpers.format_price(contact.budget_money(self.contacts_courses.order("contacts_courses.created_at DESC").first.created_at))}</div>"      
+    end     
+    
+    return str.join("")
+  end
+  
+  def add_note_log
+    if !contacts_courses.empty? and note_logs.empty?
+      contact.activities.create(user_id: user.id, note: "auto", item_code: "registration_#{self.id.to_s}")
+    end
+  end
+  
+  def note_logs
+    CourseRegister.where(item_code: "registration_#{self.id.to_s}")
+  end
   
   def all_deliveries
     deliveries.where(status: 1).order("deliveries.delivery_date DESC, deliveries.created_at DESC")
@@ -880,6 +903,11 @@ class CourseRegister < ActiveRecord::Base
       
       # remove all deliveries
       self.deliveries.update_all(status: 0)
+      
+      # remote note log
+      note_logs.each do |a|
+        a.delete
+      end  
       
       self.save_draft(user)
     end

@@ -767,6 +767,52 @@ class Transfer < ActiveRecord::Base
     return from_message
   end
   
+  def note_log(c)
+    from_item = ""
+    if !from_hour.nil?
+      hours = {}
+      JSON.parse(from_hour).each do |r|
+        tr = Transfer.find(r[0])
+        hour_id = tr.course.course_type_id.to_s+"-"+tr.course.subject_id.to_s
+        hours[hour_id] = hours[hour_id].nil? ? r[1].to_f : hours[hour_id] + r[1].to_f
+      end
+      
+      arr = []
+      hours.each do |r|
+        arr << CourseType.find(r[0].split("-")[0]).short_name+"-"+Subject.find(r[0].split("-")[1]).name+": "+r[1].to_s+" hours" if r[1].to_f > 0
+      end
+      from_item = "<strong>"+arr.join("; ")+"</strong>"
+    else
+      from_item = course.name
+    end
+    
+    to_item = ""
+    credit_note = ""
+    if !from_hour.nil? || to_type == "money"
+      to_item = ApplicationController.helpers.format_price(money)+" "+Setting.get("currency_code")
+      credit_note = "<div>Credit note: #{ApplicationController.helpers.format_price(c.budget_money(self.created_at))}</div>"
+    elsif to_type == "course"
+      to_item = to_course.name
+    elsif to_type == "hour"
+      to_item = hour.to_s+" hours"   
+    end
+    
+    # for transferrer
+    from_message = "Deferred/Transferred <strong>#{from_item}</strong> into <strong>#{to_item}</strong>"
+    from_message += " to <strong>#{to_contact.display_name}<strong>" if to_contact != contact
+    
+    # for receiver
+    if to_contact != contact
+      to_message = "Received <strong>#{to_item}</strong> from <strong>#{contact.display_name}</strong> by deferring <strong>#{from_item}</strong>"      
+    end
+    
+    if c == contact
+      from_message+credit_note
+    elsif c == to_contact
+      to_message+credit_note
+    end
+  end
+  
   def can_delete?
     return true if !statuses.include?("active")
     
