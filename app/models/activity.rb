@@ -91,7 +91,7 @@ class Activity < ActiveRecord::Base
       
       item = [
               item.content(user),
-              "<div class=\"text-center nowrap\">#{item.created_at.strftime("%d-%b-%Y, %I:%M %p")}<br /><strong>by:</strong><br />#{item.user.staff_col}</div>",
+              "<div class=\"text-center nowrap\">#{item.display_created_at}</div>",
               "<div class=\"text-center\">#{item.contact.contact_link}</div>",
               "<div class=\"text-center\">#{item.staff_col}</div>",
               "<div class=\"text-center\">#{item.display_statuses}</div>",  
@@ -110,6 +110,26 @@ class Activity < ActiveRecord::Base
     
     return {result: result, items: @records, actions_col: actions_col}
     
+  end
+  
+  def display_created_at
+    date = created_at
+    u = user
+    if item_code.present?
+      type = item_code.split("_")[0]
+      code = item_code.split("_")[1]
+      
+      if type == "transfer"
+        date = Transfer.find(code).created_at
+        u = Transfer.find(code).user
+      end
+      if type == "registration"
+        date = CourseRegister.find(code).created_at
+        u = CourseRegister.find(code).user
+      end
+    end
+    
+    "#{date.strftime("%d-%b-%Y, %I:%M %p")}<br /><strong>by:</strong><br />#{u.staff_col}"
   end
   
   def content(u)
