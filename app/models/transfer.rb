@@ -807,9 +807,9 @@ class Transfer < ActiveRecord::Base
     end
     
     if c == contact
-      from_message+credit_note
+      return from_message+credit_note
     else
-      to_message+credit_note
+      return to_message+credit_note
     end
   end
   
