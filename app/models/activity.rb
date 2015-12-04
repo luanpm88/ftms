@@ -118,15 +118,15 @@ class Activity < ActiveRecord::Base
       code = item_code.split("_")[1]
       
       if type == "transfer"
-        "<span class=\"note_content\">"+Transfer.find(code).note_log(contact).html_safe+"</span>"
+        return "<span class=\"note_content\">"+Transfer.find(code).note_log(contact).html_safe+"</span>"
       end
       if type == "registration"
-        "<span class=\"note_content\">"+CourseRegister.find(code).note_log.html_safe+"</span>"
+        return "<span class=\"note_content\">"+CourseRegister.find(code).note_log.html_safe+"</span>"
       end
     else
       edit_box = u == user ? "<a class=\"note_edit_button\" href=\"#edit\"><i class=\"icon-pencil\"></i> Edit</a><div class=\"note_log_edit_box\" item-id=\"#{id.to_s}\"><textarea class=>#{note}</textarea><br /><button class=\"btn btn-small btn-primary note_save_button\">Save</button><button class=\"btn btn-small btn-white note_cancel_button\">Cancel</button></div>" : ""
-      "<span class=\"note_content\">"+note.gsub("\n","<br />").html_safe+"</span>"+edit_box
-    end    
+      return "<span class=\"note_content\">"+note.gsub("\n","<br />").html_safe+"</span>"+edit_box
+    end
   end
   
   def staff_col
