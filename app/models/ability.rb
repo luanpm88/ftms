@@ -123,6 +123,7 @@ class Ability
         !c.statuses.include?("delete_pending")
       end
       can :transfer_money_history, Contact
+      can :transfer_hour_history, Contact
       
       if user.has_role? "export_contact_information"
         can :export_mobiles, Contact

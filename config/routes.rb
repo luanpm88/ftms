@@ -489,6 +489,7 @@ Hkerp::Application.routes.draw do
       post :not_related_contacts
       
       get :transfer_money_history
+      get :transfer_hour_history
     end
   end
 

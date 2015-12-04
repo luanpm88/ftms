@@ -227,8 +227,11 @@ class Transfer < ActiveRecord::Base
       arr = []
       hours.each do |r|
         arr << "<strong>"+CourseType.find(r[0].split("-")[0]).short_name+"-"+Subject.find(r[0].split("-")[1]).name+": "+r[1].to_s+" hours</strong>" if r[1].to_f > 0
-      end      
-      arr << "<br /><div>Note: #{note}</div>" if note.present?
+      end
+      
+      if !short
+        arr << "<br /><div>Note: #{note}</div>" if note.present?
+      end
       
       return arr.join("<br />")
 

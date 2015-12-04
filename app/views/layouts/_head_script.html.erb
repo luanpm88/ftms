@@ -149,7 +149,7 @@
 			  input_budget_hour = parseFloat($(this).val().replace(/,/g,""))
 			}
 			var remain = 0 - input_budget_hour
-			$(".item_budget_hour_"+id).html(ReplaceNumberWithDots(remain.toFixed(0)))
+			$(".item_budget_hour_"+id).html(ReplaceNumberWithDots(remain.toFixed(2)))
 		  })
 		  $(".budget_hour").each(function() {
 			var id = $(this).attr("rel")
@@ -162,14 +162,14 @@
 				
 				if (vv > budget_hour) {
 					vv = budget_hour
-					$(this).val(ReplaceNumberWithDots(budget_hour.toFixed(0)))
+					$(this).val(ReplaceNumberWithDots(budget_hour.toFixed(2)))
 				}
 				
 				input_budget_hour += vv
 			  }
 			})
 			var remain = budget_hour - input_budget_hour
-			$(".item_budget_hour_"+id).html(ReplaceNumberWithDots(remain.toFixed(0)))
+			$(".item_budget_hour_"+id).html(ReplaceNumberWithDots(remain.toFixed(2)))
 		  })
 		
 		
@@ -4000,6 +4000,20 @@
 				height: "70%",
 				autoSize: false,
 				href: '<%= transfer_money_history_contacts_path %>?id='+iid,
+				type: 'ajax'
+			});
+		});
+		
+		// hour transfer history
+		$('.transfer_hour_log_button').on('click', function(){
+			var iid = $(this).attr("contact-id");
+			var pd = $(this).attr("program-id");
+			var sd = $(this).attr("subject-id");
+			window.parent.$.fancybox({
+				width: "70%",
+				height: "70%",
+				autoSize: false,
+				href: '<%= transfer_hour_history_contacts_path %>?id='+iid+"&program_id="+pd+"&subject_id="+sd,
 				type: 'ajax'
 			});
 		});

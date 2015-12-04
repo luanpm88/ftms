@@ -1796,7 +1796,9 @@ class Contact < ActiveRecord::Base
   def display_budget_hour
     str = []
     budget_hour.each do |col|
-      str << CourseType.find(col[0].split("-")[0]).short_name+"-"+Subject.find(col[0].split("-")[1]).name+": "+col[1].to_s if col[1] != 0
+      str << "<a program-id=\"#{CourseType.find(col[0].split("-")[0]).id.to_s}\" subject-id=\"#{Subject.find(col[0].split("-")[1]).id.to_s}\" contact-id=\"#{self.id.to_s}\" title=\"View Derferred/Tranferred Hour history\" href=\"#\" class=\"transfer_log_button transfer_hour_log_button\">"+
+  			  "<i class=\"icon-time\"></i>"+
+			  "</a>"+CourseType.find(col[0].split("-")[0]).short_name+"-"+Subject.find(col[0].split("-")[1]).name+": "+col[1].to_s if col[1] != 0
     end
     return str.join("<br >").html_safe
   end
@@ -1815,7 +1817,7 @@ class Contact < ActiveRecord::Base
       row = {}
       row[:datetime] = t.created_at
       by = t.contact != t.to_contact ? " of #{t.contact.contact_link}" : ""
-      row[:content] = "Deferred/Transferred course#{by}:"
+      row[:content] = t.from_hour.nil? ? "Deferred/Transferred course#{by}:" : "Deferred/Transferred hour#{by}:"
       row[:content] += t.diplay_from_course(true)
       row[:sign] = "+"
       row[:money] = t.money
@@ -1834,6 +1836,56 @@ class Contact < ActiveRecord::Base
       row[:money] = t.money
       logs << row
     end
+    
+    return (logs.sort! { |a,b| a[:datetime] <=> b[:datetime] })
+  end
+  
+  def budget_hour_logs(program_id, subject_id)
+    logs = []
+    
+    active_received_transfers.where(to_type: "hour").each do |transfer|
+      if transfer.course.course_type_id == program_id.to_i and transfer.course.subject_id == subject_id.to_i        
+        row = {}
+        row[:datetime] = transfer.created_at
+        by = transfer.contact != transfer.to_contact ? " of #{transfer.contact.contact_link}" : ""
+        row[:content] = "Deferred/Transferred Course#{by}:"
+        row[:content] += transfer.diplay_from_course(true)
+        row[:sign] = "+"
+        row[:hour] = transfer.hour
+        logs << row
+      end
+    end
+    active_contacts_courses.joins("LEFT JOIN courses ON courses.id = contacts_courses.course_id").each do |cc|
+      if cc.course.course_type_id == program_id.to_i and cc.course.subject_id == subject_id.to_i and cc.hour.to_f > 0
+        t = ContactsCourse.find(cc.id)
+        row = {}
+        row[:datetime] = t.created_at
+        row[:content] = "Registered Course:"
+        full_course = (t.full_course == true and t.course.upfront != true) ? " <span class=\"active\">[full]</span>" : ""
+        row[:content] += "<div class=\"nowrap\"><strong>"+t.course.display_name+full_course+"</strong></div>"
+        row[:content] += "<div class=\"courses_phrases_list\">"+Course.render_courses_phrase_list(t.courses_phrases.joins(:phrase).order("phrases.name, courses_phrases.start_at"),t)+"</div>" if !t.courses_phrases.empty?
+        row[:sign] = "-"
+        row[:hour] = t.hour
+        logs << row
+      end
+    end
+    
+    active_transfers.where.not(from_hour: nil).each do |transfer|
+        total = 0.0
+        JSON.parse(transfer.from_hour).each do |row|
+          tr = Transfer.find(row[0])
+          if tr.course.course_type_id == program_id.to_i and tr.course.subject_id == subject_id.to_i
+            total += row[1].to_f
+          end
+        end
+        row = {}
+        row[:datetime] = transfer.created_at
+        row[:content] = "Deferred/Transferred <strong>"+total.to_s+"</strong> hour(s) for <strong>#{ApplicationController.helpers.format_price(transfer.money)}</strong>"
+        row[:sign] = "-"
+        row[:hour] = total
+        logs << row
+    end
+
     
     return (logs.sort! { |a,b| a[:datetime] <=> b[:datetime] })
   end

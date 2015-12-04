@@ -8636,7 +8636,7 @@ h5.list_title {
 .row_not_sure td:first-child {
     border-left: solid 4px red;
 }
-.transfer_money_log_button {
+.transfer_log_button {
     background: #0aa699 none repeat scroll 0 0;
     border-radius: 4px;
     color: #fff;
@@ -8646,7 +8646,7 @@ h5.list_title {
     padding: 3px 5px;
     margin-right: 5px;
 }
-.transfer_money_log_button:hover {
+.transfer_log_button:hover {
     color: #fff;
     opacity: 0.9;
 }

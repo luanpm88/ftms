@@ -4,9 +4,13 @@ class ContactsController < ApplicationController
   include ContactsHelper
   
   load_and_authorize_resource
-  before_action :set_contact, only: [:transfer_money_history, :print, :part_info, :remove_related_contact, :delete, :course_register, :ajax_quick_info, :ajax_tag_box, :ajax_edit, :ajax_update, :show, :edit, :update, :destroy, :ajax_destroy, :ajax_show, :ajax_list_agent, :ajax_list_supplier_agent]
+  before_action :set_contact, only: [:transfer_hour_history, :transfer_money_history, :print, :part_info, :remove_related_contact, :delete, :course_register, :ajax_quick_info, :ajax_tag_box, :ajax_edit, :ajax_update, :show, :edit, :update, :destroy, :ajax_destroy, :ajax_show, :ajax_list_agent, :ajax_list_supplier_agent]
   
   def transfer_money_history
+    render layout: nil
+  end
+  
+  def transfer_hour_history
     render layout: nil
   end
   
