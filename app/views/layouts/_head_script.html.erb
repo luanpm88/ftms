@@ -1542,10 +1542,14 @@
 				var count = 0
 				$(".datatable-contacts tr").each(function() {
 					if (count > 0) {
+						var cf = "";
+						if($(".contact-filter input[name='courses']").val()) {
+							cf =  $(".contact-filter input[name='courses']").val()
+						}
 						var row = $(this)
                         var iid = row.find(".main_part_info").attr("item_id")
 						datatable_contact_hash[count] = $.ajax({
-						  url: '<%= part_info_contacts_path %>?id='+iid,
+						  url: '<%= part_info_contacts_path %>?id='+iid+'&courses='+cf,
 						  success: function(data, textStatus, jqXHR)
 						  {
 							row.find("td").eq(2).html(data.col_2)
