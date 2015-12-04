@@ -55,7 +55,8 @@ class CourseRegister < ActiveRecord::Base
   
   def add_note_log
     if !contacts_courses.empty? and note_logs.empty? and parent_id == nil
-      contact.activities.create(user_id: user.id, note: "auto", item_code: "registration_#{self.id.to_s}", created_at: self.created_at)
+      a = contact.activities.create(user_id: user.id, note: "auto", item_code: "registration_#{self.id.to_s}", created_at: self.created_at)
+      a.update_attribute(created_at: self.created_at)
     end
   end
   
