@@ -808,7 +808,7 @@ class Transfer < ActiveRecord::Base
     
     if c == contact
       from_message+credit_note
-    elsif c == to_contact
+    else
       to_message+credit_note
     end
   end
