@@ -94,6 +94,10 @@ class Contact < ActiveRecord::Base
   after_validation :update_cache
   before_validation :check_type
   
+  def company_contacts
+    contacts.where("contacts.status IS NOT NULL AND contacts.status NOT LIKE ?", "%[deleted]%")
+  end
+  
   def related_contacts
     return [] if group.nil?
     return group.contacts.where.not(id: self.id)
