@@ -1,7 +1,7 @@
           <%= form_tag("", {class: "listing_form", method: "post", target: "_blank"}) do |f| %>
 				
 				<div class="contact-filter">
-					<input type="hidden" style="width:100%;margin-bottom: 5px;" name="company" data="<%= contacts_path(is_individual: false, format: "json") %>" class="select2-ajax-companies" value="<%= @contact.id if !@contact.nil? %>" text="<%= @contact.name if !@contact.nil? %>" data-placeholder="All"/>
+					<input type="hidden" name="company" value="<%= @contact.id if !@contact.nil? %>" />
 				</div>
 
                 <div class="row">                  

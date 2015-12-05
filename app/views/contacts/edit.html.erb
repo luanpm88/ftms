@@ -44,8 +44,8 @@
 								<li class="<%= "active" if ["information",nil].include?(params[:tab]) %>"><a href="#information">Information</a></li>
 								
 								<% if @contact.is_individual == false %>
-										<li class="<%= "active" if ["studenta"].include?(params[:tab]) %>">
-												<a href="#studenta">Student List (<%= @contact.company_contacts.count %>)</a>
+										<li class="<%= "active" if ["student"].include?(params[:tab]) %>">
+												<a href="#student">Student List (<%= @contact.company_contacts.count %>)</a>
 										</li>
 								<% end %>
 								
@@ -110,7 +110,7 @@
 								</div>
 						 
 								<% if @contact.is_individual == false %>
-										<div class="tab-pane <%= "active" if ["studenta",nil].include?(params[:tab]) %>" id="studenta">
+										<div class="tab-pane <%= "active" if ["student"].include?(params[:tab]) %>" id="student">
 								
 												<%= render "student" %>
 								
