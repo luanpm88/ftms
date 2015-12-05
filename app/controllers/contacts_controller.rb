@@ -80,6 +80,8 @@ class ContactsController < ApplicationController
     @student = @contact
     @activity = Activity.new(contact_id: @contact.id)
     
+    @types = [] #[ContactType.student.id.to_s,ContactType.inquiry.id.to_s,ContactType.lecturer.id.to_s]
+    
     if params[:from_date].present? && params[:to_date].present?
       @from_date = params[:from_date].to_date
       @to_date =  params[:to_date].to_date.end_of_day
@@ -653,6 +655,39 @@ class ContactsController < ApplicationController
       log.save
       
       render text: "Contacts ware successfully merged.!"
+    end      
+  end
+  
+  def merge_companies
+    if !params[:check_all_page].nil?
+      params[:intake_year] = params["filter"]["intake(1i)"] if params["filter"].present?
+      params[:intake_month] = params["filter"]["intake(2i)"] if params["filter"].present?
+      
+      if params[:is_individual] == "false"
+        params[:contact_types] = nil
+      end        
+      
+      @contacts = Contact.filters(params, current_user)
+    else
+      @contacts = Contact.where(id: params[:ids])
+    end
+    
+    valid_com = true
+    @contacts.each do |c|
+      valid_com = false
+      break
+    end
+    
+    if @contacts.count > 15
+      render text: "<span style=\"color: red\">Invalid companies selected! Make sure selected items are company and the same contact.</span>"
+    else
+      contact = Contact.merge_companies(@contacts)
+      
+      #log = UserLog.new(user_id: current_user.id, title: "Merge Companies")
+      #log.render_content(@contacts, params)
+      #log.save
+      
+      render text: "Company ware successfully merged.! View company: <strong>#{contact.contact_link}</strong>"
     end      
   end
   

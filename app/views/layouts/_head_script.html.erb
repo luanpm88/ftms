@@ -1449,7 +1449,9 @@
 						d.contact_types = types;
 					}
 					
-					d.is_individual = $(".contact-filter select[name=is_individual]").select2("val");
+					if($(".contact-filter select[name=is_individual]").val()) {
+						d.is_individual = $(".contact-filter select[name=is_individual]").select2("val");
+					}
 					
 					if($(".contact-filter select[name='tags[]']").val()) {
 						d.tags = $(".contact-filter select[name='tags[]'").val()
@@ -1606,6 +1608,7 @@
 							d.last_id =  $(".main_merge_row").last().attr("last_id")
 						}
 					}
+					d.is_individual = $(".merge-contact-filter select[name=is_individual]").select2("val")
 				}
 			},
 			"columnDefs": [ { "targets": [0,2,3,4,5,7], "orderable": false } ],

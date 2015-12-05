@@ -35,8 +35,17 @@
 				</div>
 
 			
-                <div class="row order-filters hidden">
-					  <div class="col-md-3 merge-contact-filter">
+                <div class="row order-filters merge-contact-filter">
+					<div class="col-md-3">
+						<h4>Contact Types</h4>
+							<div class="input-with-icon right">
+											<select name="is_individual" class="modern_select is_individual width100">
+												<option value="true">Individual</option>
+												<option value="false">Company/Organization</option>
+											</select>											
+									  </div>
+					</div>
+					  <div class="col-md-3">
 						  <h4>Type</h4>							
 						  <%= select_tag 'type', options_for_select([["Find Related Contacts","related"],["Merged Contacts","merged"]], params[:type]), class: "modern_select width100" %>
 					  </div>
@@ -54,6 +63,7 @@
 							<ul class="dropdown-menu">                        
 								<li><a href="#" rel="<%= do_merge_contacts_path(tab_page: 1) %>" type="ajax">Merge Selected Contacts</a></li>
 								<li><a href="#" rel="<%= not_related_contacts_contacts_path(tab_page: 1) %>" type="ajax">Not Related Contacts</a></li>
+								<li><a href="#" rel="<%= merge_companies_contacts_path(tab_page: 1) %>" type="ajax">Merge Companies</a></li>
 							</ul>
 						</div>
 						<!--<div class="checkbox check-default check_all_page_but" style="display: inline-block">

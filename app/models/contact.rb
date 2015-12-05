@@ -95,7 +95,7 @@ class Contact < ActiveRecord::Base
   before_validation :check_type
   
   def company_contacts
-    contacts.where("contacts.status IS NOT NULL AND contacts.status NOT LIKE ?", "%[deleted]%")
+    contacts.where(draft_for: nil).where("contacts.status IS NOT NULL AND contacts.status NOT LIKE ?", "%[deleted]%")
   end
   
   def related_contacts
@@ -498,7 +498,11 @@ class Contact < ActiveRecord::Base
     records = []
     used_ids = []
     loop do     
-      record = self.filters(params, user).where(cache_group_id: nil).where("id > ?", current_id).order("id").first
+      record = self.filters(params, user)
+      
+      record = record.where("contacts.is_individual = #{params[:is_individual]}") if params[:is_individual].present?
+      
+      record = record.where(cache_group_id: nil).where("id > ?", current_id).order("id").first
       current_id = record.id if record.present?
       used_ids << record.id if record.present?
       if record.present?
@@ -1224,7 +1228,7 @@ class Contact < ActiveRecord::Base
   end
   
   def contacts_link
-    ActionController::Base.helpers.link_to("["+contacts.where(draft_for: nil).count.to_s+"]", {controller: "contacts", action: "index", company_id: self.id, tab_page: 1}, title: "#{display_name}: Contact List", class: "tab_page")
+    ActionController::Base.helpers.link_to("["+company_contacts.count.to_s+"]", {controller: "contacts", action: "index", company_id: self.id, tab_page: 1}, title: "#{display_name}: Contact List", class: "tab_page")
   end
   
   def json_encode_course_type_ids_names
@@ -2217,7 +2221,7 @@ class Contact < ActiveRecord::Base
           contact.update_contact_type_from_old_student
           
           contact.add_status("active")
-          uu = User.where(:email => "support@hoangkhang.com.vn").first
+          uu = User.where(:email => "soft.support@hoangkhang.com.vn").first
           uu = User.first if uu.nil?
           contact.save_draft(uu)
           contact.update_info
@@ -2249,7 +2253,7 @@ class Contact < ActiveRecord::Base
       if ct.nil?
         ct = CourseType.create(short_name: program_name.upcase, name: program_name.upcase)
         ct.add_status("new_pending")
-        uu = User.where(:email => "support@hoangkhang.com.vn").first
+        uu = User.where(:email => "soft.support@hoangkhang.com.vn").first
         uu = User.first if uu.nil?
         ct.save_draft(uu)
       end
@@ -2265,7 +2269,7 @@ class Contact < ActiveRecord::Base
       if ct.nil?
         ct = CourseType.create(short_name: program_name.upcase, name: program_name.upcase)
         ct.add_status("new_pending")
-        uu = User.where(:email => "support@hoangkhang.com.vn").first
+        uu = User.where(:email => "soft.support@hoangkhang.com.vn").first
         uu = User.first if uu.nil?
         ct.save_draft(uu)
       end   
@@ -2443,7 +2447,7 @@ class Contact < ActiveRecord::Base
         old_ct = CourseType.main_course_types.where("course_types.status IS NOT NULL AND course_types.status NOT LIKE ?", "%[deleted]%").where("LOWER(short_name) = '#{old}'").first
         if old_ct.present? && main_ct.present?     
           old_ct.set_statuses(["deleted"])
-          uu = User.where(:email => "support@hoangkhang.com.vn").first
+          uu = User.where(:email => "soft.support@hoangkhang.com.vn").first
           uu = User.first if uu.nil?
           old_ct.save_draft(uu)
           
@@ -2545,6 +2549,40 @@ class Contact < ActiveRecord::Base
     return group
   end
   
+  def self.merge_companies(cs)
+    mainc = cs.first
+    
+    cs.each do |c|
+      if c.company_contacts.count > mainc.company_contacts.count
+        mainc = c
+      end      
+    end
+    
+    names = [mainc.name]
+    tax_codes = [mainc.tax_code]
+    addresses = [mainc.address]
+    cs.where.not(id: mainc.id).each do |c|
+      names << c.name if c.name.present?
+      tax_codes << c.tax_code if c.tax_code.present?
+      addresses << c.address if c.address.present?
+      
+      c.contacts.update_all(referrer_id: mainc.id)
+      
+      uu = User.where(:email => "soft.support@hoangkhang.com.vn").first
+      uu = User.first if uu.nil?
+      c.set_statuses(["deleted"])
+      c.update_info
+      c.save_draft(uu)
+    end
+    mainc.update_attribute(:name, names.join(" | "))
+    mainc.update_attribute(:tax_code, tax_codes.join(" | "))
+    mainc.update_attribute(:address, addresses.join(" | "))
+    mainc.save
+    mainc.update_info
+    
+    return mainc
+  end
+  
   def group
     return nil if cache_group_id.nil?
     RelatedContact.where(id: cache_group_id).first
@@ -2566,7 +2604,7 @@ class Contact < ActiveRecord::Base
       #puts com.nil?
       #puts com
       if !com.present?
-        uu = User.where(:email => "support@hoangkhang.com.vn").first
+        uu = User.where(:email => "soft.support@hoangkhang.com.vn").first
         uu = User.first if uu.nil?
         
         new_com = Contact.create(name: old_com.strip,

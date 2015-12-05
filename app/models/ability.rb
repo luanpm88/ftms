@@ -131,6 +131,7 @@ class Ability
       end
         
       can :merge_contacts, Contact
+      can :merge_companies, Contact
       can :merge_contacts_datatable, Contact
       can :remove_related_contact, Contact
       can :undo_remove_related_contact, Contact

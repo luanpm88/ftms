@@ -490,6 +490,8 @@ Hkerp::Application.routes.draw do
       
       get :transfer_money_history
       get :transfer_hour_history
+      
+      post :merge_companies
     end
   end
 
