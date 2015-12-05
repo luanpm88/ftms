@@ -1,0 +1,49 @@
+          <%= form_tag("", {class: "listing_form", method: "post", target: "_blank"}) do |f| %>
+				
+				<div class="contact-filter">
+					<input type="hidden" style="width:100%;margin-bottom: 5px;" name="company" data="<%= contacts_path(is_individual: false, format: "json") %>" class="select2-ajax-companies" value="<%= @contact.id if !@contact.nil? %>" text="<%= @contact.name if !@contact.nil? %>" data-placeholder="All"/>
+				</div>
+
+                <div class="row">                  
+                    <div class="col-md-12">
+						<h3>Listing  <span class="semi-bold">Contacts</span></h3>
+						
+                        <div class="grid simple">
+                            
+                            <div class="grid-body no-border">
+                                 
+									
+									<table class="table table-striped no-more-tables datatable-contacts no-filter">
+										<thead>
+											<tr>                                                
+												<th>
+													<div class="checkbox check-default">
+														<input id="checkbox_all" type="checkbox" value="all" class="checkall">
+														<label for="checkbox_all"></label>
+													</div>
+												</th>
+												<!--<th width="1%" class="text-center">Avatar</th>-->
+                                                <th class="text-left">Name/Info</th>												
+												<th class="text-left">Type: Program</th>
+												<th class="text-center" style="width: 1px">
+													<span class="personal-box">Course</span>
+													<span class="company-box">Student</span>
+												</th>
+												<!--<th class="text-left">Company</th>-->
+												<th class="text-center">Tag</th>
+												<th class="text-center">Created on</th>
+												<th class="text-center">Education Consultant</th>												
+												<th class="text-center">Status</th>
+												<th class="text-right">Actions</th>
+											</tr>
+										</thead>                                        
+									</table>
+									
+								
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+				
+			<% end %>

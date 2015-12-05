@@ -687,7 +687,7 @@ class ContactsController < ApplicationController
       #log.render_content(@contacts, params)
       #log.save
       
-      render text: "Company ware successfully merged.! View company: <strong>#{contact.contact_link}</strong>"
+      render text: "Company ware successfully joined.! View & Edit company: <strong>#{contact.contact_link}</strong>"
     end      
   end
   
