@@ -7,9 +7,9 @@
                  <i class=""></i>
                  <div class="input-with-iconz right">
                       <select name="contacts_courses[<%= params[:number].to_s %>][price]" class="text-right modern_select width100 required price_course">
-                        <% @course.prices.each do |price| %>
-                            <option value="<%= price.amount %>" class="text-right"><%= format_price(price.amount) %></option>
-                        <% end %>
+                              <% @course.prices.each do |price| %>
+                                  <option value="<%= price.amount %>" class="text-right"><%= format_price(price.amount) %></option>
+                              <% end %>
                               <option value="no_price" class="text-right">No Price</option>
                       </select>
                  </div>
