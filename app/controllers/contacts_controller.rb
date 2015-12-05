@@ -674,11 +674,11 @@ class ContactsController < ApplicationController
     
     valid_com = true
     @contacts.each do |c|
-      valid_com = false
+      valid_com = false if c.is_individual
       break
     end
     
-    if @contacts.count > 15
+    if @contacts.count > 15 or !valid_com
       render text: "<span style=\"color: red\">Invalid companies selected! Make sure selected items are company and the same contact.</span>"
     else
       contact = Contact.merge_companies(@contacts)
