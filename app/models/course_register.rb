@@ -710,7 +710,7 @@ class CourseRegister < ActiveRecord::Base
   end
   
   def paid?(date=nil)
-    return false if no_price? && paid_amount(date).to_f == 0
+    return false if no_price? && company_payment_records.empty?
     paid_amount(date) == total
   end
   

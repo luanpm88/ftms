@@ -154,7 +154,7 @@ class Activity < ActiveRecord::Base
       self.account_manager = contact.account_manager
       self.save
     end
-    account_manager.staff_col
+    user.staff_col
   end
   
   def delete

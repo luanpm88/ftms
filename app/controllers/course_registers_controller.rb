@@ -23,6 +23,8 @@ class CourseRegistersController < ApplicationController
     @course_register = CourseRegister.new
     @contact = !params[:contact_id].present? ? Contact.new : Contact.find(params[:contact_id])
     
+    @course_register.payment_type = @contact.payment_type
+    @course_register.sponsored_company = @contact.referrer if !@contact.referrer.nil?
     
     
     @course_register.created_date = Time.now.strftime("%d-%b-%Y")
@@ -68,11 +70,12 @@ class CourseRegistersController < ApplicationController
   # PATCH/PUT /course_registers/1
   # PATCH/PUT /course_registers/1.json
   def update
-    @course_register.update_contacts_courses(params[:contacts_courses])
+    @course_register.update_contacts_courses(params[:contacts_courses]) if !params[:contacts_courses].nil?
     @course_register.update_books_contacts(params[:books_contacts]) if !params[:books_contacts].nil?
     
     respond_to do |format|
-      if @course_register.save
+      if @course_register.save and @course_register.update(course_register_params)
+        
         Contact.find(@course_register.contact.id).update_info
         
         @course_register.update_statuses

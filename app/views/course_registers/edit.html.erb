@@ -625,10 +625,10 @@
 										<div class="form-group">
 											 <label class="form-label"><label>Payment type</label></label>
 											 <span class="help">(required)</span>
-											 <div class="input-with-icon right">                                       
+											 <div class="input-with-icon right">
 												  <select name="course_register[payment_type]" class="modern_select width100 required">
-													   <option value="self-financed" <%= 'selected="selected"' if @contact.payment_type == 'self-financed' %>>Self-financed</option>
-													   <option value="company-sponsored" <%= 'selected="selected"' if @contact.payment_type == 'company-sponsored' %>>Company-sponsored</option>
+													   <option value="self-financed" <%= 'selected="selected"' if @course_register.payment_type == 'self-financed' %>>Self-financed</option>
+													   <option value="company-sponsored" <%= 'selected="selected"' if @course_register.payment_type == 'company-sponsored' %>>Company-sponsored</option>
 												  </select>
 											 </div>
 										</div>										
@@ -643,7 +643,7 @@
 												  <i class=""></i>
 												  <div class="input-with_add_but">
 													   <%= link_to '<i class="icon-plus"></i>'.html_safe, new_contact_path(:is_individual => false, tab_page: 1), title: "New Company", :class => 'btn btn-sm btn-small btn-white add-agent-button tab_page' %>
-													   <input style="width:100%;margin-bottom: 5px;" name="course_register[sponsored_company_id]" data="<%= contacts_path(is_individual: false, format: "json") %>" class="select2-ajax-contacts required" value="<%= @contact.referrer_id %>" text="<%= @contact.referrer.name if !@contact.referrer.nil? %>" />
+													   <input style="width:100%;margin-bottom: 5px;" name="course_register[sponsored_company_id]" data="<%= contacts_path(is_individual: false, format: "json") %>" class="select2-ajax-contacts required" value="<%= @course_register.sponsored_company_id %>" text="<%= @course_register.sponsored_company.name if !@course_register.sponsored_company.nil? %>" />
 												  </div>
 											 </div>
 										</div>

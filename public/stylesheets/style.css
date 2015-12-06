@@ -8650,3 +8650,6 @@ h5.list_title {
     color: #fff;
     opacity: 0.9;
 }
+.tab-content {
+    padding-bottom: 100px;
+}
