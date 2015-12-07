@@ -518,6 +518,9 @@ class Course < ActiveRecord::Base
     end    
     return result
   end
+  
+  
+  
   def self.active_courses(filter=nil)
     result = self.main_courses(filter).where("courses.status IS NOT NULL AND courses.status LIKE ?", "%[active]%")
   

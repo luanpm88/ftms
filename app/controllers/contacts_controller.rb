@@ -620,10 +620,17 @@ class ContactsController < ApplicationController
   end
   
   def part_info
+    half_course = ""
+    if params[:courses].present?
+      c = @contact.active_course(params[:courses].to_i)
+      half_course = "<h5 class=\"text-left\">#{c[:course].name} <span class=\"out_of_date\">[Half]</span>:</h5>"+Course.render_courses_phrase_list(c[:courses_phrases]) if c.present? and c[:full_course] != true
+    end
+    
+    
     render json: {
       col_1: '<div class="text-left"><strong>'+@contact.contact_link+"</strong></div>"+'<div class="text-left">'+@contact.html_info_line.html_safe+@contact.referrer_link+"</div>"+@contact.picture_link,
       col_2: '<div class="text-left">'+@contact.course_types_name_col+"</div>",
-      col_3: '<div class="text-center">'+@contact.course_count_link+@contact.display_transferred_courses_phrases(params[:courses])+"</div>",
+      col_3: '<div class="text-center">'+@contact.course_count_link+@contact.display_transferred_courses_phrases(params[:courses])+half_course+"</div>",
       col_4: '<div class="text-center contact_tag_box" rel="'+@contact.id.to_s+'">'+ContactsController.helpers.render_contact_tags_selecter(@contact)+"</div>",
       col_5: '<div class="text-center">'+@contact.created_at.strftime("%d-%b-%Y")+"<br /><strong>by:</strong><br />"+@contact.user.staff_col+"</div>",
       col_6: '<div class="text-center">'+@contact.account_manager_col+"</div>",

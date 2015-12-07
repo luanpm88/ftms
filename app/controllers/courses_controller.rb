@@ -274,6 +274,8 @@ class CoursesController < ApplicationController
       @money = @to_contact.active_course(@course.id)[:money]
       @remain = @to_contact.active_course(@course.id)[:remain]
       @full_course = @to_contact.active_course(@course.id)[:full_course]
+
+      
       @type = "from"
     end
     
@@ -284,8 +286,11 @@ class CoursesController < ApplicationController
     @contact = Contact.find(params[:contact_id])
     @to_contact = Contact.find(params[:to_contact_id])
     @transfer = @course.transfers.new
-    @transfer.contact = @to_contact
+    @transfer.contact = @contact
+    @transfer.to_contact = @to_contact
     @remain = @contact.active_course(@course.id)[:remain]
+    
+    @transfer.all_to_courses
     
     render layout: nil
   end

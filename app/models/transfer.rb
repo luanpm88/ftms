@@ -837,4 +837,32 @@ class Transfer < ActiveRecord::Base
     end    
   end
   
+  def all_to_courses
+    result = Course.where(parent_id: nil)
+    result = result.where("courses.status IS NOT NULL AND courses.status NOT LIKE ?", "%[deleted]%")
+    
+    if self.course.course_type_id
+      result = result.where(course_type_id: self.course.course_type_id)
+    end
+    if self.course.subject_id
+      result = result.where(subject_id: self.course.subject_id)
+    end
+    
+    if self.course.upfront == true
+      result = result.where(upfront: false)
+    end
+    if self.course.upfront == false
+      if contact == to_contact
+        result = result.where(upfront: true)
+      end
+    end
+    
+    result_arr = []
+    result.each do |c|
+      result_arr << c if !to_contact.learned_courses.include?(c)
+    end
+
+    return result_arr
+  end
+  
 end

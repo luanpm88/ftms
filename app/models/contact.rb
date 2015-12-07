@@ -257,7 +257,7 @@ class Contact < ActiveRecord::Base
     @records = @records.where("contacts.referrer_id IN (#{params[:companies]})") if params[:companies].present?
     
     if params[:courses].present?
-      @records = @records.where("contacts.cache_courses LIKE ?", "%[#{params[:courses]}]%")
+      @records = @records.where("contacts.cache_courses LIKE ?", "%[#{params[:courses]},%")
     end
     
     if params[:phrases].present?
@@ -415,18 +415,23 @@ class Contact < ActiveRecord::Base
       order += " "+params["order"]["0"]["dir"]
     else
       order = "contacts.name"
-    end    
+    end
+    
+    total = @records.count
     
     order = "contacts.name, contacts.email DESC, contacts.mobile DESC" if params["search"]["value"].present?
     
-    if params[:courses].present?
-      order = "cache_transferred_courses_phrases DESC, "+order
+    
+    if params[:courses].present? and !Course.find(params[:courses]).courses_phrases.empty?
+      phrase_pattern = (Course.find(params[:courses]).courses_phrases.map {|cp| "contacts.cache_transferred_courses_phrases LIKE '%[#{cp.id.to_s}]%'"}).join(" OR ")
+      @records = @records.select("*, CASE WHEN (#{phrase_pattern}) THEN 0 WHEN contacts.cache_courses LIKE '%[#{params[:courses]},half]%' THEN 1 ELSE 2 END AS transferred_order")
+      order = "transferred_order, "+order
     end
     
     @records = @records.order(order) if !order.nil?
     #@records = @records.order(order) if !order.nil? && !params["search"]["value"].present?
     
-    total = @records.count
+    
     @records = @records.limit(params[:length]).offset(params["start"])
     data = []
     
@@ -1048,7 +1053,7 @@ class Contact < ActiveRecord::Base
                 }
   
   def self.full_text_search(params)
-    records = self.active_contacts
+    records = self.main_contacts
     if params[:is_individual].present?
       records = records.where(is_individual: params[:is_individual])
     end
@@ -1056,7 +1061,7 @@ class Contact < ActiveRecord::Base
       cids = Contact.joins(:contact_types).where(contact_types: {id: params[:contact_type_id]}).map(&:id)
       records = records.where(id: cids)
     end
-    records = records.search(params[:q]) if params[:q].present?
+    records = records.where("LOWER(contacts.cache_search) LIKE ? OR LOWER(contacts.name) LIKE ? OR UPPER(contacts.name) LIKE ?", "%#{params[:q].mb_chars.strip.downcase}%", "%#{params[:q].mb_chars.strip.downcase}%", "%#{params[:q].mb_chars.strip.upcase}%") if params[:q].present?
     records.order("name").limit(50).map {|model| {:id => model.id, :text => model.display_name(params)} }
   end
   
@@ -2144,7 +2149,7 @@ class Contact < ActiveRecord::Base
   def real_courses
     arr = []
     active_courses_with_phrases.each do |row|
-      arr << row[:course]
+      arr << row
     end
     
     return arr
@@ -2160,7 +2165,7 @@ class Contact < ActiveRecord::Base
   end
   
   def update_cache_courses
-    self.update_attribute(:cache_courses, "["+real_courses.map(&:id).join("][")+"]")
+    self.update_attribute(:cache_courses, "["+(real_courses.map {|c| "#{c[:course].id.to_s},#{(c[:full_course] == true ? "full" : "half")}"}).join("][")+"]")
   end
   
   def update_cache_phrases
@@ -2373,7 +2378,7 @@ class Contact < ActiveRecord::Base
     str = []
     list.each do |row|
       title = show_title ? "<h5 class=\"text-left\">Deferred Phrase(s):</h5>" : ""
-      str << ("<div class=\"text-left nowrap items_confirmed\">#{title}<h5><strong>#{Course.find(row[0]).display_name}</strong></h5>"+Course.render_courses_phrase_list(row[1])+"</div>").html_safe
+      str << ("<div class=\"text-left items_confirmed\">#{title}<h5><strong>#{Course.find(row[0]).display_name}</strong></h5>"+Course.render_courses_phrase_list(row[1])+"</div>").html_safe
     end
     
     return str.join("<br />")

@@ -1,15 +1,16 @@
 <script>
 	
 	function fullCourseCheck() {
-		$(".full_course_checkbox").each(function() {
-			var container = $(this).parents(".phrase_list_container")
-			var checked = $(this).attr("checked") == "checked"			
+		$(".phrase_list_container").each(function() {
+			var container = $(this)
+			var input = container.find(".full_course_checkbox")
+			var checked = input.attr("checked") == "checked"			
 			var inputs = container.find("input.phrase_checkable")
 			
 			if(checked) {
 				inputs.attr("checked", true)
 				inputs.attr("disabled", true)
-				$(this).attr("disabled", false)
+				input.attr("disabled", false)
 				inputs.eq(1).trigger("change")
 			} else {
 				inputs.attr("disabled", false)
@@ -1550,6 +1551,7 @@
 						}
 						var row = $(this)
                         var iid = row.find(".main_part_info").attr("item_id")
+						
 						datatable_contact_hash[count] = $.ajax({
 						  url: '<%= part_info_contacts_path %>?id='+iid+'&courses='+cf,
 						  success: function(data, textStatus, jqXHR)
