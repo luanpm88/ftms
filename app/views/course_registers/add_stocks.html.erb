@@ -267,7 +267,7 @@
 													</th>
 													<th class="text-left">Name</th>
 													<th>Info</th>
-													<th><%= "Deferred Phrase(s)" if params[:courses].present? %></th>
+													<th><%= "Not Learned Phrase(s)" if params[:courses].present? %></th>
 													<th width="20%" class="text-center">Education Consultant</th>												
 												</tr>
 											</thead>
@@ -294,7 +294,7 @@
 																
 														</td>
 														<td>
-																<%= item.display_transferred_courses_phrases(params[:courses], false).html_safe %>
+																<%= item.display_not_learned_course(params[:courses]).html_safe %>
 														</td>
 														<td class="text-center">
 															<%= item.staff_col %>
