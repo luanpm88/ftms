@@ -267,7 +267,7 @@
 													</th>
 													<th class="text-left">Name</th>
 													<th>Info</th>
-													<th><%= "Not Learned Phrase(s)" if params[:courses].present? %></th>
+													<th><%= Course.find(params[:courses]).name if params[:courses].present? %></th>
 													<th width="20%" class="text-center">Education Consultant</th>												
 												</tr>
 											</thead>
