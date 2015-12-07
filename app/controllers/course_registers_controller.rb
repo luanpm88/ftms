@@ -280,7 +280,13 @@ class CourseRegistersController < ApplicationController
       end
     end
     
-    @contacts = @contacts.order("cache_transferred_courses_phrases DESC, name")
+    
+    if params[:courses].present? and !Course.find(params[:courses]).courses_phrases.empty?
+      phrase_pattern = (Course.find(params[:courses]).courses_phrases.map {|cp| "contacts.cache_transferred_courses_phrases LIKE '%[#{cp.id.to_s}]%'"}).join(" OR ")
+      @contacts = @contacts.select("*, CASE WHEN (#{phrase_pattern}) THEN 0 WHEN contacts.cache_courses LIKE '%[#{params[:courses]},half]%' THEN 1 ELSE 2 END AS transferred_order")
+      @contacts = @contacts.order("transferred_order, name")
+    end
+    
     
     @course = params[:courses].present? ? Course.find(params[:courses]) : nil
     
