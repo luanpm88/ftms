@@ -3079,6 +3079,9 @@
 					if($(".discount-program-filter select[name='status']").val()) {
 						d.status =  $(".discount-program-filter select[name='status']").val()
 					}
+					if($(".discount-program-filter input[name='valid_on']").val()) {
+						d.valid_on =  $(".discount-program-filter input[name='valid_on']").val()
+					}
 				}
 			},
 			"columnDefs": [ { "targets": [0,2,3,7,8,9], "orderable": false } ],

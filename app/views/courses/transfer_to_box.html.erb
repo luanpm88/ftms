@@ -7,7 +7,7 @@
 										   <i class=""></i>
 										   <div class="input-with_add_but">
 												<%= link_to '<i class="icon-plus"></i>'.html_safe, new_contact_path(contact_type_id: ContactType.lecturer.id, tab_page: 1), title: "New Lecturer", :class => 'btn btn-sm btn-small btn-white add-agent-button tab_page' %>
-												<input style="width:100%;margin-bottom: 5px;" name="transfer[to_contact_id]" data="<%= contacts_path(is_individual: "true", format: "json") %>" class="select2-ajax-contacts" value="<%= @transfer.to_contact_id %>" text="<%= @transfer.to_contact.display_name %>" />
+												<input style="width:100%;margin-bottom: 5px;" name="transfer[to_contact_id]" data="<%= contacts_path(email: "true", is_individual: "true", format: "json") %>" class="select2-ajax-contacts" value="<%= @transfer.to_contact_id %>" text="<%= @transfer.to_contact.display_name_long %>" />
 										   </div>
 									  </div>
 								 </div>

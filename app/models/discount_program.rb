@@ -68,6 +68,11 @@ class DiscountProgram < ActiveRecord::Base
       @records = @records.where("course_types.id IN (#{params["course_types"].join(",")})")
     end
     
+    if !params[:status].present?
+      @records = @records.where("discount_programs.start_at <= ?", params[:valid_on].to_datetime.beginning_of_day) if params[:valid_on].present?
+      @records = @records.where("discount_programs.end_at >= ?", params[:valid_on].to_datetime.end_of_day) if params[:valid_on].present?
+    end
+    
     @records = @records.search(params["search"]["value"]) if params["search"].present? && !params["search"]["value"].empty?
     
     return @records
@@ -219,6 +224,7 @@ class DiscountProgram < ActiveRecord::Base
   def display_statuses
     return "" if statuses.empty?
     result = statuses.map {|s| "<span title=\"Last updated: #{current.created_at.strftime("%d-%b-%Y, %I:%M %p")}; By: #{current.user.name}\" class=\"badge user-role badge-info contact-status #{s}\">#{s}</span>"}
+    result << "<span title=\"Out of Date\" class=\"badge user-role badge-info contact-status deleted\">out_of_date</span>" if self.end_at < Time.now.beginning_of_day
     result.join(" ").html_safe
   end
   

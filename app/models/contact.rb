@@ -1062,7 +1062,7 @@ class Contact < ActiveRecord::Base
       records = records.where(id: cids)
     end
     records = records.where("LOWER(contacts.cache_search) LIKE ? OR LOWER(contacts.name) LIKE ? OR UPPER(contacts.name) LIKE ?", "%#{params[:q].mb_chars.strip.downcase}%", "%#{params[:q].mb_chars.strip.downcase}%", "%#{params[:q].mb_chars.strip.upcase}%") if params[:q].present?
-    records.order("name").limit(50).map {|model| {:id => model.id, :text => model.display_name(params)} }
+    records.order("name").limit(50).map {|model| {:id => model.id, :text => model.display_name_long} }
   end
   
   def short_name
@@ -1125,6 +1125,20 @@ class Contact < ActiveRecord::Base
     end
     
     return result
+  end
+  
+  def display_name_long(params=nil)
+    result = []
+    sirname = sex == "female" ? "[Ms]" : (sex == "male" ? "[Mr]" : "[?]")
+    result << (is_individual ? (sirname+" "+name).html_safe.mb_chars.titleize : name)
+    
+    more = []
+    more << "#{self.email}" if self.email.present?
+    more << "#{self.mobile}" if self.mobile.present?
+    
+    result << "("+more.join(", ")+")" if !more.empty?
+    
+    return result.join(" ")
   end
   
   def name

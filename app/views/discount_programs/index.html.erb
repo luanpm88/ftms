@@ -23,6 +23,15 @@
 							<h4>Status</h4>							
 							<%= select_tag 'status', options_for_select(DiscountProgram.status_options, params[:status]), class: "modern_select width100" %>
 						</div>
+						
+						<div class="col-md-3">
+								<h4>Valid on</h4>	
+								<div class="input-append success date col-md-10 no-padding">
+									<span class="add-on"><span class="arrow"></span><i class="icon-th"></i></span>
+									<%= text_field_tag :valid_on, Time.now.strftime("%d-%b-%Y"), :class => "form-control" %>
+								</div>
+								<br style="clear: both" />
+						</div>
                   </div>
                   </div>		    
 				</div>
