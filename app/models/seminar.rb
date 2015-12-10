@@ -249,7 +249,8 @@ class Seminar < ActiveRecord::Base
       # Background: "University: #{row["University"]}\nMajor: #{row["Major"]}\nYear: #{row["Year"]}"
       #bg = "Imported Date: #{Time.now.strftime("%d-%b-%Y")}\n"
       #bg += "Creator: #{user.name.to_s}\n"
-      bg = "University: #{row["University"].to_s.strip}\n" if row["University"].present?
+      bg = ""
+      bg += "University: #{row["University"].to_s.strip}\n" if row["University"].present?
       bg += "Major: #{row["Major"].to_s.strip}\n" if row["Major"].present?
       bg += "Major: #{row["Major "].to_s.strip}\n" if row["Major "].present?
       bg += "Year: #{row["Year"].to_s.strip}\n" if row["Year"].present?
@@ -303,7 +304,12 @@ class Seminar < ActiveRecord::Base
   def similar_contacts(data={})
     result = []
     if data[:email].present?
-      result += Contact.main_contacts.where("LOWER(email) = ? OR LOWER(name) = ? OR LOWER(mobile) = ?", data[:email].strip.downcase, data[:name].to_s.strip.downcase, Contact.format_mobile(data[:mobile].to_s))
+      cond = []
+      cond << "LOWER(email) = '#{data[:email].to_s.strip.downcase}'" if data[:email].to_s.strip.downcase.present?
+      cond << "LOWER(name) = '#{data[:name].to_s.strip.downcase}'" if data[:name].to_s.strip.downcase.present?
+      cond << "LOWER(mobile) = '#{Contact.format_mobile(data[:mobile].to_s)}'" if data[:mobile].to_s.strip.downcase.present?
+      
+      result += Contact.main_contacts.where(cond.join(" OR "))
     end
     
     return result
