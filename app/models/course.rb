@@ -814,7 +814,7 @@ class Course < ActiveRecord::Base
   end
   
   def real_contacts
-    Contact.main_contacts.where("cache_courses LIKE ?", "%[#{self.id}]%")
+    Contact.main_contacts.where("cache_courses LIKE ?", "%[#{self.id},%")
   end
   
   def report_toggle(contact)
