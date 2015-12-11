@@ -266,17 +266,15 @@ class Book < ActiveRecord::Base
     if !params["order"].nil?
       case params["order"]["0"]["column"]
       when "1"
-        order = "course_types.short_name #{params["order"]["0"]["dir"]}, subjects.name #{params["order"]["0"]["dir"]}, books.name #{params["order"]["0"]["dir"]}"
+        order = "course_types.short_name #{params["order"]["0"]["dir"]}, subjects.name #{params["order"]["0"]["dir"]}, stock_types.name #{params["order"]["0"]["dir"]}"
       when "2"
         order = "books.publisher"
-      when "4"
-        order = "course_registers.created_at"
       else
         order = "books.name"
       end
       order += " "+params["order"]["0"]["dir"] if !["1"].include?(params["order"]["0"]["column"])
     else
-      order = "course_registers.created_at"
+      order = "course_types.short_name, subjects.name, stock_types.display_order, books.created_at"
     end
     
     @records = @records.order(order) if !order.nil? && !params["search"]["value"].present?
