@@ -2398,14 +2398,15 @@ class Contact < ActiveRecord::Base
     return str.join("<br />")
   end
   
-  def display_not_learned_course(cid)
+  def display_not_learned_course(cid, show_title=false)
     half_course = ""
     if cid.present? 
       c = self.active_course(cid.to_i)
-      if c.present? and (c[:full_course] != true)
-        half_course = "<div class=\"text-left\"><strong class=\"text-left nowrap\">[half-course]:</strong></div><div class=\"text-left confirmed\">"+Course.render_courses_phrase_list(c[:courses_phrases])+"</div>"
+      title = show_title ? "<hr><div><strong class=\"\">#{c[:course].name}</strong><div>" : ""
+      if c.present? and (c[:full_course] != true)        
+        half_course = "<div class=\"text-left\">#{title}<strong class=\"text-left nowrap\">[half-course]:</strong></div><div class=\"text-left confirmed\">"+Course.render_courses_phrase_list(c[:courses_phrases])+"</div>"
       elsif c.present?
-        
+        half_course = "<div class=\"text-left\">#{title}<strong class=\"text-left nowrap confirmed\">[full-course]</strong></div>"
       end
     end
     
