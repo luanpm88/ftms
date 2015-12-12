@@ -543,7 +543,7 @@ class Contact < ActiveRecord::Base
       groups = RelatedContact.all
       groups = groups.where("LOWER(related_contacts.cache_search) LIKE ?", "%#{params["search"]["value"].unaccent.strip.downcase}%") if params["search"].present? && !params["search"]["value"].empty?
       total = groups.count
-      groups = groups.limit(params[:length]).offset(params["start"])
+      groups = groups.order("related_contacts.created_at DESC").limit(params[:length]).offset(params["start"])
       
       @records = []
       groups.each do |g|
