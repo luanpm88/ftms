@@ -2404,6 +2404,8 @@ class Contact < ActiveRecord::Base
       c = self.active_course(cid.to_i)
       if c.present? and (c[:full_course] != true)
         half_course = "<div class=\"text-left\"><strong class=\"text-left nowrap\">[half-course]:</strong></div><div class=\"text-left confirmed\">"+Course.render_courses_phrase_list(c[:courses_phrases])+"</div>"
+      elsif c.present?
+        half_course = "<div class=\"text-left confirmed\"><strong class=\"text-left nowrap confirmed\">[full-course]</strong></div>"
       end
     end
     
