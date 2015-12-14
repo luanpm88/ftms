@@ -22,9 +22,11 @@
 															 <label class="form-label"><label>Deferred/Transferred Money</label></label>
 															 <span class="help"></span>
 															 <div class="input-with-iconz text-right">
-																 <a contact-id="<%= @contact.id %>" title="View Derferred/Tranferred Money History" href="#" class="transfer_log_button transfer_money_log_button">
-																	  <i class="icon-time"></i>
-																 </a>
+																 <% if !@contact.budget_money_logs.empty? %>
+																	  <a contact-id="<%= @contact.id %>" title="View Derferred/Tranferred Money History" href="#" class="transfer_log_button transfer_money_log_button">
+																		   <i class="icon-time"></i>
+																	  </a>
+																 <% end %>
 																<strong class="big-info"><%= format_price(@contact.budget_money) %></strong>
 															 </div>
 														   </div>
