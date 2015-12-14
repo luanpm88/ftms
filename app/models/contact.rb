@@ -1941,7 +1941,7 @@ class Contact < ActiveRecord::Base
   end
   
   def seminar_count
-    seminars.where(parent_id: nil).count
+    seminars.where(parent_id: nil).where("seminars.status IS NOT NULL AND seminars.status NOT LIKE ?", "%[deleted]%").count
   end
   
   def base_id_by_program_id(course_type_id)
