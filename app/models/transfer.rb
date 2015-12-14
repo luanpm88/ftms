@@ -851,11 +851,11 @@ class Transfer < ActiveRecord::Base
     if self.course.upfront == true
       result = result.where(upfront: false)
     end
-    if self.course.upfront == false
-      if contact == to_contact
-        result = result.where(upfront: true)
-      end
-    end
+    #if self.course.upfront == false
+    #  if contact == to_contact
+    #    result = result.where(upfront: true)
+    #  end
+    #end
     
     result_arr = []
     result.each do |c|
