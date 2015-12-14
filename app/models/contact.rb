@@ -1941,7 +1941,7 @@ class Contact < ActiveRecord::Base
   end
   
   def seminar_count
-    seminars.count
+    seminars.where(parent_id: nil).count
   end
   
   def base_id_by_program_id(course_type_id)
