@@ -86,6 +86,24 @@
 																			  </div>
 																	</div>
 															<% end %>
+															<% if cc.hour.to_f > 0 %>
+																	<div class="form-group">
+																			  <label class="form-label">Used Deferred/Transferred Hour(s)</label>
+																			  <span class="help"></span>
+																			  <div class="input-with-iconz  text-right">
+																					<strong><%= cc.hour.to_f %></strong>
+																			  </div>
+																	</div>
+															<% end %>
+															<% if cc.additional_money.to_f > 0 %>
+																	<div class="form-group">
+																			  <label class="form-label">Additional Money</label>
+																			  <span class="help"></span>
+																			  <div class="input-with-iconz  text-right">
+																					<strong><%= format_price(cc.additional_money.to_f) %></strong>
+																			  </div>
+																	</div>
+															<% end %>
 											 </div>
                                              <div class="col-md-2">
 												<div class="form-group">

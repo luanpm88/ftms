@@ -1216,4 +1216,13 @@ class CourseRegister < ActiveRecord::Base
     return false
   end
   
+  def budget_hours
+    bhs = {}
+    contacts_courses.each do |cc|
+      hour_id = cc.course.course_type_id.to_s+"-"+cc.course.subject_id.to_s
+      bhs[hour_id] = cc.hour
+    end
+    return bhs
+  end
+  
 end

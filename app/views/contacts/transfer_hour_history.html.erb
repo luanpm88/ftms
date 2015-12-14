@@ -5,17 +5,19 @@
         <tr>
           <th width="5%" class="text-left">Datetime</th>
           <th class="text-left">Content</th>
+          <th class="text-center">Creator</th>
           <th width="1%" class="text-right">Money</th>
         </tr>
         <% @contact.budget_hour_logs(params[:program_id], params[:subject_id]).each do |log| %>
           <tr>
             <td><%= log[:datetime].strftime("%d-%b-%Y<br> %H:%I %p").html_safe %></td>
             <td><%= log[:content].html_safe %></td>
+            <td class="text-center"><%= log[:creator] %></td>
             <td class="text-right"><%= log[:sign] %><%= format_price(log[:hour]) %></td>
           </tr>
         <% end %>
         <tr>
-            <td colspan="2" class="text-right"><strong><%= CourseType.find(params[:program_id]).short_name %>-<%= Subject.find(params[:subject_id]).name %></strong> Remain:</td>
+            <td colspan="3" class="text-right"><strong><%= CourseType.find(params[:program_id]).short_name %>-<%= Subject.find(params[:subject_id]).name %></strong> Remain:</td>
             <td class="text-right"><strong class="confirmed big-info"><%= format_price(@contact.budget_hour[CourseType.find(params[:program_id]).id.to_s+"-"+Subject.find(params[:subject_id]).id.to_s]) %></strong></td>
           </tr>
       </table>

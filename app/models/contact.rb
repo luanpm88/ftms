@@ -1825,7 +1825,7 @@ class Contact < ActiveRecord::Base
     budget_hour.each do |col|
       str << "<a program-id=\"#{CourseType.find(col[0].split("-")[0]).id.to_s}\" subject-id=\"#{Subject.find(col[0].split("-")[1]).id.to_s}\" contact-id=\"#{self.id.to_s}\" title=\"View Derferred/Tranferred Hour history\" href=\"#\" class=\"transfer_log_button transfer_hour_log_button\">"+
   			  "<i class=\"icon-time\"></i>"+
-			  "</a>"+CourseType.find(col[0].split("-")[0]).short_name+"-"+Subject.find(col[0].split("-")[1]).name+": "+col[1].to_s if col[1] != 0
+			  "</a>"+CourseType.find(col[0].split("-")[0]).short_name+"-"+Subject.find(col[0].split("-")[1]).name+": "+col[1].to_f.to_s
     end
     return str.join("<br >").html_safe
   end
@@ -1846,6 +1846,7 @@ class Contact < ActiveRecord::Base
       by = t.contact != t.to_contact ? " of #{t.contact.contact_link}" : ""
       row[:content] = t.from_hour.nil? ? "Deferred/Transferred course#{by}:" : "Deferred/Transferred hour#{by}:"
       row[:content] += t.diplay_from_course(true)
+      row[:creator] = t.user.staff_col
       row[:sign] = "+"
       row[:money] = t.money
       logs << row
@@ -1859,6 +1860,7 @@ class Contact < ActiveRecord::Base
       full_course = (t.full_course == true and t.course.upfront != true) ? " <span class=\"active\">[full]</span>" : ""
       row[:content] += "<div class=\"nowrap\"><strong>"+t.course.display_name+full_course+"</strong></div>"
       row[:content] += "<div class=\"courses_phrases_list\">"+Course.render_courses_phrase_list(t.courses_phrases.joins(:phrase).order("phrases.name, courses_phrases.start_at"),t)+"</div>" if !t.courses_phrases.empty?
+      row[:creator] = t.course_register.user.staff_col
       row[:sign] = "-"
       row[:money] = t.money
       logs << row
@@ -1877,6 +1879,7 @@ class Contact < ActiveRecord::Base
         by = transfer.contact != transfer.to_contact ? " of #{transfer.contact.contact_link}" : ""
         row[:content] = "Deferred/Transferred Course#{by}:"
         row[:content] += transfer.diplay_from_course(true)
+        row[:creator] = transfer.user.staff_col
         row[:sign] = "+"
         row[:hour] = transfer.hour
         logs << row
@@ -1891,6 +1894,7 @@ class Contact < ActiveRecord::Base
         full_course = (t.full_course == true and t.course.upfront != true) ? " <span class=\"active\">[full]</span>" : ""
         row[:content] += "<div class=\"nowrap\"><strong>"+t.course.display_name+full_course+"</strong></div>"
         row[:content] += "<div class=\"courses_phrases_list\">"+Course.render_courses_phrase_list(t.courses_phrases.joins(:phrase).order("phrases.name, courses_phrases.start_at"),t)+"</div>" if !t.courses_phrases.empty?
+        row[:creator] = t.course_register.user.staff_col
         row[:sign] = "-"
         row[:hour] = t.hour
         logs << row
@@ -1908,6 +1912,7 @@ class Contact < ActiveRecord::Base
         row = {}
         row[:datetime] = transfer.created_at
         row[:content] = "Deferred/Transferred <strong>"+total.to_s+"</strong> hour(s) for <strong>#{ApplicationController.helpers.format_price(transfer.money)}</strong>"
+        row[:creator] = transfer.staff_col
         row[:sign] = "-"
         row[:hour] = total
         logs << row

@@ -26,25 +26,27 @@
                 
                 <div class="budget_values hidden">
 					<div class="budget_money"><%= @contact.budget_money+@course_register.budget_money %></div>
-					<% if @contact.budget_money <= 0 %>
+					<% if @contact.budget_money+@course_register.budget_money <= 0 %>
 						 <style>
 							  .transfer_money_form {
 								   display: none;
 							  }
 						 </style>
 					<% end %>
+					<% sum_hour = 0 %>
 					<% @contact.budget_hour.each do |val| %>
-						 <div class="budget_hour budget_hour_<%= val[0] %>" rel="<%= val[0] %>"><%= val[1] %></div>
-						 <% if val[1] <= 0 %>
+						 <div class="budget_hour budget_hour_<%= val[0] %>" rel="<%= val[0] %>"><%= val[1]+@course_register.budget_hours[val[0]].to_f %></div>
+						 <% if val[1]+@course_register.budget_hours[val[0]].to_f <= 0 %>
 							  <style>
 								   .transfer_hour_form_<%= val[0] %> {
 										display: none;
 								   }
 							  </style>
 						 <% end %>
+						 <% sum_hour += val[1]+@course_register.budget_hours[val[0]].to_f %>
 					<% end %>
 				</div>
-				<% if @contact.budget_money + @contact.budget_hour_sum <= 0 %>
+				<% if @contact.budget_money+@course_register.budget_money + sum_hour <= 0 %>
 					<style>
 						 .transfer_form {
 							  display: none;
