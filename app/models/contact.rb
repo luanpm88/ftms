@@ -1744,7 +1744,7 @@ class Contact < ActiveRecord::Base
     end
     active_contacts_courses.joins("LEFT JOIN courses ON courses.id = contacts_courses.course_id").each do |cc|
       hour_id = cc.course.course_type_id.to_s+"-"+cc.course.subject_id.to_s
-      hours[hour_id] = hours[hour_id].nil? ? -cc.hour.to_f : hours[hour_id] - cc.hour.to_f
+      hours[hour_id] = (hours[hour_id].nil? ? -cc.hour.to_f : hours[hour_id] - cc.hour.to_f) if !hours[hour_id].nil?
     end
     
     active_transfers.where.not(from_hour: nil).each do |transfer|
