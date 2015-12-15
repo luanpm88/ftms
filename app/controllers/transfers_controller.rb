@@ -35,23 +35,19 @@ class TransfersController < ApplicationController
     @transfer.user = current_user
     
     # if course -> ...
-      if @transfer.full_course == true
-        @transfer.courses_phrase_ids = "["+@transfer.course.courses_phrases.map(&:id).join("][")+"]" if !@transfer.course.courses_phrases.empty?
-      else
-        @transfer.courses_phrase_ids = "["+params[:from_courses_phrases].join("][")+"]" if params[:from_courses_phrases].present?
-      end
+    if @transfer.full_course == true
+      @transfer.courses_phrase_ids = "["+@transfer.course.courses_phrases.map(&:id).join("][")+"]" if !@transfer.course.courses_phrases.empty?
+    else
+      @transfer.courses_phrase_ids = "["+params[:from_courses_phrases].join("][")+"]" if params[:from_courses_phrases].present?
+    end
     
     # if upfront -> course
-      if @transfer.to_full_course == true
-        @transfer.to_courses_phrase_ids = "["+@transfer.to_course.courses_phrases.map(&:id).join("][")+"]" if !@transfer.to_course.courses_phrases.empty?
-      else
-        @transfer.to_courses_phrase_ids = "["+params[:to_courses_phrases].join("][")+"]" if params[:to_courses_phrases].present?
-      end
+    if @transfer.to_full_course == true
+      @transfer.to_courses_phrase_ids = "["+@transfer.to_course.courses_phrases.map(&:id).join("][")+"]" if !@transfer.to_course.courses_phrases.empty?
+    else
+      @transfer.to_courses_phrase_ids = "["+params[:to_courses_phrases].join("][")+"]" if params[:to_courses_phrases].present?
+    end
 
-    
-        
-    
-    @transfer.to_courses_phrase_ids = "["+params[:to_courses_phrases].join("][")+"]" if params[:to_courses_phrases].present?
     
     @transfer.from_hour = params[:from_hours].to_json if params[:from_hours].present?
 
@@ -73,12 +69,35 @@ class TransfersController < ApplicationController
   # PATCH/PUT /transfers/1
   # PATCH/PUT /transfers/1.json
   def update
+    @transfer.update(transfer_params)
+    
+    # if course -> ...
+    if params[:full_course] == true
+      @transfer.courses_phrase_ids = "["+@transfer.course.courses_phrases.map(&:id).join("][")+"]" if !@transfer.course.courses_phrases.empty?
+    else
+      @transfer.full_course = false
+      @transfer.courses_phrase_ids = "["+params[:from_courses_phrases].join("][")+"]" if params[:from_courses_phrases].present?
+    end
+    
+    # if upfront -> course
+    if params[:to_full_course] == true
+      @transfer.to_courses_phrase_ids = "["+@transfer.to_course.courses_phrases.map(&:id).join("][")+"]" if !@transfer.to_course.courses_phrases.empty?
+    else
+      @transfer.to_full_course = false
+      @transfer.to_courses_phrase_ids = "["+params[:to_courses_phrases].join("][")+"]" if params[:to_courses_phrases].present?
+    end
+
+    
+    @transfer.from_hour = params[:from_hours].to_json if params[:from_hours].present?
+    
     respond_to do |format|
-      if @transfer.update(transfer_params)
+      if @transfer.save
         @transfer.update_status("update", current_user)        
         @transfer.save_draft(current_user)
         
-        format.html { redirect_to params[:tab_page].present? ? "/home/close_tab" : @transfer, notice: 'Transfer was successfully updated.' }
+         @tab = {url: {controller: "contacts", action: "edit", id: @transfer.contact.id, tab_page: 1, tab: "transfer"}, title: @transfer.contact.display_name}
+        format.html { render "/home/close_tab", layout: nil }
+        format.json { render action: 'show', status: :created, location: @transfer }
         format.json { head :no_content }
       else
         format.html { render action: 'edit', tab_page: params[:tab_page] }

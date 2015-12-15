@@ -2126,8 +2126,8 @@ class Contact < ActiveRecord::Base
     return arr.join("")
   end
   
-  def courses_phrase_registered?(courses_phrase)
-    active_courses_with_phrases.each do |row|
+  def courses_phrase_registered?(courses_phrase,datetime=nil)
+    active_courses_with_phrases(datetime).each do |row|
       row[:courses_phrases].each do |cp|
         if cp.id == courses_phrase.id
           return true

@@ -46,9 +46,9 @@ module TransfersHelper
       
       #actions += '<li class="divider"></li>' if group_3 > 0
       
-      #if can? :update, item
-      #  actions += '<li>'+ActionController::Base.helpers.link_to('Edit', {controller: "subjects", action: "edit", id: item.id, tab_page: 1}, psrc: subjects_path(tab_page: 1), title: "Edit: #{item.name}", class: "tab_page")+'</li>'        
-      #end
+      if can? :update, item
+        actions += '<li>'+ActionController::Base.helpers.link_to('Edit', {controller: "transfers", action: "edit", id: item.id, tab_page: 1}, psrc: subjects_path(tab_page: 1), title: "Transfer: Edit", class: "tab_page")+'</li>'        
+      end
       #
       #if can? :destroy, item
       #  actions += '<li>'+ActionController::Base.helpers.link_to('Destroy', {controller: "subjects", action: "destroy", id: item.id}, method: :delete, data: { confirm: 'Are you sure?' })+'</li>'        

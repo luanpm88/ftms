@@ -1,6 +1,557 @@
-<h1>Editing Transfer</h1>
+       <div class="row">
+            <div class="col-md-12">
+              <div class="grid simple">
+                <div class="grid-titles no-border">
+                  <h4>Defer/Transfer <span class="semi-bold">Course</span></h4>
+                  
+                </div>     
+                
+                <div class="grid-body no-border transfer_course_from">
+                  <%= form_for(@transfer) do |f| %>
+					
+					<%= hidden_field_tag("tab_page", 1) if params[:tab_page] %>
+					
+					<div class="row column-seperation">
+						 <div class="col-md-6">
+                            <h3>From</h3>           
+                            
 
-<%= render 'form' %>
+                            <div class="form-group">
+                               <label class="form-label"><label>Contact</label></label>
+                               <span class="help"></span>
+                               <div class="input-with-icon right">
+								   <div class="">										
+										<strong><%= @transfer.contact.display_name %></strong>
+								   </div>
+                               </div>
+                            </div>
+							
+							<div class="form-group transfer_course_box">
+								   <div class="form-group">
+											<label class="form-label"><%= f.label :course %></label>
+											<div class="input-with-icon  right">                                       
+												 <i class=""></i>
+												 <div class="">
+													  <%= @transfer.course.display_name %>
+												 </div>
+											</div>
+								   </div>
+								   
+								   <div class="course_phrases_list">
+										
+										<%
+											 @disable = {}
+											 @course = @transfer.course
+											 @to_contact = @transfer.contact
+											 active_course = @to_contact.active_course(@transfer.course.id, @transfer.created_at-1.second)
+											 @courses_phrases = active_course[:courses_phrases]
+											 @hour = active_course[:hour]
+											 @money = active_course[:money]
+											 @remain = active_course[:remain]
+											 @full_course = active_course[:full_course]
+									   
+											 
+											 @type = "from"
+										%>
+										
+										
+										
+										
+										
+										<div class="form-group">
+											 <label class="form-label"><label>
+												 <%= @type == "from" ? "Course Detail" : "Transferred Amount" %>
+											 </label>
+											 </label>						
+											 <span class="help"><%= "(required)" if @type == "to" %></span>
+											 <div class="input-with-iconz  right">						
+													 <div class="form-group <%= @type %>_phrase_list_box_hour_money">
+														 <div class="row">
+															 <div class="col-md-2">
+																 <h4 style="margin-top: 0" class="text-right">
+																	 Hour:
+																 </h4>
+															 </div>
+															 <div class="col-md-3">
+																 <h4 style="margin-top: 0">
+																	 <% if @type == "from" %>
+																		 <strong hour="<%= @hour %>" class="total_phrase_hour"><%= @hour %></strong>
+																	 <% else %>
+																		 <%= text_field_tag "transfer[to_course_hour]", "", class: "form-control price_input price_discount required" %>
+																	 <% end %>
+																 </h4>
+															 </div>
+															 <div class="col-md-2">
+																 <h4 style="margin-top: 0" class="text-right">
+																	 Money:
+																 </h4>
+															 </div>
+															 <div class="col-md-4">
+																 <h4 style="margin-top: 0">
+																	 <% if @type == "from" %>
+																		 <strong per_hour="<%= @money/@hour if @hour != "N/A" %>" money="<%= @money %>" class="total_phrase_money"><%= @money == -1 ? "No Price!" : format_price(@money) %></strong>
+																	 <% else %>
+																		 <%= text_field_tag "transfer[to_course_money]", "", class: "form-control price_input price_discount required" %>
+																	 <% end %>
+																 </h4>
+															 </div>										
+														 </div>
+														 <br />
+														 
+														 
+														 <% if @type == "from" && @remain > 0 %>						
+															 <div class="row">										
+																 <div class="col-md-12">
+																	 <div class="form-group">
+																		 <label class="form-label">
+																			 <label>
+																				 <span class="out_of_date">Write Off Amount (Recievable Amount)</span>
+																			 </label>
+																		 </label>
+																		 <h4 style="margin-top: 0">
+																			 <span class="out_of_date"><%= format_price(@remain) %>/<%= format_price(@remain+@money) %> (remain/total)</span>
+																		 </h4>
+																	 </div>
+																 </div>
+															 </div>
+														 <% end %>
+														 
+														 
+														 <div class="input-with-icon right phrase_list_container">
+															 
+															 <% if !@course.upfront && !@course.courses_phrases.empty? %>
+																 <label class="form-label"><label>Phrase List
+																	 <% if @type == "to" %>
+																		 (</strong><span hour="<%= @course.total_hour %>" class="to_total_phrase_hour"><%= @course.total_hour %></span> hours</strong>)
+																	 <% end %>
+																 </label></label>
+																 
+																 <% if @type == "from" && @remain == 0 && @full_course == true %>
+																	 <div class="checkbox check-success" style="display: inline-block; margin-bottom: -3px">
+																			 <%= check_box_tag "transfer[full_course]", true, @transfer.full_course, {id: "checkbox_full_course_from", class: "full_course_checkbox"} %>
+																			 <label for="checkbox_full_course_from" style="margin: 0; font-weight: bold">
+																				 <span>
+																						Defer/Transfer Full Course
+																				 </span>
+																			 </label>
+																	 </div>
+																 <% end %>
+																 
+																 <% if @type == "to" %>
+																	 <div class="checkbox check-success" style="display: inline-block; margin-bottom: -3px">
+																			 <%= check_box_tag "transfer[to_full_course]", true, true, {id: "checkbox_full_course_to", class: "full_course_checkbox"} %>
+																			 <label for="checkbox_full_course_to" style="margin: 0; font-weight: bold">
+																				 <span>
+																						Defer/Transfer Full Course
+																				 </span>
+																			 </label>
+																	 </div>
+																 <% end %>
+																 
+																	 
+																 
+																 
+																 <% group_name = "" %>
+																 <div>
+																	 <% @courses_phrases.each do |courses_phrase| %>													
+																			 <% if group_name != courses_phrase.phrase.name %>
+																				 <% if group_name != "" %><br style="clear: both" /><% end %>
+																				 <% group_name = courses_phrase.phrase.name %>
+																				 
+																				 <h5 style="margin-top: 0;"><strong><%= group_name %></strong></h5>
+																			 <% end %>
+						 
+																			 <% if @disable[courses_phrase.id] %>
+																				 <div class="row-fluid phrase_checkbox" title="Registered">
+																						  <div class="checkbox check-default">
+																							  <%= check_box_tag "disabled", courses_phrase.id, false, {id: "checkbox_"+@type+"_"+courses_phrase.id.to_s, class: "courses_phrase_item", hour: CoursesPhrase.find(courses_phrase.id).hour, disabled: "disabled", money: (@type == "to" ? 0 : CoursesPhrase.find(courses_phrase.id).courses_phrase_money(@to_contact, @course)) } %>
+																							  <label for="checkbox_<%= @type %>_<%= courses_phrase.id %>">
+																								 <span>
+																									 <%= CoursesPhrase.find(courses_phrase.id).display_name if courses_phrase.start_at.present? %>
+																									 
+																								 </span>
+																							  </label>
+																						  </div>
+																					 </div>
+																			 <% else %>
+																					 <div class="row-fluid phrase_checkbox <%= "uncheckable" if @type == "from" && @remain > 0 %>">
+																						  <div class="checkbox check-success">
+																							  <%= check_box_tag @type+"_courses_phrases[]", courses_phrase.id, @transfer.courses_phrases.include?(courses_phrase), {id: "checkbox_"+@type+"_"+courses_phrase.id.to_s, class: "courses_phrase_item phrase_checkable", hour: CoursesPhrase.find(courses_phrase.id).hour, money: (@type == "to" ? 0 : CoursesPhrase.find(courses_phrase.id).courses_phrase_money(@to_contact, @course)) } %>
+																							 
+																							  <label for="checkbox_<%= @type %>_<%= courses_phrase.id %>">
+																								 <span>
+																									 <%= CoursesPhrase.find(courses_phrase.id).display_name if courses_phrase.start_at.present? %>
+																								 </span>
+																							  </label>
+																						  </div>
+																					 </div>
+																			 <% end %>
+																	 <% end %>
+																	 
+																 </div>
+															 <% end %>
+														 </div>
+													 
+													 </div>
+														 
+												 
+											 </div>
+										
+										</div>
+										
+										
+										
+								   </div>
+	
+							</div>
+                           
+						 </div>
+						 <div class="col-md-6">
+							  <h3>To</h3>
+							  
+							  
+							  
+							  <div class="transfer_to_box">
+								   
+								   
+								   
+								   <div class="row">
+										<div class="col-md-8">
+											 <div class="form-group">
+												  <label class="form-label"><label>Contact</label></label>
+												  <span class="help">(required)</span>							   
+												  <div class="input-with-icon  right">                                       
+													   <i class=""></i>
+													   <div class="">
+															<strong><%= @transfer.to_contact.display_name %></strong>
+													   </div>
+												  </div>
+											 </div>
+										</div>
+										<div class="col-md-4">
+											 <div class="form-group">
+												  <label class="form-label"><label>Type</label></label>
+												  <span class="help">(required)</span>
+												  <div class="input-with-icon right">
+													   <strong><%= @transfer.to_type.capitalize %></strong>
+												  </div>
+											 </div>
+										</div>
+								 </div>
+								   
+								   
+								   
+								   
+								   <% if @transfer.to_type == "hour" %>
+										
+										<div class="row transfer_type_box transfer_type_box_hour">
+											 <div class="col-md-6 to_hour_box">
+												  <div class="form-group">
+														<label class="form-label"><label>Hour</label></label>
+														<span class="help">(required)</span>
+														<div class="input-with-iconz right">                                       
+															 <i class=""></i>
+															  <div class="input-with_add_butz">
+																<%= text_field_tag "transfer[hour]", @transfer.hour, class: "form-control price_input required keep_change" %>
+															  </div>
+														</div>
+												  </div>
+												  
+											 </div>
+												  <div class="col-md-6 to_hour_box">
+														 <div class="form-group">
+															   <label class="form-label"><label>Equating Money</label></label>
+															   <span class="help">(required)</span>
+															   <div class="input-with-iconz right">                                       
+																	<i class=""></i>
+																	 <div class="input-with_add_butz">
+																	   <%= text_field_tag "transfer[hour_money]", format_price(@transfer.hour_money), class: "form-control price_input required keep_change" %>
+																	 </div>
+															   </div>
+														 </div>
+												  </div>
+										</div>
+								   
+								   <% elsif @transfer.to_type == "money" %>
+								   
+										<div class="row transfer_type_box transfer_type_box_money">
+												  <div class="col-md-12 to_money_box">
+													   <div class="form-group">
+															 <label class="form-label"><label>Money</label></label>
+															 <span class="help">(required)</span>
+															 <div class="input-with-iconz right">                                       
+																  <i class=""></i>
+																   <div class="input-with_add_butz">
+																	 <%= text_field_tag "transfer[money]", format_price(@transfer.money), class: "form-control price_input price_discount required keep_change" %>
+																   </div>
+															 </div>
+													   </div>
+													   
+												  </div>
+										</div>
+								   
+								   <% elsif @transfer.to_type == "course" %>
+										
+										
+										
+										
+										
+										<%
+											 disable = {}
+											 
+											 @course = @transfer.to_course
+											 @courses_phrases = @course.ordered_courses_phrases
+											 @type = "to"
+											 
+											 @to_contact = @transfer.to_contact
+											 
+											 @courses_phrases.each do |cp|
+												 @disable[cp.id] = @to_contact.courses_phrase_registered?(cp, @transfer.created_at-1.second)
+											 end
 
-<%= link_to 'Show', @transfer %> |
-<%= link_to 'Back', transfers_path %>
+											 @full_course = true
+										%>
+										
+										
+										
+										
+										
+										
+										
+										
+										
+										<div class="form-group">
+											 <label class="form-label"><label>
+												 <%= @type == "from" ? "Course Detail" : "Transferred Amount" %>
+											 </label>
+											 </label>						
+											 <span class="help"><%= "(required)" if @type == "to" %></span>
+											 <div class="input-with-iconz  right">						
+													 <div class="form-group <%= @type %>_phrase_list_box_hour_money">
+														 <div class="row">
+															 <div class="col-md-2">
+																 <h4 style="margin-top: 0" class="text-right">
+																	 Hour:
+																 </h4>
+															 </div>
+															 <div class="col-md-3">
+																 <h4 style="margin-top: 0">
+																	 <% if @type == "from" %>
+																		 <strong hour="<%= @hour %>" class="total_phrase_hour"><%= @hour %></strong>
+																	 <% else %>
+																		 <%= text_field_tag "transfer[to_course_hour]", @transfer.to_course_hour, class: "form-control price_input price_discount required keep_change" %>
+																	 <% end %>
+																 </h4>
+															 </div>
+															 <div class="col-md-2">
+																 <h4 style="margin-top: 0" class="text-right">
+																	 Money:
+																 </h4>
+															 </div>
+															 <div class="col-md-4">
+																 <h4 style="margin-top: 0">
+																	 <% if @type == "from" %>
+																		 <strong per_hour="<%= @money/@hour if @hour != "N/A" %>" money="<%= @money %>" class="total_phrase_money"><%= @money == -1 ? "No Price!" : format_price(@money) %></strong>
+																	 <% else %>
+																		 <%= text_field_tag "transfer[to_course_money]", format_price(@transfer.to_course_money), class: "form-control price_input price_discount required keep_change" %>
+																	 <% end %>
+																 </h4>
+															 </div>										
+														 </div>
+														 <br />
+														 
+														 
+														 <% if @type == "from" && @remain > 0 %>						
+															 <div class="row">										
+																 <div class="col-md-12">
+																	 <div class="form-group">
+																		 <label class="form-label">
+																			 <label>
+																				 <span class="out_of_date">Write Off Amount (Recievable Amount)</span>
+																			 </label>
+																		 </label>
+																		 <h4 style="margin-top: 0">
+																			 <span class="out_of_date"><%= format_price(@remain) %>/<%= format_price(@remain+@money) %> (remain/total)</span>
+																		 </h4>
+																	 </div>
+																 </div>
+															 </div>
+														 <% end %>
+														 
+														 
+														 <div class="input-with-icon right phrase_list_container">
+															 
+															 <% if !@course.upfront && !@course.courses_phrases.empty? %>
+																 <label class="form-label"><label>Phrase List
+																	 <% if @type == "to" %>
+																		 (</strong><span hour="<%= @course.total_hour %>" class="to_total_phrase_hour"><%= @course.total_hour %></span> hours</strong>)
+																	 <% end %>
+																 </label></label>
+																 
+																 <% if @type == "from" && @remain == 0 && @full_course == true %>
+																	 <div class="checkbox check-success" style="display: inline-block; margin-bottom: -3px">
+																			 <%= check_box_tag "transfer[full_course]", true, true, {id: "checkbox_full_course_from", class: "full_course_checkbox"} %>
+																			 <label for="checkbox_full_course_from" style="margin: 0; font-weight: bold">
+																				 <span>
+																						Defer/Transfer Full Course
+																				 </span>
+																			 </label>
+																	 </div>
+																 <% end %>
+																 
+																 <% if @type == "to" %>
+																	 <div class="checkbox check-success" style="display: inline-block; margin-bottom: -3px">
+																			 <%= check_box_tag "transfer[to_full_course]", true, @transfer.to_full_course, {id: "checkbox_full_course_to", class: "full_course_checkbox"} %>
+																			 <label for="checkbox_full_course_to" style="margin: 0; font-weight: bold">
+																				 <span>
+																						Defer/Transfer Full Course
+																				 </span>
+																			 </label>
+																	 </div>
+																 <% end %>
+																 
+																	 
+																 
+																 
+																 <% group_name = "" %>
+																 <div>
+																	 <% @courses_phrases.each do |courses_phrase| %>													
+																			 <% if group_name != courses_phrase.phrase.name %>
+																				 <% if group_name != "" %><br style="clear: both" /><% end %>
+																				 <% group_name = courses_phrase.phrase.name %>
+																				 
+																				 <h5 style="margin-top: 0;"><strong><%= group_name %></strong></h5>
+																			 <% end %>
+						 
+																			 <% if @disable[courses_phrase.id] %>
+																				 <div class="row-fluid phrase_checkbox" title="Registered">
+																						  <div class="checkbox check-default">
+																							  <%= check_box_tag "disabled", courses_phrase.id, false, {id: "checkbox_"+@type+"_"+courses_phrase.id.to_s, class: "courses_phrase_item", hour: CoursesPhrase.find(courses_phrase.id).hour, disabled: "disabled", money: (@type == "to" ? 0 : CoursesPhrase.find(courses_phrase.id).courses_phrase_money(@to_contact, @course)) } %>
+																							  <label for="checkbox_<%= @type %>_<%= courses_phrase.id %>">
+																								 <span>
+																									 <%= CoursesPhrase.find(courses_phrase.id).display_name if courses_phrase.start_at.present? %>
+																									 
+																								 </span>
+																							  </label>
+																						  </div>
+																					 </div>
+																			 <% else %>
+																					 
+																					 <div class="row-fluid phrase_checkbox <%= "uncheckable" if @type == "from" && @remain > 0 %>">
+																						  <div class="checkbox check-success">
+																							  <%= check_box_tag @type+"_courses_phrases[]", courses_phrase.id, (@transfer.to_courses_phrases.map(&:id).include?(courses_phrase.id)), {id: "checkbox_"+@type+"_"+courses_phrase.id.to_s, class: "courses_phrase_item phrase_checkable", hour: CoursesPhrase.find(courses_phrase.id).hour, money: (@type == "to" ? 0 : CoursesPhrase.find(courses_phrase.id).courses_phrase_money(@to_contact, @course)) } %>
+																							 
+																							  <label for="checkbox_<%= @type %>_<%= courses_phrase.id %>">
+																								 <span>
+																									 <%= CoursesPhrase.find(courses_phrase.id).display_name if courses_phrase.start_at.present? %>
+																								 </span>
+																							  </label>
+																						  </div>
+																					 </div>
+																			 <% end %>
+																	 <% end %>
+																	 
+																 </div>
+															 <% end %>
+														 </div>
+													 
+													 </div>
+														 
+												 
+											 </div>
+										
+										
+							  </div>
+										
+										
+										
+										
+										
+										
+										
+								   <% end %>
+								   
+								   
+								   
+								   
+								   
+								   
+								   
+								   
+							  
+						 
+							  </div>
+						 
+						 </div>
+					</div>
+					
+					<hr />
+					
+					<div class="row">
+						 <div class="col-md-6">
+							  <h3>Admin Fee <span style="font-size: 16px; color: #888">(required)</span></h3>
+							  <div class="form-group">                                    
+                                    <div class="input-with-iconz right">                                       
+                                         <i class=""></i>
+                                          <div class="input-with_add_butz">
+                                            <%= f.text_field "admin_fee", value: format_price(@transfer.admin_fee), class: "form-control price_input price_discount required" %>
+                                          </div>
+                                    </div>
+							  </div>
+							  
+						 </div>
+						 <div class="col-md-6">
+							  <h3>Note</h3>
+							  <div class="form-group">
+								   <span class="help"></span>
+								   
+								   <div class="input-with-icon  right">                                       
+										   <i class=""></i>
+										   <%= f.text_area :note, :class => "form-control", style: "height: 160px" %>
+								   </div>
+							  </div>
+						 </div>
+					</div>
+					
+					
+					
+					
+					<div class="row">
+						 
+					</div>
+					
+                      <div class="form-actions">  
+                           <div class="pull-right">
+                              <button type="submit" class="btn btn-success btn-cons"><i class="icon-ok"></i> Save</button>
+
+                            <%= link_to 'Cancel', users_path, :class => "btn btn-white btn-cons cancel-but" %>
+                         </div>
+                      </div>
+
+							  
+					<% end %>
+			   </div>
+			 </div>
+            </div>
+			
+      </div>
+
+<script>
+	 $(document).ready(function() {
+		  jQuery.validator.addMethod("valid_transfer", function(value, element) {
+			   var to_hour = ""
+			   if($("input[name='transfer[hour]']").length) {
+				 to_hour = $("input[name='transfer[hour]']").val();
+			   }
+			   var to_money = ""
+			   if($("input[name='transfer[money]']").length) {
+				 to_money = $("input[name='transfer[money]']").val();
+			   }
+			   return to_course != "" || to_hour != "" || to_money != "";
+		  }, "Unvalid transfer details. Please check the details below.");
+
+		  $("input[name='transfer[admin_fee]']").rules('add', {
+			   valid_transfer: true
+		  });
+	 });
+</script>

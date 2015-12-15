@@ -210,7 +210,11 @@
 				hour = parseFloat($(".transfer_course_box .total_phrase_hour").html().replace(/,/g,""))
 			}
 			
-			$("input[name='transfer[hour]']").val(hour)			
+			if($("input[name='transfer[hour]']").hasClass("keep_change")) {
+				
+			} else {
+				$("input[name='transfer[hour]']").val(hour)
+			}
 			
 			// to hour
 			var to_hour = 0
@@ -242,11 +246,20 @@
 				money = ReplaceNumberWithDots(money.toFixed(0))
 			}
 			
-			$("input[name='transfer[to_course_hour]']").val(hour)
-			$("input[name='transfer[to_course_money]']").val(money)
+			if(!$("input[name='transfer[to_course_hour]']").hasClass("keep_change")) {
+				$("input[name='transfer[to_course_hour]']").val(hour)
+			}
+			if(!$("input[name='transfer[to_course_money]']").hasClass("keep_change")) {
+				$("input[name='transfer[to_course_money]']").val(money)
+			}
 			
-			$("input[name='transfer[hour_money]']").val(money)
-			$("input[name='transfer[money]']").val(money)
+			if(!$("input[name='transfer[hour_money]']").hasClass("keep_change")) {
+				$("input[name='transfer[hour_money]']").val(money)
+			}
+			
+			if(!$("input[name='transfer[money]']").hasClass("keep_change")) {
+				$("input[name='transfer[money]']").val(money)
+			}
 	}
 	
 	function checkTransferToBoxes() {

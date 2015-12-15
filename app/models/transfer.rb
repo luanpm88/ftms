@@ -187,7 +187,7 @@ class Transfer < ActiveRecord::Base
     if !course.nil?
       active_course = contact.active_course(course.id, self.created_at-1.second)
       
-      full_course_subfix = (active_course[:full_course] == true && course.upfront != true) ? " <span class=\"active\">[full]</span>" : ""
+      full_course_subfix = (self.full_course == true && course.upfront != true) ? " <span class=\"active\">[full]</span>" : ""
       
       arr = []
       arr << "<div class=\"nowrap\"><strong>"+course.display_name+full_course_subfix+"</strong></div>"
