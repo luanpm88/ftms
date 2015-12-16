@@ -47,7 +47,7 @@
                                         <div class="input-with-iconz">                                       
                                             <div class="">
 											  <% if @old_record.nil? %>													
-													<input style="width:100%;margin-bottom: 5px;" name="payment_record[company_id]" data="<%= contacts_path(is_individual: false, format: "json") %>" class="select2-ajax-companies" value="" text="" data-placeholder="All"/>
+													<input style="width:100%;margin-bottom: 5px;" name="payment_record[company_id]" data="<%= contacts_path(is_individual: false, format: "json") %>" class="select2-ajax-companies required" value="" text="" data-placeholder="All"/>
 											  <% else %>
 												<div class="text-right">
 												  <strong class="big-infoz"><%= @old_record.company.name %></strong>

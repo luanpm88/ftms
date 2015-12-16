@@ -46,8 +46,8 @@ class CourseRegister < ActiveRecord::Base
     str << course_list(false)
     
     if budget_money > 0
-      str << "<div>Used Credit: #{ApplicationController.helpers.format_price(self.budget_money)}</div>"
-      str << "<div>Credit note: #{ApplicationController.helpers.format_price(contact.budget_money(self.contacts_courses.order("contacts_courses.created_at DESC").first.created_at))}</div>"      
+      str << "<div>Used Credit: #{ApplicationController.helpers.format_price_round(self.budget_money)}</div>"
+      str << "<div>Credit note: #{ApplicationController.helpers.format_price_round(contact.budget_money(self.contacts_courses.order("contacts_courses.created_at DESC").first.created_at))}</div>"      
     end     
     
     return str.join("")
@@ -374,7 +374,7 @@ class CourseRegister < ActiveRecord::Base
     if is_no_price? && total == 0.0
       "No price!"
     else
-      '<label class="col_label top0">Total:</label>'+ApplicationController.helpers.format_price(total)+"<label class=\"col_label top0\">Paid:</label>"+ApplicationController.helpers.format_price(paid_amount)+"<label class=\"col_label top0\">Receivable:</label>"+ApplicationController.helpers.format_price(remain_amount)
+      '<label class="col_label top0">Total:</label>'+ApplicationController.helpers.format_price_round(total)+"<label class=\"col_label top0\">Paid:</label>"+ApplicationController.helpers.format_price_round(paid_amount)+"<label class=\"col_label top0\">Receivable:</label>"+ApplicationController.helpers.format_price_round(remain_amount)
     end
   end
   
@@ -446,13 +446,13 @@ class CourseRegister < ActiveRecord::Base
   end
   
   def total_col
-    is_no_price? ? "No price!" : ApplicationController.helpers.format_price(total)
+    is_no_price? ? "No price!" : ApplicationController.helpers.format_price_round(total)
   end
   def paid_col
-    is_no_price? ? "No price!" : ApplicationController.helpers.format_price(paid_amount)
+    is_no_price? ? "No price!" : ApplicationController.helpers.format_price_round(paid_amount)
   end
   def remain_col
-    is_no_price? ? "No price!" : ApplicationController.helpers.format_price(remain_amount)
+    is_no_price? ? "No price!" : ApplicationController.helpers.format_price_round(remain_amount)
   end
   
   def paid_on

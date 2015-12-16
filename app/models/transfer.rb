@@ -146,7 +146,7 @@ class Transfer < ActiveRecord::Base
               '<div class="text-left">'+item.diplay_to_course+"</div>",
               '<div class="text-center">'+item.display_hour+"</div>",
               '<div class="text-right">'+item.display_money+"</div>",
-              '<div class="text-right"><label class="col_label top0">Total:</label>'+ApplicationController.helpers.format_price(item.total)+"<label class=\"col_label top0\">Paid:</label>"+ApplicationController.helpers.format_price(item.paid)+"<label class=\"col_label top0\">Receivable:</label>"+ApplicationController.helpers.format_price(item.remain)+"</div>",
+              '<div class="text-right"><label class="col_label top0">Total:</label>'+ApplicationController.helpers.format_price_round(item.total)+"<label class=\"col_label top0\">Paid:</label>"+ApplicationController.helpers.format_price_round(item.paid)+"<label class=\"col_label top0\">Receivable:</label>"+ApplicationController.helpers.format_price_round(item.remain)+"</div>",
               #'<div class="text-right">'+ApplicationController.helpers.format_price(item.admin_fee.to_f)+"</div>",              
               '<div class="text-center">'+item.created_at.strftime("%d-%b-%Y <br/> %I:%M %p").html_safe+"<br /><strong>by:</strong><br />"+item.user.staff_col+"</div>",
               '<div class="text-center">'+item.display_statuses+"<br /><br />"+item.display_payment_status+"</div>",
@@ -208,7 +208,7 @@ class Transfer < ActiveRecord::Base
       end
       
       if !short
-        arr << "<br /><div>Hour: <strong>#{hour}</strong> <br /> Money: <strong>#{ApplicationController.helpers.format_price(money)}</trong></div>"
+        arr << "<br /><div>Hour: <strong>#{hour}</strong> <br /> Money: <strong>#{ApplicationController.helpers.format_price_round(money)}</trong></div>"
         
         arr << "<br /><div style=\"font-weight: normal\">Note: #{note}</div>" if note.present?
       end
@@ -248,7 +248,7 @@ class Transfer < ActiveRecord::Base
         arr = []
         arr << "<div class=\"nowrap\"><strong>"+to_course.display_name+full_course_subfix+"</strong></div>"
         arr << "<div class=\"courses_phrases_list\">"+Course.render_courses_phrase_list(to_courses_phrases)+"</div>" if to_courses_phrases
-        arr << "<br /><div>Hour: <strong>#{to_course_hour}</strong> <br /> Money: <strong>#{ApplicationController.helpers.format_price(to_course_money)}</trong></div>"
+        arr << "<br /><div>Hour: <strong>#{to_course_hour}</strong> <br /> Money: <strong>#{ApplicationController.helpers.format_price_round(to_course_money)}</trong></div>"
         return arr.join("")
       else
         "N/A"
@@ -268,7 +268,7 @@ class Transfer < ActiveRecord::Base
   
   def display_money
     if to_type == "money"
-      ApplicationController.helpers.format_price(money.to_f)
+      ApplicationController.helpers.format_price_round(money.to_f)
     else
       "N/A"
     end
@@ -747,7 +747,7 @@ class Transfer < ActiveRecord::Base
     
     to_item = ""
     if !from_hour.nil? || to_type == "money"
-      to_item = ApplicationController.helpers.format_price(money)+" "+Setting.get("currency_code")
+      to_item = ApplicationController.helpers.format_price_round(money)+" "+Setting.get("currency_code")
     elsif to_type == "course"
       to_item = to_course.name
     elsif to_type == "hour"
@@ -792,8 +792,8 @@ class Transfer < ActiveRecord::Base
     to_item = ""
     credit_note = ""
     if !from_hour.nil? || to_type == "money"
-      to_item = ApplicationController.helpers.format_price(money)+" "+Setting.get("currency_code")
-      credit_note = "<div>Credit note: #{ApplicationController.helpers.format_price(c.budget_money(self.created_at))}</div>"
+      to_item = ApplicationController.helpers.format_price_round(money)+" "+Setting.get("currency_code")
+      credit_note = "<div>Credit note: #{ApplicationController.helpers.format_price_round(c.budget_money(self.created_at))}</div>"
     elsif to_type == "course"
       to_item = to_course.name
     elsif to_type == "hour"

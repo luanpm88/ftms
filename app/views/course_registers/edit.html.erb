@@ -645,7 +645,7 @@
 												  <i class=""></i>
 												  <div class="input-with_add_but">
 													   <%= link_to '<i class="icon-plus"></i>'.html_safe, new_contact_path(:is_individual => false, tab_page: 1), title: "New Company", :class => 'btn btn-sm btn-small btn-white add-agent-button tab_page' %>
-													   <input style="width:100%;margin-bottom: 5px;" name="course_register[sponsored_company_id]" data="<%= contacts_path(is_individual: false, format: "json") %>" class="select2-ajax-contacts required" value="<%= @course_register.sponsored_company_id %>" text="<%= @course_register.sponsored_company.name if !@course_register.sponsored_company.nil? %>" />
+													   <input style="width:100%;margin-bottom: 5px;" name="course_register[sponsored_company_id]" data="<%= contacts_path(is_individual: false, format: "json") %>" class="select2-ajax-companies required" value="<%= @course_register.sponsored_company_id %>" text="<%= @course_register.sponsored_company.name if !@course_register.sponsored_company.nil? %>" />
 												  </div>
 											 </div>
 										</div>
@@ -758,9 +758,22 @@
 			   return course_count != "0" || stock_count != "0"
 		  }, "You must register at least one course/stock. Please check again.");
 		  
+		  jQuery.validator.addMethod("sponsor_on_course", function(value, element) {
+			   var valid = true
+			   var payment_type = $("select[name='course_register[payment_type]']").val()
+			   var course_count = $(".total_course_count").html()
+			   
+			   if (payment_type == "company-sponsored" && course_count > 1) {
+					valid = false
+               }
+			   
+			   return valid
+		  }, "Can not add more than <strong>1 course</strong> per registration if payment type is <strong>company-sponsored</strong>. Please check again.");
+		  
 		  $("input[name='total_valid']").rules('add', {
 			   total: true,
-			   item_count: true
+			   item_count: true,
+			   sponsor_on_course: true
 		  });
 		  
 		  $("#stock_type_id").select2('destroy');

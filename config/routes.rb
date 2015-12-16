@@ -74,6 +74,7 @@ Hkerp::Application.routes.draw do
       get :company_pay
       post :do_company_pay
       post :print_payment_list
+      get :print_payment_list
       
       post :pay_transfer
       get :part_info

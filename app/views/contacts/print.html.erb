@@ -179,18 +179,17 @@
         <strong>Note log:</strong>
       </td>
       <td colspan="3">
-        <% @contact.active_activities.each do |a| %>
-          <%= a.note %>; created on <%= a.created_at.strftime("%d-%b-%Y") %>
-          <br />
-        <% end %>
+        <table>
+          <% @contact.active_activities.limit(5).each do |a| %>
+            <tr>
+              <td><%= a.note %><br /><br /></td>
+              <td valign="top" style="white-space: nowrap"><%= a.created_at.strftime("%d-%b-%Y") %>, by <%= a.user.name if a.user.present? %></td>
+            </tr>
+              
+             
+          <% end %>
+        </table>
       </td>
     </tr>
   </table>
-  
-  
-  <p></p>
-  <br />
-  
-
-  
 </div>

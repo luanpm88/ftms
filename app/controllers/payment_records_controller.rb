@@ -236,11 +236,14 @@ class PaymentRecordsController < ApplicationController
   end
   
   def print_payment_list
-    
-    if params[:ids].present?
+    if params[:payment_record_id].present?
+      @course_registers = PaymentRecord.find(params[:payment_record_id]).course_registers
+    elsif params[:ids].present?
       if !params[:check_all_page].nil?
         params[:intake_year] = params["filter"]["intake(1i)"] if params["filter"].present?
         params[:intake_month] = params["filter"]["intake(2i)"] if params["filter"].present?
+        
+        params["payment_statuses"] = "receivable"
         
         if params[:is_individual] == "false"
           params[:contact_types] = nil
@@ -251,16 +254,17 @@ class PaymentRecordsController < ApplicationController
         @course_registers = CourseRegister.where(id: params[:ids])
       end
       
-      @course_registers = @course_registers.includes(:contact).order("contacts.name, course_registers.contact_id")
       
-      
-      # intakes filters
-      intakes_filters = (params["intakes"].present? ? params["intakes"].split(",") : nil)
-      
-      paper_ids = []
-      
-      @list = []
-      @course_registers.each do |cr|        
+    end
+    
+    # order by contact name
+    @course_registers = @course_registers.includes(:contact).order("contacts.name, course_registers.contact_id")
+    
+    
+    # render company payment list
+    paper_ids = []      
+    @list = []
+    @course_registers.each do |cr|        
         cr.contacts_courses.each do |cc|
           row = {}
           row[:contact_name] = cc.contact.name
@@ -272,62 +276,59 @@ class PaymentRecordsController < ApplicationController
           row[:papers][cc.course.subject_id] = "X"          
           paper_ids << cc.course.subject_id
           
-          # check intakes filter
-          is_in_intake = intakes_filters.nil? ? true : intakes_filters.include?("#{cc.course.intake.strftime("%m")}-#{cc.course.intake.strftime("%Y")}")
+          ## check intakes filter
+          #is_in_intake = intakes_filters.nil? ? true : intakes_filters.include?("#{cc.course.intake.strftime("%m")}-#{cc.course.intake.strftime("%Y")}")
           
           if (params[:course_types].present? && !params[:course_types].include?(cc.course.course_type_id.to_s)) || (params[:subjects].present? && !params[:subjects].include?(cc.course.subject_id.to_s))
           else
-            @list << row if is_in_intake
+            @list << row # if is_in_intake
           end
         end
-      end
-      
-      
-      
-      @course_registers.each do |cr|        
-        cr.books_contacts.each do |bc|
-          row = {}
-          row[:contact_name] = bc.contact.name
-          row[:stock] = bc.book.display_name
-          row[:company] = !cr.sponsored_company.nil? ? cr.sponsored_company.name : ""         
-          
-          row[:papers] = {}          
-          row[:papers][bc.book.subject_id] = "X"          
-          paper_ids << bc.book.subject_id         
-          
-          if (params[:course_types].present? && !params[:course_types].include?(bc.book.course_type_id.to_s)) || (params[:subjects].present? && !params[:subjects].include?(bc.book.subject_id.to_s))
-          else
-            @list << row
-          end
+    end
+    
+    @course_registers.each do |cr|        
+      cr.books_contacts.each do |bc|
+        row = {}
+        row[:contact_name] = bc.contact.name
+        row[:stock] = bc.book.display_name
+        row[:company] = !cr.sponsored_company.nil? ? cr.sponsored_company.name : ""         
+        
+        row[:papers] = {}          
+        row[:papers][bc.book.subject_id] = "X"          
+        paper_ids << bc.book.subject_id         
+        
+        if (params[:course_types].present? && !params[:course_types].include?(bc.book.course_type_id.to_s)) || (params[:subjects].present? && !params[:subjects].include?(bc.book.subject_id.to_s))
+        else
+          @list << row
         end
       end
-
-      
-      @papers = Subject.where(id: paper_ids).order("name")
-      
-      respond_to do |format|
-        format.html {render "print_payment_list.xls.erb"}
-        format.xls
-        format.pdf {
-          render  :pdf => "payment_list_"+Time.now.strftime("%d_%b_%Y"),
-            :template => 'payment_records/print_payment_list.pdf.erb',
-            :layout => nil,
-            :orientation => 'Landscape',
-            :footer => {
-               :center => "",
-               :left => "",
-               :right => "",               
-               :page_size => "A4",
-               :margin  => {:top    => 0, # default 10 (mm)
-                          :bottom => 0,
-                          :left   => 0,
-                          :right  => 0},
-            }
-        }
-      end
-      
-      
-    end      
+    end
+    
+    @papers = Subject.where(id: paper_ids).order("name")
+    
+    
+    respond_to do |format|
+      format.html {render "print_payment_list.xls.erb"}
+      format.xls
+      format.pdf {
+        render  :pdf => "payment_list_"+Time.now.strftime("%d_%b_%Y"),
+          :template => 'payment_records/print_payment_list.pdf.erb',
+          :layout => nil,
+          :orientation => 'Landscape',
+          :footer => {
+             :center => "",
+             :left => "",
+             :right => "",               
+             :page_size => "A4",
+             :margin  => {:top    => 0, # default 10 (mm)
+                        :bottom => 0,
+                        :left   => 0,
+                        :right  => 0},
+          }
+      }
+    end
+    
+    
   end
   
   def pay_transfer

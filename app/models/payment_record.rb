@@ -314,9 +314,9 @@ class PaymentRecord < ActiveRecord::Base
   
   def display_paid_amount
     if !company.nil?
-      (company_records.map {|r| ApplicationController.helpers.format_price(r.total)}).join("<br />")
+      (company_records.map {|r| ApplicationController.helpers.format_price_round(r.total)}).join("<br />")
     else
-      ApplicationController.helpers.format_price(paid_amount)
+      ApplicationController.helpers.format_price_round(paid_amount)
     end
   end
   
@@ -412,7 +412,7 @@ class PaymentRecord < ActiveRecord::Base
               "<div class=\"checkbox check-default\"><input name=\"ids[]\" id=\"checkbox#{item.id}\" type=\"checkbox\" value=\"#{item.id}\"><label for=\"checkbox#{item.id}\"></label></div>",
               item.contact.contact_link,
               '<div class="text-left">'+item.course.display_name+"</div>",
-              '<div class="text-right"><label class="col_label top0">Total:</label>'+ApplicationController.helpers.format_price(item.total)+"<label class=\"col_label top0\">Paid:</label>"+ApplicationController.helpers.format_price(item.paid)+"<label class=\"col_label top0\">Receivable:</label>"+ApplicationController.helpers.format_price(item.remain)+"</div>",
+              '<div class="text-right"><label class="col_label top0">Total:</label>'+ApplicationController.helpers.format_price_round(item.total)+"<label class=\"col_label top0\">Paid:</label>"+ApplicationController.helpers.format_price_round(item.paid)+"<label class=\"col_label top0\">Receivable:</label>"+ApplicationController.helpers.format_price_round(item.remain)+"</div>",
               '<div class="text-center">'+item.display_payment_status+item.course_register.display_payment+"</div>",
               '<div class="text-center">'+ item.course_register.course_register_link+"</div>", 
               ""

@@ -407,6 +407,9 @@ class Ability
         !cr.delivered?
       end
       can :part_info, CourseRegister
+      
+      
+      can :print_payment_list, PaymentRecord
     end
     
     if user.has_role? "education_consultant"

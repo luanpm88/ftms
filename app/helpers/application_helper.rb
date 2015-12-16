@@ -1,5 +1,23 @@
 module ApplicationHelper
   def format_price(number, vn = false, round = false, precision = nil)
+	# number = ((number.to_f/1000).round)*1000
+    prec = (number.to_f.round == number.to_f) ? 0 : 2
+    prec = 0 if round
+    
+    if !precision.nil?
+      prec = precision
+    end
+    
+    
+    if vn
+      number_to_currency(number, precision: prec, separator: ",", unit: '', delimiter: ".")
+    else
+      number_to_currency(number, precision: prec, separator: ".", unit: '', delimiter: ",")
+    end
+  end
+  
+  def format_price_round(number, vn = false, round = false, precision = nil)
+	number = ((number.to_f/1000).round)*1000
     prec = (number.to_f.round == number.to_f) ? 0 : 2
     prec = 0 if round
     

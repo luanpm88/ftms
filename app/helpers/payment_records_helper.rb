@@ -18,6 +18,12 @@ module PaymentRecordsHelper
             actions += '<li>'+ActionController::Base.helpers.link_to("<i class=\"icon icon-print\"></i> Receipt [#{pr.payment_date.strftime("%d-%b-%Y")}]".html_safe, {controller: "payment_records", action: "show", id: pr.id, tab_page: 1}, title: "Receipt [#{pr.payment_date.strftime("%d-%b-%Y")}]", class: "tab_page")+'</li>'        
           end
         end
+        if can? :print_payment_list, item
+          actions += '<li>'+ActionController::Base.helpers.link_to("<i class=\"icon icon-list\"></i> Print Payment List".html_safe, {controller: "payment_records", action: "print_payment_list", payment_record_id: item.id, format: "pdf"}, title: "Company Payment List", target: "_blank")+'</li>'        
+        end
+        if can? :print_payment_list, item
+          actions += '<li>'+ActionController::Base.helpers.link_to("<i class=\"icon icon-list\"></i> Print Payment List (Excel)".html_safe, {controller: "payment_records", action: "print_payment_list", payment_record_id: item.id, format: "xls"}, title: "Company Payment List", target: "_blank")+'</li>'        
+        end
       end
       
       if can? :trash, item
