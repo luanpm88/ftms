@@ -4,7 +4,16 @@ class CoursesController < ApplicationController
   load_and_authorize_resource
   
   before_action :set_course, only: [:transfer_to_box, :transfer_to_course, :delete, :show, :edit, :update, :destroy] # [delete] for revision-feature
-
+  
+  def intake_options
+    respond_to do |format|
+      format.html { render layout: "content" if params[:tab_page].present? }
+      format.json {
+        render json: Course.intake_options
+      }
+    end
+  end
+  
   # GET /courses
   # GET /courses.json
   def index

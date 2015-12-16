@@ -164,6 +164,7 @@ class Ability
       can :report_toggle, Course
       can :transfer_to_box, Course
       can :approve_all, Course
+      can :intake_options, Course
       
       
       

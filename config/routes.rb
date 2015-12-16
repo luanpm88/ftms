@@ -312,6 +312,8 @@ Hkerp::Application.routes.draw do
       get :report_toggle
       get :undo_delete
       post :approve_all
+      
+      get :intake_options
     end
   end
   

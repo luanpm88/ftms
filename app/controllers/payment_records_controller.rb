@@ -253,6 +253,10 @@ class PaymentRecordsController < ApplicationController
       
       @course_registers = @course_registers.includes(:contact).order("contacts.name, course_registers.contact_id")
       
+      
+      # intakes filters
+      intakes_filters = (params["intakes"].present? ? params["intakes"].split(",") : nil)
+      
       paper_ids = []
       
       @list = []
@@ -268,12 +272,17 @@ class PaymentRecordsController < ApplicationController
           row[:papers][cc.course.subject_id] = "X"          
           paper_ids << cc.course.subject_id
           
+          # check intakes filter
+          is_in_intake = intakes_filters.nil? ? true : intakes_filters.include?("#{cc.course.intake.strftime("%m")}-#{cc.course.intake.strftime("%Y")}")
+          
           if (params[:course_types].present? && !params[:course_types].include?(cc.course.course_type_id.to_s)) || (params[:subjects].present? && !params[:subjects].include?(cc.course.subject_id.to_s))
           else
-            @list << row
+            @list << row if is_in_intake
           end
         end
       end
+      
+      
       
       @course_registers.each do |cr|        
         cr.books_contacts.each do |bc|
@@ -284,7 +293,7 @@ class PaymentRecordsController < ApplicationController
           
           row[:papers] = {}          
           row[:papers][bc.book.subject_id] = "X"          
-          paper_ids << bc.book.subject_id
+          paper_ids << bc.book.subject_id         
           
           if (params[:course_types].present? && !params[:course_types].include?(bc.book.course_type_id.to_s)) || (params[:subjects].present? && !params[:subjects].include?(bc.book.subject_id.to_s))
           else

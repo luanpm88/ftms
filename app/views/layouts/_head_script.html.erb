@@ -2593,6 +2593,10 @@
 						d.student =  $(".payment-list-filter input[name='student']").val()
 					}
 					
+					if($(".payment-list-filter input[name='intakes']").val()) {
+						d.intakes =  $(".payment-list-filter input[name='intakes']").val()
+					}
+					
 					if($(".payment-list-filter input[name='company']").val()) {
 						d.company =  $(".payment-list-filter input[name='company']").val()
 					}
@@ -3170,6 +3174,28 @@
 			multiple: $('.select2-ajax-stock-types').hasClass("multiple"),
 			ajax: {
 			  url: $('.select2-ajax-stock-types').attr("data"),
+			  dataType: 'json',
+			  data: function (term, page) { // page is the one-based page number tracked by Select2
+				return {
+				  q: term, //search term
+				};
+			  },
+			  results: function (data, page) {
+				return {results: data};
+			  }
+			},
+			initSelection: function (element, callback) {				      
+				callback({ id: element.val, text: element.attr('text') });
+			}
+	    });
+		
+		$('.select2-ajax-intakes').select2({
+			placeholder: "Search for intakes",
+			allowClear: true,
+			minimumInputLength: 0,
+			multiple: $('.select2-ajax-intakes').hasClass("multiple"),
+			ajax: {
+			  url: $('.select2-ajax-intakes').attr("data"),
 			  dataType: 'json',
 			  data: function (term, page) { // page is the one-based page number tracked by Select2
 				return {

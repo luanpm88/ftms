@@ -43,6 +43,10 @@ class Course < ActiveRecord::Base
                       }
                   }
   
+  def self.intake_options
+    self.main_courses.select("intake").order("intake DESC").where("intake > ?", "2000-01-01".to_date).uniq(:intake).map{|c| {"id": c.intake.strftime("%m-%Y"), "text": c.intake.strftime("%b-%Y")}}
+  end
+  
   def main_transfers
     transfers.where("transfers.parent_id IS NULL AND transfers.status IS NOT NULL AND transfers.status NOT LIKE ?", "%[deleted]%").where("course_id = ? OR transfer_for = ?", self.id, self.id)
             .uniq

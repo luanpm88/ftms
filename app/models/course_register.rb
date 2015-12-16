@@ -250,13 +250,24 @@ class CourseRegister < ActiveRecord::Base
     if params["upfront"] == "true"
       course_ids = u_course_ids
     else
-      if params["intake_year"].present? && params["intake_month"].present?
-        course_ids = Course.where("EXTRACT(YEAR FROM courses.intake) = ? AND EXTRACT(MONTH FROM courses.intake) = ? ", params["intake_year"], params["intake_month"]).map(&:id)
-      elsif params["intake_year"].present?
-        course_ids = Course.where("EXTRACT(YEAR FROM courses.intake) = ? ", params["intake_year"]).map(&:id)
-      elsif params["intake_month"].present?
-        course_ids = Course.where("EXTRACT(MONTH FROM courses.intake) = ? ", params["intake_month"]).map(&:id)
+      #if params["intake_year"].present? && params["intake_month"].present?
+      #  course_ids = Course.where("EXTRACT(YEAR FROM courses.intake) = ? AND EXTRACT(MONTH FROM courses.intake) = ? ", params["intake_year"], params["intake_month"]).map(&:id)
+      #elsif params["intake_year"].present?
+      #  course_ids = Course.where("EXTRACT(YEAR FROM courses.intake) = ? ", params["intake_year"]).map(&:id)
+      #elsif params["intake_month"].present?
+      #  course_ids = Course.where("EXTRACT(MONTH FROM courses.intake) = ? ", params["intake_month"]).map(&:id)
+      #end
+      
+      if params["intakes"].present?
+        condintakes = []
+        params["intakes"].split(",").each do |is|
+          is = is.split("-")
+          condintakes << "(EXTRACT(YEAR FROM courses.intake) = #{is[1].to_i.to_s} AND EXTRACT(MONTH FROM courses.intake) = #{is[0].to_i.to_s})"
+        end
+        course_ids = Course.where(condintakes.join(" OR ")).map(&:id)
       end
+      
+      
       if params["upfront"] == "false"
         course_ids = Course.where(upfront: false).map(&:id) if course_ids.nil?
       end

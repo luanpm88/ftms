@@ -13,7 +13,7 @@
         <Cell><Data ss:Type="String">STOCK</Data></Cell>
         <Cell><Data ss:Type="String">COMPANY</Data></Cell>
         <% @papers.each do |paper| %>
-          <Cell><Data ss:Type="String" ss:Horizontal="Center"><%= paper.name %></Data></Cell>
+          <Cell><Data ss:Type="String"><%= paper.name %></Data></Cell>
         <% end %>
       </Row>
     <% @list.each do |row| %>
@@ -24,7 +24,7 @@
         <Cell><Data ss:Type="String"><%= row[:stock] %></Data></Cell>
         <Cell><Data ss:Type="String"><%= row[:company] %></Data></Cell>
         <% @papers.each do |paper| %>
-          <Cell ss:Horizontal="Center"><Data ss:Type="String"><%= row[:papers][paper.id] %></Data></Cell>
+          <Cell><Data ss:Type="String"><%= row[:papers][paper.id] %></Data></Cell>
         <% end %>
       </Row>
     <% end %>
