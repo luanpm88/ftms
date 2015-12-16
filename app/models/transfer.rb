@@ -445,6 +445,7 @@ class Transfer < ActiveRecord::Base
       contact.update_info
       to_contact.update_info
       
+      self.note_logs.destroy_all
       self.send_note_log
     else
       delete_status("active")
