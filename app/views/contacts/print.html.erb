@@ -182,7 +182,7 @@
         <table>
           <% @contact.active_activities.limit(5).each do |a| %>
             <tr>
-              <td><%= a.note %><br /><br /></td>
+              <td><%= a.note.html_safe %><br /><br /></td>
               <td valign="top" style="white-space: nowrap"><%= a.created_at.strftime("%d-%b-%Y") %>, by <%= a.user.name if a.user.present? %></td>
             </tr>
               
