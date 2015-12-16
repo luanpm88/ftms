@@ -243,10 +243,10 @@
 													  <%= item.description.html_safe %>
 													</td>
 													<td class="text-right">
-													  <%= format_price(item.total) %>
+													  <%= item.is_no_price? && item.total == 0.0 ? "no price!" : format_price(item.total) %>
 													</td>
 													<td class="text-right">
-													  <%= format_price(item.paid_amount) %>
+													  <%= item.is_no_price? && item.total == 0.0 ? "no price!" : format_price(item.paid_amount) %>
 													</td>
 													<td class="text-center">
 													  <%= item.paid_on %>
@@ -255,7 +255,7 @@
 													  <%= item.bank_account_name %>
 													</td>
 													<td class="text-right">
-													  <%= ApplicationController.helpers.format_price(item.remain_amount) %>
+													  <%= item.is_no_price? && item.total == 0.0 ? "no price!" : ApplicationController.helpers.format_price(item.remain_amount) %>
 													</td>
 													<td class="text-center">
 													  <%= item.contact.account_manager.staff_col %>
