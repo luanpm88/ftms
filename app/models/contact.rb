@@ -2743,7 +2743,7 @@ class Contact < ActiveRecord::Base
   end
   
   def display_not_added_stock(pr)
-    return "aa" if !pr.present?
+    return "" if !pr.present?
     str = ["<br><br><strong>Not added stock(s):</strong><div class=\"price_confirmed\">"]
     pr.split(",").each do |bid|
       book = Book.find(bid)
