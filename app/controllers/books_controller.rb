@@ -300,7 +300,7 @@ class BooksController < ApplicationController
       end
     end
     
-    @books_contacts = @books_contacts.joins(:course_register, :book => [:course_type, :subject, :stock_type]).order("course_types.short_name, subjects.name, stock_types.display_order, books.created_at")
+    @books_contacts = @books_contacts.joins(:course_register, :book => [:course_type, :subject, :stock_type]).order("books_contacts.contact_id, course_types.short_name, subjects.name, stock_types.display_order, books.created_at")
     
     @list = []
     row = nil
