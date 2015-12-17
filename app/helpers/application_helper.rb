@@ -17,14 +17,14 @@ module ApplicationHelper
   end
   
   def format_price_round(number, vn = false, round = false, precision = nil)
-	number = ((number.to_f/1000).round)*1000
+	# number = ((number.to_f/1000).round)*1000
+	number = number.to_f.round
     prec = (number.to_f.round == number.to_f) ? 0 : 2
     prec = 0 if round
     
     if !precision.nil?
       prec = precision
-    end
-    
+    end    
     
     if vn
       number_to_currency(number, precision: prec, separator: ",", unit: '', delimiter: ".")
@@ -68,7 +68,7 @@ module ApplicationHelper
       return actions.html_safe
   end
   
-  def check_ajax_button(checked, url, subfix="")	
+  def check_ajax_button(checked, url, subfix="")
     "<span class=\"nowrap\"><a href=\"#{url}\" class=\"check-radio ajax-check-radio\"><i class=\"#{checked.to_s} icon-#{(checked ? "check" : "check-empty")}\"></i></a> #{subfix}</span>"
   end
   
