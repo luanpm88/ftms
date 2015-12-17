@@ -25,9 +25,9 @@
         <Cell><Data ss:Type="String"><%= contact.payment_type %></Data></Cell>
         <Cell><Data ss:Type="String"><%= contact.birthday.strftime("%d-%b-%Y") if !contact.birthday.nil? %></Data></Cell>
         <Cell><Data ss:Type="String"><%= contact.address %></Data></Cell>
-        <Cell><Data ss:Type="String"><%= contact.email %></Data></Cell>
+        <Cell><Data ss:Type="String"><%= contact.email %><%= (";"+contact.email_2s.join(";")) if !contact.email_2s.empty? %></Data></Cell>
         <Cell><Data ss:Type="String"><%= contact.phone %></Data></Cell>
-        <Cell><Data ss:Type="String"><%= contact.mobile %></Data></Cell>
+        <Cell><Data ss:Type="String"><%= contact.mobile %><%= (";"+contact.mobile_2s.join(";")) if !contact.mobile_2s.empty? %></Data></Cell>
       </Row>
     <% end %>
     </Table>
