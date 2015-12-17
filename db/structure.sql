@@ -314,7 +314,8 @@ CREATE TABLE books_contacts (
     cache_search text,
     intake timestamp without time zone,
     discount_programs text,
-    description text
+    description text,
+    money numeric
 );
 
 
@@ -4408,4 +4409,6 @@ INSERT INTO schema_migrations (version) VALUES ('20151128041642');
 INSERT INTO schema_migrations (version) VALUES ('20151201111744');
 
 INSERT INTO schema_migrations (version) VALUES ('20151217120803');
+
+INSERT INTO schema_migrations (version) VALUES ('20151217141105');
 

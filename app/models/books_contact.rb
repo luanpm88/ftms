@@ -47,6 +47,9 @@ class BooksContact < ActiveRecord::Base
   def discount=(new)
     self[:discount] = new.to_s.gsub(/\,/, '')
   end
+  def money=(new)
+    self[:money] = new.to_s.gsub(/\,/, '')
+  end
   
   def self.all_delivery_waiting
     self.includes(:book, :course_register).where(course_registers: {cache_delivery_status: "not_delivered"}).order("books.name")
@@ -54,7 +57,7 @@ class BooksContact < ActiveRecord::Base
   
   def total
     if price != -1
-      return price*quantity - discount.to_f - discount_program_amount
+      return price*quantity - discount.to_f - discount_program_amount - money.to_f
     else
       return no_price_payment_record_detail.nil? ? 0 : no_price_payment_record_detail.total.to_f
     end

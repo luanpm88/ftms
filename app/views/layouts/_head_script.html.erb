@@ -126,7 +126,7 @@
 	function calculateBudgetValues() {
 		var budget_money = parseFloat($(".budget_money").html())
 		var input_budget_money = 0
-		$(".phrase_box .input_budget_money").each(function() {
+		$(".input_budget_money").each(function() {
 		  if($(this).val() != "") {
 			var vv = parseFloat($(this).val().replace(/,/g,""))
 			
@@ -604,6 +604,7 @@
 				
 				format_price(box.find('input.price_input'))
 				
+				
 				calculateStockPriceForm()
 			}
 		});
@@ -672,6 +673,7 @@
 		var total_program = 0
 		var total_discount = 0
 		var count = 0
+		calculateBudgetValues()
 		$('.stock_box_list .stock_box').each(function() {	
 			var number = $(this).attr("rel")
 			var box = $(this)
@@ -689,6 +691,7 @@
 						var price = 0
 						var price_discount_program = 0
 						var price_discount = 0
+						var money = 0
 						
 						if(box.find('input[name="books_contacts['+number+'][quantity]"]').length) {
 						  quantity = parseFloat(box.find('input[name="books_contacts['+number+'][quantity]"]').val())
@@ -713,6 +716,13 @@
 							  price_discount_program += dp
 							}
 						})
+						
+						// Use Money
+						if(box.find('input[name="books_contacts['+number+'][money]"]').length && box.find('input[name="books_contacts['+number+'][money]"]').val() != "") {
+						  money = parseFloat(box.find('input[name="books_contacts['+number+'][money]"]').val().replace(/,/g,""))
+						}
+						price = price - money
+						
 						
 						line_total = price - price_discount - price_discount_program
 						
@@ -818,11 +828,7 @@
 					}
 					
 					
-					// Use Money
-					if(box.find('input[name="contacts_courses['+number+'][money]"]').length && box.find('input[name="contacts_courses['+number+'][money]"]').val() != "") {
-					  money = parseFloat(box.find('input[name="contacts_courses['+number+'][money]"]').val().replace(/,/g,""))
-					}
-					price = price - money
+					
 					
 					
 					
@@ -851,6 +857,14 @@
 							price = price - d_value
 						}					
 					})
+					
+					
+					// Use Money
+					if(box.find('input[name="contacts_courses['+number+'][money]"]').length && box.find('input[name="contacts_courses['+number+'][money]"]').val() != "") {
+					  money = parseFloat(box.find('input[name="contacts_courses['+number+'][money]"]').val().replace(/,/g,""))
+					}
+					price = price - money
+					
 					
 					//Other Discounts
 					box.find(".other_discount_box").each(function() {					

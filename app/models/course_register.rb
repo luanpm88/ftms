@@ -179,6 +179,8 @@ class CourseRegister < ActiveRecord::Base
         cc.upfront = row[1]["upfront"]
         #cc.intake = Date.new row[1]["intake(1i)"].to_i, row[1]["intake(2i)"].to_i
         
+        cc.money = row[1]["money"]
+        
         if row[1]["id"].present?
           cc.save            
         end
@@ -610,7 +612,7 @@ class CourseRegister < ActiveRecord::Base
   end
   
   def budget_money
-    contacts_courses.sum(:money)
+    contacts_courses.sum(:money) + books_contacts.sum(:money)
   end
   
   def discount_program_amount_old

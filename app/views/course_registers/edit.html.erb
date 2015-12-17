@@ -551,6 +551,24 @@
 																	</div>
 															  </div>
 														</div>
+														<div class="col-md-3 transfer_money_form no_price_group">
+
+																<div class="form-group">
+																	 <label class="form-label"><label>Use Deferred/Transferred Money</label></label>
+																	 <div class="input-with-iconz right">                                       
+																		  <%= text_field_tag "books_contacts["+number.to_s+"][money]", format_price(bc.money), class: "form-control price_input input_budget_money" %>
+																	 </div>
+																</div>
+														  
+																<div class="form-group">
+																	 <label class="form-label"><label>Remain</label></label>
+																	 <div class="input-with-iconz text-right">
+																		  
+																		  <strong class="item_budget_money">0</strong>
+																	 </div>
+																</div>
+							   
+														</div>
 												  </div>
 											 </div>
 											 <div class="col-md-5">

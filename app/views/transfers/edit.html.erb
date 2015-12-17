@@ -1,10 +1,22 @@
-       <div class="row">
+		  <div class="page-title <%= "draft" if @transfer.draft? %>""> <i class="icon-briefcase"></i>
+			   <h3 class="">Defer/Transfer: <span class="semi-bold"><%= @transfer.contact.name %></span>
+			   <br /><%= "Changed at: #{@transfer.created_at.strftime("%d-%b-%Y %I:%M %p")} / By: #{@transfer.older.user.name}" if @transfer.draft? %>
+			   </h3>
+			 </div>
+		   
+			 <div class="top-buts">
+					 <%= render_transfer_actions(@transfer, "big") if !@transfer.draft? %>
+					 <%= render_transfer_history_actions(@transfer) %>
+			 </div>
+			 <div>
+					 <%= @transfer.display_statuses if !@transfer.draft? %>
+			 </div>
+			 <br style="clear:both" />
+		  
+		  <div class="row">
             <div class="col-md-12">
               <div class="grid simple">
-                <div class="grid-titles no-border">
-                  <h4>Defer/Transfer <span class="semi-bold">Course</span></h4>
-                  
-                </div>     
+    
                 
                 <div class="grid-body no-border transfer_course_from">
                   <%= form_for(@transfer) do |f| %>
@@ -43,7 +55,8 @@
 											 @disable = {}
 											 @course = @transfer.course
 											 @to_contact = @transfer.contact
-											 active_course = @to_contact.active_course(@transfer.course.id, @transfer.created_at-1.second)
+											 created_time = @transfer.draft? ? @transfer.parent.created_at : @transfer.created_at
+											 active_course = @to_contact.active_course(@transfer.course.id, created_time-1.second)
 											 @courses_phrases = active_course[:courses_phrases]
 											 @hour = active_course[:hour]
 											 @money = active_course[:money]
@@ -298,7 +311,7 @@
 										
 										<%
 											 disable = {}
-											 
+											 created_time = @transfer.draft? ? @transfer.parent.created_at : @transfer.created_at
 											 @course = @transfer.to_course
 											 @courses_phrases = @course.ordered_courses_phrases
 											 @type = "to"
@@ -306,7 +319,7 @@
 											 @to_contact = @transfer.to_contact
 											 
 											 @courses_phrases.each do |cp|
-												 @disable[cp.id] = @to_contact.courses_phrase_registered?(cp, @transfer.created_at-1.second)
+												 @disable[cp.id] = @to_contact.courses_phrase_registered?(cp, created_time-1.second)
 											 end
 
 											 @full_course = true

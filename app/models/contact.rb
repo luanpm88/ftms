@@ -127,6 +127,12 @@ class Contact < ActiveRecord::Base
                     .uniq
   end
   
+  def active_books_contacts
+    books_contacts.joins("LEFT JOIN course_registers ON course_registers.id = books_contacts.course_register_id")
+                    .where(course_registers: {parent_id: nil}).where("course_registers.status IS NOT NULL AND course_registers.status LIKE ?", "%[active]%")
+                    .uniq
+  end
+  
   def active_course_registers
     course_registers.where("course_registers.parent_id IS NULL AND course_registers.status IS NOT NULL AND course_registers.status LIKE ?", "%[active]%")
   end
@@ -1847,10 +1853,17 @@ class Contact < ActiveRecord::Base
   
   def budget_money(datetime=nil)
     if datetime.present?
-      active_received_transfers.where("transfers.created_at <= ?", datetime).where(to_type: "money").sum(:money) - active_contacts_courses.where("contacts_courses.created_at <= ?", datetime).sum(:money)
+      result = active_received_transfers.where("transfers.created_at <= ?", datetime).where(to_type: "money").sum(:money)
+      result -= active_contacts_courses.where("contacts_courses.created_at <= ?", datetime).sum(:money)
+      result -= active_books_contacts.where("books_contacts.created_at <= ?", datetime).sum(:money)
+      
     else
-      active_received_transfers.where(to_type: "money").sum(:money) - active_contacts_courses.sum(:money)
+      result = active_received_transfers.where(to_type: "money").sum(:money)
+      result -= active_contacts_courses.sum(:money)
+      result -= active_books_contacts.sum(:money)
     end
+    
+    return result
   end
   
   def budget_money_logs
@@ -1875,6 +1888,18 @@ class Contact < ActiveRecord::Base
       full_course = (t.full_course == true and t.course.upfront != true) ? " <span class=\"active\">[full]</span>" : ""
       row[:content] += "<div class=\"nowrap\"><strong>"+t.course.display_name+full_course+"</strong></div>"
       row[:content] += "<div class=\"courses_phrases_list\">"+Course.render_courses_phrase_list(t.courses_phrases.joins(:phrase).order("phrases.name, courses_phrases.start_at"),t)+"</div>" if !t.courses_phrases.empty?
+      row[:creator] = t.course_register.user.staff_col
+      row[:sign] = "-"
+      row[:money] = t.money
+      logs << row
+    end
+    
+    active_books_contacts.where("money > 0").each do |t|
+      t = BooksContact.find(t.id)
+      row = {}
+      row[:datetime] = t.created_at
+      row[:content] = "Registered Stock:"
+      row[:content] += "<div class=\"nowrap\"><strong>"+t.book.display_name+"</strong></div>"      
       row[:creator] = t.course_register.user.staff_col
       row[:sign] = "-"
       row[:money] = t.money
