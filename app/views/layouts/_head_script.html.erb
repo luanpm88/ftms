@@ -1541,6 +1541,10 @@
 					if($(".contact-filter select[name='base_status']").val()) {
 						d.base_status =  $(".contact-filter select[name='base_status']").val()
 					}
+					
+					if($(".contact-filter input[name='not_added_books']").val()) {
+						d.not_added_books =  $(".contact-filter input[name='not_added_books']").val()
+					}
 				}
 			},
 			"columnDefs": [ { "targets": [0,2,3,4,6,8], "orderable": false } ],
@@ -1559,14 +1563,18 @@
 				$(".datatable-contacts tr").each(function() {
 					if (count > 0) {
 						var cf = "";
+						var not_added_books = "";
 						if($(".contact-filter input[name='courses']").val()) {
 							cf =  $(".contact-filter input[name='courses']").val()
+						}
+						if($(".contact-filter input[name='not_added_books']").val()) {
+							not_added_books =  $(".contact-filter input[name='not_added_books']").val()
 						}
 						var row = $(this)
                         var iid = row.find(".main_part_info").attr("item_id")
 						
 						datatable_contact_hash[count] = $.ajax({
-						  url: '<%= part_info_contacts_path %>?id='+iid+'&courses='+cf,
+						  url: '<%= part_info_contacts_path %>?id='+iid+'&courses='+cf+'&not_added_books='+not_added_books,
 						  success: function(data, textStatus, jqXHR)
 						  {
 							row.find("td").eq(2).html(data.col_2)
@@ -1641,10 +1649,18 @@
 				var count = 0
 				$(".datatable-merge-contacts tr").each(function() {
 					if (count > 0) {
+						var cf = "";
+						var not_added_books = "";
+						if($(".merge-contact-filter input[name='courses']").val()) {
+							cf =  $(".merge-contact-filter input[name='courses']").val()
+						}
+						if($(".merge-contact-filter input[name='not_added_books']").val()) {
+							not_added_books =  $(".merge-contact-filter input[name='not_added_books']").val()
+						}
 						var row = $(this)
                         var iid = row.find(".main_part_info").attr("item_id")
 						datatable_m_contact_hash[count] = $.ajax({
-						  url: '<%= part_info_contacts_path %>?id='+iid,
+						  url: '<%= part_info_contacts_path %>?id='+iid+'&courses='+cf+'&not_added_books='+not_added_books,
 						  success: function(data, textStatus, jqXHR)
 						  {
 							row.find("td").eq(2).html(data.col_2)
@@ -1772,6 +1788,10 @@
 					if($(".contact-filter select[name='base_status']").val()) {
 						d.base_status =  $(".contact-filter select[name='base_status']").val()
 					}
+					
+					if($(".contact-filter input[name='not_added_books']").val()) {
+						d.not_added_books =  $(".contact-filter input[name='not_added_books']").val()
+					}
 				}				
 			},
 			"columnDefs": [ { "targets": [0,1,3,4,5,6,7,8,9,10], "orderable": false } ],
@@ -1874,6 +1894,10 @@
 					
 					if($(".contact-filter select[name='base_status']").val()) {
 						d.base_status =  $(".contact-filter select[name='base_status']").val()
+					}
+					
+					if($(".contact-filter input[name='not_added_books']").val()) {
+						d.not_added_books =  $(".contact-filter input[name='not_added_books']").val()
 					}
 				}
 			},
@@ -2483,8 +2507,8 @@
 			"ajax": {
 				"url": "<%= datatable_books_contacts_path %>",
 				"data": function ( d ) {
-					if($(".delivery-filter select[name='books[]']").val()) {
-						d.books = $(".delivery-filter select[name='books[]']").val()
+					if($(".delivery-filter input[name='books']").val()) {
+						d.books = $(".delivery-filter input[name='books']").val()
 					}
 					
 					if($(".delivery-filter select[name='stock_types[]']").val()) {
@@ -3210,6 +3234,30 @@
 				callback({ id: element.val, text: element.attr('text') });
 			}
 	    });
+		
+		$('.select2-ajax-not-added-books').select2({
+			placeholder: "Search for not added stocks",
+			allowClear: true,
+			minimumInputLength: 0,
+			multiple: $('.select2-ajax-not-added-books').hasClass("multiple"),
+			ajax: {
+			  url: $('.select2-ajax-not-added-books').attr("data")+"&course_id="+$('input[name="courses"]').val(),
+			  dataType: 'json',
+			  course_id: $('input[name="courses"]').val(),
+			  data: function (term, page) { // page is the one-based page number tracked by Select2
+				return {
+				  q: term, //search term
+				};
+			  },
+			  results: function (data, page) {
+				return {results: data};
+			  }
+			},
+			initSelection: function (element, callback) {				      
+				callback({ id: element.val, text: element.attr('text') });
+			}
+	    });
+		
 	    
 		//number input
 	    $('input.number_input').number(true, 2);
@@ -3674,6 +3722,29 @@
 				{
 					box.html(data)
 					box.find(".modern_select").select2()
+				}
+			});
+			
+			$('.select2-ajax-not-added-books').select2({
+				placeholder: "Search for not added stocks",
+				allowClear: true,
+				minimumInputLength: 0,
+				multiple: $('.select2-ajax-not-added-books').hasClass("multiple"),
+				ajax: {
+				  url: $('.select2-ajax-not-added-books').attr("data")+"&course_id="+$('input[name="courses"]').val(),
+				  dataType: 'json',
+				  course_id: $('input[name="courses"]').val(),
+				  data: function (term, page) { // page is the one-based page number tracked by Select2
+					return {
+					  q: term, //search term
+					};
+				  },
+				  results: function (data, page) {
+					return {results: data};
+				  }
+				},
+				initSelection: function (element, callback) {				      
+					callback({ id: element.val, text: element.attr('text') });
 				}
 			});
 		});

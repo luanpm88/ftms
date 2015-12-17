@@ -45,7 +45,19 @@ class Book < ActiveRecord::Base
   end
   
   def self.full_text_search(params)    
-    self.main_books.order("name").search(params[:q]).limit(50).map {|model| {:id => model.id, :text => model.name} }
+    result = self.main_books.includes(:stock_type, :course_type, :subject, :books_contacts => :course_register).where("books.status IS NOT NULL AND books.status NOT LIKE ?", "%[deleted]%")
+    result = result.where("LOWER(books.cache_search) LIKE ?", "%#{params[:q].strip.downcase}%") if params[:q].present?
+    
+    result = result.where("LOWER(books.cache_search) LIKE '%lecture%'") if params[:lecture_note].present?
+    
+    if params[:course_id].present?
+      course = Course.find(params[:course_id])
+      result = result.where(course_type_id: course.course_type_id).where(subject_id: course.subject_id)
+    end    
+    
+    result = result.order("course_types.short_name, subjects.name, stock_types.display_order, books.created_at").limit(50).map {|model| {:id => model.id, :text => model.display_name} }
+    
+    result
   end
   
   def self.active_books_contacts

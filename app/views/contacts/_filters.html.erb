@@ -1,4 +1,4 @@
-<div class="grid simple " id="contact_filter">
+<div class="grid simple " id="contact_filter" style="margin-bottom: 10px">
 				<div class="grid-body no-border filters contact-filter">
 
 						<div class="row order-filters">
@@ -90,11 +90,13 @@
 							</div>-->
 							
 							
-							
-							<div class="col-md-3 seminar-contact-filter personal-box">
-								<h4>Seminar</h4>							
-								<input style="width:100%;margin-bottom: 5px;" name="seminars" data="<%= seminars_path(format: "json") %>" class="select2-ajax-seminars multiple" value="<%= @seminar.id if !@seminar.nil? %>" text="<%= @seminar.name if !@seminar.nil? %>" />
+							<div class="col-md-3">
+								<h4>Education Consultant</h4>
+								<div class="">
+									<%= select_tag 'user', options_for_select(User.main_users.collect{ |u| [u.name, u.id] }) , {:include_blank => 'All', class: "modern_select width100"} %>
+								</div>
 							</div>
+							
 							
 							<div class="col-md-3 course-contact-filter personal-box">
 								<h4>Course</h4>							
@@ -105,86 +107,96 @@
 								<h4>Phrase</h4>							
 								<input style="width:100%;margin-bottom: 5px;" name="phrases" data="<%= phrases_path(format: "json") %>" class="select2-ajax-phrases multiple" />
 							</div>
+						</div>
 						
-							
-
-						</div>
-						<div class="row order-filters personal-box">
-							<div class="col-md-2">
-								<h4>Created From</h4>							
-								<div class="input-with-icon  right">                                       
-									<i class=""></i>
-									<div class="input-append success date col-md-10 no-padding">
-									  <%= text_field_tag :created_from, "", :class => "form-control" %>
-									  <span class="add-on"><span class="arrow"></span><i class="icon-th"></i></span>
+						
+						
+						<a style="margin-top: 15px;" href="#more" class="btn btn-info btn-small" onclick="$('.more_filters').toggle()">More filters... <span class="caret"></span></a>
+						
+						<div class="more_filters" style="display: none">
+								<div class="row order-filters personal-box">
+									<div class="col-md-2">
+										<h4>Created From</h4>							
+										<div class="input-with-icon  right">                                       
+											<i class=""></i>
+											<div class="input-append success date col-md-10 no-padding">
+											  <%= text_field_tag :created_from, "", :class => "form-control" %>
+											  <span class="add-on"><span class="arrow"></span><i class="icon-th"></i></span>
+											</div>
+											<br style="clear: both" />
+									   </div>
+									</div>			
+									<div class="col-md-2">
+										<h4>Created To</h4>							
+										<div class="input-with-icon  right">                                       
+											<i class=""></i>
+											<div class="input-append success date col-md-10 no-padding">
+											  <%= text_field_tag :created_to, "", :class => "form-control" %>
+											  <span class="add-on"><span class="arrow"></span><i class="icon-th"></i></span>
+											</div>
+											<br style="clear: both" />
+									   </div>
 									</div>
-									<br style="clear: both" />
-							   </div>
-							</div>			
-							<div class="col-md-2">
-								<h4>Created To</h4>							
-								<div class="input-with-icon  right">                                       
-									<i class=""></i>
-									<div class="input-append success date col-md-10 no-padding">
-									  <%= text_field_tag :created_to, "", :class => "form-control" %>
-									  <span class="add-on"><span class="arrow"></span><i class="icon-th"></i></span>
+									<div class="col-md-2">
+										<h4>Payment Type</h4>							
+										<div class="input-with-icon right">
+											<select name="payment_type" class="modern_select width100">
+													<option value="">All</option>
+													<option value="self-financed">Self-financed</option>
+													<option value="company-sponsored">Company-sponsored</option>
+											</select>
+										</div>
 									</div>
-									<br style="clear: both" />
-							   </div>
-							</div>
-							<div class="col-md-2">
-								<h4>Payment Type</h4>							
-								<div class="input-with-icon right">
-									<select name="payment_type" class="modern_select width100">
-											<option value="">All</option>
-											<option value="self-financed">Self-financed</option>
-											<option value="company-sponsored">Company-sponsored</option>
-									</select>
-								</div>
-							</div>
-							
-							<div class="col-md-3">
-								<h4>Company</h4>
-								<div class="">
-									<div class="input-with-icon  right">                                       
-									<i class=""></i>
-									<input style="width:100%;margin-bottom: 5px;" name="company" data="<%= contacts_path(is_individual: false, format: "json") %>" class="select2-ajax-companies" value="<%= @company.id if !@company.nil? %>" text="<%= @company.name if !@company.nil? %>" data-placeholder="All"/>
+									
+									<div class="col-md-3">
+										<h4>Company</h4>
+										<div class="">
+											<div class="input-with-icon  right">                                       
+											<i class=""></i>
+											<input style="width:100%;margin-bottom: 5px;" name="company" data="<%= contacts_path(is_individual: false, format: "json") %>" class="select2-ajax-companies" value="<%= @company.id if !@company.nil? %>" text="<%= @company.name if !@company.nil? %>" data-placeholder="All"/>
+											</div>
+										</div>
 									</div>
+									<div class="col-md-3 seminar-contact-filter personal-box">
+										<h4>Seminar</h4>							
+										<input style="width:100%;margin-bottom: 5px;" name="seminars" data="<%= seminars_path(format: "json") %>" class="select2-ajax-seminars multiple" value="<%= @seminar.id if !@seminar.nil? %>" text="<%= @seminar.name if !@seminar.nil? %>" />
+									</div>
+									
 								</div>
+									
+								<div class="row">
+										<div class="col-md-3">
+														<h4>ApproveStatus</h4>							
+														<%= select_tag 'status', options_for_select(Contact.status_options, params[:status]), class: "modern_select width100" %>
+										</div>	
+									
+									<div class="col-md-3 personal-box">
+										<h4>Tag</h4>
+										<%= select_tag 'tags[]', options_for_select(ContactTag.active_contact_tags.collect{ |u| [u.name, u.id] }), class: "modern_select width100", multiple: "multiple" %>
+									</div>
+									<div class="col-md-3 personal-box">
+										<h4>Old Tag</h4>                        
+										<div class="lecturers-filter-box">
+											<input style="width:100%;margin-bottom: 5px;" name="old_tag" data="<%= old_tags_path(format: "json") %>" class="select2-ajax-old-tags" />
+										</div>
+									</div>
+		
+									<div class="col-md-3 personal-box">
+										<h4>Old Course</h4>                        
+										<div class="lecturers-filter-box">
+											<input style="width:100%;margin-bottom: 5px;" name="old_course" data="<%= old_link_students_path(format: "json") %>" class="select2-ajax-old-link-students" />
+										</div>
+									</div>
 							</div>
-							
-							<div class="col-md-3">
-								<h4>Education Consultant</h4>
-								<div class="">
-									<%= select_tag 'user', options_for_select(User.main_users.collect{ |u| [u.name, u.id] }) , {:include_blank => 'All', class: "modern_select width100"} %>
-								</div>
+									
+							<div class="row">
+										<div class="col-md-6">
+											<h4>Check not added lecture note</h4>							
+											<input style="width:100%;margin-bottom: 5px;" name="not_added_books" data="<%= books_path(format: "json", lecture_note: true) %>" class="select2-ajax-not-added-books multiple" />
+										</div>
 							</div>
+									
 						</div>
-							
-						<div class="row">
-								<div class="col-md-3">
-												<h4>ApproveStatus</h4>							
-												<%= select_tag 'status', options_for_select(Contact.status_options, params[:status]), class: "modern_select width100" %>
-								</div>	
-							
-							<div class="col-md-3 personal-box">
-								<h4>Tag</h4>
-								<%= select_tag 'tags[]', options_for_select(ContactTag.active_contact_tags.collect{ |u| [u.name, u.id] }), class: "modern_select width100", multiple: "multiple" %>
-							</div>
-							<div class="col-md-3 personal-box">
-								<h4>Old Tag</h4>                        
-								<div class="lecturers-filter-box">
-									<input style="width:100%;margin-bottom: 5px;" name="old_tag" data="<%= old_tags_path(format: "json") %>" class="select2-ajax-old-tags" />
-								</div>
-							</div>
-
-							<div class="col-md-3 personal-box">
-								<h4>Old Course</h4>                        
-								<div class="lecturers-filter-box">
-									<input style="width:100%;margin-bottom: 5px;" name="old_course" data="<%= old_link_students_path(format: "json") %>" class="select2-ajax-old-link-students" />
-								</div>
-							</div>
-						</div>
-
+										
 				</div>		    
 			</div>

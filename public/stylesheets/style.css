@@ -8653,3 +8653,14 @@ h5.list_title {
 .tab-content {
     padding-bottom: 100px;
 }
+.listing_box_actions {
+    float: left;
+    margin-bottom: -45px;
+    position: absolute;
+    z-index: 1;
+    margin-top: 0;
+}
+.dataTables_wrapper .dataTables_length {
+    float: right;
+    margin-left: 20px;
+}

@@ -109,6 +109,12 @@ class Contact < ActiveRecord::Base
           .uniq
   end
   
+  def added_books
+    books.includes(:books_contacts).joins("LEFT JOIN course_registers ON course_registers.id = books_contacts.course_register_id")
+          .where(course_registers: {parent_id: nil}).where("course_registers.status IS NOT NULL AND course_registers.status NOT LIKE ?", "%[deleted]%")
+          .uniq
+  end
+  
   def active_courses
     courses.includes(:contacts_courses).joins("LEFT JOIN course_registers ON course_registers.id = contacts_courses.course_register_id")
           .where(course_registers: {parent_id: nil}).where("course_registers.status IS NOT NULL AND course_registers.status LIKE ?", "%[active]%")
@@ -161,6 +167,7 @@ class Contact < ActiveRecord::Base
     self.update_cache_intakes
     self.update_cache_subjects
     self.update_cache_courses
+    self.update_cache_books
     self.update_cache_phrases
     self.update_cache_search
     self.update_cache_transferred_courses_phrases
@@ -374,6 +381,14 @@ class Contact < ActiveRecord::Base
       @records = @records.where("contacts.status NOT LIKE ?","%[deleted]%")
     end
     
+    if params["not_added_books"].present?
+      ors = []
+      params["not_added_books"].split(",").each do |b|
+        ors << "contacts.cache_books NOT LIKE '%[#{b}]%'"
+      end
+      @records = @records.where(ors.join(" OR "))
+    end
+    
     # Areas filter
     cities_ids = []
     if params[:area_ids].present?
@@ -446,7 +461,7 @@ class Contact < ActiveRecord::Base
       
       item = [
               "<div item_id=\"#{item.id.to_s}\" class=\"main_part_info checkbox check-default\"><input name=\"ids[]\" id=\"checkbox#{item.id}\" type=\"checkbox\" value=\"#{item.id}\"><label for=\"checkbox#{item.id}\"></label></div>",
-              '<div class="text-left"><strong>'+item.contact_link+"</strong></div>"+'<div class="text-left">'+item.html_info_line.html_safe+item.referrer_link+"</div>"+item.picture_link,
+              '<div class="text-left"><strong>'+item.contact_link+"</strong></div>"+'<div class="text-left">'+item.html_info_line.html_safe+item.referrer_link+"</div>"+item.picture_link+item.display_not_added_stock(params[:not_added_books]),
               "",
               "",
               "",
@@ -2187,6 +2202,10 @@ class Contact < ActiveRecord::Base
     self.update_attribute(:cache_courses, "["+(real_courses.map {|c| "#{c[:course].id.to_s},#{(c[:full_course] == true ? "full" : "half")}"}).join("][")+"]")
   end
   
+  def update_cache_books
+    self.update_attribute(:cache_books, "["+self.added_books.map(&:id).join("][")+"]")
+  end
+  
   def update_cache_phrases
     self.update_attribute(:cache_phrases, "["+real_phrase_ids.join("][")+"]")
   end
@@ -2722,5 +2741,16 @@ class Contact < ActiveRecord::Base
       self.update_attribute(:bases, nil)
     end
   end
-
+  
+  def display_not_added_stock(pr)
+    return "aa" if !pr.present?
+    str = ["<br><br><strong>Not added stock(s):</strong><div class=\"price_confirmed\">"]
+    pr.split(",").each do |bid|
+      book = Book.find(bid)
+      str << "<div class=\"\">#{book.display_name}</div>" if !self.cache_books.include?("[#{bid}]")
+    end
+    str << "<div>"
+    return str.join("")
+  end
+  
 end
