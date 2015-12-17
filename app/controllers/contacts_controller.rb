@@ -544,6 +544,14 @@ class ContactsController < ApplicationController
     end
     
     
+    # get all emails
+    @mobiles = []
+    @contacts.each do |c|
+      @mobiles << c.mobile if c.mobile.present?
+      @mobiles += c.mobile_2s if !c.mobile_2s.empty?
+    end
+    @mobiles = @mobiles.uniq    
+    
     
     log = UserLog.new(user_id: current_user.id, title: "Export Contact Mobiles")
     log.render_content(@contacts, params)
@@ -568,6 +576,14 @@ class ContactsController < ApplicationController
         @contacts = Contact.where(id: params[:ids])
       end
     end
+    
+    # get all emails
+    @emails = []
+    @contacts.each do |c|
+      @emails << c.email if c.email.present?
+      @emails += c.email_2s if !c.email_2s.empty?
+    end
+    @emails = @emails.uniq
     
     log = UserLog.new(user_id: current_user.id, title: "Export Contact Emails")
     log.render_content(@contacts, params)
