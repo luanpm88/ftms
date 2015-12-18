@@ -266,7 +266,7 @@ class CourseRegister < ActiveRecord::Base
           is = is.split("-")
           condintakes << "(EXTRACT(YEAR FROM courses.intake) = #{is[1].to_i.to_s} AND EXTRACT(MONTH FROM courses.intake) = #{is[0].to_i.to_s})"
         end
-        course_ids = Course.where(condintakes.join(" OR ")).map(&:id)
+        course_ids = Course.where(condintakes.join(" OR ")).where(upfront: false).map(&:id)
       end
       
       
