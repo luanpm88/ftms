@@ -2265,6 +2265,10 @@
 						d.user =  $(".course-register-filter select[name='user']").val()
 					}
 					
+					if($(".course-register-filter input[name='intakes']").val()) {
+						d.intakes =  $(".course-register-filter input[name='intakes']").val()
+					}
+					
 					d.full_course = $(".course-register-filter input[name='full_course']:checked").val()
 				}
 			},

@@ -849,9 +849,9 @@ class Transfer < ActiveRecord::Base
       result = result.where(subject_id: self.course.subject_id)
     end
     
-    if self.course.upfront == true
-      result = result.where(upfront: false)
-    end
+    #if self.course.upfront == true
+    #  result = result.where(upfront: false)
+    #end
     #if self.course.upfront == false
     #  if contact == to_contact
     #    result = result.where(upfront: true)

@@ -472,7 +472,7 @@ class Course < ActiveRecord::Base
   end
   
   def display_prices
-    a = all_prices.map {|p| "<div class=\"#{((p.deadline.present? and p.deadline <= Time.now.end_of_day) ? "price_old_box" : "")}\">"+ApplicationController.helpers.format_price(p.amount)+(p.deadline.present? ? "<br />(#{p.deadline.strftime("%d-%b-%Y")})".html_safe : "")+"</div>"}
+    a = all_prices.map {|p| "<div class=\"#{((p.deadline.present? and p.deadline <= Time.now.end_of_day) ? "price_old_box" : "")}\">"+ApplicationController.helpers.format_price_round(p.amount)+(p.deadline.present? ? "<br />(#{p.deadline.strftime("%d-%b-%Y")})".html_safe : "")+"</div>"}
     return a.join("")
   end
   
@@ -818,7 +818,7 @@ class Course < ActiveRecord::Base
   end
   
   def real_contacts
-    Contact.main_contacts.where("cache_courses LIKE ?", "%[#{self.id},%")
+    Contact.main_contacts.where("cache_courses LIKE ?", "%[#{self.id},%").where("contacts.status NOT LIKE ?", "%[deleted]%")
   end
   
   def report_toggle(contact)

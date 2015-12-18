@@ -1951,7 +1951,7 @@ class Contact < ActiveRecord::Base
         end
         row = {}
         row[:datetime] = transfer.created_at
-        row[:content] = "Deferred/Transferred <strong>"+total.to_s+"</strong> hour(s) for <strong>#{ApplicationController.helpers.format_price(transfer.money)}</strong>"
+        row[:content] = "Deferred/Transferred <strong>"+total.to_s+"</strong> hour(s) for <strong>#{ApplicationController.helpers.format_price_round(transfer.money)}</strong>"
         row[:creator] = transfer.staff_col
         row[:sign] = "-"
         row[:hour] = total
@@ -2162,7 +2162,7 @@ class Contact < ActiveRecord::Base
     arr = []
     arr << "<div class=\"nowrap\"><strong>"+active_course(course_id)[:course].display_name+full_course_subfix+"</strong> <span>#{course.report_toggle(self)}</span></div>"
     arr << "<div class=\"courses_phrases_list\">"+Course.render_courses_phrase_list(active_course(course_id)[:courses_phrases])+"</div>" if !active_course(course_id)[:courses_phrases].empty?
-    arr << "<br /><div>Hour: <strong>#{self.active_course(course_id)[:hour]}</strong> <br /> Money: <strong>#{ApplicationController.helpers.format_price(self.active_course(course_id)[:money])}</trong></div>"
+    arr << "<br /><div>Hour: <strong>#{self.active_course(course_id)[:hour]}</strong> <br /> Money: <strong>#{ApplicationController.helpers.format_price_round(self.active_course(course_id)[:money])}</trong></div>"
     return arr.join("")
   end
   
