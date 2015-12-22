@@ -206,6 +206,16 @@ class PaymentRecord < ActiveRecord::Base
     end    
   end
   
+  def ec
+    if !company.nil?
+      account_manager
+    elsif !transfer.nil?
+      transfer.user
+    else
+      course_register.account_manager
+    end    
+  end
+  
   def paid_on
     if !company.nil?
       (company_records.map {|r| r.payment_record_link(payment_date.strftime("%d-%b-%Y"))}).join("<br />")

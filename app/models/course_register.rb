@@ -275,7 +275,31 @@ class CourseRegister < ActiveRecord::Base
       end
     end
     @records = @records.joins(:contacts_courses => :course).where(courses: {id: course_ids}) if !course_ids.nil?
-
+  
+  
+    # combined search course
+    if params["intakes"].present? && params["course_types"].present?
+      conds = []
+      params["intakes"].split(",").each do |is|
+        i = is.split("-")
+        intake = I18n.t("date.abbr_month_names")[i[0].to_i]+"-"+i[1]
+        params["course_types"].each do |ct|
+          c = CourseType.find(ct).short_name
+          search_name = "#{intake}-#{c}".downcase
+          
+          if params["subjects"].present?
+            params["subjects"].each do |ss|
+              s = Subject.find(ss).name
+              search_name = "#{intake}-#{c}-#{s}".downcase
+              conds << "LOWER(course_registers.cache_search) LIKE '%#{search_name}%'"
+            end
+          else
+            conds << "LOWER(course_registers.cache_search) LIKE '%#{search_name}%'"
+          end
+        end
+      end
+      @records = @records.where(conds.join(" OR ")) if !conds.empty?
+    end
     
     ########## BEGIN REVISION-FEATURE #########################
     

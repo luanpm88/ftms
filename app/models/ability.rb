@@ -166,8 +166,6 @@ class Ability
       can :approve_all, Course
       can :intake_options, Course
       
-      
-      
       can :datatable, CourseType
       can :read, CourseType
       can :create, CourseType
@@ -341,7 +339,7 @@ class Ability
       can :create, PaymentRecord
       can :print, PaymentRecord
       can :trash, PaymentRecord do |pr|
-        pr.user == user && !pr.transferred? && pr.status == 1
+        (pr.user == user || pr.ec == user) && pr.status == 1 # && !pr.transferred?
       end
       can :payment_list, PaymentRecord
       can :datatable_payment_list, PaymentRecord
