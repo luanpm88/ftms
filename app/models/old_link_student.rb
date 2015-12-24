@@ -22,11 +22,10 @@ class OldLinkStudent < ActiveRecord::Base
 	end
     
     def self.full_text_search(params)    
-		tags = self.order("subject_id")
+		tags = self.select(:subject_id).order("subject_id")
 		tags = tags.where("LOWER(old_link_students.subject_id) LIKE ?", "%#{params[:q].strip.downcase}%") if params[:q].present?
-		tags = tags.limit(50)
-		tags = (tags.map {|c| c.subject_id}).uniq
-		tags = tags.map {|model| {:id => model, :text => model} }
+		tags = tags.uniq.limit(50)
+		tags = tags.map {|model| {:id => model.subject_id, :text => model.subject_id} }
 	end
 
 end
