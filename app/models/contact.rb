@@ -465,7 +465,7 @@ class Contact < ActiveRecord::Base
       
       itemz = [
               "<div item_id=\"#{item.id.to_s}\" class=\"main_part_info checkbox check-default\"><input name=\"ids[]\" id=\"checkbox#{item.id}\" type=\"checkbox\" value=\"#{item.id}\"><label for=\"checkbox#{item.id}\"></label></div>",
-              '<div class="text-left"><strong>'+item.contact_link+"</strong></div>"+'<div class="text-left">'+item.html_info_line.html_safe+item.referrer_link+"</div>"+item.picture_link+item.display_not_added_stock(params[:not_added_books]),
+              "[#{item.find_old_group_id}]"+'<div class="text-left"><strong>'+item.contact_link+"</strong></div>"+'<div class="text-left">'+item.html_info_line.html_safe+item.referrer_link+"</div>"+item.picture_link+item.display_not_added_stock(params[:not_added_books]),
               "",
               "",
               "",
@@ -489,7 +489,7 @@ class Contact < ActiveRecord::Base
         item.find_related_contacts.each do |child|
           row = [
                   "<div item_id=\"#{child.id.to_s}\" class=\"main_part_info checkbox check-default\"><input name=\"ids[]\" id=\"checkbox#{child.id}\" type=\"checkbox\" value=\"#{child.id}\"><label for=\"checkbox#{child.id}\"></label></div>",
-                  "[#{child.chache_group_id}]"+'<div class="text-left re_merge"><strong class="label_name" val="'+child.name.unaccent.to_s+'">'+child.contact_link+"</strong></div>"+'<div class="text-left">'+child.html_info_line.html_safe+child.referrer_link+"</div>"+child.picture_link,              
+                  "[#{child.cache_group_id}]"+'<div class="text-left re_merge"><strong class="label_name" val="'+child.name.unaccent.to_s+'">'+child.contact_link+"</strong></div>"+'<div class="text-left">'+child.html_info_line.html_safe+child.referrer_link+"</div>"+child.picture_link,              
                   "",
                   "",
                   "",
@@ -588,6 +588,7 @@ class Contact < ActiveRecord::Base
     if params["type"] == "merged"
       
       groups = RelatedContact.all
+      # .where("related_contacts.cache_search NOT LIKE '%[single_group]%'")
       groups = groups.where("LOWER(related_contacts.cache_search) LIKE ?", "%#{params["search"]["value"].unaccent.strip.downcase}%") if params["search"].present? && !params["search"]["value"].empty?
       total = groups.count
       groups = groups.order("related_contacts.created_at DESC").limit(params[:length]).offset(params["start"])

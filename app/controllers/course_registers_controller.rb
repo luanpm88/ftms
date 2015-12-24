@@ -308,6 +308,7 @@ class CourseRegistersController < ApplicationController
         @course_register.save
         @course_register.add_status("active")        
         @course_register.save_draft(current_user)
+        @course_register.contact.update_info
       end
     end
     
