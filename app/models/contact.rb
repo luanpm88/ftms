@@ -1515,7 +1515,7 @@ class Contact < ActiveRecord::Base
       # Annoucing users
       add_annoucing_users([self.current.user])
       
-      self.save_draft(user) 
+      self.save_draft(user)
     end
   end
   
