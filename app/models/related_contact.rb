@@ -20,13 +20,18 @@ class RelatedContact < ActiveRecord::Base
     if self.contacts.count <= 1
       #self.contacts.update_all(cache_group_id: nil)
       #self.destroy
-    end    
+    end
   end
   
   def contacts
     return [] if contact_ids.nil?
     c_ids = self.contact_ids.split("][").map {|s| s.gsub("[","").gsub("]","") }
-    return Contact.main_contacts.where("contacts.status NOT LIKE ?", "%deleted%").where(id: c_ids).order("name,email DESC,mobile DESC")
+    return Contact.main_contacts.where(id: c_ids).order("name,email DESC,mobile DESC")
+  end
+  
+  def main_contacts
+    return [] if contacts.empty?
+    contacts.where("contacts.status NOT LIKE ?", "%deleted%")
   end
   
   def update_cache_search
@@ -35,8 +40,7 @@ class RelatedContact < ActiveRecord::Base
       str << c.cache_search
     end
     self.update_attribute(:cache_search, str.join(" "))
-  end
-  
+  end  
   
   # FOR TMP REMOVED
   def add_removed_contact(contact)
