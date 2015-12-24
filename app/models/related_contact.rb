@@ -19,7 +19,7 @@ class RelatedContact < ActiveRecord::Base
     
     if self.contacts.count <= 1
       self.contacts.update_all(cache_group_id: nil)
-      self.destroy
+      #self.destroy
     end    
   end
   
