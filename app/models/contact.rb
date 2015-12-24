@@ -665,8 +665,7 @@ class Contact < ActiveRecord::Base
       
     end
     
-    result = {
-              "drawn" => params[:drawn],
+    result = {    
               "recordsTotal" => total,
               "recordsFiltered" => total
     }
