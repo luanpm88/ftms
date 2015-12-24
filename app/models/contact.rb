@@ -1528,7 +1528,7 @@ class Contact < ActiveRecord::Base
       add_annoucing_users([self.current.user])
       
       # remove related contacts
-      self.group.remove_contact(self)
+      # self.group.remove_contact(self)
       
       self.save_draft(user)
     end
