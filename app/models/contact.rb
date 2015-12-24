@@ -242,8 +242,6 @@ class Contact < ActiveRecord::Base
     end
   end
   
-  
-  
   def exist_contacts
     exist = []    
     if is_individual
@@ -1775,7 +1773,7 @@ class Contact < ActiveRecord::Base
           hours[hour_id] = hours[hour_id].nil? ? -row[1].to_f : hours[hour_id] - row[1].to_f
         end
     end
-    
+  
     return hours
   end
   
@@ -1850,13 +1848,12 @@ class Contact < ActiveRecord::Base
     end
     return str.join("<br >").html_safe
   end
-  
+
   def budget_money(datetime=nil)
     if datetime.present?
       result = active_received_transfers.where("transfers.created_at <= ?", datetime).where(to_type: "money").sum(:money)
       result -= active_contacts_courses.where("contacts_courses.created_at <= ?", datetime).sum(:money)
       result -= active_books_contacts.where("books_contacts.created_at <= ?", datetime).sum(:money)
-      
     else
       result = active_received_transfers.where(to_type: "money").sum(:money)
       result -= active_contacts_courses.sum(:money)
@@ -2041,10 +2038,8 @@ class Contact < ActiveRecord::Base
         new_origin = []
         origin.each do |row|
           remove_course = false
-          
-          
+
           if !transfer.course.nil? && !row[:course].nil? && row[:course].id == transfer.course.id && row[:created_at] < transfer.created_at
-            
             # upfront course
             if transfer.course.upfront == true
               remove_course = true
@@ -2065,20 +2060,15 @@ class Contact < ActiveRecord::Base
                 end
               end
               
-              
-              
               remove_course = true if row[:courses_phrases].empty?
             end
           end
 
-          
           # remove course
           new_origin << row if remove_course == false
         end
         origin = new_origin
       end
-      
-      
       
       # RECEIVED
       if self == transfer.to_contact
@@ -2776,6 +2766,49 @@ class Contact < ActiveRecord::Base
     end
     str << "<div>"
     return str.join("")
+  end
+  
+  # FOR FIX MERGE DELETE
+  
+  def self.restore_group
+    count = 0
+    self.old_group_ids.each do |group_id|
+      # find group
+      if Contact.where.not(draft_for: nil).where(cache_group_id: group_id).map(&:draft_for).uniq.count > 1
+        groups = RelatedContact.where(id: group_id)
+        group = groups.empty? ? RelatedContact.create : groups.first
+        
+        Contact.where.not(draft_for: nil).where(cache_group_id: group_id).each do |c|
+          group.add_contact(c.draft_for_contact)
+        end
+        count += 1
+      end
+    end
+    return count
+  end
+  
+  def self.old_group_ids
+    count = []
+    Contact.joins(:drafts).where("contacts.status IS NOT NULL AND contacts.status NOT LIKE '%deleted%' AND contacts.draft_for IS NULL AND contacts.cache_group_id IS NULL").where("drafts_contacts.cache_group_id IS NOT NULL").uniq.each do |c| 
+      group_id = c.find_old_group_id
+      if !group_id.nil?
+        count << group_id        
+      end
+    end
+    return count.uniq
+  end
+  
+  def find_old_group_id
+    cgs = self.drafts.order("created_at DESC").where.not(cache_group_id: nil)
+    if cgs.empty?
+      return nil
+    else
+      return cgs.first.cache_group_id
+    end
+  end
+  
+  def find_main_group_contacts(group_id)
+    parent_ids = Contact.where.not(draft_for: nil).where(cache_group_id: group_id).where.not(id: ([self.id]+[self.drafts.map(&:id)]))
   end
   
 end

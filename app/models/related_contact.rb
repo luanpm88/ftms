@@ -18,7 +18,7 @@ class RelatedContact < ActiveRecord::Base
     add_removed_contact(contact)
     
     if self.contacts.count <= 1
-      self.contacts.update_all(cache_group_id: nil)
+      #self.contacts.update_all(cache_group_id: nil)
       #self.destroy
     end    
   end
