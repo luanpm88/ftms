@@ -9,4 +9,15 @@ class PaymentRecordDetail < ActiveRecord::Base
   def total=(new)
     self[:total] = new.to_s.gsub(/\,/, '')
   end
+  
+  def real_amount
+    if !books_contact_id.nil?
+      return 0 if BooksContact.where(id: books_contact_id).count == 0
+    end
+    if !contacts_course_id.nil?
+      return 0 if ContactsCourse.where(id: contacts_course_id).count == 0
+    end
+    
+    return amount
+  end
 end

@@ -500,7 +500,11 @@ class PaymentRecord < ActiveRecord::Base
     if !transfer.nil?
       self.amount
     else
-      payment_record_details.sum(:amount)
+      total = 0.0
+      payment_record_details.each do |prd|
+        total += prd.real_amount
+      end
+      return total
     end
   end
   
