@@ -36,10 +36,10 @@ class RelatedContact < ActiveRecord::Base
   
   def update_cache_search
     str = []
+    str << "[single_group]" if contacts.count <= 1
     contacts.each do |c|
       str << c.cache_search
-    end
-    str << "[single_group]" if contacts.count <= 1
+    end    
     self.update_attribute(:cache_search, str.join(" "))
   end  
   
