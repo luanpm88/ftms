@@ -483,7 +483,7 @@ class Contact < ActiveRecord::Base
               #'',
             ]
       data << itemz
-      arr << itemz
+      arr << item
       
       #if item.statuses.include?("deleted") and item.cache_group_id.nil? and item.find_old_group_id.present?
       #  item.find_related_contacts.each do |child|
@@ -508,7 +508,7 @@ class Contact < ActiveRecord::Base
       #    # total += 1
       #    # arr << child
       #    data << row
-      #    arr << row
+      #    arr << child
       #  end
       #end
       
