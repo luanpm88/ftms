@@ -521,7 +521,7 @@ class Contact < ActiveRecord::Base
     }
     result["data"] = data
     
-    return {result: result, items: arr, actions_col: actions_col}
+    return {result: result, items: @records, actions_col: actions_col}
   end
   
   def self.find_related_contacts(params, user, session)
