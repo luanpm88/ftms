@@ -465,7 +465,7 @@ class Contact < ActiveRecord::Base
       
       itemz = [
               "<div item_id=\"#{item.id.to_s}\" class=\"main_part_info checkbox check-default\"><input name=\"ids[]\" id=\"checkbox#{item.id}\" type=\"checkbox\" value=\"#{item.id}\"><label for=\"checkbox#{item.id}\"></label></div>",
-              '<div class="text-left"><strong>'+item.contact_link+"</strong></div>"+'<div class="text-left">'+item.html_info_line.html_safe+item.referrer_link+"</div>"+item.picture_link+item.display_not_added_stock(params[:not_added_books]),
+              "[#{item.cache_group_id}][#{item.find_old_group_id}]"+'<div class="text-left"><strong>'+item.contact_link+"</strong></div>"+'<div class="text-left">'+item.html_info_line.html_safe+item.referrer_link+"</div>"+item.picture_link+item.display_not_added_stock(params[:not_added_books]),
               "",
               "",
               "",
