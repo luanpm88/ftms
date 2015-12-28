@@ -485,32 +485,32 @@ class Contact < ActiveRecord::Base
       data << itemz
       arr << item
       
-      #if item.statuses.include?("deleted") and item.cache_group_id.nil? and item.find_old_group_id.present?
-      #  item.find_related_contacts.each do |child|
-      #    row = [
-      #            "<div item_id=\"#{child.id.to_s}\" class=\"main_part_info checkbox check-default\"><input name=\"ids[]\" id=\"checkbox#{child.id}\" type=\"checkbox\" value=\"#{child.id}\"><label for=\"checkbox#{child.id}\"></label></div>",
-      #            '<div class="text-left re_merge"><strong class="label_name" val="'+child.name.unaccent.to_s+'">'+child.contact_link+"</strong></div>"+'<div class="text-left">'+child.html_info_line.html_safe+child.referrer_link+"</div>"+child.picture_link,              
-      #            "",
-      #            "",
-      #            "",
-      #            "",
-      #            "",
-      #            "",
-      #            ""
-      #            #'<div class="text-left">'+child.course_types_name_col+"</div>",
-      #            #'<div class="text-center">'+child.course_count_link+"</div>",
-      #            #'<div class="text-center contact_tag_box" rel="'+child.id.to_s+'">'+ContactsController.helpers.render_contact_tags_selecter(child)+"</div>",
-      #            #'<div class="text-center">'+child.created_at.strftime("%d-%b-%Y")+"</div>",
-      #            #'<div class="text-center">'+child.account_manager_col+"</div>",
-      #            #'<div class="text-center">'+child.display_statuses+"</div>",
-      #            #'',
-      #          ]
-      #    # total += 1
-      #    # arr << child
-      #    data << row
-      #    arr << child
-      #  end
-      #end
+      if item.statuses.include?("deleted") and item.cache_group_id.nil? and item.find_old_group_id.present?
+        item.find_related_contacts.each do |child|
+          row = [
+                  "<div item_id=\"#{child.id.to_s}\" class=\"main_part_info checkbox check-default\"><input name=\"ids[]\" id=\"checkbox#{child.id}\" type=\"checkbox\" value=\"#{child.id}\"><label for=\"checkbox#{child.id}\"></label></div>",
+                  '<div class="text-left re_merge"><strong class="label_name" val="'+child.name.unaccent.to_s+'">'+child.contact_link+"</strong></div>"+'<div class="text-left">'+child.html_info_line.html_safe+child.referrer_link+"</div>"+child.picture_link,              
+                  "",
+                  "",
+                  "",
+                  "",
+                  "",
+                  "",
+                  ""
+                  #'<div class="text-left">'+child.course_types_name_col+"</div>",
+                  #'<div class="text-center">'+child.course_count_link+"</div>",
+                  #'<div class="text-center contact_tag_box" rel="'+child.id.to_s+'">'+ContactsController.helpers.render_contact_tags_selecter(child)+"</div>",
+                  #'<div class="text-center">'+child.created_at.strftime("%d-%b-%Y")+"</div>",
+                  #'<div class="text-center">'+child.account_manager_col+"</div>",
+                  #'<div class="text-center">'+child.display_statuses+"</div>",
+                  #'',
+                ]
+          # total += 1
+          # arr << child
+          data << row
+          arr << child
+        end
+      end
       
     end
     
