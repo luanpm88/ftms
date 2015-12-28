@@ -489,7 +489,7 @@ class Contact < ActiveRecord::Base
         item.find_related_contacts.each do |child|
           row = [
                   "<div item_id=\"#{child.id.to_s}\" class=\"main_part_info checkbox check-default\"><input name=\"ids[]\" id=\"checkbox#{child.id}\" type=\"checkbox\" value=\"#{child.id}\"><label for=\"checkbox#{child.id}\"></label></div>",
-                  '<div class="text-left re_merge"><strong class="label_name" val="'+child.name.unaccent.to_s+'">'+child.contact_link+"</strong></div>"+'<div class="text-left">'+child.html_info_line.html_safe+child.referrer_link+"</div>"+child.picture_link,              
+                  "[#{child.cache_group_id}]"+'<div class="text-left re_merge"><strong class="label_name" val="'+child.name.unaccent.to_s+'">'+child.contact_link+"</strong></div>"+'<div class="text-left">'+child.html_info_line.html_safe+child.referrer_link+"</div>"+child.picture_link,              
                   "",
                   "",
                   "",
@@ -1029,13 +1029,13 @@ class Contact < ActiveRecord::Base
   def html_info_line
     line = "";
     
-    display_email_2 = (email_2s.map {|e| "<span class=\"box_mini_info label_email nowrap\" val=\"#{e}\"><i class=\"icon-envelope\"></i> " + e + "</span> "}).join(" ")
+    display_email_2 = (email_2s.map {|e| "<span class=\"box_mini_info label_email nowrap\" val=\"#{e.to_s.strip.downcase}\"><i class=\"icon-envelope\"></i> " + e + "</span> "}).join(" ")
     display_mobile_2 = (mobile_2s.map {|e| "<span class=\"box_mini_info label_mobile nowrap\" val=\"#{e}\"><i class=\"icon-phone\"></i> +" + e + "</span> "}).join(" ")
     
     if is_individual
       birth = !birthday.nil? ? birthday.strftime("%d-%b-%Y") : ""
       line += "<span class=\"box_mini_info nowrap\"><i class=\"icon-calendar\"></i> " + birth + "</span> " if !mobile.nil? && !mobile.empty?
-      line += "<span class=\"box_mini_info label_email nowrap\" val=\"#{email}\"><i class=\"icon-envelope\"></i> " + email + "</span> " if !email.nil? && !email.empty?
+      line += "<span class=\"box_mini_info label_email nowrap\" val=\"#{email.to_s.strip.downcase}\"><i class=\"icon-envelope\"></i> " + email + "</span> " if !email.nil? && !email.empty?
       line += display_email_2
       line += "<span class=\"box_mini_info label_mobile nowrap\" val=\"#{display_mobile}\"><i class=\"icon-phone\"></i> " + display_mobile + "</span> " if !mobile.nil? && !mobile.empty?
       line += display_mobile_2
