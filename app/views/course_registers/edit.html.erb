@@ -103,8 +103,7 @@
 														<div class="input-with-icon  right">                                       
 															 <i class=""></i>
 															 <div class="input-with_add_but">																  
-																  <strong><%= cc.course.display_name %></strong>
-                                                                  <%= hidden_field_tag "contacts_courses["+number.to_s+"][course_id]", cc.course_id, { box_number: number} %>
+																  <input style="width:100%;margin-bottom: 5px;" name="contacts_courses[<%= number %>][course_id]" value="<%= cc.course_id %>" text="<%= cc.course.display_name %>" data="<%= courses_path(format: "json", student_id: @contact.id) %>" class="select2-ajax-courses main_input registration_course required" box_number="<%= number %>" />                                                                 
                                                                   <%= hidden_field_tag "contacts_courses["+number.to_s+"][id]", cc.id %>
 															 </div>
 														</div>

@@ -96,7 +96,7 @@ class Course < ActiveRecord::Base
     if !params.nil?
       if params[:student_id].present?
         contact = Contact.find(params[:student_id])
-        learned_course_ids = contact.learned_courses.map{|c| c.id}
+        learned_course_ids = contact.learned_courses(params[:current_time]).map{|c| c.id}
         
         result = result.where.not(id: learned_course_ids)
       end      

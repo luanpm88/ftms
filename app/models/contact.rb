@@ -1346,9 +1346,9 @@ class Contact < ActiveRecord::Base
     active_courses_with_phrases.count
   end
   
-  def learned_courses
+  def learned_courses(current_time=nil)
     arr = []
-    active_courses_with_phrases.each do |row|
+    active_courses_with_phrases(current_time).each do |row|
       if row[:course].upfront || row[:courses_phrases].count == row[:course].courses_phrases.count
         arr << row[:course]
       end
