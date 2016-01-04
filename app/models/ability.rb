@@ -440,6 +440,21 @@ class Ability
       can :approve_delete, Activity do |c|
         c.deleted == 1 && c.contact.account_manager  == user && c.user.lower?("education_consultant")
       end
+      
+      # Company pay
+      can :company_pay, PaymentRecord do |pr|
+        !pr.company_id.nil? && !pr.paid?
+      end
+      can :do_company_pay, PaymentRecord
+      can :print_payment_list, PaymentRecord
+      can :company_pay_remain, PaymentRecord do |pr|
+        !pr.company.nil? && !pr.paid?
+      end
+      can :pay_transfer, PaymentRecord      
+      
+      can :pay, Transfer do |t|
+        !t.paid?
+      end
     end
     
     if user.has_role?("storage_manager") || user.has_role?("manager") || user.has_role?("admin")
