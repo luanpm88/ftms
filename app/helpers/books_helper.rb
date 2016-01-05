@@ -58,7 +58,7 @@ module BooksHelper
       
             
       
-      delivery_details = item.delivery_details.joins(:delivery => :course_register).where(course_registers: {contact_id: student.id})
+      delivery_details = item.delivery_details.joins(:delivery => :course_register).where(deliveries: {status: 1}).where(course_registers: {contact_id: student.id})
       
       if can? :delivery_print, CourseRegister
         delivery_details.each do |dd|
