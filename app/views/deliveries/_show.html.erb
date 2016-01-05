@@ -42,6 +42,9 @@
       border-left: none;
       padding: 5px;
   }
+  .text-nowrap {
+    white-space: nowrap;
+  }
 </style>
 
 <div class="page">
@@ -62,10 +65,10 @@
       <td width="40%">
         <%= @delivery.course_register.contact.display_name %>
       </td>
-      <td>
+      <td class="text-nowrap">
         <strong>Delivered Date:</strong>
       </td>
-      <td>
+      <td class="text-nowrap">
         <%= @delivery.delivery_date.strftime("%d-%b-%Y") %>
       </td>
     </tr>
