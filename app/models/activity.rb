@@ -68,7 +68,7 @@ class Activity < ActiveRecord::Base
     order = "activities.created_at DESC"
     if !params["order"].nil?
       case params["order"]["0"]["column"]
-      when "1"
+      when "2"
         order = "activities.created_at"
       else
         order = "activities.created_at"
@@ -86,10 +86,11 @@ class Activity < ActiveRecord::Base
     
     data = []
     
-    actions_col = 5
+    actions_col = 6
     @records.each do |item|
       
       item = [
+              params[:contact_id].present? ? "" : "<div item_id=\"#{item.id.to_s}\" class=\"main_part_info checkbox check-default\"><input name=\"ids[]\" id=\"checkbox#{item.id}\" type=\"checkbox\" value=\"#{item.id}\"><label for=\"checkbox#{item.id}\"></label></div>",
               item.content(user),
               "<div class=\"text-center nowrap\">#{item.display_created_at}</div>",
               "<div class=\"text-center\">#{item.contact.contact_link}</div>",

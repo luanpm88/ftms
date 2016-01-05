@@ -61,6 +61,8 @@ Hkerp::Application.routes.draw do
       get :approve_delete
       get :undo_delete
       get :change
+      
+      post :approve_all
     end
   end
   resources :payment_records do

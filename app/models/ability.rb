@@ -480,6 +480,8 @@ class Ability
         c.statuses.include?("delete_pending")
       end
       
+      can :approve_all, StockType
+      
       ## BOOK
       can :approved, Book
       can :approve_new, Book do |c|
@@ -494,6 +496,7 @@ class Ability
       can :undo_delete, Book do |c|
         c.statuses.include?("delete_pending")
       end
+      can :approve_all, Book
     end
     
     if user.has_role?("accountant") || user.has_role?("manager") || user.has_role?("admin")
@@ -746,6 +749,7 @@ class Ability
       can :undo_delete, Activity do |c|
         c.deleted == 1
       end
+      can :approve_all, Activity
       
       ## TRANSFER
       can :approved, Transfer

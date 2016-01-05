@@ -1247,6 +1247,8 @@ class Contact < ActiveRecord::Base
       count += cr.all_payment_records.count
     end
     
+    count += PaymentRecord.where(status: 1).where(company_id: self.id).count
+    
     return count
   end
   

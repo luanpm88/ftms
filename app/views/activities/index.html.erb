@@ -3,7 +3,8 @@
                     	<h3>Note Log - <span class="semi-bold"> Management</span></h3>	
                 </div>
 				
-				
+		<%= form_tag("", {class: "listing_form", method: "post", target: "_blank"}) do |f| %>
+		
 				<div class="grid simple ">
                   <div class="grid-body no-border filters activity-filter">
                   <div class="row order-filters">
@@ -51,6 +52,24 @@
                 <div class="row">
                   <div class="col-md-12">
                       
+						<div class="listing_box_actions">
+							<div class="btn-group listing_actions"> <a href="#" data-toggle="dropdown" class="btn btn-primary dropdown-toggle btn-demo-space"> List Actions (<span class="listing_checked_count">0</span>)<span class="caret"></span> </a>
+								<ul class="dropdown-menu">
+									
+									<li><a href="#" rel="<%= approve_all_activities_path %>" type="ajax">Approve All</a></li>
+									
+									
+								</ul>
+							</div>
+							<div class="checkbox check-default check_all_page_but" style="display: inline-block">
+								<input name="check_all_page" id="checkbox_all_page" type="checkbox" value="all_page" class="check_all_page">
+								<label for="checkbox_all_page">Select All Pages</label>
+							</div>
+							
+							
+							
+						</div>
+					  
                       <div class="grid simple ">
                           <div class="grid-title no-border">
                               <h4>Activity  <span class="semi-bold">Log</span></h4>
@@ -60,7 +79,13 @@
                                
                                   <table class="table table-striped no-more-tables datatable-activities no-filter">
                                           <thead>
-                                              <tr>                                                
+                                              <tr>
+												<th>
+													<div class="checkbox check-default">
+														<input id="checkbox_all" type="checkbox" value="all" class="checkall">
+														<label for="checkbox_all"></label>
+													</div>
+												</th>
                                                   <th width="40%">Note</th>
                                                   <th class="text-center" width="1%">Created At</th>
                                                   <th class="text-center">Contact</th>
@@ -78,5 +103,5 @@
           
               </div>
 
-
+		<% end %>
 

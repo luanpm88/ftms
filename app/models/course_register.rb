@@ -140,6 +140,16 @@ class CourseRegister < ActiveRecord::Base
             cc.save            
           end
         end
+      elsif row[1]["id"].present?
+        cccc = ContactsCourse.find(row[1]["id"])
+        cccc_cr = cccc.course_register
+        cccc_prs = cccc.payment_record_details
+        cccc.destroy
+        
+        cccc_cr.update_statuses
+        cccc_prs.each do |pr|
+          pr.payment_record.update_statuses
+        end
       end
     end
 

@@ -8618,7 +8618,7 @@ h5.list_title {
 }
 .note_content {
     display: block;
-    width: 530px;
+    width: 500px;
 }
 .cp_unchangable * {
     color: red;

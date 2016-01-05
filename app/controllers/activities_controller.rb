@@ -95,6 +95,34 @@ class ActivitiesController < ApplicationController
     end
   end
   
+  def approve_all
+    authorize! :approve_all, Activity
+    
+    if params[:ids].present?
+      if !params[:check_all_page].nil?
+        params[:intake_year] = params["filter"]["intake(1i)"] if params["filter"].present?
+        params[:intake_month] = params["filter"]["intake(2i)"] if params["filter"].present?
+        
+        if params[:is_individual] == "false"
+          params[:contact_types] = nil
+        end        
+        
+        @contacts = Activity.filters(params, current_user)
+      else
+        @contacts = Activity.where(id: params[:ids])
+      end
+    end
+    
+    @contacts.each do |c|
+      c.update_attribute(:deleted, 2) if current_user.can?(:approve_delete, c)
+    end
+    
+    respond_to do |format|
+      format.html { render text: "Note logs were approved!" }
+      format.json { render action: 'show', status: :created, location: @course_register }
+    end
+  end
+  
   def undo_delete
     authorize! :undo_delete, @activity
     

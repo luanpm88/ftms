@@ -87,10 +87,11 @@
 					
 					 
 					<div class="phrase_box_list">
-						 <% @course_register.contacts_courses.order("contacts_courses.id").each_with_index do |cc, number| %>
-							  <div class="row column-seperation item_box phrase_box phrase_box_<%= cc.id.to_s %>" rel="<%= number.to_s %>">
+						<% cc_count = 0 %>
+						<% @course_register.contacts_courses.order("contacts_courses.id").each_with_index do |cc, number| %>
+							  <div class="row column-seperation item_box phrase_box phrase_box_<%= number.to_s %>" rel="<%= number.to_s %>">
 								   <div class="phrase_box_label">Course #<%= number+1 %></div>
-								   <!--<div class="phrase_box_close" rel="<%= number.to_s %>"><i class="icon icon-remove"></i></div>-->
+								   <div class="phrase_box_close" rel="<%= number.to_s %>"><i class="icon icon-remove"></i></div>
 								   <div class="col-md-12">
 										<hr />
 								   </div>
@@ -154,7 +155,8 @@
                                                                 <i class=""></i>
 																	  <% num = 0 %>
 																	  <% cc.all_discount_programs.each do |discount_program| %>
-																		   <div class="row discount_program_box phrase_boxx"  <%= 'style="display: none"'.html_safe if num > 0 %>>
+																		
+																		   <div class="row discount_program_box phrase_boxx">
 																				<div class="col-md-6">                                   
 																					 <div class="input-with_add_but">
 																					   <%= link_to '<i class="icon-plus"></i>'.html_safe, new_discount_program_path(tab_page: 1), title: "New Discount Program", :class => 'btn btn-sm btn-small btn-white tab_page' %>                                          
@@ -382,11 +384,51 @@
 									   	
 								  </div>						 
 							  </div>
+						<% cc_count += 1 %>	  
+						<% end %>
+						 
+						
+						<% (cc_count..9).each do |number| %>
+							  <div class="row column-seperation item_box phrase_box phrase_box_<%= number.to_s %> <%= 'hidden'.html_safe if number >= 0 %>" rel="<%= number %>">
+								   <div class="phrase_box_label">Course #<%= number+1 %></div>
+								   <div class="phrase_box_close" rel="<%= number.to_s %>"><i class="icon icon-remove"></i></div>
+								   <div class="col-md-12">
+										<hr />
+								   </div>
+								   <div class="col-md-6">
+										<div class="row">
+											 <div class="col-md-12">
+												  <div class="form-group">
+														<label class="form-label"><%= f.label :course %></label>
+														<span class="help">(required)</span>
+														<div class="input-with-icon  right">                                       
+															 <i class=""></i>
+															 <div class="input-with_add_but">
+																  <%= link_to '<i class="icon-plus"></i>'.html_safe, new_course_path(tab_page: 1), title: "New Course", :class => 'btn btn-sm btn-small btn-white tab_page' %>
+																  <input style="width:100%;margin-bottom: 5px;" name="contacts_courses[<%= number %>][course_id]" data="<%= courses_path(format: "json", student_id: @contact.id) %>" class="select2-ajax-courses main_input registration_course required" box_number="<%= number %>" />
+															 </div>
+														</div>
+												  </div>
+											 </div>
+										</div>
+										
+										<div class="registration_course_price_box_<%= number %>"></div>
+										
+								   </div>
+								  <div class="col-md-6">
+									   
+											 
+											 <div class="registration_phrase_box_<%= number %>">                                       
+												  
+												  
+											</div>
+									   	
+								  </div>						 
+							  </div>
 							  
 						 <% end %>
-						 
-						 
-						 
+						
+						 <a href="#add" class="btn btn-white add-more-course-form"><i class="icon icon-plus"></i> Add Course</a>
 					</div>
 					
 					
