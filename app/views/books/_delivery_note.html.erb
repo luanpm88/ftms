@@ -43,6 +43,9 @@
       border-left: none;
       padding: 5px;
   }
+  .text-nowrap {
+    white-space: nowrap;
+  }
 </style>
 
 <% num = 0 %>
@@ -63,13 +66,13 @@
                 <td>
                   <strong>Student:</strong>
                 </td>
-                <td width="50%">
+                <td width="50%" class="text-nowrap">
                   <%= row[:contact].display_name %>
                 </td>
                 <td>
                   <strong>Date:</strong>
                 </td>
-                <td>
+                <td class="text-nowrap">
                   <%= Time.now.strftime("%d-%b-%Y") %>
                 </td>
               </tr>

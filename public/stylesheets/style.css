@@ -8664,3 +8664,6 @@ h5.list_title {
     float: right;
     margin-left: 20px;
 }
+.text-nowrap {
+    white-space: nowrap;
+}

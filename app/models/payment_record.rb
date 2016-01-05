@@ -258,7 +258,7 @@ class PaymentRecord < ActiveRecord::Base
         students[cr.contact_id] = students[cr.contact_id].nil? ? 1 : students[cr.contact_id] + 1
       end
       
-      return "Student count: <strong>#{students.count.to_s}</strong><br />Paper count: <strong>#{paper_count.to_s}<strong>"
+      return "<span class=\"text-nowrap\">Student count: <strong>#{students.count.to_s}</strong></span><br /><span class=\"text-nowrap\">Paper count: <strong>#{paper_count.to_s}<strong></span>"
     elsif !transfer.nil?
       "Defer/Transfer at [#{transfer.created_at.strftime("%d-%b-%Y")}]"
     else

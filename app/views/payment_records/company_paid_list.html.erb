@@ -1,0 +1,96 @@
+
+	  
+             <div class="">
+            <div class="">
+              <div class="">
+                <div class="">
+                  <h4>Payment <span class="semi-bold">Details</span></h4>
+                  
+                </div>     
+                
+                
+                
+                
+                <div class="grid-body no-border">
+				  
+				  
+                  
+                  
+                  <%= form_for(@payment_record, :url => do_company_pay_payment_records_path) do |f| %>
+					
+					<%= hidden_field_tag("tab_page", 1) if params[:tab_page] %>
+					<%= hidden_field_tag("old_record_id", @old_record.id) if !@old_record.nil? %>
+                    
+					
+						 
+						 
+					<h3>Registraton List</h3>
+					
+					<div class="">
+						<div class="">
+							<div class="">								
+								<div class="">									 
+										<table class="table table-striped no-more-tables no-filter">
+											<thead>
+												<tr>
+													
+													<th>Student</th>
+													<th class="text-left">Description</th>
+													<th class="text-right">Payable Amount</th>
+													<th class="text-right">Paid Amount</th>
+													<th class="text-center">Paid On</th>                                                
+													<th class="text-center">At Bank</th>
+													<th class="text-right">Receivable</th>											
+													<th class="text-center" width="1%">Education Consultant</th>
+													
+												</tr>
+												
+												<% @course_registers.each do |item| %>
+												  <tr class="">
+													
+													<td>
+													  <%= item.contact.contact_link %>
+													</td>
+													<td>
+													  <%= item.description.html_safe %>
+													</td>
+													<td class="text-right">
+													  <%= item.is_no_price? && item.total == 0.0 ? "no price!" : format_price(item.total) %>
+													</td>
+													<td class="text-right">
+													  <%= item.is_no_price? && item.total == 0.0 ? "no price!" : format_price(item.paid_amount) %>
+													</td>
+													<td class="text-center">
+													  <%= item.paid_on %>
+													</td>
+													<td class="text-center">
+													  <%= item.bank_account_name %>
+													</td>
+													<td class="text-right">
+													  <%= item.is_no_price? && item.total == 0.0 ? "no price!" : ApplicationController.helpers.format_price(item.remain_amount) %>
+													</td>
+													<td class="text-center">
+													  <%= item.contact.account_manager.staff_col %>
+													</td>													  
+												  </tr>
+												<% end %>
+												
+											</thead>                                        
+										</table>
+								</div>
+							</div>
+				
+						</div>
+				
+					</div>
+					
+					
+							  
+					
+					
+					<% end %>
+			   </div>
+			 </div>
+            </div>
+			
+     </div>

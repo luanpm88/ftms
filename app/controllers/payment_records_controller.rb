@@ -4,7 +4,7 @@ class PaymentRecordsController < ApplicationController
   
   load_and_authorize_resource
   
-  before_action :set_payment_record, only: [:part_info, :show, :edit, :update, :destroy]
+  before_action :set_payment_record, only: [:company_paid_list, :part_info, :show, :edit, :update, :destroy]
   
   def part_info
     item = @payment_record
@@ -146,6 +146,12 @@ class PaymentRecordsController < ApplicationController
       format.html { render "/payment_records/deleted", layout: nil }
       format.json { render action: 'show', status: :created, location: @phrase }
     end
+  end
+  
+  def company_paid_list
+    @course_registers = @payment_record.course_registers
+    
+    render layout: "content"
   end
   
   def company_pay
@@ -308,7 +314,7 @@ class PaymentRecordsController < ApplicationController
     
     
     respond_to do |format|
-      format.html {render "print_payment_list.xls.erb"}
+      format.html {render "company_paid_list.html.erb"}
       format.xls
       format.pdf {
         render  :pdf => "payment_list_"+Time.now.strftime("%d_%b_%Y"),

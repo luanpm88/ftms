@@ -446,11 +446,16 @@ class Ability
         !pr.company_id.nil? && !pr.paid?
       end
       can :do_company_pay, PaymentRecord
-      can :print_payment_list, PaymentRecord
+      can :print_payment_list, PaymentRecord do |pr|
+        !pr.company.nil?
+      end
       can :company_pay_remain, PaymentRecord do |pr|
         !pr.company.nil? && !pr.paid?
       end
-      can :pay_transfer, PaymentRecord      
+      can :pay_transfer, PaymentRecord
+      can :company_paid_list, PaymentRecord do |pr|
+        !pr.company.nil?
+      end
       
       can :pay, Transfer do |t|
         !t.paid?
@@ -504,12 +509,16 @@ class Ability
         !pr.company_id.nil? && !pr.paid?
       end
       can :do_company_pay, PaymentRecord
-      can :print_payment_list, PaymentRecord
+      can :print_payment_list, PaymentRecord do |pr|
+        !pr.company.nil?
+      end
       can :company_pay_remain, PaymentRecord do |pr|
         !pr.company.nil? && !pr.paid?
       end
       can :pay_transfer, PaymentRecord
-      
+      can :company_paid_list, PaymentRecord do |pr|
+        !pr.company.nil?
+      end
       
       can :pay, Transfer do |t|
         !t.paid?
@@ -718,7 +727,9 @@ class Ability
       end
       can :company_pay, PaymentRecord
       can :do_company_pay, PaymentRecord
-      can :print_payment_list, PaymentRecord
+      can :print_payment_list, PaymentRecord do |pr|
+        !pr.company.nil?
+      end
       can :company_pay_remain, PaymentRecord do |pr|
         !pr.company.nil? && !pr.paid?
       end

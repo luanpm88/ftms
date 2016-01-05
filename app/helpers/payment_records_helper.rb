@@ -18,6 +18,9 @@ module PaymentRecordsHelper
             actions += '<li>'+ActionController::Base.helpers.link_to("<i class=\"icon icon-print\"></i> Receipt [#{pr.payment_date.strftime("%d-%b-%Y")}]".html_safe, {controller: "payment_records", action: "show", id: pr.id, tab_page: 1}, title: "Receipt [#{pr.payment_date.strftime("%d-%b-%Y")}]", class: "tab_page")+'</li>'        
           end
         end
+        if can? :company_paid_list, item
+          actions += '<li>'+ActionController::Base.helpers.link_to("<i class=\"icon icon-zoom-in\"></i> View Payment List".html_safe, {controller: "payment_records", action: "company_paid_list", id: item.id}, title: "Company Payment List", class: "fancybox_link")+'</li>'        
+        end
         if can? :print_payment_list, item
           actions += '<li>'+ActionController::Base.helpers.link_to("<i class=\"icon icon-list\"></i> Print Payment List".html_safe, {controller: "payment_records", action: "print_payment_list", payment_record_id: item.id, format: "pdf"}, title: "Company Payment List", target: "_blank")+'</li>'        
         end
