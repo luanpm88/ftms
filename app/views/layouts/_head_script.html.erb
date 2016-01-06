@@ -55,7 +55,7 @@
 			success: function(data, textStatus, jqXHR)
 			{
 				if(table.length && $(".contact_detail_tabs_page").length == 0) {
-					table.dataTable().fnFilter();
+					table.dataTable().fnDraw(true);
 				} else {
 					var ptab = $(".contact-tabs li.active a").attr("href").replace("#","&tab=")
 					window.location.href = window.location.href+ptab
@@ -4006,7 +4006,7 @@
 				url : '<%= check_upfront_books_contacts_path %>?id='+id+'&book_id='+book_id,
 				success:function(data, textStatus, jqXHR)
 				{					
-					table.dataTable().fnFilter();
+					table.dataTable().fnDraw(true);
 				}
 			});
 		});
@@ -4020,7 +4020,7 @@
 				url : '<%= check_upfront_books_contacts_path %>?id='+id+'&book_id=',
 				success:function(data, textStatus, jqXHR)
 				{					
-					table.dataTable().fnFilter();
+					table.dataTable().fnDraw(true);
 				}
 			});
 		});		
@@ -4092,7 +4092,7 @@
 				success:function(data, textStatus, jqXHR)
 				{
 					window.parent.modernAlert(data)
-					box.parents("table").dataTable().fnFilter();
+					box.parents("table").dataTable().fnDraw(true);
 				}
 			});
 		});

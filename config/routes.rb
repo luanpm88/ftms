@@ -319,6 +319,8 @@ Hkerp::Application.routes.draw do
       post :approve_all
       
       get :intake_options
+      
+      post :print_list
     end
   end
   

@@ -330,7 +330,11 @@ class BooksContact < ActiveRecord::Base
       # select_tag = ActionController::Base.helpers.select_tag('books[]', ActionController::Base.helpers.options_for_select(Book.active_books.where(course_type_id: book.course_type_id, subject_id: book.subject_id).collect{ |u| [u.display_name+u.display_valid_time, u.id] }), class: "modern_select bc-upfront-select width100")
       "<span class=\"upfront-box\"><a class=\"check-radio ajax-uncheck-book-upfront\" rel=\"#{self.id.to_s}\" href=\"#c\"><i class=\"icon-check\"></i></a> Upfront<div style=\"display:none\" class=\"select-bc-box\"></div></span>"
     else
-      "<a class=\"check-radio ajax-check-book-upfront\" bc_id=\"#{self.id.to_s}\" valid_time='#{self.book.display_valid_time}' rel=\"#{self.id.to_s}\" href=\"#c\"><i class=\"icon-check-empty\"></i></a> Upfront"
+      if delivered?
+        "<a class=\"check-radio ajax-check-book-upfrontz\" href=\"#c\"><i class=\"icon-check-empty\"></i></a> Upfront"
+      else
+        "<a class=\"check-radio ajax-check-book-upfront\" bc_id=\"#{self.id.to_s}\" valid_time='#{self.book.display_valid_time}' rel=\"#{self.id.to_s}\" href=\"#c\"><i class=\"icon-check-empty\"></i></a> Upfront"
+      end     
     end    
   end
 
@@ -350,7 +354,11 @@ class BooksContact < ActiveRecord::Base
     if delivered?
       return "<div class=\"nowrap check-radio\">"+ActionController::Base.helpers.link_to("<i class=\"#{delivered?.to_s} icon-check#{delivered? ? "" : "-empty"}\"></i>".html_safe, {controller: "books_contacts", action: "remove", id: self.id, tab_page: 1}, title: "Deliver Stock: #{self.contact.display_name}", title: 'Remove Delivery', class: "approve_link")+"</div> (#{delivered_count.to_s}/#{quantity.to_s}) delivered?"
     else
-      return "<div class=\"nowrap check-radio\">"+ActionController::Base.helpers.link_to("<i class=\"#{delivered?.to_s} icon-check#{delivered? ? "" : "-empty"}\"></i>".html_safe, {controller: "deliveries", action: "new", course_register_id: self.course_register_id, tab_page: 1}, title: "Deliver Stock: #{self.contact.display_name}", title: 'Materials Delivery', class: "tab_page")+"</div> (#{delivered_count.to_s}/#{quantity.to_s}) delivered?"
+      if !self.upfront
+        return "<div class=\"nowrap check-radio\">"+ActionController::Base.helpers.link_to("<i class=\"#{delivered?.to_s} icon-check#{delivered? ? "" : "-empty"}\"></i>".html_safe, {controller: "deliveries", action: "new", course_register_id: self.course_register_id, tab_page: 1}, title: "Deliver Stock: #{self.contact.display_name}", title: 'Materials Delivery', class: "tab_page")+"</div> (#{delivered_count.to_s}/#{quantity.to_s}) delivered?"
+      else
+        return "<div class=\"nowrap check-radio\">"+ActionController::Base.helpers.link_to("<i class=\"#{delivered?.to_s} icon-check#{delivered? ? "" : "-empty"}\"></i>".html_safe, "#", title: "Deliver Stock: #{self.contact.display_name}")+"</div> (#{delivered_count.to_s}/#{quantity.to_s}) delivered?"
+      end
     end
   end
 

@@ -341,6 +341,24 @@ class CoursesController < ApplicationController
     end
   end
   
+  def print_list
+    if params[:ids].present?
+      if !params[:check_all_page].nil?
+        params[:intake_year] = params["filter"]["intake(1i)"] if params["filter"].present?
+        params[:intake_month] = params["filter"]["intake(2i)"] if params["filter"].present?
+        
+        @items = Course.filters(params, current_user)
+      else
+        @items = Course.where(id: params[:ids])
+      end
+    end
+    
+    respond_to do |format|
+      format.html {render "print_list.html.erb"}
+      format.xls
+    end
+  end
+  
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_course

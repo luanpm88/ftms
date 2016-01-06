@@ -165,6 +165,7 @@ class Ability
       can :transfer_to_box, Course
       can :approve_all, Course
       can :intake_options, Course
+      can :print_list, Course
       
       can :datatable, CourseType
       can :read, CourseType

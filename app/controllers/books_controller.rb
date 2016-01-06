@@ -382,7 +382,7 @@ class BooksController < ApplicationController
       delivery.status = 1
       
       cr.books_contacts.each do |bc|
-        if @books_contacts.include?(bc) && !bc.delivered?
+        if @books_contacts.include?(bc) && !bc.delivered? && !bc.upfront
           delivery.save
           delivery.delivery_details.create(book_id: bc.book_id, quantity: bc.remain)
         end        

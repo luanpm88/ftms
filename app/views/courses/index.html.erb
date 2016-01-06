@@ -26,7 +26,8 @@
 							<div class="listing_box_actions">
 									<div class="btn-group listing_actions"> <a href="#" data-toggle="dropdown" class="btn btn-white dropdown-toggle btn-demo-space"> List Actions (<span class="listing_checked_count">0</span>)<span class="caret"></span> </a>
 										<ul class="dropdown-menu">									
-											<li><a href="#" rel="<%= approve_all_courses_path %>" type="ajax">Approve All</a></li>									
+											<li><a href="#" rel="<%= approve_all_courses_path %>" type="ajax">Approve All</a></li>
+											<li><a href="#" rel="<%= print_list_courses_path(format: "xls") %>">Export Excel</a></li>
 										</ul>
 									</div>
 									<div class="checkbox check-default check_all_page_but" style="display: inline-block">
