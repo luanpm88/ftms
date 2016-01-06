@@ -1,0 +1,29 @@
+<?xml version="1.0"?>
+<Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet"
+  xmlns:o="urn:schemas-microsoft-com:office:office"
+  xmlns:x="urn:schemas-microsoft-com:office:excel"
+  xmlns:ss="urn:schemas-microsoft-com:office:spreadsheet"
+  xmlns:html="http://www.w3.org/TR/REC-html40">
+  <Worksheet ss:Name="Sheet1">
+    <Table>
+      <Row>
+        <Cell><Data ss:Type="String">Intake</Data></Cell>
+        <Cell><Data ss:Type="String">Course</Data></Cell>
+        <Cell><Data ss:Type="String">For exam</Data></Cell>
+        <Cell><Data ss:Type="String">Student num</Data></Cell>
+        <Cell><Data ss:Type="String">Full count</Data></Cell>
+        <Cell><Data ss:Type="String">Half count</Data></Cell>
+      </Row>
+    <% @items.each do |item| %>
+      <Row>
+        <Cell><Data ss:Type="String"><%= item.display_intake %></Data></Cell>
+        <Cell><Data ss:Type="String"><%= item.program_paper_name %></Data></Cell>
+        <Cell><Data ss:Type="String"><%= item.display_for_exam %></Data></Cell>
+        <Cell><Data ss:Type="String"><%= item.real_contacts.count.to_s %></Data></Cell>
+        <Cell><Data ss:Type="String"><%= item.real_contacts.where("cache_courses LIKE ?","%[#{item.id},full]%").count.to_s %></Data></Cell>
+        <Cell><Data ss:Type="String"><%= item.real_contacts.where("cache_courses LIKE ?","%[#{item.id},half]%").count.to_s %></Data></Cell>
+      </Row>
+    <% end %>
+    </Table>
+  </Worksheet>
+</Workbook>
