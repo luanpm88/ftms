@@ -26,8 +26,6 @@
             <% end %>
 </div>
 
-<%= form_tag("", {class: "listing_form", method: "post", target: "_blank"}) do |f| %>
-    <%= hidden_field_tag "contact", @contact.id %>
 
 <div class="row">
     <div class="col-md-12">
@@ -69,7 +67,7 @@
 </div>
 
 
-<% end %>
+
 
 <% if @contact.old_student.present? && (!@contact.old_tags.empty? || !@contact.old_note_details.empty?) %>
     <div class="row">
