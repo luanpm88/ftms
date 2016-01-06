@@ -145,7 +145,7 @@ class Activity < ActiveRecord::Base
         return "<span class=\"note_content\">"+CourseRegister.find(code).note_log.html_safe+"</span>"
       end
     else
-      edit_box = u == user ? "<a class=\"note_edit_button\" href=\"#edit\"><i class=\"icon-pencil\"></i> Edit</a><div class=\"note_log_edit_box\" item-id=\"#{id.to_s}\"><textarea class=>#{note}</textarea><br /><button class=\"btn btn-small btn-primary note_save_button\">Save</button><button class=\"btn btn-small btn-white note_cancel_button\">Cancel</button></div>" : ""
+      edit_box = u == user ? "<a class=\"note_edit_button\" href=\"#edit\"><i class=\"icon-pencil\"></i> Edit</a><div class=\"note_log_edit_box\" item-id=\"#{id.to_s}\"><textarea class=>#{note}</textarea><br /><a class=\"btn btn-small btn-primary note_save_button\">Save</a><a class=\"btn btn-small btn-white note_cancel_button\">Cancel</a></div>" : ""
       return "<span class=\"note_content\">"+note.gsub("\n","<br />").html_safe+"</span>"+edit_box
     end
   end
