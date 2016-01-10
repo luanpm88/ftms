@@ -465,7 +465,7 @@ class Contact < ActiveRecord::Base
       
       itemz = [
               "<div item_id=\"#{item.id.to_s}\" class=\"main_part_info checkbox check-default\"><input name=\"ids[]\" id=\"checkbox#{item.id}\" type=\"checkbox\" value=\"#{item.id}\"><label for=\"checkbox#{item.id}\"></label></div>",
-              "[#{item.find_old_group_id}]"+'<div class="text-left"><strong>'+item.contact_link+"</strong></div>"+'<div class="text-left">'+item.html_info_line.html_safe+item.referrer_link+"</div>"+item.picture_link+item.display_not_added_stock(params[:not_added_books]),
+              "[#{item.cache_group_id}]"+'<div class="text-left"><strong>'+item.contact_link+"</strong></div>"+'<div class="text-left">'+item.html_info_line.html_safe+item.referrer_link+"</div>"+item.picture_link+item.display_not_added_stock(params[:not_added_books]),
               "",
               "",
               "",
@@ -485,11 +485,11 @@ class Contact < ActiveRecord::Base
       data << itemz
       arr << item
       
-      if item.statuses.include?("deleted") and item.cache_group_id.nil? and item.find_old_group_id.present?
+      if item.statuses.include?("deleted") # and item.cache_group_id.nil? and item.find_old_group_id.present?
         item.find_related_contacts.each do |child|
           row = [
                   "<div item_id=\"#{child.id.to_s}\" class=\"main_part_info checkbox check-default\"><input name=\"ids[]\" id=\"checkbox#{child.id}\" type=\"checkbox\" value=\"#{child.id}\"><label for=\"checkbox#{child.id}\"></label></div>",
-                  "[#{child.find_old_group_id}]"+'<div class="text-left re_merge"><strong class="label_name" val="'+child.name.unaccent.to_s+'">'+child.contact_link+"</strong></div>"+'<div class="text-left">'+child.html_info_line.html_safe+child.referrer_link+"</div>"+child.picture_link,              
+                  "[#{child.cache_group_id}]"+'<div class="text-left re_merge"><strong class="label_name" val="'+child.name.unaccent.to_s+'">'+child.contact_link+"</strong></div>"+'<div class="text-left">'+child.html_info_line.html_safe+child.referrer_link+"</div>"+child.picture_link,              
                   "",
                   "",
                   "",
@@ -1506,7 +1506,8 @@ class Contact < ActiveRecord::Base
   
   def display_statuses
     return "" if statuses.empty?
-    result = statuses.map {|s| "<span title=\"Last updated: #{current.created_at.strftime("%d-%b-%Y, %I:%M %p")} / By: #{current.user.name}\" class=\"badge user-role badge-info contact-status #{s}\">#{s}</span>"}
+    edit_by = ((statuses.include?("active") or statuses.include?("deleted")) and !older.nil?) ? " by: #{older.user.name}, approved " : ""
+    result = statuses.map {|s| "<span title=\"Last updated: #{current.created_at.strftime("%d-%b-%Y, %I:%M %p")} /#{edit_by} by: #{current.user.name}\" class=\"badge user-role badge-info contact-status #{s}\">#{s}</span>"}
     result.join(" ").html_safe
   end
   
