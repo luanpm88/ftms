@@ -8,11 +8,31 @@
                         <i class="icon-briefcase"></i>
                     	<h3>Payment - <span class="semi-bold"> Record</span></h3>	
                 </div>
-				
+			
+			<%= form_tag("", {class: "listing_form", method: "post", target: "_blank"}) do |f| %>
+			
 				<%= render "filter" %>
 				
                 <div class="row">
-                    <div class="col-md-12">                        
+                    <div class="col-md-12">
+						
+						
+						<div class="listing_box_actions">
+							<div class="btn-group listing_actions"> <a href="#" data-toggle="dropdown" class="btn btn-primary dropdown-toggle btn-demo-space"> List Actions (<span class="listing_checked_count">0</span>)<span class="caret"></span> </a>
+								<ul class="dropdown-menu">
+									<li><a href="#" rel="<%= export_list_payment_records_path(format: "xls") %>">Export List (Excel)</a></li>									
+								</ul>
+							</div>
+							<div class="checkbox check-default check_all_page_but" style="display: inline-block">
+								<input name="check_all_page" id="checkbox_all_page" type="checkbox" value="all_page" class="check_all_page">
+								<label for="checkbox_all_page">Select All Pages</label>
+							</div>
+							
+							
+							
+						</div>
+						
+						
                         <div class="grid simple ">
                             <div class="grid-title no-border">
                                 <h4>Listing  <span class="semi-bold">Payment</span></h4>
@@ -22,7 +42,13 @@
                                  
                                     <table class="table table-striped no-more-tables datatable-payment-records no-filter">
                                         <thead>
-                                            <tr>                                                
+                                            <tr>
+												<th>
+													<div class="checkbox check-default">
+														<input id="checkbox_all" type="checkbox" value="all" class="checkall">
+														<label for="checkbox_all"></label>
+													</div>
+												</th>
 												<th>Payer</th>
 												<th class="text-left">Description</th>
 												<th class="text-right">Payable Amount</th>
@@ -43,3 +69,4 @@
 		    
                 </div>
 
+			<% end %>

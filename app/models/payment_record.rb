@@ -133,9 +133,9 @@ class PaymentRecord < ActiveRecord::Base
     
     if !params["order"].nil?
       case params["order"]["0"]["column"]
-      when "0"
+      when "1"
         order = "payment_records.payment_date"
-      when "4"
+      when "5"
         order = "payment_records.payment_date"
       else
         order = "payment_records.payment_date"
@@ -151,10 +151,11 @@ class PaymentRecord < ActiveRecord::Base
     
     data = []
     
-    actions_col = 9
+    actions_col = 10
     @records.each do |item|
       item = [
-              "<span item_id=\"#{item.id.to_s}\" class=\"main_part_info\"></span>"+item.contact.contact_link,
+              "<div item_id=\"#{item.id.to_s}\" class=\"main_part_info checkbox check-default\"><input name=\"ids[]\" id=\"checkbox#{item.id}\" type=\"checkbox\" value=\"#{item.id}\"><label for=\"checkbox#{item.id}\"></label></div>",
+              item.contact.contact_link,
               "",
               "",
               "",
@@ -196,14 +197,18 @@ class PaymentRecord < ActiveRecord::Base
     
   end
   
-  def staff_col
+  def staff
     if !company.nil?
-      account_manager.staff_col
+      account_manager
     elsif !transfer.nil?
-      transfer.user.staff_col
+      transfer.user
     else
-      course_register.account_manager.staff_col
+      course_register.account_manager
     end    
+  end
+  
+  def staff_col
+    staff.staff_col
   end
   
   def ec
@@ -246,6 +251,23 @@ class PaymentRecord < ActiveRecord::Base
       transfer.contact
     else
       course_register.contact
+    end
+  end
+  
+  def description_raw
+    if !company.nil?
+      paper_count = 0
+      students = {}
+      course_registers.each do |cr|
+        paper_count += cr.contacts_courses.count
+        students[cr.contact_id] = students[cr.contact_id].nil? ? 1 : students[cr.contact_id] + 1
+      end
+      
+      return "Student count: #{students.count.to_s}; Paper count: #{paper_count.to_s}"
+    elsif !transfer.nil?
+      "Defer/Transfer at [#{transfer.created_at.strftime("%d-%b-%Y")}]"
+    else
+      course_register.course_list_raw(false)+"; "+course_register.book_list_raw(false)
     end
   end
   

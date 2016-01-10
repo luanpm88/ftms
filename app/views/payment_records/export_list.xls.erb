@@ -1,0 +1,33 @@
+<?xml version="1.0"?>
+<Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet"
+  xmlns:o="urn:schemas-microsoft-com:office:office"
+  xmlns:x="urn:schemas-microsoft-com:office:excel"
+  xmlns:ss="urn:schemas-microsoft-com:office:spreadsheet"
+  xmlns:html="http://www.w3.org/TR/REC-html40">
+  <Worksheet ss:Name="Sheet1">
+    <Table>
+      <Row>
+        <Cell><Data ss:Type="String">Paid on</Data></Cell>
+        <Cell><Data ss:Type="String">Full Name</Data></Cell>
+        <Cell><Data ss:Type="String">Company</Data></Cell>
+        <Cell><Data ss:Type="String">Description</Data></Cell>
+        <Cell><Data ss:Type="String">Paid amount</Data></Cell>
+        <Cell><Data ss:Type="String">At bank</Data></Cell>
+        <Cell><Data ss:Type="String">Bank ref</Data></Cell>
+        <Cell><Data ss:Type="String">Education Consultant</Data></Cell>        
+      </Row>
+    <% @items.each do |item| %>
+      <Row>
+        <Cell><Data ss:Type="String"><%= item.created_at.strftime("%d-%b-%Y") %></Data></Cell>
+        <Cell><Data ss:Type="String"><%= item.contact.display_name %></Data></Cell>
+        <Cell><Data ss:Type="String"><%= item.contact.referrer.name if !item.contact.referrer.nil? %></Data></Cell>
+        <Cell><Data ss:Type="String"><%= item.description_raw %></Data></Cell>
+        <Cell><Data ss:Type="String"><%= item.display_paid_amount %></Data></Cell>
+        <Cell><Data ss:Type="String"><%= item.bank_account_name %></Data></Cell>
+        <Cell><Data ss:Type="String"><%= item.bank_ref %></Data></Cell>
+        <Cell><Data ss:Type="String"><%= item.staff.name %></Data></Cell>
+      </Row>
+    <% end %>
+    </Table>
+  </Worksheet>
+</Workbook>

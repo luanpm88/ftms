@@ -578,6 +578,20 @@ class CourseRegister < ActiveRecord::Base
     return arr.join("")
   end
   
+  def course_list_raw(phrase_list=true)
+    arr = []
+    courses.each do |row|
+      
+      full_course = (row[:contacts_course].full_course == true and row[:course].upfront != true) ? " [full]" : ""
+      
+      
+      arr << row[:course].display_name+full_course
+      
+    end
+    
+    return arr.join("; ")
+  end
+  
   def courses
     arr = []
     contacts_courses.each do |cc|
@@ -602,6 +616,17 @@ class CourseRegister < ActiveRecord::Base
     end
     
     return arr.join("")
+  end
+  
+  def book_list_raw(long=true)
+    arr = []
+    books.each do |row|
+      if long == false
+        arr << "[#{row[:books_contact].quantity}] "+row[:book].display_name
+      end
+    end
+    
+    return arr.join("; ")
   end
   
   def ordered_books_contacts

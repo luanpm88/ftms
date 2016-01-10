@@ -82,6 +82,8 @@ Hkerp::Application.routes.draw do
       get :part_info
       
       get :company_paid_list
+      
+      post :export_list
     end
   end
   resources :stock_updates do

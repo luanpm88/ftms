@@ -345,6 +345,7 @@ class Ability
       can :payment_list, PaymentRecord
       can :datatable_payment_list, PaymentRecord
       can :part_info, PaymentRecord
+      can :export_list, PaymentRecord
       
       can :datatable, Activity
       can :read, Activity

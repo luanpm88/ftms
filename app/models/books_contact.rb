@@ -302,10 +302,18 @@ class BooksContact < ActiveRecord::Base
   
   def display_delivery_status    
     if delivered?
-      return "<a class=\"check-radio ajax-check-radioz\" href=\"#c\"><i class=\"#{delivered?.to_s} icon-check#{delivered? ? "" : "-empty"}\"></i></a>"
+      return "<a class=\"check-radio ajax-check-radioz\" title=\"#{display_deliveries}\" href=\"#c\"><i class=\"#{delivered?.to_s} icon-check#{delivered? ? "" : "-empty"}\"></i></a>"
     else
       return "<div class=\"nowrap check-radio\">"+ActionController::Base.helpers.link_to("<i class=\"#{delivered?.to_s} icon-check#{delivered? ? "" : "-empty"}\"></i>".html_safe, {controller: "deliveries", action: "new", course_register_id: self.course_register_id, tab_page: 1}, title: "Deliver Stock: #{self.contact.display_name}", title: 'Materials Delivery', class: "tab_page")+"</div>"
     end
+  end
+  
+  def display_deliveries
+    str = []
+    Delivery.where(id: BooksContact.find(self.id).delivery_details.map(&:delivery_id)).each do |d|
+      str << "[Delivered #{d.delivery_details.where(book_id: self.book_id).sum(:quantity)} stock(s); by #{d.user.name}; on #{d.delivery_date.strftime("%Y-%b-%d")}]"
+    end
+    return str.join("")
   end
 
   def delivery_status
@@ -352,7 +360,7 @@ class BooksContact < ActiveRecord::Base
 
   def display_delivery_status    
     if delivered?
-      return "<div class=\"nowrap check-radio\">"+ActionController::Base.helpers.link_to("<i class=\"#{delivered?.to_s} icon-check#{delivered? ? "" : "-empty"}\"></i>".html_safe, {controller: "books_contacts", action: "remove", id: self.id, tab_page: 1}, title: "Deliver Stock: #{self.contact.display_name}", title: 'Remove Delivery', class: "approve_link")+"</div> (#{delivered_count.to_s}/#{quantity.to_s}) delivered?"
+      return "<div  title=\"\" class=\"nowrap check-radio\">"+ActionController::Base.helpers.link_to("<i class=\"#{delivered?.to_s} icon-check#{delivered? ? "" : "-empty"}\"></i>".html_safe, {controller: "books_contacts", action: "remove", id: self.id, tab_page: 1}, title: "Deliver Stock: #{self.contact.display_name}", title: "Remove Delivery #{display_deliveries}", class: "approve_link")+"</div> (#{delivered_count.to_s}/#{quantity.to_s}) delivered?"
     else
       if !self.upfront
         return "<div class=\"nowrap check-radio\">"+ActionController::Base.helpers.link_to("<i class=\"#{delivered?.to_s} icon-check#{delivered? ? "" : "-empty"}\"></i>".html_safe, {controller: "deliveries", action: "new", course_register_id: self.course_register_id, tab_page: 1}, title: "Deliver Stock: #{self.contact.display_name}", title: 'Materials Delivery', class: "tab_page")+"</div> (#{delivered_count.to_s}/#{quantity.to_s}) delivered?"

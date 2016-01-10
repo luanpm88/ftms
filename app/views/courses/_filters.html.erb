@@ -5,14 +5,14 @@
 						  <h4>Intake</h4>  
 						  <div class="date_select_filter">
 							  <div class="input-with-icon date-group-my right">                                       
-							  <%= date_select(:filter, :intake, {include_blank: true, use_short_month: true}) %>
+							  <%= date_select(:filter, :intake, {include_blank: true, use_short_month: true, start_year: 2015}) %>
 							  </div>
 						  </div>
 						</div>
 						<div class="col-md-3 year_bigger">
 							<h4>For exam</h4>							
 							<div class="date_select_filter date_mbe">
-								<%= select_tag 'for_exam_year', options_for_select(((Time.now.year-10)..(Time.now.year+10)).each { |u| [u, u] }), {:include_blank => '', class: "modern_select"} %>
+								<%= select_tag 'for_exam_year', options_for_select((2015..(Time.now.year+10)).each { |u| [u, u] }), {:include_blank => '', class: "modern_select"} %>
 								<%= select_tag 'for_exam_month', options_for_select((Course.months_with_CBE.each { |u| [u, u] })), class: "modern_select_none" %>
 							</div>
 						</div>

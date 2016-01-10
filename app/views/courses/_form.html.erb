@@ -57,7 +57,7 @@
 											  <%= render "field_history", drafts: @course.field_history("intake"), type: "intake" %>
 											  <div class="input-with-icon date-group right">                                       
 												  <i class=""></i>
-												  <%= f.date_select :intake, use_short_month: true %>
+												  <%= f.date_select :intake, use_short_month: true, start_year: 2015 %>
 											  </div>
 										</div>
 										<div class="form-group">
@@ -65,7 +65,7 @@
 											 <span class="help">(required)</span>
 											 <%= render "field_history", drafts: @course.field_history("for_exam"), type: "for_exam" %>
 											 <div class="date_select_filter date_mbe">
-												 <%= select_tag 'course[for_exam_year]', options_for_select(((Time.now.year-10)..(Time.now.year+10)).each { |u| [u, u] }, @course.for_exam_year), class: "modern_select" %>
+												 <%= select_tag 'course[for_exam_year]', options_for_select((2015..(Time.now.year+10)).each { |u| [u, u] }, @course.for_exam_year), class: "modern_select" %>
 												 <%= select_tag 'course[for_exam_month]', options_for_select((Course.months_with_CBE.each { |u| [u, u] }), @course.for_exam_month), class: "modern_select_none required" %>
 											 </div>
 										</div>

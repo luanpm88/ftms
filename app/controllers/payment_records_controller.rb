@@ -358,6 +358,36 @@ class PaymentRecordsController < ApplicationController
       end
     end
   end
+  
+  def export_list
+    if params[:ids].present?
+      if !params[:check_all_page].nil?
+        params[:intake_year] = params["filter"]["intake(1i)"] if params["filter"].present?
+        params[:intake_month] = params["filter"]["intake(2i)"] if params["filter"].present?
+        
+        if params[:is_individual] == "false"
+          params[:contact_types] = nil
+        end        
+        
+        @items = PaymentRecord.filters(params, current_user)
+      else
+        @items = PaymentRecord.where(id: params[:ids])
+      end
+      
+      @items = @items.order("payment_records.created_at DESC")
+      
+      
+      #log = UserLog.new(user_id: current_user.id, title: "Export Payment List")
+      #log.render_content(@items, params)
+      #log.save
+      
+      
+      respond_to do |format|
+        format.html
+        format.xls
+      end
+    end      
+  end
 
   private
     # Use callbacks to share common setup or constraints between actions.
