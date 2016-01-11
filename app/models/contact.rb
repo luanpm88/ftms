@@ -274,7 +274,11 @@ class Contact < ActiveRecord::Base
     if params[:phrases].present?
       conds = []
       params[:phrases].split(",").each do |ccid|
-        conds << "contacts.cache_phrases LIKE '%[#{ccid}]%'"
+        if params[:courses].present?
+          conds << "contacts.cache_phrases LIKE '%[#{params[:courses]},#{ccid}]%'"
+        else
+          conds << "contacts.cache_phrases LIKE '%,#{ccid}]%'"
+        end
       end
       
       @records = @records.where(conds.join(" OR "))
@@ -2240,7 +2244,7 @@ class Contact < ActiveRecord::Base
   def real_phrase_ids
     arr = []
     active_courses_with_phrases.each do |row|
-      arr += (row[:courses_phrases].map{|cp| cp.phrase_id}).uniq
+      arr += (row[:courses_phrases].map{|cp| cp.course_id.to_s+","+cp.phrase_id.to_s}).uniq
     end
     
     return arr

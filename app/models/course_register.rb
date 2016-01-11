@@ -149,6 +149,7 @@ class CourseRegister < ActiveRecord::Base
         cccc_cr.update_statuses
         cccc_prs.each do |pr|
           pr.payment_record.update_statuses
+          pr.payment_record.update_attribute(:status, 0) if pr.payment_record.total == 0.0
         end
       end
     end
