@@ -201,7 +201,7 @@ class PaymentRecord < ActiveRecord::Base
     if !company.nil?
       account_manager
     elsif !transfer.nil?
-      transfer.user
+      transfer.contact.account_manager
     else
       course_register.account_manager
     end    

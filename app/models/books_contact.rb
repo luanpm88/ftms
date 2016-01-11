@@ -132,18 +132,24 @@ class BooksContact < ActiveRecord::Base
     remain <= 0
   end
   
-  def paid_amount
+  def paid_amount(from_date=nil, to_date=nil)
     records = course_register.all_payment_records
     
     total = 0.00
     records.each do |p|
-      total += p.payment_record_details.where(books_contact_id: self.id).sum(:amount)
+      prds = p.payment_record_details.where(books_contact_id: self.id)
+      if from_date.present? && to_date.present?
+        prds = prds.includes(:payment_record)
+                    .where("payment_records.payment_date >= ? AND payment_records.payment_date >= ? ", @from_date.beginning_of_day, @to_date.end_of_day)
+      end
+      
+      total += prds.sum(:amount)
     end
     return total
   end
   
-  def remain_amount
-    total - paid_amount
+  def remain_amount(from_date=nil, to_date=nil)
+    total - paid_amount(from_date, to_date)
   end
   
   def self.all_to_be_ordered(book_id=nil)

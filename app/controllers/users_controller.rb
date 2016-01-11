@@ -209,6 +209,7 @@ class UsersController < ApplicationController
       
       
       @course_types = CourseType.main_course_types.order("short_name")
+      @course_types << CourseType.new(id: -1, short_name: "Defer/Transfer")
       @course_types.each do |ct|
         #@statistics << {user: u, course_type: ct}
         
@@ -223,14 +224,28 @@ class UsersController < ApplicationController
         @records.each do |pr|
           pr.payment_record_details.each do |prd|
             if !prd.contacts_course.nil? && prd.contacts_course.course.course_type_id == ct.id
-              total += prd.amount
-              group_total += prd.amount
+              total += prd.real_amount
+              group_total += prd.real_amount
             elsif !prd.books_contact.nil? && prd.books_contact.book.course_type_id == ct.id
-              total += prd.amount
-              group_total += prd.amount
+              total += prd.real_amount
+              group_total += prd.real_amount
             end
           end
         end
+        
+        # transfer sales
+        @records = PaymentRecord.includes(:transfer => :contact)
+                              .where(transfers: {parent_id: nil}).where("transfers.status IS NOT NULL AND transfers.status LIKE ?", "%[active]%")
+                              .where(status: 1)
+                              .where(contacts: {account_manager_id: u.id}) #.where(course_types: {id: ct.id}) #.sum(:price)                              
+                              .where("payment_records.payment_date >= ? AND payment_records.payment_date <= ? ", @from_date.beginning_of_day, @to_date.end_of_day).uniq
+        @records.each do |pr|
+            if ct.id == -1
+              total += pr.amount
+              group_total += pr.amount            
+            end
+        end
+        
         
         ## company sales
         @records = PaymentRecord.where(status: 1)
@@ -239,8 +254,8 @@ class UsersController < ApplicationController
         @records.each do |pr|
           pr.payment_record_details.each do |prd|
             if prd.course_type_id == ct.id
-              total += prd.amount
-              group_total += prd.amount
+              total += prd.real_amount
+              group_total += prd.real_amount
             end
           end
         end
@@ -248,18 +263,31 @@ class UsersController < ApplicationController
         
         
         # receivable
-        receivable = 0
-        contacts_courses = ContactsCourse.includes(:course_register, :course => :course_type)
-                                          .where(course_registers: {parent_id: nil}).where("course_registers.status IS NOT NULL AND course_registers.status LIKE ?", "%[active]%")
-                                          .where(course_types: {id: ct.id})
-                                          .where(course_registers: {account_manager_id: u.id})
-                                          .where("course_registers.created_at >= ? AND course_registers.created_at <= ? ", @from_date.beginning_of_day, @to_date.end_of_day)
-        
-        contacts_courses.each do |cc|
-          receivable += cc.remain(@from_date, @to_date) if !cc.course_register.paid?(@to_date.end_of_day)
-        end
-
-        receivable_total += receivable
+              receivable = 0
+              
+              #contacts courses
+              contacts_courses = ContactsCourse.includes(:course_register, :course => :course_type)
+                                                .where(course_registers: {parent_id: nil}).where("course_registers.status IS NOT NULL AND course_registers.status LIKE ?", "%[active]%")
+                                                .where(course_types: {id: ct.id})
+                                                .where(course_registers: {account_manager_id: u.id})
+                                                .where("course_registers.created_at >= ? AND course_registers.created_at <= ? ", @from_date.beginning_of_day, @to_date.end_of_day)
+              
+              contacts_courses.each do |cc|
+                receivable += cc.remain(@from_date, @to_date) if !cc.course_register.paid?(@to_date.end_of_day)
+              end
+              
+              #books courses
+              books_contacts = BooksContact.includes(:course_register, :book => :course_type)
+                                                .where(course_registers: {parent_id: nil}).where("course_registers.status IS NOT NULL AND course_registers.status LIKE ?", "%[active]%")
+                                                .where(course_types: {id: ct.id})
+                                                .where(course_registers: {account_manager_id: u.id})
+                                                .where("course_registers.created_at >= ? AND course_registers.created_at <= ? ", @from_date.beginning_of_day, @to_date.end_of_day)
+              
+              books_contacts.each do |cc|
+                receivable += cc.remain_amount(@from_date, @to_date) if !cc.course_register.paid?(@to_date.end_of_day)
+              end
+      
+              receivable_total += receivable
         
         
         # Inquiry # Student
