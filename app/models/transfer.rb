@@ -622,10 +622,10 @@ class Transfer < ActiveRecord::Base
   def paid(from_date=nil, to_date=nil)
     total = all_payment_records
     if from_date.present?
-      total = total.where("payment_records.payment_date >= ?", @from_date.beginning_of_day)
+      total = total.where("payment_records.payment_date >= ?", from_date.beginning_of_day)
     end
     if to_date.present?
-      total = total.where("payment_records.payment_date <= ? ", @to_date.end_of_day)
+      total = total.where("payment_records.payment_date <= ? ", to_date.end_of_day)
     end
     
     total = total.sum(:amount)

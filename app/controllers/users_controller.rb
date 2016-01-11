@@ -286,6 +286,18 @@ class UsersController < ApplicationController
               books_contacts.each do |cc|
                 receivable += cc.remain_amount(@from_date, @to_date) if !cc.course_register.paid?(@to_date.end_of_day)
               end
+              
+              if ct.id == -1
+                #transfers
+                transfers = Transfer.includes(:contact).where(parent_id: nil).where("transfers.status IS NOT NULL AND transfers.status LIKE ?", "%[active]%")
+                                                  .where(contacts: {account_manager_id: u.id})
+                                                  .where("transfers.created_at >= ? AND transfers.created_at <= ? ", @from_date.beginning_of_day, @to_date.end_of_day)
+                #receivable += transfers.first.id                           
+                transfers.each do |tsf|
+                  receivable += tsf.remain(@from_date, @to_date)
+                end
+              end
+                
       
               receivable_total += receivable
         

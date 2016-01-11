@@ -137,7 +137,9 @@ class ContactsCourse < ActiveRecord::Base
                     .where("payment_records.payment_date >= ? AND payment_records.payment_date >= ? ", from_date.beginning_of_day, to_date.end_of_day)
       end
       
-      total += prds.sum(:amount)
+      prds.each do |prd|
+        total += prd.real_amount
+      end
     end
     return total
   end

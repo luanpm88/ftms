@@ -225,7 +225,7 @@ class PaymentRecord < ActiveRecord::Base
     if !company.nil?
       (company_records.map {|r| r.payment_record_link(payment_date.strftime("%d-%b-%Y"))}).join("<br />")
     elsif !transfer.nil?
-      transfer.created_at.strftime("%d-%b-%Y")
+      payment_date.strftime("%d-%b-%Y")
     else
       self.payment_record_link      
     end    
