@@ -367,9 +367,9 @@ class PaymentRecordsController < ApplicationController
         
         if params[:is_individual] == "false"
           params[:contact_types] = nil
-        end        
+        end
         
-        @items = PaymentRecord.filters(params, current_user)
+        @items = PaymentRecord.filter(params, current_user)
       else
         @items = PaymentRecord.where(id: params[:ids])
       end
