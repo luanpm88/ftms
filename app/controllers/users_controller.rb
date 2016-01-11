@@ -225,6 +225,9 @@ class UsersController < ApplicationController
             if !prd.contacts_course.nil? && prd.contacts_course.course.course_type_id == ct.id
               total += prd.amount
               group_total += prd.amount
+            elsif !prd.books_contact.nil? && prd.books_contact.book.course_type_id == ct.id
+              total += prd.amount
+              group_total += prd.amount
             end
           end
         end

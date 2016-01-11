@@ -1028,6 +1028,8 @@ class Contact < ActiveRecord::Base
   
   def html_info_line
     line = "";
+    
+    line += "<span class=\"box_mini_info nowrap\"><i class=\"icon-#{sex}\"></i> #{sex}</span>" if sex.present?
 
     display_email_2 = (email_2s.map {|e| "<span class=\"box_mini_info label_email nowrap\" val=\"#{e.to_s.strip.downcase}\"><i class=\"icon-envelope\"></i> " + e + "</span> "}).join(" ")
     display_mobile_2 = (mobile_2s.map {|e| "<span class=\"box_mini_info label_mobile nowrap\" val=\"#{e}\"><i class=\"icon-phone\"></i> +" + e + "</span> "}).join(" ")
@@ -1163,8 +1165,8 @@ class Contact < ActiveRecord::Base
   end
   
   def display_name(params=nil)
-    sirname = sex == "female" ? "[Ms]" : (sex == "male" ? "[Mr]" : "[?]")
-    result = is_individual ? (sirname+" "+name).html_safe.mb_chars.titleize : name
+    #sirname = sex == "female" ? "[Ms]" : (sex == "male" ? "[Mr]" : "[?]")
+    result = is_individual ? (name).html_safe.mb_chars.titleize : name
     result = result
     
     if params.present?
@@ -1176,8 +1178,8 @@ class Contact < ActiveRecord::Base
   
   def display_name_long(params=nil)
     result = []
-    sirname = sex == "female" ? "[Ms]" : (sex == "male" ? "[Mr]" : "[?]")
-    result << (is_individual ? (sirname+" "+name).html_safe.mb_chars.titleize : name)
+    # sirname = sex == "female" ? "[Ms]" : (sex == "male" ? "[Mr]" : "[?]")
+    result << (is_individual ? (name).html_safe.mb_chars.titleize : name)
     
     more = []
     more << "#{self.email}" if self.email.present?
