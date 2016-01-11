@@ -374,7 +374,7 @@ class PaymentRecordsController < ApplicationController
         @items = PaymentRecord.where(id: params[:ids])
       end
       
-      @items = @items.order("payment_records.created_at DESC")
+      @items = @items.order("payment_records.payment_date DESC")
       
       
       #log = UserLog.new(user_id: current_user.id, title: "Export Payment List")
