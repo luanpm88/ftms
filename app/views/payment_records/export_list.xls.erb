@@ -18,7 +18,7 @@
       </Row>
     <% @items.each do |item| %>
       <Row>
-        <Cell><Data ss:Type="String"><%= item.created_at.strftime("%d-%b-%Y") %></Data></Cell>
+        <Cell><Data ss:Type="String"><%= item.payment_date.strftime("%d-%b-%Y") %></Data></Cell>
         <Cell><Data ss:Type="String"><%= item.contact.display_name %></Data></Cell>
         <Cell><Data ss:Type="String"><%= item.contact.referrer.name if !item.contact.referrer.nil? %></Data></Cell>
         <Cell><Data ss:Type="String"><%= item.description_raw %></Data></Cell>
