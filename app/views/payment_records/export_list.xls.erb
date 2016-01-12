@@ -22,7 +22,7 @@
         <Cell><Data ss:Type="String"><%= item.contact.display_name %></Data></Cell>
         <Cell><Data ss:Type="String"><%= item.contact.referrer.name if !item.contact.referrer.nil? %></Data></Cell>
         <Cell><Data ss:Type="String"><%= item.description_raw %></Data></Cell>
-        <Cell><Data ss:Type="String"><%= item.display_paid_amount %></Data></Cell>
+        <Cell><Data ss:Type="Number"><%= item.display_paid_amount %></Data></Cell>
         <Cell><Data ss:Type="String"><%= item.bank_account_name %></Data></Cell>
         <Cell><Data ss:Type="String"><%= item.bank_ref %></Data></Cell>
         <Cell><Data ss:Type="String"><%= item.staff.name %></Data></Cell>
