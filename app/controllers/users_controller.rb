@@ -216,7 +216,7 @@ class UsersController < ApplicationController
         # sales
         total = 0.0
         @records = PaymentRecord.includes(:course_register => :contact)
-                              .where(course_registers: {parent_id: nil}).where("course_registers.status IS NOT NULL AND course_registers.status LIKE ?", "%[active]%")
+                              .where(course_registers: {parent_id: nil}).where("course_registers.status IS NOT NULL AND course_registers.status NOT LIKE ?", "%[deleted]%")
                               .where(status: 1)
                               .where(course_registers: {account_manager_id: u.id}) #.where(course_types: {id: ct.id}) #.sum(:price)                              
                               .where("payment_records.payment_date >= ? AND payment_records.payment_date <= ? ", @from_date.beginning_of_day, @to_date.end_of_day).uniq
@@ -235,7 +235,7 @@ class UsersController < ApplicationController
         
         # transfer sales
         @records = PaymentRecord.includes(:transfer => :contact)
-                              .where(transfers: {parent_id: nil}).where("transfers.status IS NOT NULL AND transfers.status LIKE ?", "%[active]%")
+                              .where(transfers: {parent_id: nil}).where("transfers.status IS NOT NULL AND transfers.status NOT LIKE ?", "%[deleted]%")
                               .where(status: 1)
                               .where(contacts: {account_manager_id: u.id}) #.where(course_types: {id: ct.id}) #.sum(:price)                              
                               .where("payment_records.payment_date >= ? AND payment_records.payment_date <= ? ", @from_date.beginning_of_day, @to_date.end_of_day).uniq
@@ -267,7 +267,7 @@ class UsersController < ApplicationController
               
               #contacts courses
               contacts_courses = ContactsCourse.includes(:course_register, :course => :course_type)
-                                                .where(course_registers: {parent_id: nil}).where("course_registers.status IS NOT NULL AND course_registers.status LIKE ?", "%[active]%")
+                                                .where(course_registers: {parent_id: nil}).where("course_registers.status IS NOT NULL AND course_registers.status NOT LIKE ?", "%[deleted]%")
                                                 .where(course_types: {id: ct.id})
                                                 .where(course_registers: {account_manager_id: u.id})
                                                 .where("course_registers.created_at >= ? AND course_registers.created_at <= ? ", @from_date.beginning_of_day, @to_date.end_of_day)
@@ -278,7 +278,7 @@ class UsersController < ApplicationController
               
               #books courses
               books_contacts = BooksContact.includes(:course_register, :book => :course_type)
-                                                .where(course_registers: {parent_id: nil}).where("course_registers.status IS NOT NULL AND course_registers.status LIKE ?", "%[active]%")
+                                                .where(course_registers: {parent_id: nil}).where("course_registers.status IS NOT NULL AND course_registers.status NOT LIKE ?", "%[deleted]%")
                                                 .where(course_types: {id: ct.id})
                                                 .where(course_registers: {account_manager_id: u.id})
                                                 .where("course_registers.created_at >= ? AND course_registers.created_at <= ? ", @from_date.beginning_of_day, @to_date.end_of_day)
@@ -289,7 +289,7 @@ class UsersController < ApplicationController
               
               if ct.id == -1
                 #transfers
-                transfers = Transfer.includes(:contact).where(parent_id: nil).where("transfers.status IS NOT NULL AND transfers.status LIKE ?", "%[active]%")
+                transfers = Transfer.includes(:contact).where(parent_id: nil).where("transfers.status IS NOT NULL AND transfers.status NOT LIKE ?", "%[deleted]%")
                                                   .where(contacts: {account_manager_id: u.id})
                                                   .where("transfers.created_at >= ? AND transfers.created_at <= ? ", @from_date.beginning_of_day, @to_date.end_of_day)
                 #receivable += transfers.first.id                           
@@ -350,7 +350,7 @@ class UsersController < ApplicationController
         # Paper
         paper = 0
         @papers = ContactsCourse.includes(:course_register, :contact, :course => :course_type)
-                            .where(course_registers: {parent_id: nil}).where("course_registers.status IS NOT NULL AND course_registers.status LIKE ?", "%[active]%")
+                            .where(course_registers: {parent_id: nil}).where("course_registers.status IS NOT NULL AND course_registers.status NOT LIKE ?", "%[deleted]%")
                             .where(course_registers: {account_manager_id: u.id})
                             .where(course_types: {id: ct.id})
                             .where("course_registers.created_at >= ? AND course_registers.created_at <= ? ", @from_date.beginning_of_day, @to_date.end_of_day)
