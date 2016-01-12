@@ -132,12 +132,14 @@ class ContactsCourse < ActiveRecord::Base
     total = 0.00
     records.each do |p|
       prds = p.payment_record_details.where(contacts_course_id: self.id)
-      if from_date.present? && to_date.present?
-        prds = prds.includes(:payment_record)
-                    .where("payment_records.payment_date >= ? AND payment_records.payment_date >= ? ", from_date.beginning_of_day, to_date.end_of_day)
+      prds = prds.joins(:payment_record) if from_date.present? || to_date.present?
+      if from_date.present?
+        prds = prds.where("payment_records.payment_date >= ?", from_date.beginning_of_day)
       end
-      
-      prds.each do |prd|
+      if to_date.present?
+        prds = prds.where("payment_records.payment_date <= ?", to_date.end_of_day)
+      end
+      prds.uniq.each do |prd|
         total += prd.real_amount
       end
     end
