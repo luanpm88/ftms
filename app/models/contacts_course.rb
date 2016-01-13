@@ -147,7 +147,7 @@ class ContactsCourse < ActiveRecord::Base
   end
   
   def remain(from_date=nil, to_date=nil)
-    total - paid(from_date=nil, to_date=nil)
+    total - paid(from_date, to_date)
   end
   
   def report_toggle
