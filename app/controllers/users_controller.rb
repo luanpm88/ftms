@@ -287,8 +287,7 @@ class UsersController < ApplicationController
                                                 .where(course_registers: {account_manager_id: u.id})
                                                 .where("course_registers.created_at >= ? AND course_registers.created_at <= ? ", @from_date.beginning_of_day, @to_date.end_of_day)
               
-              books_contacts.each do |cc|
-                @logs += cc.id.to_s+"sssss" if !cc.course_register.paid?(@to_date.end_of_day)
+              books_contacts.each do |cc|                
                 receivable += cc.remain_amount(@from_date, @to_date) if !cc.course_register.paid?(@to_date.end_of_day)
               end
               
@@ -297,8 +296,9 @@ class UsersController < ApplicationController
                 transfers = Transfer.includes(:contact).where(parent_id: nil).where("transfers.status IS NOT NULL AND transfers.status NOT LIKE ?", "%[deleted]%")
                                                   .where(contacts: {account_manager_id: u.id})
                                                   .where("transfers.created_at >= ? AND transfers.created_at <= ? ", @from_date.beginning_of_day, @to_date.end_of_day)
-                #receivable += transfers.first.id                           
+                                       
                 transfers.each do |tsf|
+                  @logs += tsf.id.to_s+"sssss" if tsf.remain(@from_date, @to_date) != 0.0 
                   receivable += tsf.remain(@from_date, @to_date)
                 end
               end
