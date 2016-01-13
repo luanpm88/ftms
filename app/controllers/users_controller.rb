@@ -181,6 +181,8 @@ class UsersController < ApplicationController
     #  @date = @date.change(:year => params[:filter]["intake(1i)"].to_i, month: params[:filter]["intake(2i)"].to_i)
     #end
     
+    @logs = ""
+    
     if params[:from_date].present? && params[:to_date].present?
       @from_date = params[:from_date].to_date
       @to_date =  params[:to_date].to_date.end_of_day
@@ -276,7 +278,7 @@ class UsersController < ApplicationController
                 receivable += cc.remain(@from_date, @to_date) if !cc.course_register.paid?(@to_date.end_of_day)
               end
               
-              @logs = ""
+              
               
               #books courses
               books_contacts = BooksContact.includes(:course_register, :book => :course_type)
