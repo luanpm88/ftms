@@ -275,6 +275,7 @@ class UsersController < ApplicationController
                                                 .where("course_registers.created_at >= ? AND course_registers.created_at <= ? ", @from_date.beginning_of_day, @to_date.end_of_day)
               
               contacts_courses.each do |cc|
+                @logs += cc.id.to_s+"sssss" if !cc.course_register.paid?(@to_date.end_of_day)
                 receivable += cc.remain(@from_date, @to_date) if !cc.course_register.paid?(@to_date.end_of_day)
               end
               
