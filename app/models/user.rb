@@ -485,7 +485,7 @@ class User < ActiveRecord::Base
     
     conds = []
     courses.each do |c|
-      conds << "contacts.cache_courses LIKE '%[#{c.id.to_s}]%'"
+      conds << "contacts.cache_courses LIKE '%[#{c.id.to_s},%'"
     end
     students = !conds.empty? ? Contact.main_contacts.where(conds.join(" OR ")) : []
                                     
@@ -527,7 +527,7 @@ class User < ActiveRecord::Base
         
     conds = []
     courses.each do |c|
-      conds << "contacts.cache_courses LIKE '%[#{c.id.to_s}]%'"
+      conds << "contacts.cache_courses LIKE '%[#{c.id.to_s},%'"
     end
     students = !conds.empty? ? Contact.main_contacts.where(conds.join(" OR ")) : []
                                     
