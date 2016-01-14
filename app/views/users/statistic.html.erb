@@ -145,7 +145,14 @@
 																<%= format_price(row[:total]) %>
 													  </td>
 													  <td class="text-right">
-																<strong><%= format_price(row[:receivable]) %></strong>
+																<strong>
+																		<%= format_price(row[:receivable]) %>
+																</strong>
+																<div>
+																		<% row[:receivable_contacts].each do |c| %>
+																				<div><%= c.name %></div>		
+																		<% end %>
+																</div>
 														</td>
 													  <td class="text-center">
 																<%= row[:paper] %>

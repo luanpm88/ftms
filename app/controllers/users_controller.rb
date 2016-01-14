@@ -266,6 +266,7 @@ class UsersController < ApplicationController
         
         # receivable
               receivable = 0
+              receivable_contacts = []
               
               #contacts courses
               contacts_courses = ContactsCourse.includes(:course_register, :course => :course_type)
@@ -274,9 +275,12 @@ class UsersController < ApplicationController
                                                 .where(course_registers: {account_manager_id: u.id})
                                                 .where("course_registers.created_at >= ? AND course_registers.created_at <= ? ", @from_date.beginning_of_day, @to_date.end_of_day)
               
-              contacts_courses.each do |cc|
-                @logs += cc.id.to_s+"sssss" if !cc.course_register.paid?(@to_date.end_of_day)
-                receivable += cc.remain(@from_date, @to_date) if !cc.course_register.paid?(@to_date.end_of_day)
+              contacts_courses.each do |cc|                
+                if !cc.course_register.paid?(@to_date.end_of_day)
+                  receivable += cc.remain(@from_date, @to_date)
+                  @logs += cc.id.to_s+"sssss"
+                  receivable_contacts << cc.contact
+                end
               end
               
               
@@ -288,9 +292,12 @@ class UsersController < ApplicationController
                                                 .where(course_registers: {account_manager_id: u.id})
                                                 .where("course_registers.created_at >= ? AND course_registers.created_at <= ? ", @from_date.beginning_of_day, @to_date.end_of_day)
               
-              books_contacts.each do |cc|
-                @logs += cc.id.to_s+"sssss" if !cc.course_register.paid?(@to_date.end_of_day)
-                receivable += cc.remain_amount(@from_date, @to_date) if !cc.course_register.paid?(@to_date.end_of_day)
+              books_contacts.each do |cc|                
+                if !cc.course_register.paid?(@to_date.end_of_day)
+                  receivable += cc.remain_amount(@from_date, @to_date)
+                  receivable_contacts << cc.contact
+                  @logs += cc.id.to_s+"sssss"
+                end
               end
               
               if ct.id == -1
@@ -300,8 +307,11 @@ class UsersController < ApplicationController
                                                   .where("transfers.created_at >= ? AND transfers.created_at <= ? ", @from_date.beginning_of_day, @to_date.end_of_day)
                                        
                 transfers.each do |tsf|
-                  @logs += tsf.id.to_s+"sssss" if tsf.remain(@from_date, @to_date) != 0.0 
-                  receivable += tsf.remain(@from_date, @to_date)
+                  if tsf.remain(@from_date, @to_date) != 0.0 
+                    receivable += tsf.remain(@from_date, @to_date)
+                    receivable_contacts << tsf.contact
+                    @logs += tsf.id.to_s+"sssss" 
+                  end
                 end
               end
                 
@@ -367,7 +377,7 @@ class UsersController < ApplicationController
         
         
         
-        row[:statistics] << {user: u, course_type: ct, paper: paper, inquiry: inquiry, student: student, total: total, receivable: receivable} if total > 0.0 || receivable > 0.0 || paper > 0 || inquiry > 0 || student > 0
+        row[:statistics] << {user: u, course_type: ct, paper: paper, inquiry: inquiry, student: student, total: total, receivable: receivable, receivable_contacts: receivable_contacts} if total > 0.0 || receivable > 0.0 || paper > 0 || inquiry > 0 || student > 0
 
       end
       
