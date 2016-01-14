@@ -642,8 +642,6 @@ class Transfer < ActiveRecord::Base
   end
   
   def payment_status
-    return [] if !statuses.include?("active")
-    
     str = []
     if paid?
       str << "fully_paid"
