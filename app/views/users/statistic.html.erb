@@ -149,8 +149,8 @@
 																		<%= format_price(row[:receivable]) %>
 																</strong>
 																<div>
-																		<% row[:receivable_contacts].each do |c| %>
-																				<div><%= c.name %></div>		
+																		<% row[:receivable_contacts].uniq.each do |c| %>
+																				<div><%= c.contact_link %></div>		
 																		<% end %>
 																</div>
 														</td>
