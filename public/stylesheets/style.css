@@ -5510,7 +5510,7 @@ ul.progress-list li  .progress{
 	background-image:none;
 	border-radius:2px;
 	border: 1px solid #e5e9ec;
-	padding: 3px 9px;
+	padding: 3px 5px;
 	transition: border 0.2s linear 0s;	 
 	height:35px 
 }
