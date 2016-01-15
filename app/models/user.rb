@@ -502,7 +502,7 @@ class User < ActiveRecord::Base
         
         arr = []
         student.active_courses_with_phrases.each do |r|
-          arr << r[:course].name if !r[:course].upfront && course_types.include?(r[:course].course_type_id.to_s) && r[:course].subject.id == subject.id && !r[:course].no_report_contacts.include?(student)
+          arr << r[:course].name if courses.include?(r[:course]) && !r[:course].upfront && course_types.include?(r[:course].course_type_id.to_s) && r[:course].subject.id == subject.id && !r[:course].no_report_contacts.include?(student)
         end
         #ccs = student.active_contacts_courses.where(report: true).includes(:course).where(courses: {subject_id: subject.id})
         s_row["count"] = arr.join("\n") if !arr.empty?
@@ -544,7 +544,7 @@ class User < ActiveRecord::Base
         
         arr = []
         student.active_courses_with_phrases.each do |r|
-          arr << r[:course].name if !r[:course].upfront && course_types.include?(r[:course].course_type_id.to_s) && r[:course].subject.id == subject.id && !r[:course].no_report_contacts.include?(student)
+          arr << r[:course].name if courses.include?(r[:course]) && !r[:course].upfront && course_types.include?(r[:course].course_type_id.to_s) && r[:course].subject.id == subject.id && !r[:course].no_report_contacts.include?(student)
         end
         #ccs = student.active_contacts_courses.where(report: true).includes(:course).where(courses: {subject_id: subject.id})
         s_row["count"] = arr.join("\n") if !arr.empty?
