@@ -756,11 +756,11 @@ class User < ActiveRecord::Base
                                        
                 transfers.each do |tsf|
                   if tsf.remain(from_date, to_date) != 0.0 
-                    if users_statistics[tsf.contact.account_manager_id][:details][cc.course.course_type_id].present?
+                    if users_statistics[tsf.contact.account_manager_id][:details][tsf.course.course_type_id].present?
                       users_statistics[tsf.contact.account_manager_id][:details][-1][:receivable] += tsf.remain(from_date, to_date)
                       users_statistics[tsf.contact.account_manager_id][:details][-1][:receivable_contacts] << tsf.contact
                     end
-                    users_statistics[tsf.contact.account_manager_id][:receivable] += cc.remain(from_date, to_date)
+                    users_statistics[tsf.contact.account_manager_id][:receivable] += tsf.remain(from_date, to_date)
                   end
                 end
                 
