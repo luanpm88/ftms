@@ -65,8 +65,8 @@
       
       <div class="row">
           <div class="col-md-12">
-				<%= link_to 'Print', statistic_users_path(format: "pdf", from_date: @from_date, to_date: @to_date), :class => 'btn btn-primary btn-cons', target: "_blank" %>
-				<%= link_to 'Print (Excel)', statistic_users_path(format: "xls", from_date: @from_date, to_date: @to_date), :class => 'btn btn-primary btn-cons', target: "_blank" %>
+				<%= link_to 'Print', statistic_users_path(format: "pdf", from_date: @from_date, to_date: @to_date, users: params[:users]), :class => 'btn btn-primary btn-cons', target: "_blank" %>
+				<%= link_to 'Print (Excel)', statistic_users_path(format: "xls", from_date: @from_date, to_date: @to_date, users: params[:users]), :class => 'btn btn-primary btn-cons', target: "_blank" %>
               <div class="grid simple ">                  
                   <div class="grid-body no-border">                       
                         <table class="table no-more-tables no-filter">
