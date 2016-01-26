@@ -640,6 +640,7 @@ class User < ActiveRecord::Base
     users.each do |u|
       row = {}
       row[:user] = u
+      row[:show] = true
       row[:note] = 0
       row[:paper] = 0
       row[:inquiry] = 0
@@ -651,6 +652,7 @@ class User < ActiveRecord::Base
       course_types.each do |ct|
         row_2 = {
                   course_type: ct,
+                  show: true,
                   paper: 0,
                   inquiry: 0,
                   student: 0,
@@ -790,7 +792,7 @@ class User < ActiveRecord::Base
               
               if c.cache_course_type_ids.present? && c.cache_course_type_ids.include?("[#{ct.id}]") && c.contact_types.include?(ContactType.student)          
                 users_statistics[c.creator_id][:details][ct.id][:student] += 1
-                student_total += 1
+                users_statistics[c.creator_id][:student] += 1
               end
               
               users_statistics[c.creator_id][:details][ct.id][:inquiry] -= transform
@@ -831,6 +833,10 @@ class User < ActiveRecord::Base
           all_total[:student] += u[1][:student]
           all_total[:sales] += u[1][:sales]
           all_total[:receivable] += u[1][:receivable]
+          
+          u[:details].each do |ct|
+            users_statistics[u.id][:details][ct[0]][:show] = false if ct[1]["paper"]+ct[1]["note"]+ct[1]["sales"]+ct[1]["receivable"]+ct[1]["inquiry"]+ct[1]["student"] > 0
+          end
         end
         
     
