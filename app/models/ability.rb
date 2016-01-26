@@ -73,6 +73,7 @@ class Ability
     if user.has_role? "user"
       can :user_guide, User      
       can :statistic, User
+      can :statistics_enhanced, User
       can :online_report, User
       
       can :read, OldTag

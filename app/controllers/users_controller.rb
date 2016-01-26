@@ -405,6 +405,8 @@ class UsersController < ApplicationController
       @all_total[:receivable_total] += receivable_total
       
     end
+    
+    
     respond_to do |format|
         format.html 
         format.xls {render "users/statistics.xls.erb"}
@@ -426,6 +428,45 @@ class UsersController < ApplicationController
         }
     end
     
+  end
+  
+  def statistics_enhanced
+    if params[:from_date].present? && params[:to_date].present?
+      @from_date = params[:from_date].to_date
+      @to_date =  params[:to_date].to_date.end_of_day
+    else
+      @from_date = DateTime.now.beginning_of_month
+      @to_date =  DateTime.now
+    end
+    
+    @users = User.where(status: 1).where(id: 6).order("users.first_name, users.last_name")
+    
+    params[:users] = [current_user.id] if current_user.lower?("manager")
+    @users = @users.where(id: params[:users]) if params[:users].present?
+    
+    @result = User.statistics(@users, @from_date, @to_date)
+    
+    
+    respond_to do |format|
+        format.html 
+        format.xls {render "users/statistics_enhanced.xls.erb"}
+        format.pdf {
+          render  :pdf => "users_statistics_"+Time.now.strftime("%d_%b_%Y"),
+            :template => 'users/statistics_enhanced.pdf.erb',
+            :layout => nil,
+            :orientation => 'Landscape',
+            :footer => {
+               :center => "",
+               :left => "",
+               :right => "",               
+               :page_size => "A4",
+               :margin  => {:top    => 0, # default 10 (mm)
+                          :bottom => 0,
+                          :left   => 0,
+                          :right  => 0},
+            }
+        }
+    end
   end
   
   def import_from_old_system

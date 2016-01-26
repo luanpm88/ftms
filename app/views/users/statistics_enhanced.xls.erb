@@ -1,0 +1,72 @@
+<?xml version="1.0"?>
+<Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet"
+  xmlns:o="urn:schemas-microsoft-com:office:office"
+  xmlns:x="urn:schemas-microsoft-com:office:excel"
+  xmlns:ss="urn:schemas-microsoft-com:office:spreadsheet"
+  xmlns:html="http://www.w3.org/TR/REC-html40">
+  <Worksheet ss:Name="Sheet1">
+    <Table>
+      <Row>
+        <Cell><Data ss:Type="String">From</Data></Cell>
+        <Cell><Data ss:Type="String"><%= @from_date.strftime("%d-%b-%Y") %></Data></Cell>
+        <Cell><Data ss:Type="String">To</Data></Cell>
+        <Cell><Data ss:Type="String"><%= @to_date.strftime("%d-%b-%Y") %></Data></Cell>
+        <Cell><Data ss:Type="String"></Data></Cell>
+        <Cell><Data ss:Type="String"></Data></Cell>
+        <Cell><Data ss:Type="String"></Data></Cell>
+        <Cell><Data ss:Type="String"></Data></Cell>
+      </Row>
+      <Row>
+        <Cell><Data ss:Type="String">Consultant</Data></Cell>
+        <Cell><Data ss:Type="String">Program</Data></Cell>
+        <Cell><Data ss:Type="String">Note Log</Data></Cell>
+        <Cell><Data ss:Type="String">Sales</Data></Cell>
+        <Cell><Data ss:Type="String">Receivable</Data></Cell>
+        <Cell><Data ss:Type="String">Paper</Data></Cell>
+        <Cell><Data ss:Type="String">New Inquiry</Data></Cell>
+        <Cell><Data ss:Type="String">New Student</Data></Cell>
+      </Row>
+      
+      <Row>
+        <Cell><Data ss:Type="String"></Data></Cell>
+        <Cell><Data ss:Type="String">All Total:</Data></Cell>
+        <Cell><Data ss:Type="String"><%= format_price(@result[:total][:note]) %></Data></Cell>
+        <Cell><Data ss:Type="String"><%= format_price(@result[:total][:sales]) %></Data></Cell>
+        <Cell><Data ss:Type="String"><%= format_price(@result[:total][:receivable]) %></Data></Cell>
+        <Cell><Data ss:Type="String"><%= @result[:total][:paper] %></Data></Cell>
+        <Cell><Data ss:Type="String"><%= @result[:total][:inquiry] %></Data></Cell>
+        <Cell><Data ss:Type="String"><%= @result[:total][:student] %></Data></Cell>
+      </Row>
+      
+      <% @result[:data].each do |row1| %>
+      <% user_id, user_values = row1 %>
+        <Row>
+          <Cell><Data ss:Type="String"><%= user_values[:user].name %></Data></Cell>
+          <Cell><Data ss:Type="String">All</Data></Cell>
+          <Cell><Data ss:Type="String"><%= user_values[:note] %></Data></Cell>
+          <Cell><Data ss:Type="String"><%= format_price(user_values[:total]) %></Data></Cell>
+          <Cell><Data ss:Type="String"><%= format_price(user_values[:receivable]) %></Data></Cell>
+          <Cell><Data ss:Type="String"><%= user_values[:paper] %></Data></Cell>
+          <Cell><Data ss:Type="String"><%= user_values[:inquiry] %></Data></Cell>
+          <Cell><Data ss:Type="String"><%= user_values[:student] %></Data></Cell>
+        </Row>
+        
+        <% user_values[:details].each do |row2| %>
+        <% ct_id, ct_values = row2 %>
+          <Row>
+            <Cell><Data ss:Type="String"><%= user_values[:user].name %></Data></Cell>
+            <Cell><Data ss:Type="String"><%= ct_values[:course_type].short_name %></Data></Cell>
+            <Cell><Data ss:Type="String"></Data></Cell>
+            <Cell><Data ss:Type="String"><%= format_price(ct_values[:total]) %></Data></Cell>
+            <Cell><Data ss:Type="String"><%= format_price(ct_values[:receivable]) %></Data></Cell>
+            <Cell><Data ss:Type="String"><%= ct_values[:paper] %></Data></Cell>
+            <Cell><Data ss:Type="String"><%= ct_values[:inquiry] %></Data></Cell>
+            <Cell><Data ss:Type="String"><%= ct_values[:student] %></Data></Cell>
+          </Row>
+        <% end %>
+        
+      <% end %>
+
+    </Table>
+  </Worksheet>
+</Workbook>

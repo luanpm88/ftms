@@ -2023,7 +2023,8 @@ class Contact < ActiveRecord::Base
     
     b_arr = JSON.parse(bases)
     b_arr.each do |item|
-      return CourseType.find(course_type_id).short_name+"-"+item["name"].to_s if item["course_type_id"].to_i == course_type_id.to_i
+      #return CourseType.find(course_type_id).short_name+"-"+item["name"].to_s if item["course_type_id"].to_i == course_type_id.to_i
+      return item["name"].to_s if item["course_type_id"].to_i == course_type_id.to_i
     end
     return ""
   end
