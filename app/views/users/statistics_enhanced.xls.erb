@@ -53,16 +53,18 @@
         
         <% user_values[:details].each do |row2| %>
         <% ct_id, ct_values = row2 %>
-          <Row>
-            <Cell><Data ss:Type="String"><%= user_values[:user].name %></Data></Cell>
-            <Cell><Data ss:Type="String"><%= ct_values[:course_type].short_name %></Data></Cell>
-            <Cell><Data ss:Type="String"></Data></Cell>
-            <Cell><Data ss:Type="String"><%= format_price(ct_values[:total]) %></Data></Cell>
-            <Cell><Data ss:Type="String"><%= format_price(ct_values[:receivable]) %></Data></Cell>
-            <Cell><Data ss:Type="String"><%= ct_values[:paper] %></Data></Cell>
-            <Cell><Data ss:Type="String"><%= ct_values[:inquiry] %></Data></Cell>
-            <Cell><Data ss:Type="String"><%= ct_values[:student] %></Data></Cell>
-          </Row>
+          <% if ct_values[:show] %>
+            <Row>
+              <Cell><Data ss:Type="String"><%= user_values[:user].name %></Data></Cell>
+              <Cell><Data ss:Type="String"><%= ct_values[:course_type].short_name %></Data></Cell>
+              <Cell><Data ss:Type="String"></Data></Cell>
+              <Cell><Data ss:Type="String"><%= format_price(ct_values[:total]) %></Data></Cell>
+              <Cell><Data ss:Type="String"><%= format_price(ct_values[:receivable]) %></Data></Cell>
+              <Cell><Data ss:Type="String"><%= ct_values[:paper] %></Data></Cell>
+              <Cell><Data ss:Type="String"><%= ct_values[:inquiry] %></Data></Cell>
+              <Cell><Data ss:Type="String"><%= ct_values[:student] %></Data></Cell>
+            </Row>
+          <% end %>
         <% end %>
         
       <% end %>

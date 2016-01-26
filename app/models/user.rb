@@ -748,7 +748,7 @@ class User < ActiveRecord::Base
                 end
               end
               
-
+    
                 #transfers
                 transfers = Transfer.includes(:contact).where(parent_id: nil).where("transfers.status IS NOT NULL AND transfers.status NOT LIKE ?", "%[deleted]%")
                                                   .where(contacts: {account_manager_id: user_ids})
@@ -801,7 +801,7 @@ class User < ActiveRecord::Base
               users_statistics[c.creator_id][:student] += transform
           end
         end
-
+    
         
         
         # Paper
@@ -834,9 +834,9 @@ class User < ActiveRecord::Base
           all_total[:sales] += u[1][:sales]
           all_total[:receivable] += u[1][:receivable]
           
-          #u[1][:details].each do |ct|
-          #  users_statistics[u.id][:details][ct[0]][:show] = false if ct[1][:paper]+ct[1][:note]+ct[1][:sales]+ct[1][:receivable]+ct[1][:inquiry]+ct[1][:student] > 0
-          #end
+          u[1][:details].each do |ct|
+            users_statistics[u[0]][:details][ct[0]][:show] = false if ct[1][:paper]+ct[1][:sales]+ct[1][:receivable]+ct[1][:inquiry]+ct[1][:student] == 0
+          end
         end
         
     

@@ -134,9 +134,10 @@
 										</tr>
 										<% user_values[:details].each do |row2| %>
 											<% ct_id, ct_values = row2 %>
+                        <% if ct_values[:show] %>
 													<tr class="details_row detail-u-<%= user_id %>" style="display: none">
 															<td>
-																
+																<%= ct_values[:show] %>
 															</td>
 															<td class="text-center">
 																	<%= ct_values[:course_type].short_name %>
@@ -166,6 +167,7 @@
 															</td>
 															<td></td>
 													</tr>
+                        <% end %>
 										<% end %>
 										
 									<% end %>
