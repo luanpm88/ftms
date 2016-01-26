@@ -439,7 +439,7 @@ class UsersController < ApplicationController
       @to_date =  DateTime.now
     end
     
-    @users = User.where(status: 1).where(id: 6).order("users.first_name, users.last_name")
+    @users = User.where(status: 1).order("users.first_name, users.last_name")
     
     params[:users] = [current_user.id] if current_user.lower?("manager")
     @users = @users.where(id: params[:users]) if params[:users].present?
