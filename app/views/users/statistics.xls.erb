@@ -31,8 +31,8 @@
         <Cell><Data ss:Type="String"></Data></Cell>
         <Cell><Data ss:Type="String">All Total:</Data></Cell>
         <Cell><Data ss:Type="String"><%= format_price(@all_total[:note_total]) %></Data></Cell>
-        <Cell><Data ss:Type="String"><%= format_price(@all_total[:group_total]) %></Data></Cell>
-        <Cell><Data ss:Type="String"><%= format_price(@all_total[:receivable_total]) %></Data></Cell>
+        <Cell><Data ss:Type="Number"><%= @all_total[:group_total] %></Data></Cell>
+        <Cell><Data ss:Type="Number"><%= @all_total[:receivable_total] %></Data></Cell>
         <Cell><Data ss:Type="String"><%= @all_total[:paper_total] %></Data></Cell>
         <Cell><Data ss:Type="String"><%= @all_total[:inquiry_total] %></Data></Cell>
         <Cell><Data ss:Type="String"><%= @all_total[:student_total] %></Data></Cell>
@@ -43,8 +43,8 @@
           <Cell><Data ss:Type="String"><%= u[:user].name %></Data></Cell>
           <Cell><Data ss:Type="String">All</Data></Cell>
           <Cell><Data ss:Type="String"><%= u[:note] %></Data></Cell>
-          <Cell><Data ss:Type="String"><%= format_price(u[:total]) %></Data></Cell>
-          <Cell><Data ss:Type="String"><%= format_price(u[:receivable]) %></Data></Cell>
+          <Cell><Data ss:Type="Number"><%= u[:total] %></Data></Cell>
+          <Cell><Data ss:Type="Number"><%= u[:receivable] %></Data></Cell>
           <Cell><Data ss:Type="String"><%= u[:paper] %></Data></Cell>
           <Cell><Data ss:Type="String"><%= u[:inquiry] %></Data></Cell>
           <Cell><Data ss:Type="String"><%= u[:student] %></Data></Cell>
