@@ -1036,7 +1036,7 @@ class Contact < ActiveRecord::Base
     line += "<span class=\"box_mini_info nowrap\"><i class=\"icon-#{sex}\"></i> #{sex}</span>" if sex.present?
 
     display_email_2 = (email_2s.map {|e| "<span class=\"box_mini_info label_email nowrap\" val=\"#{e.to_s.strip.downcase}\"><i class=\"icon-envelope\"></i> " + e + "</span> "}).join(" ")
-    display_mobile_2 = (mobile_2s.map {|e| "<span class=\"box_mini_info label_mobile nowrap\" val=\"#{e}\"><i class=\"icon-phone\"></i> +" + e + "</span> "}).join(" ")
+    display_mobile_2 = (mobile_2s.map {|e| "<span class=\"box_mini_info label_mobile nowrap\" val=\"+#{e}\"><i class=\"icon-phone\"></i> +" + e + "</span> "}).join(" ")
     
     if is_individual
       birth = !birthday.nil? ? birthday.strftime("%d-%b-%Y") : ""
