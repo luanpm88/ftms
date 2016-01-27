@@ -488,7 +488,7 @@
 					<ul class="sub-menu">
 						
 						
-						<li<% if params[:controller] == "users" && params[:action] == "statistic" %> class="active"<% end %>><%= link_to 'Sales Statistic (testing...)', statistic_users_path(tab_page:1), class: "tab_page" %></li>
+						<li style="display: none" <% if params[:controller] == "users" && params[:action] == "statistic" %> class="active"<% end %>><%= link_to 'Sales Statistic (testing...)', statistic_users_path(tab_page:1), class: "tab_page" %></li>
 						<li<% if params[:controller] == "users" && params[:action] == "statistics_enhanced" %> class="active"<% end %>><%= link_to 'Sales Statistic', statistics_enhanced_users_path(tab_page:1), class: "tab_page" %></li>
 						<li<% if params[:controller] == "users" %> class="active"<% end %>><%= link_to 'Online Report', online_report_users_path(tab_page:1), class: "tab_page" %></li>				
 					</ul>
