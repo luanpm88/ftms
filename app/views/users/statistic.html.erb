@@ -55,14 +55,14 @@
 						<div class="col-md-2">
                                 <div class="">
                                     <h4 style="color:#fff">...</h4>
-                                    <input type="submit" value="Go" class="btn btn-primary" />
+                                    <input type="submit" value="Calculate" class="btn btn-primary" />
                                 </div>
                         </div>
                   </div>
                   </div>
         </form>
 	  </div>
-      
+      <hr>
       <div class="row">
           <div class="col-md-12">
 				<%= link_to 'Print', statistic_users_path(format: "pdf", from_date: @from_date, to_date: @to_date, users: params[:users]), :class => 'btn btn-primary btn-cons', target: "_blank" %>

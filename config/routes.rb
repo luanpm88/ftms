@@ -435,6 +435,7 @@ Hkerp::Application.routes.draw do
       
       get :statistic
       get :statistics_enhanced
+      get :download_statistics
       
       get :online_report
       post :online_report

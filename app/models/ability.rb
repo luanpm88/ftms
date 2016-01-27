@@ -74,6 +74,7 @@ class Ability
       can :user_guide, User      
       can :statistic, User
       can :statistics_enhanced, User
+      can :download_statistics, User
       can :online_report, User
       
       can :read, OldTag

@@ -55,132 +55,139 @@
 						<div class="col-md-2">
                                 <div class="">
                                     <h4 style="color:#fff">...</h4>
-                                    <input type="submit" value="Go" class="btn btn-primary" />
+                                    <input type="submit" name="calculate" value="Calculate" class="btn btn-primary" />
+                                    <script>
+                                      $("input[name=calculate]").click(function() {
+                                        $(this).val("System is calculating! Please wait...");
+                                        $(this).addClass("btn-warning");
+                                      });
+                                    </script>
                                 </div>
                         </div>
                   </div>
                   </div>
         </form>
 	  </div>
-      
+    
+  <% if params[:calculate].present? %>
+      <hr >
       <div class="row">
-          <div class="col-md-12">
-				<%= link_to 'Print', statistics_enhanced_users_path(format: "pdf", from_date: @from_date, to_date: @to_date, users: params[:users]), :class => 'btn btn-primary btn-cons', target: "_blank" %>
-				<%= link_to 'Print (Excel)', statistics_enhanced_users_path(format: "xls", from_date: @from_date, to_date: @to_date, users: params[:users]), :class => 'btn btn-primary btn-cons', target: "_blank" %>
-              <div class="grid simple ">                  
-                  <div class="grid-body no-border">                       
-                        <table class="table no-more-tables no-filter">
-                              <thead>
-                                  <tr>                                                
-                                      <th>Consultant</th>
-									  
-                                      <th class="text-center">Program</th>
-									  <th class="text-center">Note Log</th>
-                                      <th class="text-right">Sales</th>
-									  <th class="text-right">Receivable</th>
-									  <th class="text-center">Paper</th>
-									  <th class="text-center">New Inquiry</th>
-									  <th class="text-center">New Student</th>									  
-									  <th width="1%" class="text-center">
-										
-									  </th>
-                                  </tr>
-                              </thead>
-								<tr class="total_row" style="background: #efefef">
-										<td colspan="2" class="text-right">All Total:</td>
-										<td class="text-center"><strong class=" paid"><%= format_price(@result[:total][:note]) %></strong></td>
-										<td class="text-right"><strong class=" paid"><%= format_price(@result[:total][:sales]) %></strong></td>
-										<td class="text-right"><strong class=" paid"><%= format_price(@result[:total][:receivable]) %></strong></td>
-										<td class="text-center"><strong class=" paid"><%= format_price(@result[:total][:paper]) %></strong></td>
-										<td class="text-center"><strong class=" paid"><%= format_price(@result[:total][:inquiry]) %></strong></td>
-										<td class="text-center"><strong class=" paid"><%= format_price(@result[:total][:student]) %></strong></td>
-										<td></td>
-								</tr>
-								<% @result[:data].each do |row1| %>
-									<% user_id, user_values = row1 %>
-										<tr class="total_row">
-												<td>
-														<%= user_values[:user].name %>
-												</td>
-												
-												<td class="text-center">
-														
-														All</td>
-												<td class="text-center">
-														<strong><%= format_price(user_values[:note]) %></strong>
-												</td>
-												<td class="text-right">
-														<strong><%= format_price(user_values[:sales]) %></strong>
-												</td>
-												<td class="text-right">
-														<strong><%= format_price(user_values[:receivable]) %></strong>
-												</td>
-												<td class="text-center">
-														<strong><%= user_values[:paper] %></strong>
-												</td>												
-												<td class="text-center">
-														<strong><%= user_values[:inquiry] %></strong>
-												</td>
-												<td class="text-center">
-														<strong><%= user_values[:student] %></strong>
-												</td>
-												<td>
-													<% if !user_values[:details].empty? %>
-														<a onclick="$('.detail-u-<%= user_id %>').toggle()" href="#open">
-																		<i class="icon icon-ellipsis-horizontal"></i>
-														</a>
-													<% end %>
-												</td>
-										</tr>
-										<% user_values[:details].each do |row2| %>
-											<% ct_id, ct_values = row2 %>
-                        <% if ct_values[:show] %>
-													<tr class="details_row detail-u-<%= user_id %>" style="display: none">
-															<td>
-																<%= ct_values[:show] %>
-															</td>
-															<td class="text-center">
-																	<%= ct_values[:course_type].short_name %>
-															</td>
-															<td></td>
-															<td class="text-right">
-																	<%= format_price(ct_values[:sales]) %>
-															</td>
-															<td class="text-right">
-																	<strong>
-																			<%= format_price(ct_values[:receivable]) %>
-																	</strong>
-																	<div>
-																			<% ct_values[:receivable_contacts].uniq.each do |c| %>
-																				<div><%= c.contact_link %></div>		
-																			<% end %>
-																	</div>
-															</td>
-															<td class="text-center">
-																	<%= ct_values[:paper] %>
-															</td>													  
-															<td class="text-center">
-																	<%= ct_values[:inquiry] %>
-															</td>
-															<td class="text-center">
-																	<%= ct_values[:student] %>
-															</td>
-															<td></td>
-													</tr>
-                        <% end %>
-										<% end %>
-										
-									<% end %>
-								
-								
-								
-                          </table>
-                  </div>
-              </div>
-  
-          </div>
-  
-      </div>
-	  <style>
-		
-	  </style>
+            <div class="col-md-12">
+          <%= link_to 'Print', download_statistics_users_path(format: "pdf", from_date: @from_date, to_date: @to_date, users: params[:users]), :class => 'btn btn-primary btn-cons', target: "_blank" %>
+          <%= link_to 'Print (Excel)', download_statistics_users_path(format: "xls", from_date: @from_date, to_date: @to_date, users: params[:users]), :class => 'btn btn-primary btn-cons', target: "_blank" %>
+                <div class="grid simple ">                  
+                    <div class="grid-body no-border">                       
+                          <table class="table no-more-tables no-filter">
+                                <thead>
+                                    <tr>                                                
+                                        <th>Consultant</th>
+                      
+                                        <th class="text-center">Program</th>
+                      <th class="text-center">Note Log</th>
+                                        <th class="text-right">Sales</th>
+                      <th class="text-right">Receivable</th>
+                      <th class="text-center">Paper</th>
+                      <th class="text-center">New Inquiry</th>
+                      <th class="text-center">New Student</th>									  
+                      <th width="1%" class="text-center">
+                      
+                      </th>
+                                    </tr>
+                                </thead>
+                  <tr class="total_row" style="background: #efefef">
+                      <td colspan="2" class="text-right">All Total:</td>
+                      <td class="text-center"><strong class=" paid"><%= format_price(@result[:total][:note]) %></strong></td>
+                      <td class="text-right"><strong class=" paid"><%= format_price(@result[:total][:sales]) %></strong></td>
+                      <td class="text-right"><strong class=" paid"><%= format_price(@result[:total][:receivable]) %></strong></td>
+                      <td class="text-center"><strong class=" paid"><%= format_price(@result[:total][:paper]) %></strong></td>
+                      <td class="text-center"><strong class=" paid"><%= format_price(@result[:total][:inquiry]) %></strong></td>
+                      <td class="text-center"><strong class=" paid"><%= format_price(@result[:total][:student]) %></strong></td>
+                      <td></td>
+                  </tr>
+                  <% @result[:data].each do |row1| %>
+                    <% user_id, user_values = row1 %>
+                      <tr class="total_row">
+                          <td>
+                              <%= user_values[:user].name %>
+                          </td>
+                          
+                          <td class="text-center">
+                              
+                              All</td>
+                          <td class="text-center">
+                              <strong><%= format_price(user_values[:note]) %></strong>
+                          </td>
+                          <td class="text-right">
+                              <strong><%= format_price(user_values[:sales]) %></strong>
+                          </td>
+                          <td class="text-right">
+                              <strong><%= format_price(user_values[:receivable]) %></strong>
+                          </td>
+                          <td class="text-center">
+                              <strong><%= user_values[:paper] %></strong>
+                          </td>												
+                          <td class="text-center">
+                              <strong><%= user_values[:inquiry] %></strong>
+                          </td>
+                          <td class="text-center">
+                              <strong><%= user_values[:student] %></strong>
+                          </td>
+                          <td>
+                            <% if !user_values[:details].empty? %>
+                              <a onclick="$('.detail-u-<%= user_id %>').toggle()" href="#open">
+                                      <i class="icon icon-ellipsis-horizontal"></i>
+                              </a>
+                            <% end %>
+                          </td>
+                      </tr>
+                      <% user_values[:details].each do |row2| %>
+                        <% ct_id, ct_values = row2 %>
+                          <% if ct_values[:show] %>
+                            <tr class="details_row detail-u-<%= user_id %>" style="display: none">
+                                <td>
+                                  <%= ct_values[:show] %>
+                                </td>
+                                <td class="text-center">
+                                    <%= ct_values[:course_type].short_name %>
+                                </td>
+                                <td></td>
+                                <td class="text-right">
+                                    <%= format_price(ct_values[:sales]) %>
+                                </td>
+                                <td class="text-right">
+                                    <strong>
+                                        <%= format_price(ct_values[:receivable]) %>
+                                    </strong>
+                                    <div>
+                                        <% ct_values[:receivable_contacts].uniq.each do |c| %>
+                                          <div><%= c.contact_link %></div>		
+                                        <% end %>
+                                    </div>
+                                </td>
+                                <td class="text-center">
+                                    <%= ct_values[:paper] %>
+                                </td>													  
+                                <td class="text-center">
+                                    <%= ct_values[:inquiry] %>
+                                </td>
+                                <td class="text-center">
+                                    <%= ct_values[:student] %>
+                                </td>
+                                <td></td>
+                            </tr>
+                          <% end %>
+                      <% end %>
+                      
+                    <% end %>
+                  
+                  
+                  
+                            </table>
+                    </div>
+                </div>
+    
+            </div>
+    
+        </div>
+	  
+  <% end %>
