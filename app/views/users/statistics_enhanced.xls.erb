@@ -30,12 +30,12 @@
       <Row>
         <Cell><Data ss:Type="String"></Data></Cell>
         <Cell><Data ss:Type="String">All Total:</Data></Cell>
-        <Cell><Data ss:Type="String"><%= format_price(@result[:total][:note]) %></Data></Cell>
+        <Cell><Data ss:Type="Number"><%= @result[:total][:note] %></Data></Cell>
         <Cell><Data ss:Type="Number"><%= @result[:total][:sales] %></Data></Cell>
         <Cell><Data ss:Type="Number"><%= @result[:total][:receivable] %></Data></Cell>
-        <Cell><Data ss:Type="String"><%= @result[:total][:paper] %></Data></Cell>
-        <Cell><Data ss:Type="String"><%= @result[:total][:inquiry] %></Data></Cell>
-        <Cell><Data ss:Type="String"><%= @result[:total][:student] %></Data></Cell>
+        <Cell><Data ss:Type="Number"><%= @result[:total][:paper] %></Data></Cell>
+        <Cell><Data ss:Type="Number"><%= @result[:total][:inquiry] %></Data></Cell>
+        <Cell><Data ss:Type="Number"><%= @result[:total][:student] %></Data></Cell>
       </Row>
       
       <% @result[:data].each do |row1| %>
@@ -43,12 +43,12 @@
         <Row>
           <Cell><Data ss:Type="String"><%= user_values[:user].name %></Data></Cell>
           <Cell><Data ss:Type="String">All</Data></Cell>
-          <Cell><Data ss:Type="String"><%= user_values[:note] %></Data></Cell>
+          <Cell><Data ss:Type="Number"><%= user_values[:note] %></Data></Cell>
           <Cell><Data ss:Type="Number"><%= user_values[:total] %></Data></Cell>
           <Cell><Data ss:Type="Number"><%= user_values[:receivable] %></Data></Cell>
-          <Cell><Data ss:Type="String"><%= user_values[:paper] %></Data></Cell>
-          <Cell><Data ss:Type="String"><%= user_values[:inquiry] %></Data></Cell>
-          <Cell><Data ss:Type="String"><%= user_values[:student] %></Data></Cell>
+          <Cell><Data ss:Type="Number"><%= user_values[:paper] %></Data></Cell>
+          <Cell><Data ss:Type="Number"><%= user_values[:inquiry] %></Data></Cell>
+          <Cell><Data ss:Type="Number"><%= user_values[:student] %></Data></Cell>
         </Row>
         
         <% user_values[:details].each do |row2| %>
@@ -60,9 +60,9 @@
               <Cell><Data ss:Type="String"></Data></Cell>
               <Cell><Data ss:Type="Number"><%= ct_values[:total] %></Data></Cell>
               <Cell><Data ss:Type="Number"><%= ct_values[:receivable] %></Data></Cell>
-              <Cell><Data ss:Type="String"><%= ct_values[:paper] %></Data></Cell>
-              <Cell><Data ss:Type="String"><%= ct_values[:inquiry] %></Data></Cell>
-              <Cell><Data ss:Type="String"><%= ct_values[:student] %></Data></Cell>
+              <Cell><Data ss:Type="Number"><%= ct_values[:paper] %></Data></Cell>
+              <Cell><Data ss:Type="Number"><%= ct_values[:inquiry] %></Data></Cell>
+              <Cell><Data ss:Type="Number"><%= ct_values[:student] %></Data></Cell>
             </Row>
           <% end %>
         <% end %>
