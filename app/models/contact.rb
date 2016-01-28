@@ -2214,6 +2214,7 @@ class Contact < ActiveRecord::Base
     str << mobile.to_s
     str << mobile.to_s.gsub(/^84/,"")
     str << mobile_2s.join(" ")
+    str << (mobile_2s.map {|m| "0" + m.to_s.gsub(/^84/,"") }).join(" ")
     str << "0" + mobile.to_s.gsub(/^84/,"")
     str << phone.to_s.gsub(/^84/,"")
     str << "0" + phone.to_s.gsub(/^84/,"")
