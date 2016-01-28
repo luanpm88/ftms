@@ -442,9 +442,11 @@ class UsersController < ApplicationController
     
     @users = []
     
-    @users = User.where(status: 1).order("users.first_name, users.last_name") if params[:calculate].present?    
-    params[:users] = [current_user.id] if current_user.lower?("manager")
-    @users = @users.where(id: params[:users]) if params[:users].present?
+    if params[:calculate].present?
+      @users = User.where(status: 1).order("users.first_name, users.last_name")     
+      params[:users] = [current_user.id] if current_user.lower?("manager")
+      @users = @users.where(id: params[:users]) if params[:users].present?
+    end
     
     @result = User.statistics(@users, @from_date, @to_date)
     
