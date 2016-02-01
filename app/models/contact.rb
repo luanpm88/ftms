@@ -2207,9 +2207,9 @@ class Contact < ActiveRecord::Base
   
   def render_cache_search
     str = []
-    str << display_name.to_s
-    str << display_name.unaccent
-    str << "[search_name: "+name.unaccent.downcase+" ]"
+    str << display_name.to_s.squish
+    str << display_name.unaccent.squish
+    str << "[search_name: "+name.unaccent.downcase.squish+" ]"
     str << "[tag:"+(contact_tags.map {|ct| ct.name}).join("][tag:")+"]"
     str << mobile.to_s
     str << mobile.to_s.gsub(/^84/,"")
@@ -2222,8 +2222,11 @@ class Contact < ActiveRecord::Base
     str << email_2s.join(" ")    
     str << address.to_s
     str << birthday.strftime("%d-%b-%Y") if birthday.present?
-    str << referrer.name if !referrer.nil?
+    str << referrer.name.squish if !referrer.nil?
     str << display_bases.to_s
+    
+    # update name
+    self.update_attribute(:name, self.name.squish)
     
     return str.join(" ")
   end
