@@ -98,7 +98,7 @@
 														<strong><%= user_values[:note] %></strong>
 												</td>
 												<td class="text-right">
-														<strong><%= format_price(user_values[:total]) %></strong>
+														<strong><%= format_price(user_values[:sales]) %></strong>
 												</td>
 												<td class="text-right">
 														<strong><%= format_price(user_values[:receivable]) %></strong>
@@ -127,7 +127,7 @@
 													  </td>
 													  <td></td>
 													  <td class="text-right">
-																<%= format_price(ct_values[:total]) %>
+																<%= format_price(ct_values[:sales]) %>
 													  </td>
 													  <td class="text-right">
 																<strong><%= format_price(ct_values[:receivable]) %></strong>
