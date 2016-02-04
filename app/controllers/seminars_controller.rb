@@ -144,6 +144,19 @@ class SeminarsController < ApplicationController
         if row[1]["check"].present? && row[1]["check"] == "true"        
           contact = Contact.new(is_individual: true, name: row[1]["name"], email: row[1]["email"], mobile: row[1]["mobile"], note: row[1]["note"])
           contact.user = current_user
+          
+          # multi mobile
+          if row[1]["mobile"].to_s.strip.split(/[\,\n;]/).count > 1
+            contact.mobile = Contact.format_mobile(row[1]["mobile"].split(/[\,\n;]/)[0])
+            contact.mobile_2 = (row[1]["mobile"].split(/[\,\n;]/)[1..-1].map{|m| Contact.format_mobile(m)}).join(",")
+          end
+          
+          # multi email
+          if row[1]["email"].to_s.strip.split(/[\,\n;]/).count > 1
+            contact.email = row[1]["email"].split(/[\,\n;]/)[0].strip.downcase
+            contact.email_2 = (row[1]["email"].split(/[\,\n;]/)[1..-1].map{|m| m.strip.downcase}).join(",")
+          end
+          
 
           contact.contact_types << ContactType.inquiry
           # add curse type

@@ -63,10 +63,10 @@
 																<%= text_area_tag "rows["+index.to_s+"][company]", row[:company], class: "form-control" %>
 														</td>
 														<td>
-																<%= text_field_tag "rows["+index.to_s+"][mobile]", Contact.format_mobile(row[:mobile].to_i), class: "form-control" %>
+																<%= text_area_tag "rows["+index.to_s+"][mobile]", row[:mobiles].join(";"), class: "form-control" %>
 														</td>
 														<td>
-																<%= text_field_tag "rows["+index.to_s+"][email]", row[:email], class: "form-control" %>
+																<%= text_area_tag "rows["+index.to_s+"][email]", row[:emails].join(";"), class: "form-control" %>
 														</td>
 														<td>
 																<%= text_area_tag "rows["+index.to_s+"][note]", row[:background], class: "form-control" %>
@@ -120,14 +120,22 @@
 																			<%= contact.referrer_link %>																		
 																	</td>
 																	<td>
-																		<span class="<%= "label_color_green" if Contact.format_mobile(row[:mobile].to_i) == contact.mobile %>">
-																				<%= contact.mobile %>
-																		</span>
+																		<% contact.all_mobiles.each do |m| %>
+																				<div>
+																						<span class="<%= "label_color_green" if row[:mobiles].include?(m) %>">
+																								<%= m %>
+																						</span>
+																				</div>
+																		<% end %>
 																	</td>
 																	<td>
-																		<span class="<%= "label_color_blue" if row[:email].strip.downcase == contact.email.strip.downcase %>">
-																			<%= contact.email %>
-																		</span>
+																		<% contact.all_emails.each do |m| %>
+																				<div>
+																						<span class="<%= "label_color_green" if row[:emails].include?(m) %>">
+																								<%= m %>
+																						</span>
+																				</div>
+																		<% end %>
 																	</td>
 																	<td>
 																				<%= contact.display_note %>
@@ -150,13 +158,13 @@
 																	</td>
 																	<td class="text-center">
 
-																				<%= contact.contact_link("<span class=\"btn btn-mini btn-white\">Update</span>".html_safe) %>
+																				<%= contact.contact_link("<span class=\"btn btn-mini btn-primary\">Update Info</span>".html_safe) %>
 
 																	</td>
 																	<td>
 																		<% if !["new_imported"].include?(row[:status]) && !contact.seminars.include?(@seminar) %>
 																			<div class="checkbox check-success pull-right">
-																				<input <%= 'checked=checked' if !contact.seminars.include?(@seminar) && (row[:name].unaccent.strip.downcase == contact.name.unaccent.strip.downcase && row[:email].strip.downcase == contact.email.strip.downcase && Contact.format_mobile(row[:mobile].to_i) == contact.mobile) %> group="<%= index %>" name="contacts[<%= contact.id %>][check]" id="checkbox_c_<%= index %>_<%= contact.id %>" type="checkbox" value="true" class="checkall">
+																				<input <%= 'checked=checked' if !contact.seminars.include?(@seminar) && row[:selected_id] == contact.id %> group="<%= index %>" name="contacts[<%= contact.id %>][check]" id="checkbox_c_<%= index %>_<%= contact.id %>" type="checkbox" value="true" class="checkall">
 																				<label for="checkbox_c_<%= index %>_<%= contact.id %>"></label>
 																			</div>
 																		<% end %>

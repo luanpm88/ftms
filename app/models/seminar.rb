@@ -256,7 +256,11 @@ class Seminar < ActiveRecord::Base
       bg += "Year: #{row["Year"].to_s.strip}\n" if row["Year"].present?
       
       item = {name: row["Fullname"], company: row["Company"], mobile: row["Mobile"], email: row["Email"], present: row["Status"], background: bg}
-      item[:contacts] = similar_contacts({email: item[:email], name: item[:name], mobile: item[:mobile]})
+      item[:mobiles] = ((item[:mobile].to_s.split(/[\,\n;]/)).map {|m| Contact.format_mobile(m.to_i)})
+      item[:emails] = ((item[:email].to_s.split(/[\,\n;]/)).map {|m| m.to_s.strip.downcase})
+      
+      
+      item[:contacts] = similar_contacts({email: item[:email], emails: item[:emails], name: item[:name], mobile: item[:mobile], mobiles: item[:mobiles]})
       list << item if row["Fullname"].present?
     end
     
@@ -272,14 +276,18 @@ class Seminar < ActiveRecord::Base
     list.each do |row|
       if !row[:contacts].empty?
         row[:status] = "not_sure"
+        row[:order] = 0
         row[:contacts].each do |contact|
-          if row[:name].unaccent.strip.downcase == contact.name.unaccent.strip.downcase && row[:email].strip.downcase == contact.email.strip.downcase && Contact.format_mobile(row[:mobile].to_i) == contact.mobile
-            row[:selected_id] = contact.id
-            
-            row[:status] = "old_imported"
-            
-            old_count += 1
-            break
+          if row[:name].unaccent.strip.downcase == contact.name.unaccent.strip.downcase && contact.has_emails(row[:emails]) && contact.has_mobiles(row[:mobiles])
+              row[:selected_id] = contact.id
+              
+              
+              # (row[:name].unaccent.strip.downcase == contact.name.unaccent.strip.downcase && row[:email].strip.downcase == contact.email.strip.downcase && Contact.format_mobile(row[:mobile].to_i) == contact.mobile)
+              row[:status] = "old_imported"
+              row[:order] = 1
+              
+              old_count += 1
+              break
           end        
         end
         
@@ -287,10 +295,12 @@ class Seminar < ActiveRecord::Base
       else
         row[:status] = "new_imported"
         new_count += 1
+        row[:order] = 2
       end
       
         
       new_list << row
+      new_list.sort! { |a,b| a[:order] <=> b[:order] }
     end
     return { list: new_list,
               new_count: new_count,
@@ -305,9 +315,46 @@ class Seminar < ActiveRecord::Base
     result = []
     if data[:email].present?
       cond = []
-      cond << "LOWER(email) = '#{data[:email].to_s.strip.downcase}'" if data[:email].to_s.strip.downcase.present?
-      cond << "LOWER(name) = '#{data[:name].to_s.strip.downcase}'" if data[:name].to_s.strip.downcase.present?
-      cond << "LOWER(mobile) = '#{Contact.format_mobile(data[:mobile].to_s)}'" if data[:mobile].to_s.strip.downcase.present?
+      
+      #cond1 = data[:email].to_s.strip.downcase.present? ? "LOWER(contacts.cache_search) LIKE '%#{data[:email].to_s.strip.downcase}%'" : "FALSE"
+      cond2 = data[:name].to_s.strip.downcase.present? ? "LOWER(contacts.cache_search) LIKE '%#{data[:name].to_s.strip.downcase}%'" : "FALSE"
+      
+      # MOBILES COND cond3 = data[:mobile].to_s.strip.downcase.present? ? "LOWER(contacts.cache_search) LIKE '%#{Contact.format_mobile(data[:mobile].to_s)}%'" : "FALSE"
+      if !data[:mobiles].empty?
+        cond3s = []
+        data[:mobiles].each do |m|
+          cond3s << "LOWER(contacts.cache_search) LIKE '%#{m}%'" if m.present? && m.length > 5
+        end
+        if cond3s.count > 0
+          cond3 = "("+cond3s.join(" OR ")+")"
+        else
+          cond3 = "FALSE"
+        end
+      else
+        cond3 = "FALSE"
+      end
+      
+      # EMAIL CONDS
+      if !data[:emails].empty?
+        cond1s = []
+        data[:emails].each do |m|
+          cond1s << "LOWER(contacts.cache_search) LIKE '%#{m}%'" if m.present? && m.length > 5
+        end
+        cond1 = "("+cond1s.join(" OR ")+")"
+      else
+        cond1 = "FALSE"
+      end
+      
+      
+      #cond << "LOWER(contacts.cache_search) LIKE '%#{data[:email].to_s.strip.downcase}%'" if data[:email].to_s.strip.downcase.present?
+      #cond << "LOWER(contacts.cache_search) LIKE '%#{data[:name].to_s.strip.downcase}%'" if data[:name].to_s.strip.downcase.present?
+      #cond << "LOWER(contacts.cache_search) LIKE '%#{Contact.format_mobile(data[:mobile].to_s)}%'" if data[:mobile].to_s.strip.downcase.present?
+      
+      cond << "(#{cond1} AND #{cond2})"
+      cond << "(#{cond1} AND #{cond3})"
+      cond << "(#{cond2} AND #{cond3})"
+      cond << "#{cond1}"
+      cond << "#{cond3}"
       
       result += Contact.main_contacts.where(cond.join(" OR "))
     end

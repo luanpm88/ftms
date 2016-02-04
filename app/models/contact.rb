@@ -2205,6 +2205,36 @@ class Contact < ActiveRecord::Base
     return false
   end
   
+  def all_mobiles
+    all_mobiles = mobile_2s
+    all_mobiles << mobile if mobile.present?
+    return all_mobiles
+  end
+  
+  def has_emails(arr)
+    all_emails.each do |e|
+      arr.each do |m|
+        return true if e == m && m.present? && m.length > 5
+      end
+    end
+    return false
+  end
+  
+  def has_mobiles(arr)
+    all_mobiles.each do |e|
+      arr.each do |m|
+        return true if e == m && m.present? && m.length > 5
+      end
+    end
+    return false
+  end
+  
+  def all_emails
+    all_emails = (email_2s.map {|m| m.strip.downcase })
+    all_emails << email.strip.downcase if email.present?
+    return all_emails
+  end
+  
   def render_cache_search
     str = []
     str << display_name.to_s.squish
