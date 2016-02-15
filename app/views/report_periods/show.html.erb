@@ -1,0 +1,29 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <strong>User:</strong>
+  <%= @report_period.user_id %>
+</p>
+
+<p>
+  <strong>Name:</strong>
+  <%= @report_period.name %>
+</p>
+
+<p>
+  <strong>Start at:</strong>
+  <%= @report_period.start_at %>
+</p>
+
+<p>
+  <strong>End at:</strong>
+  <%= @report_period.end_at %>
+</p>
+
+<p>
+  <strong>Status:</strong>
+  <%= @report_period.status %>
+</p>
+
+<%= link_to 'Edit', edit_report_period_path(@report_period) %> |
+<%= link_to 'Back', report_periods_path %>

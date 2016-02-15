@@ -617,7 +617,8 @@ CREATE TABLE contacts (
     old_student_course_type_ids text,
     cache_transferred_courses_phrases text,
     cache_group_id integer,
-    cache_books text
+    cache_books text,
+    remark_to_admin text
 );
 
 
@@ -2141,6 +2142,41 @@ ALTER SEQUENCE related_contacts_id_seq OWNED BY related_contacts.id;
 
 
 --
+-- Name: report_periods; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE TABLE report_periods (
+    id integer NOT NULL,
+    user_id integer,
+    name character varying,
+    start_at timestamp without time zone,
+    end_at timestamp without time zone,
+    status character varying,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL
+);
+
+
+--
+-- Name: report_periods_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE report_periods_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: report_periods_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE report_periods_id_seq OWNED BY report_periods.id;
+
+
+--
 -- Name: roles; Type: TABLE; Schema: public; Owner: -; Tablespace: 
 --
 
@@ -2169,6 +2205,41 @@ CREATE SEQUENCE roles_id_seq
 --
 
 ALTER SEQUENCE roles_id_seq OWNED BY roles.id;
+
+
+--
+-- Name: sales_targets; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE TABLE sales_targets (
+    id integer NOT NULL,
+    staff_id integer,
+    report_period_id integer,
+    user_id integer,
+    amount numeric,
+    status character varying,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL
+);
+
+
+--
+-- Name: sales_targets_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE sales_targets_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: sales_targets_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE sales_targets_id_seq OWNED BY sales_targets.id;
 
 
 --
@@ -2967,7 +3038,21 @@ ALTER TABLE ONLY related_contacts ALTER COLUMN id SET DEFAULT nextval('related_c
 -- Name: id; Type: DEFAULT; Schema: public; Owner: -
 --
 
+ALTER TABLE ONLY report_periods ALTER COLUMN id SET DEFAULT nextval('report_periods_id_seq'::regclass);
+
+
+--
+-- Name: id; Type: DEFAULT; Schema: public; Owner: -
+--
+
 ALTER TABLE ONLY roles ALTER COLUMN id SET DEFAULT nextval('roles_id_seq'::regclass);
+
+
+--
+-- Name: id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY sales_targets ALTER COLUMN id SET DEFAULT nextval('sales_targets_id_seq'::regclass);
 
 
 --
@@ -3497,11 +3582,27 @@ ALTER TABLE ONLY related_contacts
 
 
 --
+-- Name: report_periods_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+--
+
+ALTER TABLE ONLY report_periods
+    ADD CONSTRAINT report_periods_pkey PRIMARY KEY (id);
+
+
+--
 -- Name: roles_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
 --
 
 ALTER TABLE ONLY roles
     ADD CONSTRAINT roles_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: sales_targets_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+--
+
+ALTER TABLE ONLY sales_targets
+    ADD CONSTRAINT sales_targets_pkey PRIMARY KEY (id);
 
 
 --
@@ -4411,4 +4512,10 @@ INSERT INTO schema_migrations (version) VALUES ('20151201111744');
 INSERT INTO schema_migrations (version) VALUES ('20151217120803');
 
 INSERT INTO schema_migrations (version) VALUES ('20151217141105');
+
+INSERT INTO schema_migrations (version) VALUES ('20160215022441');
+
+INSERT INTO schema_migrations (version) VALUES ('20160215030529');
+
+INSERT INTO schema_migrations (version) VALUES ('20160215035940');
 

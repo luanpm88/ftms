@@ -22,6 +22,10 @@
         <Cell><Data ss:Type="String">Note Log</Data></Cell>
         <Cell><Data ss:Type="String">Sales</Data></Cell>
         <Cell><Data ss:Type="String">Receivable</Data></Cell>
+        <% if !@report_period.nil? %>
+          <Cell><Data ss:Type="String">Target</Data></Cell>
+          <Cell><Data ss:Type="String">To_be_achived</Data></Cell>
+        <% end %>
         <Cell><Data ss:Type="String">Paper</Data></Cell>
         <Cell><Data ss:Type="String">New Inquiry</Data></Cell>
         <Cell><Data ss:Type="String">New Student</Data></Cell>
@@ -33,6 +37,10 @@
         <Cell><Data ss:Type="Number"><%= @result[:total][:note] %></Data></Cell>
         <Cell><Data ss:Type="Number"><%= @result[:total][:sales] %></Data></Cell>
         <Cell><Data ss:Type="Number"><%= @result[:total][:receivable] %></Data></Cell>
+        <% if !@report_period.nil? %>
+          <Cell><Data ss:Type="String"></Data></Cell>
+          <Cell><Data ss:Type="String"></Data></Cell>
+        <% end %>
         <Cell><Data ss:Type="Number"><%= @result[:total][:paper] %></Data></Cell>
         <Cell><Data ss:Type="Number"><%= @result[:total][:inquiry] %></Data></Cell>
         <Cell><Data ss:Type="Number"><%= @result[:total][:student] %></Data></Cell>
@@ -46,6 +54,10 @@
           <Cell><Data ss:Type="Number"><%= user_values[:note] %></Data></Cell>
           <Cell><Data ss:Type="Number"><%= user_values[:sales] %></Data></Cell>
           <Cell><Data ss:Type="Number"><%= user_values[:receivable] %></Data></Cell>
+          <% if !@report_period.nil? %>
+            <Cell><Data ss:Type="Number"><%= format_price(user_values[:user].get_sales_target(@report_period)) %></Data></Cell>
+            <Cell><Data ss:Type="Number"><%= format_price(user_values[:user].get_sales_target(@report_period)-user_values[:sales]) %></Data></Cell>
+          <% end %>
           <Cell><Data ss:Type="Number"><%= user_values[:paper] %></Data></Cell>
           <Cell><Data ss:Type="Number"><%= user_values[:inquiry] %></Data></Cell>
           <Cell><Data ss:Type="Number"><%= user_values[:student] %></Data></Cell>
@@ -60,6 +72,10 @@
               <Cell><Data ss:Type="String"></Data></Cell>
               <Cell><Data ss:Type="Number"><%= ct_values[:sales] %></Data></Cell>
               <Cell><Data ss:Type="Number"><%= ct_values[:receivable] %></Data></Cell>
+              <% if !@report_period.nil? %>
+                <Cell><Data ss:Type="String"></Data></Cell>
+                <Cell><Data ss:Type="String"></Data></Cell>
+              <% end %>
               <Cell><Data ss:Type="Number"><%= ct_values[:paper] %></Data></Cell>
               <Cell><Data ss:Type="Number"><%= ct_values[:inquiry] %></Data></Cell>
               <Cell><Data ss:Type="Number"><%= ct_values[:student] %></Data></Cell>

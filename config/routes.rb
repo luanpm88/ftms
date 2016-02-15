@@ -1,4 +1,18 @@
 Hkerp::Application.routes.draw do
+  resources :sales_targets do
+    collection do
+      get :datatable
+      get :delete
+      get :undo_delete
+    end
+  end
+  resources :report_periods do
+    collection do
+      get :datatable
+      get :delete
+      get :undo_delete
+    end
+  end
   resources :user_logs do
     collection do
       get :datatable

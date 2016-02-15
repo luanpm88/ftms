@@ -4,6 +4,8 @@
   }
   .page {
     padding: 0;
+    position: relative;
+    min-height: 1000px;
   }
   .logo img {
     width: 220px;
@@ -45,6 +47,10 @@
   .text-nowrap {
     white-space: nowrap;
   }
+  .remark_to_admin {
+    position: absolute;
+    bottom: 0;
+ }
 </style>
 
 <div class="page">
@@ -144,5 +150,11 @@
     </tr>
     
   </table>
+  
+  <% if @delivery.course_register.contact.remark_to_admin.present? %>
+    <div class="remark_to_admin">
+      Remark to admin: <%= @delivery.course_register.contact.remark_to_admin %>
+    </div>
+  <% end %>
   
 </div>

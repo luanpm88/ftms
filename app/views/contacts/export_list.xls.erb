@@ -16,6 +16,7 @@
         <Cell><Data ss:Type="String">Email</Data></Cell>
         <Cell><Data ss:Type="String">Phone</Data></Cell>        
         <Cell><Data ss:Type="String">Mobile</Data></Cell>
+        <Cell><Data ss:Type="String">Remark to admin</Data></Cell>
       </Row>
     <% @contacts.each do |contact| %>
       <Row>
@@ -28,6 +29,7 @@
         <Cell><Data ss:Type="String"><%= contact.email %><%= (";"+contact.email_2s.join(";")) if !contact.email_2s.empty? %></Data></Cell>
         <Cell><Data ss:Type="String"><%= contact.phone %></Data></Cell>
         <Cell><Data ss:Type="String"><%= contact.mobile %><%= (";"+contact.mobile_2s.join(";")) if !contact.mobile_2s.empty? %></Data></Cell>
+        <Cell><Data ss:Type="String"><%= contact.remark_to_admin %></Data></Cell>
       </Row>
     <% end %>
     </Table>

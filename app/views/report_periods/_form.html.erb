@@ -1,0 +1,84 @@
+       <div class="row">
+            <div class="col-md-12">
+              <div class="grid simple">
+                <div class="grid-titles no-border">
+                  <h4><span class="semi-bold">Course Details</span></h4>
+                  
+                </div>     
+                
+                <div class="grid-body no-border">
+                  
+                  
+                  <% if @report_period.errors.any? %>
+                    <div class="alert alert-error">
+                      <button data-dismiss="alert" class="close"></button>
+                      <div id="error_explanation">
+                        <h5><%= pluralize(@report_period.errors.count, "error") %> prohibited this report period from being saved:</h5>
+                  
+                        <ul>
+                        <% @report_period.errors.full_messages.each do |msg| %>
+                          <li><%= msg %></li>
+                        <% end %>
+                        </ul>
+                      </div>
+                    </div>
+                  <% end %>
+                    
+                  <%= form_for(@report_period) do |f| %>
+					
+					<%= hidden_field_tag("tab_page", 1) if params[:tab_page] %>
+					
+					<div class="row">
+						 <div class="col-md-6">
+                            <div class="form-group">
+								   <label class="form-label"><%= f.label :name %></label>
+								   <span class="help">(required)</span>
+								   <div class="input-with-icon  right">                                       
+									   <i class=""></i>
+										 <%= f.text_field :name, :class => "form-control required" %>
+								   </div>
+							  </div>
+						 </div>
+                         <div class="col-md-3">
+                            <div class="form-group">
+								   <label class="form-label"><%= f.label :start_on %></label>
+								   <span class="help">(required)</span>
+								   <div class="input-with-iconz  left">                                       
+                                        <i class=""></i>
+                                        <div class="input-append success date col-md-10 no-padding">
+                                             <span class="add-on"><span class="arrow"></span><i class="icon-th"></i></span>
+                                             <%= f.text_field :start_at, :class => "form-control required", value: (@report_period.start_at.nil? ? "" : @report_period.start_at.strftime("%d-%b-%Y")) %>
+                                        </div>
+                                        <br style="clear: both" />
+                                    </div>
+							  </div>
+						 </div>
+                         <div class="col-md-3">
+                            <div class="form-group">
+								   <label class="form-label"><%= f.label :end_on %></label>
+								   <span class="help">(required)</span>
+                                    <div class="input-with-iconz  left">                                       
+                                        <i class=""></i>
+                                        <div class="input-append success date col-md-10 no-padding">
+                                             <span class="add-on"><span class="arrow"></span><i class="icon-th"></i></span>
+                                             <%= f.text_field :end_at, :class => "form-control required", value: (@report_period.end_at.nil? ? "" : @report_period.end_at.strftime("%d-%b-%Y")) %>
+                                        </div>
+                                        <br style="clear: both" />
+                                    </div>
+							  </div>
+						 </div>			
+					</div>
+							  
+                    <div class="form-actions">  
+                        <div class="pull-right">
+                        <button type="submit" class="btn btn-success btn-cons"><i class="icon-ok"></i> Save</button>
+                        <%= link_to 'Cancel', users_path, :class => "btn btn-white btn-cons cancel-but" %>
+                       </div>
+                    </div>
+							  
+					<% end %>
+			   </div>
+			 </div>
+            </div>
+			
+      </div>

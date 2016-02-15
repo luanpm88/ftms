@@ -843,4 +843,10 @@ class User < ActiveRecord::Base
     return {data: users_statistics, total: all_total}
   end
   
+  def get_sales_target(report_period)
+    return 0.0 if report_period.nil?
+    target = SalesTarget.where(staff_id: self.id).where(status: "active").where(report_period_id: report_period.id).last
+    return target.nil? ? 0.0 : target.amount
+  end
+  
 end

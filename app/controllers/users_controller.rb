@@ -432,8 +432,12 @@ class UsersController < ApplicationController
   end
   
   def statistics_enhanced
-    if params[:from_date].present? && params[:to_date].present?
-      @from_date = params[:from_date].to_date
+    if params[:report_period].present?
+      @report_period = ReportPeriod.find(params[:report_period])
+      @from_date = @report_period.start_at.to_date.beginning_of_day
+      @to_date =  @report_period.end_at.to_date.end_of_day
+    elsif params[:from_date].present? && params[:to_date].present?
+      @from_date = params[:from_date].to_date.beginning_of_day
       @to_date =  params[:to_date].to_date.end_of_day
     else
       @from_date = DateTime.now.beginning_of_month
@@ -475,7 +479,11 @@ class UsersController < ApplicationController
   end
   
   def download_statistics
-    if params[:from_date].present? && params[:to_date].present?
+    if params[:report_period].present?
+      @report_period = ReportPeriod.find(params[:report_period])
+      @from_date = @report_period.start_at.to_date.beginning_of_day
+      @to_date =  @report_period.end_at.to_date.end_of_day
+    elsif params[:from_date].present? && params[:to_date].present?
       @from_date = params[:from_date].to_date
       @to_date =  params[:to_date].to_date.end_of_day
     else

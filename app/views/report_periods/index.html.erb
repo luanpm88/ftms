@@ -1,0 +1,36 @@
+
+                <div class="page-title">
+                        <i class="icon-briefcase"></i>
+                    	<h3>Report Periods - <span class="semi-bold"> Management</span></h3>	
+                </div>
+                
+            <%= form_tag("", {class: "listing_form", method: "post", target: "_blank"}) do |f| %>
+                <div class="row">
+                    <div class="col-md-12">
+                        <%= link_to 'New Report Period', new_report_period_path(tab_page: 1), psrc: report_periods_path(tab_page:1), title: "New Report Period", :class => 'btn btn-primary btn-cons tab_page' %>
+                        <div class="grid simple ">
+								
+								<%= render "filters" %>
+								
+                            <div class="grid-title no-border">
+                                <!--<h4>Listing  <span class="semi-bold">Report Periods</span></h4>-->                                
+                            </div>
+                            <div class="grid-body no-border">
+                                    <table class="table table-striped no-more-tables datatable-report-periods no-filter">
+                                        <thead>
+                                            <tr>												
+												<th class="text-left">Name</th>
+                                                <th class="text-left nowrap">Start on</th>
+												<th class="text-left nowrap">End on</th>
+												<th class="text-left">Status</th>
+												<th class="text-right" width="1%">Actions</th>
+                                            </tr>
+                                        </thead>                                        
+                                    </table>
+                            </div>
+                        </div>
+			
+                    </div>
+		    
+                </div>
+<% end %>

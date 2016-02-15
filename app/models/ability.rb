@@ -526,6 +526,7 @@ class Ability
       can :company_paid_list, PaymentRecord do |pr|
         !pr.company.nil?
       end
+      can :view_all, PaymentRecord
       
       can :pay, Transfer do |t|
         !t.paid?
@@ -768,12 +769,14 @@ class Ability
       end      
       can :undo_delete, Transfer do |c|
         c.statuses.include?("delete_pending")
-      end
-      
+      end      
       
       can :report_toggle, ContactsCourse
       
       can :remove, BooksContact
+      
+      can :manage, ReportPeriod
+      can :manage, SalesTarget
     end
   end
 end

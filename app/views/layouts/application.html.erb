@@ -305,7 +305,9 @@
 			  <ul class="sub-menu">
 				<li><%= link_to 'Course/Stock Registration Payment', payment_list_payment_records_path(tab_page:1), class: "tab_page" %></li>
 				<li><%= link_to 'Defer/Transfer Payment', transfers_path(tab_page:1), title: "Defer/Transfer Payment", class: "tab_page" %></li>
-				<li<% if params[:controller] == "payment_records" %> class="active"<% end %>><%= link_to 'Payment Record', payment_records_path(tab_page:1), class: "tab_page" %></li>
+				<% if can? :view_all, PaymentRecord %>
+					<li<% if params[:controller] == "payment_records" %> class="active"<% end %>><%= link_to 'Payment Record', payment_records_path(tab_page:1), class: "tab_page" %></li>
+				<% end %>
 				<li<% if params[:controller] == "bank_accounts" %> class="active"<% end %>>
 					<a title="Bank Account (pending)" href="<%= url_for(bank_accounts_path(tab_page:1, status: "pending")) %>" class="tab_page noti">
 						<span class="badge badge-important pull-right alert-level2"><%= Notification.bank_account_pending_count(current_user) %></span>
@@ -474,6 +476,20 @@
 							</a>
 							<%= link_to 'Seminar Management', seminars_path(tab_page:1), class: "tab_page" %>
 						</li>
+					</ul>
+			</li>
+		<% end %>
+		
+		<% if can? :report_features, User %>
+			<li>
+					<%= link_to contacts_url do %>
+					  <i class="icon-certificate"></i>
+					  <span class="title">Report Admin</span>
+					  <span class="arrow<% if params[:controller] == "users" %> open<% end %>"></span>
+					<% end %>
+					<ul class="sub-menu">
+						<li<% if params[:controller] == "report_periods" %> class="active"<% end %>><%= link_to 'Report Period', report_periods_path(tab_page:1), class: "tab_page" %></li>
+						<li<% if params[:controller] == "sales_targets" %> class="active"<% end %>><%= link_to 'Target Management', sales_targets_path(tab_page:1), class: "tab_page" %></li>				
 					</ul>
 			</li>
 		<% end %>

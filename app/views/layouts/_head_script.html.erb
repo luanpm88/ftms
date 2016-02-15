@@ -2702,6 +2702,50 @@
 			"iDisplayLength": 10
 	    });
 		
+		
+		//Datatable subjects
+	    $('.datatable-report-periods').dataTable( {
+			"processing": true,
+			"serverSide": true,
+			"ajax": {
+				"url": "<%= datatable_report_periods_path %>",
+				"data": function ( d ) {
+					if($(".report-period-filter select[name='status']").val()) {
+						d.status =  $(".report-period-filter select[name='status']").val()
+					}
+				}
+			},
+			"columnDefs": [ { "targets": [3,4], "orderable": false } ],
+			"order": [],
+			"aLengthMenu": [[10, 25, 50, 75, 100], [10, 25, 50, 75, 100]],
+			"iDisplayLength": 10
+	    });
+		
+		//Datatable subjects
+	    $('.datatable-sales-targets').dataTable( {
+			"processing": true,
+			"serverSide": true,
+			"ajax": {
+				"url": "<%= datatable_sales_targets_path %>",
+				"data": function ( d ) {
+					if($(".sales-target-filter input[name='staff']").val()) {
+						d.staff =  $(".sales-target-filter input[name='staff']").val()
+					}
+					if($(".sales-target-filter input[name='report_period']").val()) {
+						d.report_period =  $(".sales-target-filter input[name='report_period']").val()
+					}
+					if($(".sales-target-filter select[name='status']").val()) {
+						d.status =  $(".sales-target-filter select[name='status']").val()
+					}
+				}
+			},
+			"columnDefs": [ { "targets": [4,5], "orderable": false } ],
+			"order": [],
+			"aLengthMenu": [[10, 25, 50, 75, 100], [10, 25, 50, 75, 100]],
+			"iDisplayLength": 10
+	    });
+		
+		
 	    $('select[name="DataTables_Table_0_length"]').select2({allowClear: true});
 		
 		//ajax select2 for contacts
@@ -3148,6 +3192,29 @@
 			"aLengthMenu": [[10, 25, 50, 75, 100], [10, 25, 50, 75, 100]],
 			"iDisplayLength": 10
 	    });
+		
+		//ajax select2 for contacts
+	    $('.select2-ajax-report-periods').select2({
+			placeholder: "Search for a period",
+			minimumInputLength: 0,
+			allowClear: true,
+			multiple: $('.select2-ajax-report-periods').hasClass("multiple"),
+			ajax: {
+			  url: $('.select2-ajax-report-periods').attr("data"),
+			  dataType: 'json',
+			  data: function (term, page) { // page is the one-based page number tracked by Select2
+				return {
+				  q: term, //search term				  
+				};
+			  },
+			  results: function (data, page) {
+				return {results: data};
+			  }
+			},
+			initSelection: function (element, callback) {				      
+			  callback({ id: element.val(), text: element.attr('text') });
+			}
+	    });
 	    
 	    $('.dataTables_length select').select2({allowClear: true});
 	    
@@ -3170,6 +3237,7 @@
 			placeholder: "Search for a user",
 			allowClear: true,
 			minimumInputLength: 0,
+			multiple: $('.select2-ajax-users').hasClass("multiple"),
 			ajax: {
 			  url: $('.select2-ajax-users').attr("data"),
 			  dataType: 'json',
@@ -3371,7 +3439,7 @@
 		
 		$('.date-group select').select2();
 		
-		$(document).on("change", '.user-log-filter select, .user-log-filter input, .user-filters select, .merge-contact-filter select, .user-filters input,.stock-type-filter select, .stock-type-filter input,.payment-list-filter select, .payment-list-filter input,.stock-update-filter select, .stock-update-filter input,.delivery-filter select, .delivery-filter input,.activity-filter select, .activity-filter input,.phrase-filter select, .phrase-filter input,.subject-filter select, .subject-filter input,.seminar-filter select, .seminar-filter input,.contact-tag-filter select, .contact-tag-filter input,.bank-account-filter select, .bank-account-filter input,.discount-program-filter select, .discount-program-filter input,.course-type-filter select, .course-type-filter input,.transfer-filter select, .transfer-filter input,.payment-record-filter select, .payment-record-filter input, .course-filter select, .course-filter input, .book-filter input, .book-filter select, .course-register-filter input, .course-register-filter select', function() {
+		$(document).on("change", '.report-period-filter input, .report-period-filter select, .sales-target-filter input, .sales-target-filter select, .user-log-filter select, .user-log-filter input, .user-filters select, .merge-contact-filter select, .user-filters input,.stock-type-filter select, .stock-type-filter input,.payment-list-filter select, .payment-list-filter input,.stock-update-filter select, .stock-update-filter input,.delivery-filter select, .delivery-filter input,.activity-filter select, .activity-filter input,.phrase-filter select, .phrase-filter input,.subject-filter select, .subject-filter input,.seminar-filter select, .seminar-filter input,.contact-tag-filter select, .contact-tag-filter input,.bank-account-filter select, .bank-account-filter input,.discount-program-filter select, .discount-program-filter input,.course-type-filter select, .course-type-filter input,.transfer-filter select, .transfer-filter input,.payment-record-filter select, .payment-record-filter input, .course-filter select, .course-filter input, .book-filter input, .book-filter select, .course-register-filter input, .course-register-filter select', function() {
 			if (typeof($(this).attr("name")) == "undefined") {
 				return
 			}
@@ -3400,6 +3468,8 @@
 			$('.datatable-users').dataTable().fnFilter();
 			$('.datatable-merge-contacts').dataTable().fnFilter();
 			$('.datatable-user-logs').dataTable().fnFilter();
+			$('.datatable-sales-targets').dataTable().fnFilter();
+			$('.datatable-report-periods').dataTable().fnFilter();
 		});
 		
 		checkContactType()
@@ -4152,7 +4222,16 @@
 				href: '<%= transfer_hour_history_contacts_path %>?id='+iid+"&program_id="+pd+"&subject_id="+sd,
 				type: 'ajax'
 			});
+		});		
+		
+		$('input[name=report_period]').on('change', function(){
+			if ($(this).val()) {
+				$(".none_period_dates_select").hide();
+            } else {
+				$(".none_period_dates_select").show();
+			}
 		});
+		
 	})
 	
 

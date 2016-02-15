@@ -70,6 +70,10 @@
 									  <th class="text-center">Note Log</th>
                                       <th class="text-right">Sales</th>
 									  <th class="text-right">Receivable</th>
+									  <% if !@report_period.nil? %>
+										<th class="text-right">Target</th>
+										<th class="text-right nowrap">To_be_achived</th>
+									  <% end %>
 									  <th class="text-center">Paper</th>
 									  <th class="text-center">New Inquiry</th>
 									  <th class="text-center">New Student</th>									  
@@ -80,6 +84,10 @@
 										<td class="text-center"><strong class=" paid"><%= format_price(@result[:total][:note]) %></strong></td>
 										<td class="text-right"><strong class=" paid"><%= format_price(@result[:total][:sales]) %></strong></td>
 										<td class="text-right"><strong class=" paid"><%= format_price(@result[:total][:receivable]) %></strong></td>
+										<% if !@report_period.nil? %>
+										  <td class="text-right"></td>
+										  <td class="text-right nowrap"></td>
+										<% end %>
 										<td class="text-center"><strong class=" paid"><%= @result[:total][:paper] %></strong></td>
 										<td class="text-center"><strong class=" paid"><%= @result[:total][:inquiry] %></strong></td>
 										<td class="text-center"><strong class=" paid"><%= @result[:total][:student] %></strong></td>
@@ -103,6 +111,10 @@
 												<td class="text-right">
 														<strong><%= format_price(user_values[:receivable]) %></strong>
 												</td>
+												<% if !@report_period.nil? %>
+												  <td class="text-right"><strong><%= format_price(user_values[:user].get_sales_target(@report_period)) %></strong></td>
+												  <td class="text-right nowrap"><strong><%= format_price(user_values[:user].get_sales_target(@report_period)-user_values[:sales]) %></strong></td>
+												<% end %>
 												<td class="text-center">
 														<strong><%= user_values[:paper] %></strong>
 												</td>												
@@ -132,6 +144,10 @@
 													  <td class="text-right">
 																<strong><%= format_price(ct_values[:receivable]) %></strong>
 														</td>
+													  <% if !@report_period.nil? %>
+														<td class="text-right"></td>
+														<td class="text-right nowrap"></td>
+													  <% end %>
 													  <td class="text-center">
 																<%= ct_values[:paper] %>
 													  </td>													  

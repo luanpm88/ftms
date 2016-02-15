@@ -754,7 +754,17 @@
 													  
 													  
 												  </div>
-												 
+
+																<div class="form-group">
+																	 <label class="form-label"><%= f.label :remark_to_admin %></label>
+																	 <%= render "field_history", drafts: @contact.field_history("remark_to_admin"), type: "remark_to_admin" %>
+																	 <span class="help"></span>
+																	 <div class="input-with-icon  right">                                       
+																			 <i class=""></i>
+																			 <%= f.text_area :remark_to_admin, :class => "form-control" %>
+																	 </div>
+																</div>								
+
 												 <div class="form-group">
 													  <label class="form-label">
 															<%= f.label :background %>													  

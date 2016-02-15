@@ -3,7 +3,7 @@
   <ul class="history-list history-<%= type %>" style="display: none">
     <% drafts.each do |c| %>
       
-      <% if ["note","payment_type","mobile","mobile_2","email_2","email","name","address"].include?(type) %>
+      <% if ["remark_to_admin","note","payment_type","mobile","mobile_2","email_2","email","name","address"].include?(type) %>
         <li><%= c[type].empty? ? "[empty]" : c[type] %> <span class="nowrap time-span"><%= c.created_at.strftime("%d-%b-%Y, %I:%M %p") %>, by <%= c.user.name if c.user.present? %></span></li>
       <% end %>
       

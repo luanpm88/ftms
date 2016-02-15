@@ -1,0 +1,19 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <strong>Staff:</strong>
+  <%= @sales_target.staff_id %>
+</p>
+
+<p>
+  <strong>Report period:</strong>
+  <%= @sales_target.report_period_id %>
+</p>
+
+<p>
+  <strong>User:</strong>
+  <%= @sales_target.user_id %>
+</p>
+
+<%= link_to 'Edit', edit_sales_target_path(@sales_target) %> |
+<%= link_to 'Back', sales_targets_path %>
