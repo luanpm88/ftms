@@ -1,14 +1,16 @@
                 <div class="grid simple ">
                   <div class="grid-body no-border filters sales-target-filter">
                   <div class="row order-filters">
-						<div class="col-md-3">
-						  <h4>User</h4>  
-						  <div class="date_select_filter">
-							  <div class="input-with-icon date-group-my right">                                       
-								  <input name="staff" data="<%= users_path(format: "json") %>" class="select2-ajax-users required width100" value="" text="" />
-							  </div>
+						<% if !current_user.lower?("manager") %>
+						  <div class="col-md-3">
+							<h4>User</h4>  
+							<div class="date_select_filter">
+								<div class="input-with-icon date-group-my right">                                       
+									<input name="staff" data="<%= users_path(format: "json") %>" class="select2-ajax-users required width100" value="" text="" />
+								</div>
+							</div>
 						  </div>
-						</div>
+						<% end %>
 						<div class="col-md-4">
 							<h4>Report period</h4>							
 							<div class="date_select_filter date_mbe">

@@ -35,6 +35,7 @@ class SalesTargetsController < ApplicationController
           @sales_target = SalesTarget.new(sales_target_params)
           @sales_target.status = "active"
           @sales_target.staff_id = sid
+          @sales_target.user_id = current_user.id
           @sales_target.save
         end
         format.html { redirect_to params[:tab_page].present? ? "/home/close_tab" : @course, notice: 'Sales target was successfully created.' }

@@ -408,10 +408,22 @@ class Ability
       can :delivery_print, CourseRegister do |cr|
         !cr.delivered?
       end
-      can :part_info, CourseRegister
-      
+      can :part_info, CourseRegister      
       
       can :print_payment_list, PaymentRecord
+      
+      can :read, ReportPeriod
+      can :datatable, ReportPeriod
+      can :create, ReportPeriod
+      can :delete, ReportPeriod do |c|
+        c.user_id == user.id and c.users.count == 0 and c.status != 'deleted'
+      end
+      can :undo_delete, ReportPeriod do |c|
+        c.user_id == user.id and c.status == 'deleted'
+      end
+      
+      can :read, SalesTarget
+      can :datatable, SalesTarget
     end
     
     if user.has_role? "education_consultant"

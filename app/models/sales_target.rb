@@ -40,6 +40,10 @@ class SalesTarget < ActiveRecord::Base
   def self.filter(params, user)
     @records = self.all
     
+    if user.lower?("manager")
+      @records = @records.where("sales_targets.staff_id = ?", user.id)
+    end
+    
     if params["staff"].present?
       @records = @records.where("sales_targets.staff_id IN (#{params["staff"]})") if params["staff"].present?
     end

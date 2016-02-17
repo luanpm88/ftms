@@ -1,6 +1,9 @@
 class ReportPeriod < ActiveRecord::Base
   include PgSearch
   
+  has_many :sales_targets
+  has_many :users, through: :sales_targets, source: :staff
+  
   pg_search_scope :search,
                   against: [:name],                
                   using: {

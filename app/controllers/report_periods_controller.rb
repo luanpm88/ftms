@@ -34,6 +34,7 @@ class ReportPeriodsController < ApplicationController
   def create
     @report_period = ReportPeriod.new(report_period_params)
     @report_period.status = "active"
+    @report_period.user_id = current_user.id
     
     respond_to do |format|
       if @report_period.save        
