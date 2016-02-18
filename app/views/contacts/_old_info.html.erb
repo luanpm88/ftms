@@ -12,13 +12,11 @@
 			<h4><i class="icon-user"></i> <span class="semi-bold"><%= c.old_student.student_name + " - " + c.old_student.student_id + " - " + c.old_student.old_consultant.consultant_name %></span>
 				<a confirm-message="Remove from this related group?" href="<%= remove_related_contact_contacts_path(id: @contact.id, remove_id: c.id) %>" class="btn btn-small btn-warning remove_related_contact_link pull-right">This is not the same contact!</a>
 			</h4>
-		
 			<%= render "old_info_group", old_student: c.old_student %>
 		<% else %>
-			<h4><i class="icon-user"></i> <span class="semi-bold"><%= c.contact_link + " - " + c.account_manager.name %> - From New System</span>
+			<h4><i class="icon-user"></i> <span class="semi-bold"><%= c.contact_link %> <%= " - " + c.account_manager.name if !c.account_manager.nil? %> - From New System</span>
 				<a confirm-message="Remove from this related group?" href="<%= remove_related_contact_contacts_path(id: @contact.id, remove_id: c.id) %>" class="btn btn-small btn-warning remove_related_contact_link pull-right">This is not the same contact!</a>
 			</h4>
-			
 		<% end %>
 		<hr />
 	<% end %>
