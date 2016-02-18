@@ -50,7 +50,7 @@
 								<% end %>
 								
 								<% if !@contact.draft? %>
-										<% if @contact.contact_types.include?(ContactType.student) || true %>
+										<% if @contact.contact_types.include?(ContactType.student) || @contact.contact_types.include?(ContactType.inquiry) %>
 												<li class="<%= "active" if ["course_registration"].include?(params[:tab]) %>">
 														<a href="#course_registration">Course/Stock Registration
 																<span class="badge badge-info pull-right alert-level1"><%= @contact.course_register_count if @contact.course_register_count > 0 %></span>
@@ -68,21 +68,23 @@
 												<li class="<%= "active" if ["book"].include?(params[:tab]) %>">
 												  <a href="#book">Stock List   <span class="badge badge-info pull-right alert-level1"><%= @contact.book_count if @contact.book_count > 0 %></span></a>
 												</li>
+										
+										
+												<li class="<%= "active" if ["transfer"].include?(params[:tab]) %>">
+														<a href="#transfer">Defer/Transfer
+																<span class="badge badge-info pull-right alert-level1"><%= @contact.transfer_count if @contact.transfer_count > 0 %></span>
+																<span class="badge badge-pending pull-right alert-level1"><%= Notification.transfer_pending_count(current_user, @contact) %></span>
+														</a>
+												</li>
+												
+												<li class="<%= "active" if ["seminar"].include?(params[:tab]) %>">
+														<a href="#seminar">
+																Seminar
+																<span class="badge badge-info pull-right alert-level1"><%= @contact.seminar_count if @contact.seminar_count > 0 %></span>
+														</a>
+												</li>
+												
 										<% end %>
-										
-										<li class="<%= "active" if ["transfer"].include?(params[:tab]) %>">
-												<a href="#transfer">Defer/Transfer
-														<span class="badge badge-info pull-right alert-level1"><%= @contact.transfer_count if @contact.transfer_count > 0 %></span>
-														<span class="badge badge-pending pull-right alert-level1"><%= Notification.transfer_pending_count(current_user, @contact) %></span>
-												</a>
-										</li>
-										
-										<li class="<%= "active" if ["seminar"].include?(params[:tab]) %>">
-												<a href="#seminar">
-														Seminar
-														<span class="badge badge-info pull-right alert-level1"><%= @contact.seminar_count if @contact.seminar_count > 0 %></span>
-												</a>
-										</li>
 										
 										<li class="<%= "active" if ["activity"].include?(params[:tab]) %>">
 												<a href="#activity">
