@@ -60,6 +60,8 @@ class BooksController < ApplicationController
         @book.save_draft(current_user)
         
         @book.check_out_of_date
+        
+        @book.update_valid_time
       end
     end
 
@@ -88,6 +90,8 @@ class BooksController < ApplicationController
         @book.update_cache_search
         
         @book.check_out_of_date
+        
+        @book.update_valid_time
         
         format.html { redirect_to params[:tab_page].present? ? "/home/close_tab" : @book, notice: 'Book was successfully updated.' }
         format.json { head :no_content }
@@ -308,7 +312,7 @@ class BooksController < ApplicationController
       if row.nil? || row[:contact] != bc.contact || row[:address] != bc.course_register.display_mailing_address
         @list << row if !row.nil?
         
-        row = {}
+        row = {}        
         row[:contact] = bc.contact
         row[:address] = bc.course_register.display_mailing_address
         row[:address_title] = bc.course_register.display_mailing_title
@@ -384,7 +388,7 @@ class BooksController < ApplicationController
       cr.books_contacts.each do |bc|
         if @books_contacts.include?(bc) && !bc.delivered? && !bc.upfront
           delivery.save
-          delivery.delivery_details.create(book_id: bc.book_id, quantity: bc.remain)
+          delivery.delivery_details.create(book_id: bc.book_id, books_contact_id: bc.id, quantity: bc.remain)
         end        
       end
       

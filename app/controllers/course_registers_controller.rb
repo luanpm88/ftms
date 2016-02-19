@@ -300,7 +300,7 @@ class CourseRegistersController < ApplicationController
       @course_register = CourseRegister.new(course_register_params)
       @course_register.user = current_user
       @course_register.contact_id = cid
-      @course_register.update_books_contacts(params[:books_contacts]) if !params[:books_contacts].nil?      
+      @course_register.update_books_contacts(params[:books_contacts], params[:course_id]) if !params[:books_contacts].nil?      
       @course_register.account_manager_id = Contact.find(cid).account_manager
       @course_register.account_manager = Contact.find(cid).account_manager
       

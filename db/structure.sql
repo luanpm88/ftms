@@ -315,7 +315,8 @@ CREATE TABLE books_contacts (
     intake timestamp without time zone,
     discount_programs text,
     description text,
-    money numeric
+    money numeric,
+    course_id integer
 );
 
 
@@ -1129,7 +1130,8 @@ CREATE TABLE delivery_details (
     book_id integer,
     quantity integer,
     created_at timestamp without time zone NOT NULL,
-    updated_at timestamp without time zone NOT NULL
+    updated_at timestamp without time zone NOT NULL,
+    books_contact_id integer
 );
 
 
@@ -2367,7 +2369,8 @@ CREATE TABLE stock_types (
     status character varying,
     created_at timestamp without time zone NOT NULL,
     updated_at timestamp without time zone NOT NULL,
-    display_order integer
+    display_order integer,
+    is_lecturer_note boolean DEFAULT false
 );
 
 
@@ -4518,4 +4521,10 @@ INSERT INTO schema_migrations (version) VALUES ('20160215022441');
 INSERT INTO schema_migrations (version) VALUES ('20160215030529');
 
 INSERT INTO schema_migrations (version) VALUES ('20160215035940');
+
+INSERT INTO schema_migrations (version) VALUES ('20160219015445');
+
+INSERT INTO schema_migrations (version) VALUES ('20160219022007');
+
+INSERT INTO schema_migrations (version) VALUES ('20160219025221');
 

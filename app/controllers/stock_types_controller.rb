@@ -197,6 +197,6 @@ class StockTypesController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def stock_type_params
-      params.require(:stock_type).permit(:name, :description, :user_id, :annoucing_user_ids, :parent_id, :status)
+      params.require(:stock_type).permit(:is_lecturer_note, :name, :description, :user_id, :annoucing_user_ids, :parent_id, :status)
     end
 end

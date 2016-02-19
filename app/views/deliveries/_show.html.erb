@@ -115,11 +115,10 @@
     <% @delivery.delivery_details.each_with_index do |d, index| %>
       <tr>
         <td class="text-center">
-          <div><%= index+1 %></div>
-          
+          <div><%= index+1 %></div>          
         </td>
         <td class="text-left">
-          <div><strong><%= d.book.paper_name %></strong></div>          
+          <div><strong><%= (!d.books_contact.nil? and !d.books_contact.course.nil?) ? d.books_contact.course.display_name : d.book.paper_name %></strong></div>          
         </td>
         <td class="text-left">
           <%= d.book.type_name %>

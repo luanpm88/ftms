@@ -7,6 +7,7 @@ class BooksContact < ActiveRecord::Base
   
   belongs_to :course_register
   belongs_to :discount_program
+  belongs_to :course
   
   has_many :books_contacts
   has_many :payment_record_details
@@ -212,7 +213,8 @@ class BooksContact < ActiveRecord::Base
     end
     
     if params[:courses].present?
-      @records = @records.includes(:course_register => :contacts_courses).where(contacts_courses: {course_id: params[:courses].split(",")})
+      #@records = @records.includes(:course_register => :contacts_courses).where(contacts_courses: {course_id: params[:courses].split(",")})
+      @records = @records.where(course_id: params[:courses].split(","))
     end
     
     if params["upfront"] == "true"

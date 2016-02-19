@@ -123,7 +123,7 @@
                       
                     </td>
                     <td class="text-left">
-                      <div><strong><%= d[1].book.paper_name %></strong></div>          
+                      <div><strong><%= d[1].course.nil? ? d[1].book.paper_name : d[1].course.display_name %></strong></div>          
                     </td>
                     <td class="text-left">
                       <%= d[1].book.type_name %>

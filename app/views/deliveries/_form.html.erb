@@ -120,6 +120,7 @@
 														 </td>
 														 <td class="text-center">
 														   <%= hidden_field_tag "delivery_details["+index.to_s+"][book_id]", bc.book_id %>
+														   <%= hidden_field_tag "delivery_details["+index.to_s+"][books_contact_id]", bc.id %>
 														   <%= select_tag "delivery_details["+index.to_s+"][quantity]", options_for_select((bc.remain.downto(0)).map {|num| [num,num]}, bc.max_delivery), class: "modern_select width100 required delivered_count" %>
 														 </td>
 														 <td class="text-center">

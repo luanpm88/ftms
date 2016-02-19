@@ -1,5 +1,5 @@
        <div class="row">
-            <div class="col-md-6">
+            <div class="col-md-12">
               <div class="grid simple">
                 <div class="grid-title no-border">
                   <h4>Stock Type <span class="semi-bold">Details</span></h4>
@@ -35,7 +35,7 @@
 					<%= hidden_field_tag("tab_page", 1) if params[:tab_page] %>
 					
 					<div class="row <%= "draft_form" if @stock_type.draft? %>">
-						 <div class="col-md-12">
+						 <div class="col-md-6">
 							  
 							  <div class="form-group">
 								<label class="form-label"><%= f.label :name %></label>
@@ -58,10 +58,22 @@
 							  </div>
 							  
 							  
-							  
 						 </div>
 						 
-						 
+						 <div class="col-md-6">
+							  <div class="form-group">
+								   <label class="form-label">Lecturer note?</label>
+								   <span class="help">(required)</span>
+								   <div class="input-with-icon right">                                       
+										<div class="radio radio-success" style="padding: 5px">
+											 <input class="required" id="yes" type="radio" name="stock_type[is_lecturer_note]" value="true" <% if @stock_type.is_lecturer_note == true %>checked="checked"<% end %>>
+											 <label for="yes">Yes</label>
+											 <input class="required" id="no" type="radio" name="stock_type[is_lecturer_note]" value="false" <% if @stock_type.is_lecturer_note.nil? || @stock_type.is_lecturer_note == false %>checked="checked"<% end %>>
+											 <label for="no">No</label>
+										</div>
+								   </div>
+							  </div>	
+						 </div>
 						 
 					</div>
 						 

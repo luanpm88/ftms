@@ -849,6 +849,8 @@ class Book < ActiveRecord::Base
   end
   
   def display_valid_time
+    return "" if stock_type.is_lecturer_note == true
+    
     str = []
     str << valid_from.strftime("%d-%b-%Y") if valid_from.present?
     str << valid_to.strftime("%d-%b-%Y") if valid_to.present?
@@ -856,10 +858,20 @@ class Book < ActiveRecord::Base
   end
   
   def display_valid_time_raw
+    return "" if stock_type.is_lecturer_note == true
+    
     str = []
     str << valid_from.strftime("%d-%b-%Y") if valid_from.present?
     str << valid_to.strftime("%d-%b-%Y") if valid_to.present?
     return ("("+str.join(" to ")+")").html_safe
+  end
+  
+  def update_valid_time
+    if stock_type.is_lecturer_note == true
+      self.valid_from = "2000-01-01".to_datetime
+      self.valid_to = "3000-01-01".to_datetime
+    end
+    self.save
   end
   
 end

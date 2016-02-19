@@ -156,7 +156,7 @@ class CourseRegister < ActiveRecord::Base
 
   end
   
-  def update_books_contacts(cids)
+  def update_books_contacts(cids, course_id = nil)
     contact = self.contact    
     cids.each do |row|
       # remove 
@@ -168,6 +168,7 @@ class CourseRegister < ActiveRecord::Base
         cc.book_id = row[1]["book_id"]
         cc.quantity = row[1]["quantity"]
         cc.contact_id = contact.id
+        cc.course_id = course_id
         
         if row[1]["price"] == "no_price"
           cc.price = -1
