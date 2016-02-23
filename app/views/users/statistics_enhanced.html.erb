@@ -23,7 +23,7 @@
                       <div class="col-md-5">
                         <h4>Report period</h4>							
                         <div class="date_select_filter">
-                          <input name="report_period" data="<%= report_periods_path(format: "json") %>" class="select2-ajax-report-periods required width100" value="<%= @report_period.id if !@report_period.nil? %>" text="<%= @report_period.display_name if !@report_period.nil? %>" />
+                          <input name="report_period" data="<%= report_periods_path(format: "json") %>" class="select2-ajax-report-periods width100" value="<%= @report_period.id if !@report_period.nil? %>" text="<%= @report_period.display_name if !@report_period.nil? %>" />
                         </div>
                         <div class="row none_period_dates_select" <% if !@report_period.nil? %>style="display: none"<% end %>>
                           <div class="col-md-6">

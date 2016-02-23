@@ -415,12 +415,15 @@ class Ability
       can :read, ReportPeriod
       can :datatable, ReportPeriod
       can :create, ReportPeriod
+      can :update, ReportPeriod do |c|
+        c.user_id == user.id and c.users.count == 0 and c.status != 'deleted'
+      end
       can :delete, ReportPeriod do |c|
         c.user_id == user.id and c.users.count == 0 and c.status != 'deleted'
       end
       can :undo_delete, ReportPeriod do |c|
         c.user_id == user.id and c.status == 'deleted'
-      end
+      end      
       
       can :read, SalesTarget
       can :datatable, SalesTarget
