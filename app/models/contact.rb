@@ -2513,7 +2513,7 @@ class Contact < ActiveRecord::Base
     half_course = ""
     if cid.present? 
       c = self.active_course(cid.to_i)
-      title = show_title ? "<hr><div><strong class=\"\">#{c[:course].name}</strong><div>" : ""
+      title = show_title ? "<hr><div><strong class=\"\">#{c[:course].name}</strong> <div>#{c[:course].report_toggle(self)}</div><div>" : ""
       if c.present? and (c[:full_course] != true)        
         half_course = "<div class=\"text-left\">#{title}<strong class=\"text-left nowrap items_confirmed\">[half-course]:</strong></div><div class=\"text-left\">"+Course.render_courses_phrase_list(c[:courses_phrases])+"</div>"
       elsif c.present?
