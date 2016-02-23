@@ -389,9 +389,9 @@ class Contact < ActiveRecord::Base
       @records = @records.where("contacts.status NOT LIKE ?","%[deleted]%")
     end
     
-    if params["not_added_books"].present?
+    if params["no_added_books"].present?
       ors = []
-      params["not_added_books"].split(",").each do |b|
+      params["no_added_books"].split(",").each do |b|
         ors << "contacts.cache_books NOT LIKE '%[#{b}]%'"
       end
       @records = @records.where(ors.join(" OR "))
