@@ -653,6 +653,7 @@ class ContactsController < ApplicationController
     
     @contacts.each do |c|
       c.add_tag(ContactTag.find(params[:add_tag]))
+      c.update_info
     end
     
     render text: "Done!"
