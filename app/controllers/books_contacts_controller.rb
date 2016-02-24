@@ -2,7 +2,7 @@ class BooksContactsController < ApplicationController
   load_and_authorize_resource
   include BooksContactsHelper
   
-  before_action :set_books_contact, only: [:upfront_book_select_box, :remove, :check_upfront, :show, :edit, :update, :destroy]
+  before_action :set_books_contact, only: [:delete, :upfront_book_select_box, :remove, :check_upfront, :show, :edit, :update, :destroy]
 
   # GET /books_contacts
   # GET /books_contacts.json
@@ -101,6 +101,30 @@ class BooksContactsController < ApplicationController
     @book = @books_contact.book
     render layout: nil
   end
+
+  def delete
+    cr = @books_contact.course_register
+    cr.save_draft(current_user)
+    @books_contact.destroy
+    cr = CourseRegister.find(cr.id)
+    
+    # delete course register if empty
+    if cr.contacts_courses.count == 0 and cr.books_contacts.count == 0
+      cr.set_statuses(["deleted"])
+      @books_contact.contact.update_info
+    end
+    
+    # update status
+    cr.update_statuses
+    
+    # update payment records
+    cr.payment_records.each do |pr|
+      pr.update_statuses
+    end
+    
+    render text: "Stock registration was successfully removed!"
+  end
+
 
   private
     # Use callbacks to share common setup or constraints between actions.

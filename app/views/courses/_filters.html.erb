@@ -41,7 +41,7 @@
 								<input style="width:100%;margin-bottom: 5px;" name="filter[students[]]" data="<%= contacts_path(is_individual: true, contact_type_id: ContactType.student.id,format: "json") %>" class="select2-ajax-students multiple" value="<%= @student.id if !@student.nil? %>" text="<%= @student.display_name if !@student.nil? %>" />
 							</div>
 						</div>
-						<div class="col-md-3">
+						<div class="col-md-3 student-course-filter">
 							<h4>Status</h4>							
 							<%= select_tag 'status', options_for_select(Course.status_options, params[:status]), class: "modern_select width100" %>
 						</div>

@@ -124,6 +124,8 @@ Hkerp::Application.routes.draw do
       get :remove
       
       get :upfront_book_select_box
+      
+      get :delete
     end
   end
   resources :book_prices

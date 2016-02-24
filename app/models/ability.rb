@@ -245,6 +245,7 @@ class Ability
       can :datatable, BooksContact
       can :check_upfront, BooksContact
       can :upfront_book_select_box, BooksContact
+      can :delete, BooksContact
       
       can :view, ContactTag
       can :datatable, ContactTag
@@ -791,6 +792,7 @@ class Ability
       can :report_toggle, ContactsCourse
       
       can :remove, BooksContact
+      
       
       can :manage, ReportPeriod
       can :manage, SalesTarget

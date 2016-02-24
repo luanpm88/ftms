@@ -12,6 +12,10 @@ module BooksContactsHelper
         #group_1 += 1
       end
       
+      if can? :delete, item
+        actions += '<li>'+ActionController::Base.helpers.link_to('Delete', {controller: "books_contacts", action: "delete", id: item.id, tab_page: 1}, title: "#{item.book.display_name}: Delete", class: "approve_link")+'</li>'        
+      end
+      
       #actions += '<li class="divider"></li>' if group_1 > 0
       
       
