@@ -146,6 +146,8 @@ class Ability
         c.is_individual?
       end
       can :not_related_contacts, Contact
+      can :add_tags, Contact
+      can :remove_tags, Contact
       
       can :datatable, Course
       can :read, Course

@@ -2883,4 +2883,17 @@ class Contact < ActiveRecord::Base
     parent_ids = Contact.where.not(draft_for: nil).where(cache_group_id: group_id).where.not(id: ([self.id]+[self.drafts.map(&:id)]))
   end
   
+  def add_tag(contact_tag)
+    self.contact_tags << contact_tag if !self.contact_tags.include?(contact_tag)
+    self.save
+  end
+  
+  def remove_tag(contact_tag)
+    n_tags = []
+    self.contact_tags.each do |tag|
+      n_tags << tag if contact_tag != tag
+    end
+    self.update_attribute(:contact_tag_ids, n_tags.map(&:id))
+  end
+  
 end

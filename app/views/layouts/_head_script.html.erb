@@ -3008,6 +3008,52 @@
 			}
 	    });
 		
+		//ajax select2 for contact tags
+	    $('.select2-ajax-contact-tags-list').select2({
+			placeholder: "+ Add tag to selected contact(s)",
+			minimumInputLength: 0,
+			allowClear: true,
+			multiple: $('.select2-ajax-contact-tags-list').hasClass("multiple"),
+			ajax: {
+			  url: $('.select2-ajax-contact-tags-list').attr("data"),
+			  dataType: 'json',
+			  data: function (term, page) { // page is the one-based page number tracked by Select2
+				return {
+				  q: term, //search term
+				};
+			  },
+			  results: function (data, page) {
+				return {results: data};
+			  }
+			},
+			initSelection: function (element, callback) {				      
+			  callback({ id: element.val(), text: element.attr('text') });
+			}
+	    });
+		
+		//ajax select2 for contact tags
+	    $('.select2-ajax-contact-tags-list-remove').select2({
+			placeholder: "- Remove tag from selected contact(s)",
+			minimumInputLength: 0,
+			allowClear: true,
+			multiple: $('.select2-ajax-contact-tags-list-remove').hasClass("multiple"),
+			ajax: {
+			  url: $('.select2-ajax-contact-tags-list-remove').attr("data"),
+			  dataType: 'json',
+			  data: function (term, page) { // page is the one-based page number tracked by Select2
+				return {
+				  q: term, //search term
+				};
+			  },
+			  results: function (data, page) {
+				return {results: data};
+			  }
+			},
+			initSelection: function (element, callback) {				      
+			  callback({ id: element.val(), text: element.attr('text') });
+			}
+	    });
+		
 		//ajax select2 for contacts
 	    $('.select2-ajax-courses').select2({
 			placeholder: "Search for a course",
@@ -3551,6 +3597,33 @@
 				window.parent.modernAlert("<span class='chase_for_payment'>Need to choose contact(s) first!</span>")
 			}
 			getDeliveryCounting()
+		})
+		
+		$(document).on("change",".listing_actions_buttons input",function() {
+			if ($(this).select2("val") == "") {
+				return
+			}
+			var count = $('input[name="ids[]"]:checked').length
+			if (count > 0) {
+				var form = $(".listing_form")
+				var link = $(this)
+				
+					$.ajax({
+							type: "POST",
+							url: link.attr("rel"),
+							data: form.serialize(),
+							success: function(data, textStatus, jqXHR)
+							{
+								window.parent.modernAlert(data)
+								window.parent.$(".tab-pane.active .main-frame")[0].contentWindow.reloadDatatable()
+								$(this).select2("val","")
+							}
+					})
+
+			} else {
+				window.parent.modernAlert("<span class='chase_for_payment'>Need to choose contact(s) first!</span>")
+			}
+			$(this).select2("val","")
 		})
 		
 		

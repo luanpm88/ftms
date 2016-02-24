@@ -635,6 +635,52 @@ class ContactsController < ApplicationController
     render text: "Done! Contacts were checked as not the same contact."
   end
   
+  def add_tags
+    if params[:ids].present?
+      if !params[:check_all_page].nil?
+        params[:intake_year] = params["filter"]["intake(1i)"] if params["filter"].present?
+        params[:intake_month] = params["filter"]["intake(2i)"] if params["filter"].present?
+        
+        if params[:is_individual] == "false"
+          params[:contact_types] = nil
+        end        
+        
+        @contacts = Contact.filters(params, current_user)
+      else
+        @contacts = Contact.where(id: params[:ids])
+      end
+    end
+    
+    @contacts.each do |c|
+      c.add_tag(ContactTag.find(params[:add_tag]))
+    end
+    
+    render text: "Done!"
+  end
+  
+  def remove_tags
+    if params[:ids].present?
+      if !params[:check_all_page].nil?
+        params[:intake_year] = params["filter"]["intake(1i)"] if params["filter"].present?
+        params[:intake_month] = params["filter"]["intake(2i)"] if params["filter"].present?
+        
+        if params[:is_individual] == "false"
+          params[:contact_types] = nil
+        end        
+        
+        @contacts = Contact.filters(params, current_user)
+      else
+        @contacts = Contact.where(id: params[:ids])
+      end
+    end
+    
+    @contacts.each do |c|
+      c.remove_tag(ContactTag.find(params[:remove_tag]))
+    end
+    
+    render text: "Done!"
+  end
+  
   def part_info
     
     

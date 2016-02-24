@@ -519,6 +519,9 @@ Hkerp::Application.routes.draw do
       get :transfer_hour_history
       
       post :merge_companies
+      
+      post :add_tags
+      post :remove_tags
     end
   end
 

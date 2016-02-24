@@ -24,7 +24,9 @@ class ContactTag < ActiveRecord::Base
                 }
   
   def self.full_text_search(q)    
-    self.active_contact_tags.search(q).limit(50).map {|model| {:id => model.id, :text => model.name} }
+    result = self.active_contact_tags.order("name")
+    result = result.where("LOWER(contact_tags.name) LIKE ?", '%'+q.strip.downcase+'%') if q.present?
+    result = result.map {|model| {:id => model.id, :text => model.name} }
   end
   
   def self.filter(params, user)

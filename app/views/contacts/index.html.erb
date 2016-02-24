@@ -24,8 +24,8 @@
                 <div class="row">                  
                     <div class="col-md-12">
 						
-						<div class="listing_box_actions">
-							<div class="btn-group listing_actions"> <a href="#" data-toggle="dropdown" class="btn btn-primary dropdown-toggle btn-demo-space"> List Actions (<span class="listing_checked_count">0</span>)<span class="caret"></span> </a>
+						<div class="listing_box_actions" style="margin-bottom: -37px; position: relative">
+							<div class="btn-group listing_actions" style="margin-top: 9px;"> <a href="#" data-toggle="dropdown" class="btn btn-primary dropdown-toggle btn-demo-space"> List Actions (<span class="listing_checked_count">0</span>)<span class="caret"></span> </a>
 								<ul class="dropdown-menu">
 									<li><a href="#" rel="<%= export_list_contacts_path(format: "xls") %>">Export List (Excel)</a></li>
 									<li><a href="#" rel="<%= export_mobiles_contacts_path %>">Export Mobiles</a></li>
@@ -36,14 +36,21 @@
 									<li><a href="#" rel="<%= merge_companies_contacts_path(tab_page: 1) %>" type="ajax">Join Companies</a></li>
 									
 								</ul>
+							</div>							
+							
+							
+							<div class="listing_actions_buttons" style="display: inline-block;width: 600px;">
+								<%= text_field_tag 'add_tag', "", class: "select2-ajax-contact-tags-list", data: contact_tags_path(format: "json"), rel: add_tags_contacts_path %>
+								<%= text_field_tag 'remove_tag', "", class: "select2-ajax-contact-tags-list-remove", data: contact_tags_path(format: "json"), rel: remove_tags_contacts_path %>
 							</div>
-							<div class="checkbox check-default check_all_page_but" style="display: inline-block">
+							
+							
+							<div class="checkbox check-default check_all_page_but" style="display: block;
+    margin-left: 15px;
+    margin-top: 20px;">
 								<input name="check_all_page" id="checkbox_all_page" type="checkbox" value="all_page" class="check_all_page">
 								<label for="checkbox_all_page">Select All Pages</label>
 							</div>
-							
-							
-							
 						</div>
                         <div class="grid simple">
                             
