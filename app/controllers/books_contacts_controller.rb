@@ -96,7 +96,7 @@ class BooksContactsController < ApplicationController
       format.json { render action: 'show', status: :created, location: @contact }
     end
   end
-  
+
   def upfront_book_select_box
     @book = @books_contact.book
     render layout: nil
