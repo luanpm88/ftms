@@ -381,5 +381,29 @@ class BooksContact < ActiveRecord::Base
       end
     end
   end
+  
+  def delete(user)
+    cr = self.course_register
+    cr.save_draft(user)
+    self.destroy
+    cr = CourseRegister.find(cr.id)
+    
+    # delete course register if empty
+    if cr.contacts_courses.count == 0 and cr.books_contacts.count == 0
+      cr.set_statuses(["deleted"])
+      self.contact.update_info
+    end
+    
+    # update status
+    cr.update_statuses
+    
+    # update payment records
+    cr.payment_records.each do |pr|
+      pr.update_statuses
+    end
+    
+    self.contact.update_info
+    
+  end
 
 end

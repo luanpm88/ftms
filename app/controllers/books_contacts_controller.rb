@@ -103,26 +103,40 @@ class BooksContactsController < ApplicationController
   end
 
   def delete
-    cr = @books_contact.course_register
-    cr.save_draft(current_user)
-    @books_contact.destroy
-    cr = CourseRegister.find(cr.id)
-    
-    # delete course register if empty
-    if cr.contacts_courses.count == 0 and cr.books_contacts.count == 0
-      cr.set_statuses(["deleted"])
-      @books_contact.contact.update_info
-    end
-    
-    # update status
-    cr.update_statuses
-    
-    # update payment records
-    cr.payment_records.each do |pr|
-      pr.update_statuses
-    end
+    @books_contact.delete(current_user)
     
     render text: "Stock registration was successfully removed!"
+  end
+  
+  def delete_all
+    
+    if params[:ids].present?
+      if !params[:check_all_page].nil?
+        params[:intake_year] = params["filter"]["intake(1i)"] if params["filter"].present?
+        params[:intake_month] = params["filter"]["intake(2i)"] if params["filter"].present?
+        
+        if params[:is_individual] == "false"
+          params[:contact_types] = nil
+        end        
+        
+        @books_contacts = BooksContact.filter(params, current_user)
+      else
+        @books_contacts = BooksContact.where(id: params[:ids])
+      end
+    end
+    
+    if @books_contacts.count <= 50
+      @books_contacts.each do |bc|
+        bc.delete(current_user)
+      end
+      
+      render text: "Stock registration was successfully removed!"
+    else
+      render text: "<span class='out_of_date'>Error: Too many records!</span>"
+    end
+    
+    
+      
   end
 
 

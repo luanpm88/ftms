@@ -519,6 +519,8 @@ class Ability
         c.statuses.include?("delete_pending")
       end
       can :approve_all, Book
+      
+      can :delete_all, BooksContact
     end
     
     if user.has_role?("accountant") || user.has_role?("manager") || user.has_role?("admin")
