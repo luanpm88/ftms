@@ -430,6 +430,9 @@ class Ability
       
       can :read, SalesTarget
       can :datatable, SalesTarget
+      
+      # for testing
+      can :delete_all, BooksContact
     end
     
     if user.has_role? "education_consultant"
