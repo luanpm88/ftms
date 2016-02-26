@@ -73,6 +73,7 @@ class Contact < ActiveRecord::Base
   has_many :transferred_records, :class_name => "Transfer", :foreign_key => "transfer_for"
   
   has_many :payment_records
+  has_many :company_payment_records, :class_name => "PaymentRecord", :foreign_key => "company_id"
   
   has_many :activities, :dependent => :destroy
 
@@ -1106,7 +1107,7 @@ class Contact < ActiveRecord::Base
                 }
   
   def self.full_text_search(params)
-    records = self.main_contacts
+    records = self.main_contacts.where("contacts.status IS NOT NULL AND contacts.status NOT LIKE ?", "%deleted%")
     if params[:is_individual].present?
       records = records.where(is_individual: params[:is_individual])
     end
@@ -2706,10 +2707,13 @@ class Contact < ActiveRecord::Base
     names = [mainc.name]
     tax_codes = [mainc.tax_code]
     addresses = [mainc.address]
+    company_payment_records = []
     cs.where.not(id: mainc.id).each do |c|
       names << c.name if c.name.present?
       tax_codes << c.tax_code if c.tax_code.present?
       addresses << c.address if c.address.present?
+      
+      company_payment_records += c.company_payment_records
       
       c.contacts.update_all(referrer_id: mainc.id)
       
@@ -2723,6 +2727,15 @@ class Contact < ActiveRecord::Base
     mainc.update_attribute(:tax_code, tax_codes.join(" | "))
     mainc.update_attribute(:address, addresses.join(" | "))
     mainc.save
+    mainc.update_info
+    
+    # move payment records
+    company_payment_records.each do |pr|
+      rc = pr.company
+      pr.update_attribute(:company_id, mainc.id)
+      pr.update_statuses
+      rc.update_info
+    end
     mainc.update_info
     
     return mainc

@@ -57,11 +57,15 @@
 																<span class="badge badge-pending pull-right alert-level1"><%= Notification.course_register_pending_count(current_user, @contact) %></span>
 														</a>
 												</li>
-												<li class="<%= "active" if ["payment"].include?(params[:tab]) %>">
-												  <a href="#payment">Payment Record
-														 <span class="badge badge-info pull-right alert-level1"><%= @contact.payment_count if @contact.payment_count > 0 %></span>
-												  </a>
-												</li>
+										<% end %>
+										
+										<li class="<%= "active" if ["payment"].include?(params[:tab]) %>">
+										  <a href="#payment">Payment Record
+												 <span class="badge badge-info pull-right alert-level1"><%= @contact.payment_count if @contact.payment_count > 0 %></span>
+										  </a>
+										</li>
+												
+										<% if @contact.contact_types.include?(ContactType.student) || @contact.contact_types.include?(ContactType.inquiry) %>
 												<li class="<%= "active" if ["course"].include?(params[:tab]) %>">
 												  <a href="#course">Course List  <span class="badge badge-info pull-right alert-level1"><%= @contact.course_count if @contact.course_count > 0 %></span></a>
 												</li>
