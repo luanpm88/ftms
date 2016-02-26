@@ -525,6 +525,7 @@ Hkerp::Application.routes.draw do
       
       post :add_tags
       post :remove_tags
+      post :remove_company
     end
   end
 

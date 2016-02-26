@@ -28,20 +28,20 @@
 									
 									
 									<div class="listing_box_actions">
-									<div class="btn-group listing_actions"> <a href="#" data-toggle="dropdown" class="btn btn-white dropdown-toggle btn-demo-space"> List Actions (<span class="listing_checked_count">0</span>)<span class="caret"></span> </a>
-										<ul class="dropdown-menu">
-											<li><a href="#" rel="<%= company_pay_payment_records_path(tab_page: 1) %>" type="tab" title="Company Payment">Company Pay</a></li>
-											<li><a href="#" rel="<%= print_payment_list_payment_records_path(format: "pdf") %>">Print Payment List</a></li>
-											<li><a href="#" rel="<%= print_payment_list_payment_records_path(format: "xls") %>">Print Payment List (excel)</a></li>
-											<li><a href="#" rel="<%= approve_all_course_registers_path %>" type="ajax">Approve All</a></li>
-										</ul>
+										<div class="btn-group listing_actions"> <a href="#" data-toggle="dropdown" class="btn btn-white dropdown-toggle btn-demo-space"> List Actions (<span class="listing_checked_count">0</span>)<span class="caret"></span> </a>
+											<ul class="dropdown-menu">
+												<li><a href="#" rel="<%= company_pay_payment_records_path(tab_page: 1) %>" type="tab" title="Company Payment">Company Pay</a></li>
+												<li><a href="#" rel="<%= print_payment_list_payment_records_path(format: "pdf") %>">Print Payment List</a></li>
+												<li><a href="#" rel="<%= print_payment_list_payment_records_path(format: "xls") %>">Print Payment List (excel)</a></li>
+												<li><a href="#" rel="<%= approve_all_course_registers_path %>" type="ajax">Approve All</a></li>
+											</ul>
+										</div>
+										<div class="checkbox check-default check_all_page_but" style="display: inline-block">
+											<input name="check_all_page" id="checkbox_all_page" type="checkbox" value="all_page" class="check_all_page">
+											<label for="checkbox_all_page">Select All Pages</label>
+										</div>
+										
 									</div>
-									<div class="checkbox check-default check_all_page_but" style="display: inline-block">
-										<input name="check_all_page" id="checkbox_all_page" type="checkbox" value="all_page" class="check_all_page">
-										<label for="checkbox_all_page">Select All Pages</label>
-									</div>
-									
-								</div>
 								
 								
 								<div class="grid-body no-border">

@@ -433,6 +433,7 @@ class Ability
       
       # for testing
       can :delete_all, BooksContact
+      can :remove_company, Contact
     end
     
     if user.has_role? "education_consultant"

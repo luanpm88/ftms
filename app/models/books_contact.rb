@@ -384,7 +384,7 @@ class BooksContact < ActiveRecord::Base
   
   def delete(user)
     cr = self.course_register
-    cr.save_draft(user)
+    
     self.destroy
     cr = CourseRegister.find(cr.id)
     
@@ -401,6 +401,8 @@ class BooksContact < ActiveRecord::Base
     cr.payment_records.each do |pr|
       pr.update_statuses
     end
+    
+    cr.save_draft(user)
     
     self.contact.update_info
     

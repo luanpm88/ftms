@@ -682,6 +682,31 @@ class ContactsController < ApplicationController
     render text: "Done!"
   end
   
+  def remove_company
+    if params[:ids].present?
+      if !params[:check_all_page].nil?
+        params[:intake_year] = params["filter"]["intake(1i)"] if params["filter"].present?
+        params[:intake_month] = params["filter"]["intake(2i)"] if params["filter"].present?
+        
+        if params[:is_individual] == "false"
+          params[:contact_types] = nil
+        end        
+        
+        @contacts = Contact.filters(params, current_user)
+      else
+        @contacts = Contact.where(id: params[:ids])
+      end
+    end
+    
+    @contacts.each do |c|
+      c.update_attribute(:referrer_id, nil)
+      c.update_info
+      c.save_draft(current_user)
+    end
+    
+    render text: @contacts.count.to_s
+  end
+  
   def part_info
     
     
