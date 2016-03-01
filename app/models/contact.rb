@@ -728,7 +728,7 @@ class Contact < ActiveRecord::Base
               '<div class="text-center">'+item.course_count_link+"</div>",
               #'<div class="text-left">'+item.referrer_link+"</div>",
               '<div class="text-center contact_tag_box" rel="'+item.id.to_s+'">'+ContactsController.helpers.render_contact_tags_selecter(item)+"</div>",
-              '<div class="text-center">'+item.active_course(@course.id)[:created_at].strftime("%d-%b-%Y")+"</div>",
+              '<div class="text-center">'+(item.active_course(@course.id).nil? ? "" : item.active_course(@course.id)[:created_at].strftime("%d-%b-%Y"))+"</div>",
               '<div class="text-center">'+item.account_manager_col+"</div>",
               '',
             ]
