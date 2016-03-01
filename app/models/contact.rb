@@ -1674,7 +1674,7 @@ class Contact < ActiveRecord::Base
   end
   
   def field_history(type,value=nil)
-    return [] if !self.current.nil? && self.current.statuses.include?("active")
+    # return [] if !self.current.nil? && self.current.statuses.include?("active")
         
     
     if self.draft?
