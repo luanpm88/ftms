@@ -36,7 +36,7 @@
       <% end %>
       
       <% if ["bases"].include?(type) %>
-        <li><%= c.base_items.empty? ? "[empty]" : (c.base_items.map {|item| item["course_type"].short_name+"-"+item["name"].to_s+"-"+item["password"].to_s+"-"+item["status"].to_s}).join("; ") %><span class="nowrap time-span"><%= c.created_at.strftime("%d-%b-%Y, %I:%M %p") %>, by <%= c.user.name if c.user.present? %></span></li>
+        <li><%= c.base_items.empty? ? "[empty]" : c.print_bases %><span class="nowrap time-span"><%= c.created_at.strftime("%d-%b-%Y, %I:%M %p") %>, by <%= c.user.name if c.user.present? %></span></li>
       <% end %>
       
       <% if ["is_individual"].include?(type) %>

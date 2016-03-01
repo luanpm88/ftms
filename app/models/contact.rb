@@ -1699,7 +1699,10 @@ class Contact < ActiveRecord::Base
         value = c.lecturer_course_types.order("short_name").map(&:short_name).join("")        
       elsif type == "contact_type"
         arr << c if c.contact_types.order("name").map(&:name).join("") != value
-        value = c.contact_types.order("name").map(&:name).join("")       
+        value = c.contact_types.order("name").map(&:name).join("")
+      elsif type == "bases"
+        arr << c if c.print_bases != value
+        value = c.print_bases
       else
         arr << c if !c[type].nil? && c[type] != value
         value = c[type]
