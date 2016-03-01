@@ -178,6 +178,7 @@ class Contact < ActiveRecord::Base
     self.update_cache_phrases
     self.update_cache_search
     self.update_cache_transferred_courses_phrases
+    self.update_cache_old_courses
     self.check_bases
   end
   
@@ -379,7 +380,8 @@ class Contact < ActiveRecord::Base
     end
     
     if params["old_course"].present?      
-      @records = @records.includes(:old_link_students).where(old_link_students: {subject_id: params["old_course"].split(",")})
+      #@records = @records.includes(:old_link_students).where(old_link_students: {subject_id: params["old_course"].split(",")})
+      @records = @records.where("contacts.cache_old_courses LIKE ? ", '%['+params["old_course"]+']%')
     end
     
     if params["online_id"].present?      
@@ -2907,6 +2909,21 @@ class Contact < ActiveRecord::Base
       n_tags << tag if contact_tag != tag
     end
     self.update_attribute(:contact_tag_ids, n_tags.map(&:id))
+  end
+  
+  def old_courses
+    arr = []
+    arr += old_link_students.map(&:subject_id)
+    related_contacts.each do |c|
+      arr += c.old_link_students.map(&:subject_id)
+    end
+    
+    return arr
+  end
+  
+  def update_cache_old_courses
+    cache = "["+old_courses.join("][")+"]"
+    self.update_attribute(:cache_old_courses, cache)
   end
   
 end
