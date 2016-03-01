@@ -818,6 +818,7 @@ class User < ActiveRecord::Base
         end
         
         
+        # Notelog count
         users.each do |u|
           users_statistics[u.id][:note] = u.manage_activities
                                             .where("activities.created_at >= ? AND activities.created_at <= ? ", from_date, to_date)

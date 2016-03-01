@@ -94,7 +94,7 @@ class Activity < ActiveRecord::Base
               item.content(user),
               "<div class=\"text-center nowrap\">#{item.display_created_at}</div>",
               "<div class=\"text-center\">#{item.contact.contact_link}</div>",
-              "<div class=\"text-center\">#{item.contact.account_manager.staff_col}</div>",
+              "<div class=\"text-center\">#{(item.account_manager.nil? ? "" : item.account_manager.staff_col)}</div>",
               "<div class=\"text-center\">#{item.display_statuses}</div>",  
               ""
             ]
