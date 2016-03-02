@@ -3301,6 +3301,27 @@
 			}
 	    });
 		
+		$('.select2-ajax-user').select2({
+			placeholder: "Search for a user",
+			allowClear: true,
+			minimumInputLength: 0,
+			ajax: {
+			  url: $('.select2-ajax-user').attr("data"),
+			  dataType: 'json',
+			  data: function (term, page) { // page is the one-based page number tracked by Select2
+				return {
+				  q: term, //search term
+				};
+			  },
+			  results: function (data, page) {
+				return {results: data};
+			  }
+			},
+			initSelection: function (element, callback) {				      
+			  callback({ id: element.val, text: element.attr('text') });
+			}
+	    });
+		
 		$('.select2-ajax-seminars').select2({
 			placeholder: "Search for a seminar",
 			allowClear: true,
