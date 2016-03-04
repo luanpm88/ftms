@@ -632,6 +632,8 @@ class Ability
       end      
       can :approve_all, Contact
       
+      can :delete_all, Contact
+      
       
       
       

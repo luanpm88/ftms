@@ -517,6 +517,36 @@ class ContactsController < ApplicationController
     end
   end
   
+  def delete_all
+    authorize! :approve_all, Contact
+    
+    if params[:ids].present?
+      if !params[:check_all_page].nil?
+        params[:intake_year] = params["filter"]["intake(1i)"] if params["filter"].present?
+        params[:intake_month] = params["filter"]["intake(2i)"] if params["filter"].present?
+        
+        if params[:is_individual] == "false"
+          params[:contact_types] = nil
+        end        
+        
+        @contacts = Contact.filters(params, current_user)
+      else
+        @contacts = Contact.where(id: params[:ids])
+      end
+    end
+    
+    @contacts.each do |c|
+      c.delete
+      c.save_draft(current_user)
+      c.approve_delete(current_user) if current_user.can?(:approve_delete, c)
+    end
+    
+    respond_to do |format|
+      format.html { render "/course_registers/approved", layout: nil }
+      format.json { render action: 'show', status: :created, location: @course_register }
+    end
+  end
+  
   def approved
     render layout: "content"
   end
