@@ -178,15 +178,22 @@ class SeminarsController < ApplicationController
             
             # import company
             if row[1]["company"].present?
-              com = Contact.create(name: row[1]["company"].strip, is_individual: false, user_id: current_user.id)
-              com.account_manager_id = contact.account_manager_id
-              com.save
-              
-              com.add_status("new_pending")
-              com.save_draft(current_user)
-              com.update_info
-              
-              contact.update_attribute(:referrer_id, com.id)
+              com = Contact.main_contacts.where(is_individual: false).where("LOWER(name) = ?", "#{row[1]["company"].mb_chars.strip.downcase}").first
+              #puts com.nil?
+              #puts com
+              if !com.present?
+                com = Contact.create(name: row[1]["company"].strip, is_individual: false, user_id: current_user.id)
+                com.account_manager_id = contact.account_manager_id
+                com.save
+                
+                com.add_status("new_pending")
+                com.save_draft(current_user)
+                com.update_info
+                
+                contact.update_attribute(:referrer_id, com.id)
+              else
+                contact.update_attribute(:referrer_id, com.id) if !contact.referrer_id.present?
+              end
             end
           end
         end
