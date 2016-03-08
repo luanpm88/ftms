@@ -494,6 +494,9 @@ class Transfer < ActiveRecord::Base
     
     draft.save
     
+    contact.update_info if contact.present?
+    to_contact.update_info if to_contact.present?
+    
     return draft
   end
   

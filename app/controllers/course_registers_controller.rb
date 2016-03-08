@@ -137,7 +137,9 @@ class CourseRegistersController < ApplicationController
     authorize! :approve_new, @course_register
     
     respond_to do |format|
-      if @course_register.approve_new(current_user)      
+      if @course_register.approve_new(current_user)
+        Contact.find(@course_register.contact.id).update_info
+        
         format.html { render "/course_registers/approved", layout: nil }
         format.json { render action: 'show', status: :created, location: @course_register }
       else
@@ -154,7 +156,9 @@ class CourseRegistersController < ApplicationController
     authorize! :approve_update, @course_register
     
     respond_to do |format|
-      if @course_register.approve_update(current_user)      
+      if @course_register.approve_update(current_user)
+        Contact.find(@course_register.contact.id).update_info
+        
         format.html { render "/course_registers/approved", layout: nil }
         format.json { render action: 'show', status: :created, location: @course_register }
       else
@@ -170,6 +174,8 @@ class CourseRegistersController < ApplicationController
     
     @course_register.approve_delete(current_user)
     
+    Contact.find(@course_register.contact.id).update_info
+    
     respond_to do |format|
       format.html { render "/course_registers/deleted", layout: nil }
       format.json { render action: 'show', status: :created, location: @course_register }
@@ -182,7 +188,9 @@ class CourseRegistersController < ApplicationController
     @course_register.undo_delete(current_user)
     
     respond_to do |format|
-      if @course_register.undo_delete(current_user)      
+      if @course_register.undo_delete(current_user)
+        Contact.find(@course_register.contact.id).update_info
+        
         format.html { render "/course_registers/approved", layout: nil }
         format.json { render action: 'show', status: :created, location: @course_register }
       else
@@ -215,6 +223,8 @@ class CourseRegistersController < ApplicationController
       cr.approve_delete(current_user) if current_user.can?(:approve_delete, cr)
       cr.approve_new(current_user) if current_user.can?(:approve_new, cr)
       cr.approve_update(current_user) if current_user.can?(:approve_update, cr)
+      
+      Contact.find(cr.contact.id).update_info
     end
     
     respond_to do |format|
@@ -238,6 +248,8 @@ class CourseRegistersController < ApplicationController
     respond_to do |format|
       if @course_register.delete
         @course_register.save_draft(current_user)
+        
+        Contact.find(@course_register.contact.id).update_info
         
         format.html { render "/course_registers/deleted", layout: nil }
         format.json { head :no_content }
