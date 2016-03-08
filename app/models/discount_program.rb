@@ -223,9 +223,18 @@ class DiscountProgram < ActiveRecord::Base
   
   def display_statuses
     return "" if statuses.empty?
-    result = statuses.map {|s| "<span title=\"Last updated: #{current.created_at.strftime("%d-%b-%Y, %I:%M %p")}; By: #{current.user.name}\" class=\"badge user-role badge-info contact-status #{s}\">#{s}</span>"}
+    result = statuses.map {|s| "<span title=\"Last updated: #{last_updated.created_at.strftime("%d-%b-%Y, %I:%M %p")}; By: #{last_updated.user.name}\" class=\"badge user-role badge-info contact-status #{s}\">#{s}</span>"}
     result << "<span title=\"Out of Date\" class=\"badge user-role badge-info contact-status deleted\">out_of_date</span>" if self.end_at < Time.now.beginning_of_day
     result.join(" ").html_safe
+  end
+  
+  def last_updated
+    return current if older.nil? or current.statuses.include?("new_pending") or current.statuses.include?("education_consultant_pending") or current.statuses.include?("update_pending") or current.statuses.include?("delete_pending")
+    return older
+  end
+  
+  def editor
+    return last_updated.user
   end
   
   

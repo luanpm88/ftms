@@ -546,10 +546,19 @@ class Book < ActiveRecord::Base
       if (statuses.include?("out_of_date") || is_in_progress?) && s == "active"
         ""
       else
-        "<span title=\"Last updated: #{current.created_at.strftime("%d-%b-%Y, %I:%M %p")}; By: #{current.user.name}\" class=\"badge user-role badge-info contact-status #{s}\">#{s}</span>"
+        "<span title=\"Last updated: #{last_updated.created_at.strftime("%d-%b-%Y, %I:%M %p")}; By: #{last_updated.user.name}\" class=\"badge user-role badge-info contact-status #{s}\">#{s}</span>"
       end
     }
     result.join(" ").html_safe
+  end
+  
+  def last_updated
+    return current if older.nil? or current.statuses.include?("new_pending") or current.statuses.include?("education_consultant_pending") or current.statuses.include?("update_pending") or current.statuses.include?("delete_pending")
+    return older
+  end
+  
+  def editor
+    return last_updated.user
   end
   
   

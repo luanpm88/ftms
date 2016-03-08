@@ -698,7 +698,7 @@ class Ability
         c.statuses.include?("delete_pending")
       end
       can :undo_delete, DiscountProgram do |c|
-        c.statuses.include?("delete_pending")
+        c.statuses.include?("delete_pending") || c.statuses.include?("deleted")
       end
       
       

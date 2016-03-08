@@ -1516,8 +1516,17 @@ class Contact < ActiveRecord::Base
   def display_statuses
     return "" if statuses.empty?
     edit_by = ((statuses.include?("active") or statuses.include?("deleted")) and !older.nil?) ? " by: #{older.user.name}, approved " : ""
-    result = statuses.map {|s| "<span title=\"Last updated: #{current.created_at.strftime("%d-%b-%Y, %I:%M %p")} /#{edit_by} by: #{current.user.name}\" class=\"badge user-role badge-info contact-status #{s}\">#{s}</span>"}
+    result = statuses.map {|s| "<span title=\"Last updated: #{last_updated.created_at.strftime("%d-%b-%Y, %I:%M %p")} /#{edit_by} by: #{current.user.name}\" class=\"badge user-role badge-info contact-status #{s}\">#{s}</span>"}
     result.join(" ").html_safe
+  end
+  
+  def last_updated
+    return current if older.nil? or current.statuses.include?("new_pending") or current.statuses.include?("education_consultant_pending") or current.statuses.include?("update_pending") or current.statuses.include?("delete_pending")
+    return older
+  end
+  
+  def editor
+    return last_updated.user
   end
   
   
