@@ -246,6 +246,7 @@ class Ability
       can :check_upfront, BooksContact
       can :upfront_book_select_box, BooksContact
       can :delete, BooksContact
+      can :remove, BooksContact
       
       can :view, ContactTag
       can :datatable, ContactTag
