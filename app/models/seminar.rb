@@ -317,13 +317,13 @@ class Seminar < ActiveRecord::Base
       cond = []
       
       #cond1 = data[:email].to_s.strip.downcase.present? ? "LOWER(contacts.cache_search) LIKE '%#{data[:email].to_s.strip.downcase}%'" : "FALSE"
-      cond2 = data[:name].to_s.strip.downcase.present? ? "LOWER(contacts.cache_search) LIKE '%#{data[:name].to_s.strip.downcase}%'" : "FALSE"
+      cond2 = data[:name].to_s.strip.downcase.present? ? "LOWER(contacts.cache_search) LIKE '%#{data[:name].to_s.strip.downcase.gsub("'","/'")}%'" : "FALSE"
       
       # MOBILES COND cond3 = data[:mobile].to_s.strip.downcase.present? ? "LOWER(contacts.cache_search) LIKE '%#{Contact.format_mobile(data[:mobile].to_s)}%'" : "FALSE"
       if !data[:mobiles].empty?
         cond3s = []
         data[:mobiles].each do |m|
-          cond3s << "LOWER(contacts.cache_search) LIKE '%#{m}%'" if m.present? && m.length > 5
+          cond3s << "LOWER(contacts.cache_search) LIKE '%#{m.gsub("'","/'")}%'" if m.present? && m.length > 5
         end
         if cond3s.count > 0
           cond3 = "("+cond3s.join(" OR ")+")"
@@ -338,7 +338,7 @@ class Seminar < ActiveRecord::Base
       if !data[:emails].empty?
         cond1s = []
         data[:emails].each do |m|
-          cond1s << "LOWER(contacts.cache_search) LIKE '%#{m}%'" if m.present? && m.length > 5
+          cond1s << "LOWER(contacts.cache_search) LIKE '%#{m.gsub("'","/'")}%'" if m.present? && m.length > 5
         end
         cond1 = "("+cond1s.join(" OR ")+")"
       else
