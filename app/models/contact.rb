@@ -2468,7 +2468,7 @@ class Contact < ActiveRecord::Base
 
   def find_related_contacts
     cond_other = []
-    cond_other << "LOWER(contacts.cache_search) LIKE '%[search_name: #{name.unaccent.downcase} ]%'"
+    cond_other << "LOWER(contacts.cache_search) LIKE '%[search_name: #{name.unaccent.downcase.gsub("'","\\'")} ]%'"
     emails_like = ([email.to_s.downcase]+email_2s).select { |h| !h.to_s.strip.empty? and h.to_s.length > 6 }
     emails_like = emails_like.empty? ? nil : emails_like.join("|")
     cond_other << "LOWER(contacts.email) SIMILAR TO '%(#{emails_like})%'" if emails_like.present?
