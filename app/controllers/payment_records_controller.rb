@@ -275,7 +275,7 @@ class PaymentRecordsController < ApplicationController
           row = {}
           row[:contact_name] = cc.contact.name
           row[:course] = cc.course.display_name
-          row[:phrases] = Phrase.where(id: cc.course.courses_phrases.includes(:phrase).map(&:phrase_id)).order("name").map(&:"name").join("; ")
+          row[:phrases] = Phrase.where(id: cc.courses_phrases.includes(:phrase).map(&:phrase_id)).order("name").map(&:"name").join("; ")
           row[:company] = !cr.sponsored_company.nil? ? cr.sponsored_company.name : ""          
           
           row[:papers] = {}          
