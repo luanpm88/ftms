@@ -186,6 +186,7 @@ class Transfer < ActiveRecord::Base
   def diplay_from_course(short=false)
     if !course.nil?
       active_course = contact.active_course(course.id, self.created_at-1.second)
+      return "" if active_course.nil?
       
       full_course_subfix = (self.full_course == true && course.upfront != true) ? " <span class=\"active\">[full]</span>" : ""
       
