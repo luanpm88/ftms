@@ -340,7 +340,7 @@ class Seminar < ActiveRecord::Base
         data[:emails].each do |m|
           cond1s << "LOWER(contacts.cache_search) LIKE '%#{m.gsub("'","\\'")}%'" if m.present? && m.length > 5
         end
-        cond1 = "("+cond1s.join(" OR ")+")"
+        cond1 = cond1s.empty? ? "FALSE" : "("+cond1s.join(" OR ")+")"
       else
         cond1 = "FALSE"
       end
