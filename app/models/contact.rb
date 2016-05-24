@@ -695,6 +695,15 @@ class Contact < ActiveRecord::Base
     return result    
   end
   
+  def account_manager_list
+    if is_individual
+      result = !account_manager.nil? ? account_manager.name : ""
+    else
+      result = User.where(id: company_contacts.map(&:account_manager_id).uniq).map(&:name).join(", ")
+    end
+    return result 
+  end
+  
   def self.course_students(params, user)
     @course = Course.find(params[:courses])
     
@@ -1306,6 +1315,10 @@ class Contact < ActiveRecord::Base
   
   def contacts_link
     ActionController::Base.helpers.link_to("["+company_contacts.count.to_s+"]", {controller: "contacts", action: "index", company_id: self.id, tab_page: 1}, title: "#{display_name}: Contact List", class: "tab_page")
+  end
+  
+  def students_by_course_type(course_type_id)
+    company_contacts.where("contacts.cache_course_type_ids LIKE ? OR contacts.old_student_course_type_ids LIKE ?", "%[#{course_type_id}]%", "%[#{course_type_id}]%")
   end
   
   def json_encode_course_type_ids_names
@@ -2936,6 +2949,39 @@ class Contact < ActiveRecord::Base
   def update_cache_old_courses
     cache = "["+old_courses.join("][")+"]"
     self.update_attribute(:cache_old_courses, cache)
+  end
+  
+  def merge_all_infos
+    related_contacts.each do |c|
+      #self.course_registers << c.course_registers
+      #self.contacts_courses << c.contacts_courses
+      #self.books_contacts << c.books_contacts
+      
+      # copy seminars
+      c.contacts_seminars.each do |item|
+        if !self.present_with_seminar?(item.seminar)
+          new_item = item.dup
+          new_item.save
+          self.contacts_seminars << new_item
+        end
+      end
+      
+      # copy activities
+      c.activities.each do |item|
+        new_item = item.dup
+        new_item.save
+        self.activities << new_item
+      end
+      
+      #self.transfers << c.transfers
+      #self.received_transfers << c.received_transfers
+      
+      c.save
+      c.update_info
+    end    
+    
+    self.save
+    self.update_info
   end
   
 end

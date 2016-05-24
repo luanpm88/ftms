@@ -509,6 +509,8 @@ Hkerp::Application.routes.draw do
       get :remove_related_contact
       get :undo_remove_related_contact
       
+      get :merge_all_infos
+      
       post :approve_all
       post :delete_all
       

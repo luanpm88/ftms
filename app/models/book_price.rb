@@ -5,6 +5,4 @@ class BookPrice < ActiveRecord::Base
     self[:prices] = ApplicationController.helpers.split_prices(array).to_json
   end
   
-  
-
 end

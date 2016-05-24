@@ -7,29 +7,57 @@
   <Worksheet ss:Name="Sheet1">
     <Table>
       <Row>
-        <Cell><Data ss:Type="String">Gender</Data></Cell>
-        <Cell><Data ss:Type="String">Full Name</Data></Cell>
-        <Cell><Data ss:Type="String">Company</Data></Cell>
-        <Cell><Data ss:Type="String">Payment Type</Data></Cell>
-        <Cell><Data ss:Type="String">DOB</Data></Cell>
-        <Cell><Data ss:Type="String">Adress</Data></Cell>
-        <Cell><Data ss:Type="String">Email</Data></Cell>
-        <Cell><Data ss:Type="String">Phone</Data></Cell>        
-        <Cell><Data ss:Type="String">Mobile</Data></Cell>
-        <Cell><Data ss:Type="String">Remark to admin</Data></Cell>
+        <% if params[:is_individual] == "false" %>
+          <Cell><Data ss:Type="String">Company</Data></Cell>
+          <Cell><Data ss:Type="String">Adress</Data></Cell>
+          <Cell><Data ss:Type="String">Email</Data></Cell>
+          <Cell><Data ss:Type="String">Phone</Data></Cell>        
+          <Cell><Data ss:Type="String">Mobile</Data></Cell>
+          <Cell><Data ss:Type="String">Remark to admin</Data></Cell>
+          <Cell><Data ss:Type="String">EC</Data></Cell>
+          <Cell><Data ss:Type="String">Total.Contacts</Data></Cell>          
+          <% CourseType.active_course_types.each do |ct| %>
+            <Cell><Data ss:Type="String"><%= ct.short_name %></Data></Cell>
+          <% end %>
+        <% else %>
+          <Cell><Data ss:Type="String">Gender</Data></Cell>
+          <Cell><Data ss:Type="String">Full Name</Data></Cell>
+          <Cell><Data ss:Type="String">Company</Data></Cell>
+          <Cell><Data ss:Type="String">Payment Type</Data></Cell>
+          <Cell><Data ss:Type="String">DOB</Data></Cell>
+          <Cell><Data ss:Type="String">Adress</Data></Cell>
+          <Cell><Data ss:Type="String">Email</Data></Cell>
+          <Cell><Data ss:Type="String">Phone</Data></Cell>        
+          <Cell><Data ss:Type="String">Mobile</Data></Cell>
+          <Cell><Data ss:Type="String">Remark to admin</Data></Cell>
+        <% end %>
       </Row>
     <% @contacts.each do |contact| %>
       <Row>
-        <Cell><Data ss:Type="String"><%= contact.sex == "female" ? "[Ms]" : "[Mr]" %></Data></Cell>
-        <Cell><Data ss:Type="String"><%= contact.name.titleize %></Data></Cell>
-        <Cell><Data ss:Type="String"><%= contact.referrer.name if !contact.referrer.nil? %></Data></Cell>
-        <Cell><Data ss:Type="String"><%= contact.payment_type %></Data></Cell>
-        <Cell><Data ss:Type="String"><%= contact.birthday.strftime("%d-%b-%Y") if !contact.birthday.nil? %></Data></Cell>
-        <Cell><Data ss:Type="String"><%= contact.address %></Data></Cell>
-        <Cell><Data ss:Type="String"><%= contact.email %><%= (";"+contact.email_2s.join(";")) if !contact.email_2s.empty? %></Data></Cell>
-        <Cell><Data ss:Type="String"><%= contact.phone %></Data></Cell>
-        <Cell><Data ss:Type="String"><%= contact.mobile %><%= (";"+contact.mobile_2s.join(";")) if !contact.mobile_2s.empty? %></Data></Cell>
-        <Cell><Data ss:Type="String"><%= contact.remark_to_admin %></Data></Cell>
+        <% if params[:is_individual] == "false" %>
+          <Cell><Data ss:Type="String"><%= contact.name.titleize %></Data></Cell>
+          <Cell><Data ss:Type="String"><%= contact.address %></Data></Cell>
+          <Cell><Data ss:Type="String"><%= contact.email %><%= (";"+contact.email_2s.join(";")) if !contact.email_2s.empty? %></Data></Cell>
+          <Cell><Data ss:Type="String"><%= contact.phone %></Data></Cell>
+          <Cell><Data ss:Type="String"><%= contact.mobile %><%= (";"+contact.mobile_2s.join(";")) if !contact.mobile_2s.empty? %></Data></Cell>
+          <Cell><Data ss:Type="String"><%= contact.remark_to_admin %></Data></Cell>
+          <Cell><Data ss:Type="String"><%= contact.account_manager_list %></Data></Cell>
+          <Cell><Data ss:Type="String"><%= contact.company_contacts.count.to_s %></Data></Cell>          
+          <% CourseType.active_course_types.each do |ct| %>
+            <Cell><Data ss:Type="String"><%= contact.students_by_course_type(ct.id).count %></Data></Cell>
+          <% end %>
+        <% else %>
+          <Cell><Data ss:Type="String"><%= contact.sex == "female" ? "[Ms]" : "[Mr]" %></Data></Cell>
+          <Cell><Data ss:Type="String"><%= contact.name.titleize %></Data></Cell>
+          <Cell><Data ss:Type="String"><%= contact.referrer.name if !contact.referrer.nil? %></Data></Cell>
+          <Cell><Data ss:Type="String"><%= contact.payment_type %></Data></Cell>
+          <Cell><Data ss:Type="String"><%= contact.birthday.strftime("%d-%b-%Y") if !contact.birthday.nil? %></Data></Cell>
+          <Cell><Data ss:Type="String"><%= contact.address %></Data></Cell>
+          <Cell><Data ss:Type="String"><%= contact.email %><%= (";"+contact.email_2s.join(";")) if !contact.email_2s.empty? %></Data></Cell>
+          <Cell><Data ss:Type="String"><%= contact.phone %></Data></Cell>
+          <Cell><Data ss:Type="String"><%= contact.mobile %><%= (";"+contact.mobile_2s.join(";")) if !contact.mobile_2s.empty? %></Data></Cell>
+          <Cell><Data ss:Type="String"><%= contact.remark_to_admin %></Data></Cell>
+        <% end %>
       </Row>
     <% end %>
     </Table>

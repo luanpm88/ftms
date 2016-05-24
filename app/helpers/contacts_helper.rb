@@ -31,6 +31,9 @@ module ContactsHelper
       if params.present? and params[:type] == "merged"
         #actions += '<a confirm-message="Remove from this related group?" href="<%= remove_related_contact_contacts_path(id: @contact.id, remove_id: c.id) %>" class="btn btn-small btn-warning remove_related_contact_link pull-right">This is not the same contact!</a>'
         actions += '<li>'+ActionController::Base.helpers.link_to('Not related contact!', {controller: "contacts", action: "remove_related_contact", id: item.id, remove_id: item.id, tab_page: 1, redirect: "ajax"}, title: "Not related contact!", class: "approve_link")+'</li>'
+        actions += '<li class="divider"></li>'
+        actions += '<li>'+ActionController::Base.helpers.link_to('<span style="color: red"/>Merge all infos</sapn>'.html_safe, {controller: "contacts", action: "merge_all_infos", id: item.id, tab_page: 1, redirect: "ajax"}, title: "Not related contact!", class: "approve_link", data: { confirm: 'Are you sure to move all infos from related contacts to this contact? Be careful! This action cannot be undone.' })+'</li>'
+        actions += '<li class="divider"></li>'
       end
       
       

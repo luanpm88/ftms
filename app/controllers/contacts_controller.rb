@@ -4,7 +4,7 @@ class ContactsController < ApplicationController
   include ContactsHelper
   
   load_and_authorize_resource
-  before_action :set_contact, only: [:transfer_hour_history, :transfer_money_history, :print, :part_info, :remove_related_contact, :delete, :course_register, :ajax_quick_info, :ajax_tag_box, :ajax_edit, :ajax_update, :show, :edit, :update, :destroy, :ajax_destroy, :ajax_show, :ajax_list_agent, :ajax_list_supplier_agent]
+  before_action :set_contact, only: [:merge_all_infos, :transfer_hour_history, :transfer_money_history, :print, :part_info, :remove_related_contact, :delete, :course_register, :ajax_quick_info, :ajax_tag_box, :ajax_edit, :ajax_update, :show, :edit, :update, :destroy, :ajax_destroy, :ajax_show, :ajax_list_agent, :ajax_list_supplier_agent]
   
   def transfer_money_history
     render layout: nil
@@ -392,7 +392,7 @@ class ContactsController < ApplicationController
         
         if params[:is_individual] == "false"
           params[:contact_types] = nil
-        end        
+        end
         
         @contacts = Contact.filters(params, current_user)
       else
@@ -627,6 +627,19 @@ class ContactsController < ApplicationController
     group.remove_contact(Contact.find(params[:remove_id]))
     if params[:redirect] == "ajax"
       render text: "Contact was removed from related contacts"
+    else
+      respond_to do |format|
+        @tab = {url: {controller: "contacts", action: "edit", id: @contact.id, tab_page: 1, tab: "old_info"}, title: @contact.display_name+" #"+@contact.id.to_s}
+        format.html { render "/home/close_tab", layout: nil }
+      end
+    end      
+  end
+  
+  def merge_all_infos
+    @contact.merge_all_infos
+    
+    if params[:redirect] == "ajax"
+      render text: "Contact was merged infos from related contacts"
     else
       respond_to do |format|
         @tab = {url: {controller: "contacts", action: "edit", id: @contact.id, tab_page: 1, tab: "old_info"}, title: @contact.display_name+" #"+@contact.id.to_s}
