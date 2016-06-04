@@ -4,6 +4,7 @@ class PaymentRecord < ActiveRecord::Base
   belongs_to :user
   belongs_to :bank_account
   belongs_to :company, class_name: "Contact"
+  belongs_to :paid_contact, class_name: "Contact", foreign_key: "contact_id"
   belongs_to :transfer
   
   belongs_to :account_manager, class_name: "User"
@@ -59,7 +60,7 @@ class PaymentRecord < ActiveRecord::Base
     if params["students"].present?
       @records = @records.joins("LEFT JOIN course_registers crs ON crs.id = payment_records.course_register_id")
                           .joins("LEFT JOIN transfers ON transfers.id = payment_records.transfer_id")
-      @records = @records.where("crs.contact_id IN (?) OR payment_records.company_id IN (?)  OR transfers.contact_id IN (?)", params["students"], params["students"], params["students"])
+      @records = @records.where("crs.contact_id IN (?) OR payment_records.company_id IN (?)  OR transfers.contact_id IN (?) OR payment_records.contact_id IN (?)", params["students"], params["students"], params["students"], params["students"])
     end
     
     if params["company"].present?
@@ -97,6 +98,8 @@ class PaymentRecord < ActiveRecord::Base
         @records = @records.where.not(company_id: nil)
       elsif params["payment_for"] == "transfer"
         @records = @records.where.not(transfer_id: nil)
+      elsif params["payment_for"] == "custom"
+        @records = @records.where.not(contact_id: nil)
       else
         @records = @records.where(company_id: nil).where(transfer_id: nil)
       end      
@@ -202,6 +205,8 @@ class PaymentRecord < ActiveRecord::Base
       account_manager
     elsif !transfer.nil?
       transfer.contact.account_manager
+    elsif !contact_id.nil?
+      paid_contact.account_manager
     else
       course_register.account_manager
     end    
@@ -226,6 +231,8 @@ class PaymentRecord < ActiveRecord::Base
       (company_records.map {|r| r.payment_record_link(payment_date.strftime("%d-%b-%Y"))}).join("<br />")
     elsif !transfer.nil?
       payment_date.strftime("%d-%b-%Y")
+    elsif !contact_id.nil?
+      created_at.strftime("%d-%b-%Y")
     else
       self.payment_record_link      
     end    
@@ -249,6 +256,8 @@ class PaymentRecord < ActiveRecord::Base
       company
     elsif !transfer.nil?
       transfer.contact
+    elsif !contact_id.nil?
+      paid_contact
     else
       course_register.contact
     end
@@ -266,6 +275,8 @@ class PaymentRecord < ActiveRecord::Base
       return "Student count: #{students.count.to_s}; Paper count: #{paper_count.to_s}"
     elsif !transfer.nil?
       "Defer/Transfer at [#{transfer.created_at.strftime("%d-%b-%Y")}]"
+    elsif !contact_id.nil?
+      "Custom payment at [#{created_at.strftime("%d-%b-%Y")}]"
     else
       course_register.course_list_raw(false)+"; "+course_register.book_list_raw(false)
     end
@@ -283,6 +294,8 @@ class PaymentRecord < ActiveRecord::Base
       return "<span class=\"text-nowrap\">Student count: <strong>#{students.count.to_s}</strong></span><br /><span class=\"text-nowrap\">Paper count: <strong>#{paper_count.to_s}<strong></span>"
     elsif !transfer.nil?
       "Defer/Transfer at [#{transfer.created_at.strftime("%d-%b-%Y")}]"
+    elsif !contact_id.nil?
+      "Custom payment at [#{created_at.strftime("%d-%b-%Y")}]"
     else
       course_register.course_list(false)+course_register.book_list(false)
     end
@@ -321,6 +334,8 @@ class PaymentRecord < ActiveRecord::Base
       first_company_record.amount
     elsif !transfer.nil?
       transfer.total
+    elsif !contact_id.nil?
+      amount
     else
       course_register.total
     end
@@ -331,6 +346,8 @@ class PaymentRecord < ActiveRecord::Base
       amount - total
     elsif !transfer.nil?
       transfer.remain
+    elsif !contact_id.nil?
+      0
     else
       return course_register.remain_amount(self.payment_date)
     end
@@ -363,6 +380,8 @@ class PaymentRecord < ActiveRecord::Base
       return str      
     elsif !transfer.nil?
       transfer.payment_status
+    elsif !contact_id.nil?
+      ["paid"]
     else
       return course_register.payment_status
     end
@@ -521,6 +540,8 @@ class PaymentRecord < ActiveRecord::Base
   def total
     if !transfer.nil?
       self.amount
+    elsif !contact_id.nil?
+      amount
     else
       total = 0.0
       payment_record_details.each do |prd|
@@ -570,6 +591,8 @@ class PaymentRecord < ActiveRecord::Base
       str << "EC["+account_manager_id.to_s+"]"
     elsif !transfer.nil?
       str << "EC["+transfer.user_id.to_s+"]"
+    elsif !contact_id.nil?
+      str << "EC["+account_manager_id.to_s+"]"
     else
       str << "EC["+course_register.account_manager_id.to_s+"]"      
     end 

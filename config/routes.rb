@@ -529,6 +529,9 @@ Hkerp::Application.routes.draw do
       post :add_tags
       post :remove_tags
       post :remove_company
+      
+      get :add_custom_payment
+      post :add_custom_payment
     end
   end
 

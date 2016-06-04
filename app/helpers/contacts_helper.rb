@@ -65,6 +65,13 @@ module ContactsHelper
         actions += '<li>'+ActionController::Base.helpers.link_to('Undo Delete', {controller: "contacts", action: "undo_delete", id: item.id, tab_page: 1}, title: "#{item.display_name}: Undo Delete", class: "approve_link")+'</li>'
       end
       
+      
+      actions += '<li class="divider"></li>'
+      
+      if can? :add_custom_payment, item
+        actions += '<li>'+ActionController::Base.helpers.link_to('Add custom payment'.html_safe, {controller: "contacts", action: "add_custom_payment", contact_id: item.id, tab_page: 1}, title: "#{item.display_name}: Custom payment", class: "tab_page")+'</li>'
+      end
+      
       actions += '<li class="divider"></li>'
       
       if can? :print, item

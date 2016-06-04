@@ -841,6 +841,54 @@ class ContactsController < ApplicationController
                           :right  => 0},
             }
   end
+  
+  # add custom payment for users
+  def add_custom_payment
+    @payment_record = PaymentRecord.new
+    @payment_record.paid_contact = Contact.find(params[:contact_id]) if params[:contact_id].present?
+    
+    if request.post?
+      @payment_record = PaymentRecord.new(payment_record_params)
+      
+      @payment_record.user = current_user
+      @payment_record.status = 1
+      
+      respond_to do |format|
+        if @payment_record.save
+          @tab = {url: {controller: "contacts", action: "edit", id: @payment_record.contact.id, tab_page: 1, tab: "payment"}, title: @payment_record.contact.display_name}
+          format.html { render "/home/close_tab", layout: nil }
+          format.json { render action: 'show', status: :created, location: @payment_record }
+        else
+          format.html { render action: 'new', tab_page: params[:tab_page] }
+          format.json { render json: @payment_record.errors, status: :unprocessable_entity }
+        end
+      end
+    else
+      render layout: "content"
+    end    
+  end
+  
+  def pay_transfer
+    @payment_record = PaymentRecord.new(payment_record_params)
+    @payment_record.user = current_user
+    @payment_record.status = 1
+    
+    respond_to do |format|
+      if @payment_record.save
+        # create note log
+        if params[:note_log].present?
+          @payment_record.transfer.contact.activities.create(user_id: current_user.id, note: params[:note_log]) if params[:note_log].present?
+        end
+        
+        @tab = {url: {controller: "contacts", action: "edit", id: @payment_record.transfer.contact.id, tab_page: 1, tab: "transfer"}, title: @payment_record.transfer.contact.display_name}
+        format.html { render "/home/close_tab", layout: nil }
+        format.json { render action: 'show', status: :created, location: @payment_record }
+      else
+        format.html { render action: 'new', tab_page: params[:tab_page] }
+        format.json { render json: @payment_record.errors, status: :unprocessable_entity }
+      end
+    end
+  end
 
   private
     # Use callbacks to share common setup or constraints between actions.
@@ -851,5 +899,10 @@ class ContactsController < ApplicationController
     # Never trust parameters from the scary internet, only allow the white list through.
     def contact_params
       params.require(:contact).permit(:remark_to_admin, :bases, :mailing_address, :preferred_mailing, :account_manager_id, :base_id, :base_password, :invoice_required, :invoice_info_id, :payment_type, :preferred_mailing, :birthday, :sex, :referrer_id, :is_individual, :mobile_2, :first_name, :last_name, :image, :city_id, :website, :name, :phone, :mobile, :fax, :email, :address, :tax_code, :note, :account_number, :bank, :contact_type_id, :email_2 => [], :parent_ids => [], :agent_ids => [], :company_ids => [], :contact_type_ids => [], :course_type_ids => [], :lecturer_course_type_ids => [], :contact_tag_ids => [])
+    end
+    
+    # Never trust parameters from the scary internet, only allow the white list through.
+    def payment_record_params
+      params.require(:payment_record).permit(:contact_id, :bank_ref, :account_manager_id, :transfer_id, :company_id, :bank_account_id, :payment_date, :course_register_id, :amount, :debt_date, :user_id, :note)
     end
 end

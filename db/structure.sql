@@ -2019,7 +2019,8 @@ CREATE TABLE payment_records (
     cache_payment_status character varying,
     transfer_id integer,
     cache_search text,
-    account_manager_id integer
+    account_manager_id integer,
+    contact_id integer
 );
 
 
@@ -4530,4 +4531,6 @@ INSERT INTO schema_migrations (version) VALUES ('20160219022007');
 INSERT INTO schema_migrations (version) VALUES ('20160219025221');
 
 INSERT INTO schema_migrations (version) VALUES ('20160301032416');
+
+INSERT INTO schema_migrations (version) VALUES ('20160604034730');
 

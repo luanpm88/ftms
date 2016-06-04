@@ -699,6 +699,7 @@ class User < ActiveRecord::Base
     
     ## company sales
     @records = PaymentRecord.where(status: 1)
+                          .where.not(company_id: nil)
                           .where(account_manager_id: user_ids)
                           .where("payment_records.payment_date >= ? AND payment_records.payment_date <= ? ", from_date, to_date)
     @records.each do |pr|
@@ -707,8 +708,6 @@ class User < ActiveRecord::Base
         users_statistics[pr.account_manager_id][:sales] += prd.real_amount
       end
     end
-    
-    
     
     
     # receivable
@@ -749,20 +748,20 @@ class User < ActiveRecord::Base
               end
               
     
-                #transfers
-                transfers = Transfer.includes(:contact).where(parent_id: nil).where("transfers.status IS NOT NULL AND transfers.status NOT LIKE ?", "%[deleted]%")
-                                                  .where(contacts: {account_manager_id: user_ids})
-                                                  .where("transfers.created_at >= ? AND transfers.created_at <= ? ", from_date, to_date)
-                                       
-                transfers.each do |tsf|
-                  if tsf.remain(from_date, to_date) != 0.0 
-                    if users_statistics[tsf.contact.account_manager_id][:details][tsf.course.course_type_id].present?
-                      users_statistics[tsf.contact.account_manager_id][:details][-1][:receivable] += tsf.remain(from_date, to_date)
-                      users_statistics[tsf.contact.account_manager_id][:details][-1][:receivable_contacts] << tsf.contact
-                    end
-                    users_statistics[tsf.contact.account_manager_id][:receivable] += tsf.remain(from_date, to_date)
+              #transfers
+              transfers = Transfer.includes(:contact).where(parent_id: nil).where("transfers.status IS NOT NULL AND transfers.status NOT LIKE ?", "%[deleted]%")
+                                                .where(contacts: {account_manager_id: user_ids})
+                                                .where("transfers.created_at >= ? AND transfers.created_at <= ? ", from_date, to_date)
+                                     
+              transfers.each do |tsf|
+                if tsf.remain(from_date, to_date) != 0.0 
+                  if users_statistics[tsf.contact.account_manager_id][:details][tsf.course.course_type_id].present?
+                    users_statistics[tsf.contact.account_manager_id][:details][-1][:receivable] += tsf.remain(from_date, to_date)
+                    users_statistics[tsf.contact.account_manager_id][:details][-1][:receivable_contacts] << tsf.contact
                   end
+                  users_statistics[tsf.contact.account_manager_id][:receivable] += tsf.remain(from_date, to_date)
                 end
+              end
                 
     # Inquiry # Student
         @contacts = Contact.main_contacts.includes(:contact_types, :course_types)
