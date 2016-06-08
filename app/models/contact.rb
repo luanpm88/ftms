@@ -1914,6 +1914,10 @@ class Contact < ActiveRecord::Base
     return str.join("<br >").html_safe
   end
 
+  def active_payment_records
+    payment_records.where(status: 1)
+  end
+
   def budget_money(datetime=nil)
     if datetime.present?
       result = active_received_transfers.where("transfers.created_at <= ?", datetime).where(to_type: "money").sum(:money)
@@ -1924,6 +1928,9 @@ class Contact < ActiveRecord::Base
       result -= active_contacts_courses.sum(:money)
       result -= active_books_contacts.sum(:money)
     end
+    
+    # custom payment
+    result += active_payment_records.sum(:amount)
     
     return result
   end
@@ -1965,6 +1972,28 @@ class Contact < ActiveRecord::Base
       row[:creator] = t.course_register.user.staff_col
       row[:sign] = "-"
       row[:money] = t.money
+      logs << row
+    end
+    
+    active_books_contacts.where("money > 0").each do |t|
+      t = BooksContact.find(t.id)
+      row = {}
+      row[:datetime] = t.created_at
+      row[:content] = "Registered Stock:"
+      row[:content] += "<div class=\"nowrap\"><strong>"+t.book.display_name+"</strong></div>"      
+      row[:creator] = t.course_register.user.staff_col
+      row[:sign] = "-"
+      row[:money] = t.money
+      logs << row
+    end
+    
+    active_payment_records.each do |t|
+      row = {}
+      row[:datetime] = t.created_at
+      row[:content] = "Custom payment" 
+      row[:creator] = t.user.staff_col
+      row[:sign] = "+"
+      row[:money] = t.amount
       logs << row
     end
     

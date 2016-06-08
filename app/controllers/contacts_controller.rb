@@ -855,6 +855,11 @@ class ContactsController < ApplicationController
       
       respond_to do |format|
         if @payment_record.save
+          # create note log
+          if params[:note_log].present?
+            @payment_record.paid_contact.activities.create(user_id: current_user.id, note: params[:note_log]) if params[:note_log].present?
+          end
+          
           @tab = {url: {controller: "contacts", action: "edit", id: @payment_record.contact.id, tab_page: 1, tab: "payment"}, title: @payment_record.contact.display_name}
           format.html { render "/home/close_tab", layout: nil }
           format.json { render action: 'show', status: :created, location: @payment_record }

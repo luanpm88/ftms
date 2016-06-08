@@ -709,6 +709,15 @@ class User < ActiveRecord::Base
       end
     end
     
+    ## custom payments
+    @records = PaymentRecord.includes(:paid_contact)
+                          .where(status: 1)
+                          .where.not(contact_id: nil)
+                          .where(contacts: {account_manager_id: user_ids})
+    @records.each do |pr|
+      users_statistics[pr.paid_contact.account_manager_id][:sales] += pr.amount
+    end
+    
     
     # receivable
               #contacts courses

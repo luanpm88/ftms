@@ -10,7 +10,7 @@
         </tr>
         <% @contact.budget_money_logs.each do |log| %>
           <tr>
-            <td><%= log[:datetime].strftime("%d-%b-%Y<br> %H:%I %p").html_safe %></td>
+            <td class="text-nowrap"><%= log[:datetime].strftime("%d-%b-%Y<br> %H:%I %p").html_safe %></td>
             <td><%= log[:content].html_safe %></td>
             <td class="text-center"><%= log[:creator] %></td>
             <td class="text-right"><%= log[:sign] %><%= format_price(log[:money]) %></td>
