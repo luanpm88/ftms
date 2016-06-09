@@ -221,6 +221,8 @@ class PaymentRecord < ActiveRecord::Base
       account_manager
     elsif !transfer.nil?
       transfer.user
+    elsif !contact_id.nil?
+      contact.account_manager
     else
       course_register.account_manager
     end    
