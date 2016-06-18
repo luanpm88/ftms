@@ -275,15 +275,16 @@ class Course < ActiveRecord::Base
     actions_col = 6
 
     @records.each do |item|
-      by_staff = !item[:contacts_courses].present? ? "" : "<br /><strong>by:</strong><br />"+(item[:contacts_courses].map{|cc| ContactsCourse.find(cc.id).course_register.user.staff_col}).join("<br />")
-      created_at_col = !item[:contacts_courses].present? ? "" : (item[:contacts_courses].map{|cc| ContactsCourse.find(cc.id).course_register.created_at.strftime("%d-%b-%Y")}).join("<br />")
+      transferred = !item[:contacts_courses].present? ? "<strong>Last transferred on:</strong><br />" : ""
+      by_staff = !item[:contacts_courses].present? ? "<br /><strong>by:</strong><br />"+Transfer.where(to_course_id: item[:course].id).last.user.staff_col : "<br /><strong>by:</strong><br />"+(item[:contacts_courses].map{|cc| ContactsCourse.find(cc.id).course_register.user.staff_col}).join("<br />")
+      created_at_col = !item[:contacts_courses].present? ? Transfer.where(to_course_id: item[:course].id).last.created_at.strftime("%d-%b-%Y") : (item[:contacts_courses].map{|cc| ContactsCourse.find(cc.id).course_register.created_at.strftime("%d-%b-%Y")}).join("<br />")
       itemz = [
               '<div class="text-left nowrap">'+item[:course].display_intake+"</div>",
               '<div class="text-left nowrap">'+item[:course].program_paper_name+"</div>",
               '<div class="text-left">'+@student.display_active_course(item[:course].id)+"</div>",
               '<div class="text-center">'+item[:course].display_for_exam+"</div>",
               '<div class="text-center nowrap">'+item[:course].display_lecturer+"</div>",             
-              '<div class="text-center">'+created_at_col+by_staff+"</div>",
+              '<div class="text-center">'+transferred+created_at_col+by_staff+"</div>",
               "", 
             ]     
 
