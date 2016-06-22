@@ -32,9 +32,9 @@
                                <label class="form-label"><label>Contact</label></label>
                                <span class="help"></span>
                                <div class="input-with-icon right">
-								   <div class="">										
-										<strong><%= @transfer.contact.display_name %></strong>
-								   </div>
+								<div class="">										
+									<strong><%= @transfer.contact.display_name %></strong>
+								</div>
                                </div>
                             </div>
 							
@@ -44,7 +44,7 @@
 											<div class="input-with-icon  right">                                       
 												 <i class=""></i>
 												 <div class="">
-													  <%= @transfer.course.display_name %>
+													<%= @transfer.course.display_name %>
 												 </div>
 											</div>
 								   </div>
@@ -236,7 +236,8 @@
 												  <div class="input-with-icon  right">                                       
 													   <i class=""></i>
 													   <div class="">
-															<strong><%= @transfer.to_contact.display_name %></strong>
+														<input style="width:100%;margin-bottom: 5px;" name="transfer[to_contact_id]" data="<%= contacts_path(email: "true", is_individual: "true", format: "json") %>" class="select2-ajax-contacts" value="<%= @transfer.to_contact_id %>" text="<%= @transfer.to_contact.display_name_long %>" />
+															<!--<strong><%= @transfer.to_contact.display_name %></strong>-->
 													   </div>
 												  </div>
 											 </div>

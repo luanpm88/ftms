@@ -592,7 +592,7 @@ class Ability
         c.statuses.include?("update_pending")
       end
       can :approve_delete, Course do |c|
-        c.contacts_courses.empty? && c.statuses.include?("delete_pending")
+        c.statuses.include?("delete_pending") # && c.contacts_courses.empty?
       end      
       can :undo_delete, Course do |c|
         c.statuses.include?("delete_pending")
