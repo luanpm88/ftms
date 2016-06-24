@@ -125,14 +125,14 @@ class BooksContactsController < ApplicationController
       end
     end
     
-    if @books_contacts.count <= 50
+    if @books_contacts.count <= 100
       @books_contacts.each do |bc|
         bc.delete(current_user)
       end
       
       render text: "Stock registration was successfully removed!"
     else
-      render text: "<span class='out_of_date'>Error: Too many records!</span>"
+      render text: "<span class='out_of_date'>Error: Too many records! Maximum 100 items per time.</span>"
     end
     
     
