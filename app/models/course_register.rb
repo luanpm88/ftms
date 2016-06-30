@@ -169,7 +169,11 @@ class CourseRegister < ActiveRecord::Base
         cc.quantity = row[1]["quantity"]
         cc.contact_id = contact.id
         cc.course_id = course_id
-        cc.intake = (intake.split("-")[1] + "-" + intake.split("-")[0] + "-01").to_date if intake.present?
+        if intake.present?
+          cc.intake = (intake.split("-")[1] + "-" + intake.split("-")[0] + "-01").to_date
+        else
+          cc.intake = nil
+        end
         
         if row[1]["price"] == "no_price"
           cc.price = -1
