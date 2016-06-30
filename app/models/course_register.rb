@@ -156,7 +156,7 @@ class CourseRegister < ActiveRecord::Base
 
   end
   
-  def update_books_contacts(cids, course_id = nil)
+  def update_books_contacts(cids, course_id = nil, intake = nil)
     contact = self.contact    
     cids.each do |row|
       # remove 
@@ -169,6 +169,7 @@ class CourseRegister < ActiveRecord::Base
         cc.quantity = row[1]["quantity"]
         cc.contact_id = contact.id
         cc.course_id = course_id
+        cc.intake = (intake.split("-")[1] + "-" + intake.split("-")[0] + "-01").to_date if intake.present?
         
         if row[1]["price"] == "no_price"
           cc.price = -1
@@ -256,59 +257,74 @@ class CourseRegister < ActiveRecord::Base
       end
     end
     
-    course_ids = nil
+    
     if params["upfront"].present?
-      u_course_ids = Course.where(upfront: params["upfront"]).map(&:id)
+      course_ids = nil
+      if params["upfront"] == "true"
+        course_ids = Course.where(upfront: true).map(&:id)
+      end
+      if params["upfront"] == "false"
+        course_ids = Course.where(upfront: false).map(&:id)
+      end
+      @records = @records.joins(:contacts_courses => :course).where(courses: {id: course_ids}) if !course_ids.nil?
     end
     
-    if params["upfront"] == "true"
-      course_ids = u_course_ids
-    else
-      #if params["intake_year"].present? && params["intake_month"].present?
-      #  course_ids = Course.where("EXTRACT(YEAR FROM courses.intake) = ? AND EXTRACT(MONTH FROM courses.intake) = ? ", params["intake_year"], params["intake_month"]).map(&:id)
-      #elsif params["intake_year"].present?
-      #  course_ids = Course.where("EXTRACT(YEAR FROM courses.intake) = ? ", params["intake_year"]).map(&:id)
-      #elsif params["intake_month"].present?
-      #  course_ids = Course.where("EXTRACT(MONTH FROM courses.intake) = ? ", params["intake_month"]).map(&:id)
-      #end
-      
-      if params["intakes"].present?
-        condintakes = []
-        params["intakes"].split(",").each do |is|
-          is = is.split("-")
-          condintakes << "(EXTRACT(YEAR FROM courses.intake) = #{is[1].to_i.to_s} AND EXTRACT(MONTH FROM courses.intake) = #{is[0].to_i.to_s})"
-        end
-        course_ids = Course.where(condintakes.join(" OR ")).where(upfront: false).map(&:id)
-      end
-      
-      
-      if params["upfront"] == "false"
-        course_ids = Course.where(upfront: false).map(&:id) if course_ids.nil?
-      end
-    end
-    @records = @records.joins(:contacts_courses => :course).where(courses: {id: course_ids}) if !course_ids.nil?
+    #if params["upfront"] == "true"
+    #  course_ids = u_course_ids
+    #else
+    #  #if params["intake_year"].present? && params["intake_month"].present?
+    #  #  course_ids = Course.where("EXTRACT(YEAR FROM courses.intake) = ? AND EXTRACT(MONTH FROM courses.intake) = ? ", params["intake_year"], params["intake_month"]).map(&:id)
+    #  #elsif params["intake_year"].present?
+    #  #  course_ids = Course.where("EXTRACT(YEAR FROM courses.intake) = ? ", params["intake_year"]).map(&:id)
+    #  #elsif params["intake_month"].present?
+    #  #  course_ids = Course.where("EXTRACT(MONTH FROM courses.intake) = ? ", params["intake_month"]).map(&:id)
+    #  #end
+    #  
+    #  if params["intakes"].present?
+    #    condintakes = []
+    #    params["intakes"].split(",").each do |is|
+    #      is = is.split("-")
+    #      condintakes << "(EXTRACT(YEAR FROM courses.intake) = #{is[1].to_i.to_s} AND EXTRACT(MONTH FROM courses.intake) = #{is[0].to_i.to_s})"
+    #    end
+    #    course_ids = Course.where(condintakes.join(" OR ")).where(upfront: false).map(&:id)
+    #  end
+    #  
+    #  
+    #  if params["upfront"] == "false"
+    #    course_ids = Course.where(upfront: false).map(&:id) if course_ids.nil?
+    #  end
+    #end
+    
   
   
     # combined search course
-    if params["intakes"].present? && params["course_types"].present?
+    if params["intakes"].present?
       conds = []
       params["intakes"].split(",").each do |is|
         i = is.split("-")
         intake = I18n.t("date.abbr_month_names")[i[0].to_i]+"-"+i[1]
-        params["course_types"].each do |ct|
-          c = CourseType.find(ct).short_name
-          search_name = "#{intake}-#{c}".downcase
-          
-          if params["subjects"].present?
-            params["subjects"].each do |ss|
-              s = Subject.find(ss).name
-              search_name = "#{intake}-#{c}-#{s}".downcase
+        
+        # intake for stock
+        if params["course_types"].present?
+          params["course_types"].each do |ct|
+            c = CourseType.find(ct).short_name
+            search_name = "#{intake}-#{c}".downcase
+            
+            if params["subjects"].present?
+              params["subjects"].each do |ss|
+                s = Subject.find(ss).name
+                search_name = "#{intake}-#{c}-#{s}".downcase
+                conds << "LOWER(course_registers.cache_search) LIKE '%#{search_name}%'"
+              end
+            else
               conds << "LOWER(course_registers.cache_search) LIKE '%#{search_name}%'"
             end
-          else
-            conds << "LOWER(course_registers.cache_search) LIKE '%#{search_name}%'"
           end
         end
+        
+        # intake for course / stock
+        conds << "course_registers.cache_search LIKE '%[intake:#{(is.split("-")[0].to_i.to_s + "-" + is.split("-")[1].to_i.to_s)}]%'"
+        
       end
       @records = @records.where(conds.join(" OR ")) if !conds.empty?
     end
@@ -359,6 +375,8 @@ class CourseRegister < ActiveRecord::Base
       order = "course_registers.created_at DESC, course_registers.created_at DESC"
     end
     @records = @records.order(order) if !order.nil? && !params["search"]["value"].present?
+    
+    @records = @records.uniq
     
     total = @records.count
     @records = @records.limit(params[:length]).offset(params["start"])
@@ -420,7 +438,8 @@ class CourseRegister < ActiveRecord::Base
     ActionView::Base.send(:include, Rails.application.routes.url_helpers)
     
     @records = self.filter(params, user)
-    @records = @records.search(params["search"]["value"]) if !params["search"]["value"].empty?
+    # @records = @records.search(params["search"]["value"]) if !params["search"]["value"].empty?
+    @records = @records.where("LOWER(course_registers.cache_search) LIKE ?", "%#{params["search"]["value"].unaccent.strip.downcase}%") if params["search"].present? && !params["search"]["value"].empty?
     
     if !params["order"].nil?
       case params["order"]["0"]["column"]
@@ -433,6 +452,8 @@ class CourseRegister < ActiveRecord::Base
       order = "course_registers.created_at DESC"
     end
     @records = @records.order(order) if !order.nil? && !params["search"]["value"].present?
+    
+    @records = @records.uniq
     
     total = @records.count
     @records = @records.limit(params[:length]).offset(params["start"])
@@ -1237,7 +1258,8 @@ class CourseRegister < ActiveRecord::Base
     str = []
     str << contact.display_name
     str << contact.display_name.unaccent
-    str << description
+    str << book_list_raw
+    str << course_list_raw
     str << display_delivery_status
     str << total.to_s
     str << paid_amount.to_s
@@ -1246,6 +1268,13 @@ class CourseRegister < ActiveRecord::Base
     str << self.created_at.strftime("%d-%b-%Y")
     str << contact.account_manager.name
     str << display_statuses
+    str << "[intake:" + (contacts_courses.map{|cc| cc.course.display_intake_raw}).join("][") + "]" if !contacts_courses.empty?
+    
+    intakes = []
+    books_contacts.each do |bc|
+      intakes << bc.intake.strftime("%-m-%Y") if bc.intake.present?
+    end
+    str << "[intake:" + intakes.join("][") + "]"
     
     self.update_attribute(:cache_search, str.join(" "))
   end

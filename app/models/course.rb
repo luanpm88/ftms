@@ -387,6 +387,10 @@ class Course < ActiveRecord::Base
     upfront ? "Upfront" : intake.strftime("%b")+"-"+intake.year.to_s
   end
   
+  def display_intake_raw
+    upfront ? "Upfront" : intake.month.to_s+"-"+intake.year.to_s
+  end
+  
   def update_program_paper(sid)
     return false if sid.nil?
     

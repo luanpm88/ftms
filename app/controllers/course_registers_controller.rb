@@ -44,7 +44,7 @@ class CourseRegistersController < ApplicationController
     @course_register = CourseRegister.new(course_register_params)
     @course_register.user = current_user    
     @course_register.update_contacts_courses(params[:contacts_courses])
-    @course_register.update_books_contacts(params[:books_contacts]) if !params[:books_contacts].nil?
+    @course_register.update_books_contacts(params[:books_contacts], nil, params[:intake]) if !params[:books_contacts].nil?
     
     @course_register.account_manager = @course_register.contact.account_manager
     
@@ -71,7 +71,7 @@ class CourseRegistersController < ApplicationController
   # PATCH/PUT /course_registers/1.json
   def update
     @course_register.update_contacts_courses(params[:contacts_courses]) if !params[:contacts_courses].nil?
-    @course_register.update_books_contacts(params[:books_contacts]) if !params[:books_contacts].nil?
+    @course_register.update_books_contacts(params[:books_contacts], nil, params[:intake]) if !params[:books_contacts].nil?
     
     respond_to do |format|
       if @course_register.save and @course_register.update(course_register_params)
@@ -312,7 +312,7 @@ class CourseRegistersController < ApplicationController
       @course_register = CourseRegister.new(course_register_params)
       @course_register.user = current_user
       @course_register.contact_id = cid
-      @course_register.update_books_contacts(params[:books_contacts], params[:course_id]) if !params[:books_contacts].nil?      
+      @course_register.update_books_contacts(params[:books_contacts], params[:course_id], params[:intake]) if !params[:books_contacts].nil?      
       @course_register.account_manager_id = Contact.find(cid).account_manager
       @course_register.account_manager = Contact.find(cid).account_manager
       
