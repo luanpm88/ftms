@@ -39,7 +39,7 @@ class CourseRegister < ActiveRecord::Base
   
   after_create :update_statuses
   after_create :update_cache_search
-  # after_create :add_note_log
+  after_save :update_cache_search
   
   def note_log
     str = ["Registered Course(s):"]
@@ -1276,7 +1276,7 @@ class CourseRegister < ActiveRecord::Base
     end
     str << "[intake:" + intakes.join("][") + "]"
     
-    self.update_attribute(:cache_search, str.join(" "))
+    self.update_column(:cache_search, str.join(" "))
   end
   
   def has_course_transferred?

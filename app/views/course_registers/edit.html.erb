@@ -436,7 +436,19 @@
 					
 					<% if !@course_register.ordered_books_contacts.empty? %>
 							  <h3 class="dark_head">Stock Registration</h3>					
-							  
+								
+								<div class="row">
+									<div class="col-md-4">
+											<div class="form-group">
+												   <label class="form-label"><%= f.label :intake %></label>
+												  
+												   <span class="help"></span>
+												   <div class="date_select_filter">
+													   <input value="<%= @course_register.ordered_books_contacts.first.intake.strftime("%m-%Y") %>"  text="<%= @course_register.ordered_books_contacts.first.intake.strftime("%b-%Y") %>" style="width:100%;margin-bottom: 5px;" name="intake" data="<%= intake_options_courses_path(format: "json") %>" class="select2-ajax-intakes" />
+												   </div>
+											</div>										
+									</div>
+								</div>
 							  
 							  <div class="stock_box_list">
 								   
