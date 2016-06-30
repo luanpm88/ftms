@@ -178,6 +178,6 @@ class ContactTagsController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def contact_tag_params
-      params.require(:contact_tag).permit(:name, :description)
+      params.require(:contact_tag).permit(:end_at, :name, :description)
     end
 end

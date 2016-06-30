@@ -95,6 +95,10 @@ class Contact < ActiveRecord::Base
   after_validation :update_cache
   before_validation :check_type
   
+  def active_contact_tags
+    contact_tags.where(parent_id: nil).where("status IS NOT NULL AND status LIKE ?", "%[active]%")
+  end
+  
   def company_contacts
     contacts.where(draft_for: nil).where("contacts.status IS NOT NULL AND contacts.status NOT LIKE ?", "%[deleted]%")
   end

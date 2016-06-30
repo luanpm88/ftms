@@ -91,7 +91,8 @@ class ContactTag < ActiveRecord::Base
               "<div item_id=\"#{item.id.to_s}\" class=\"main_part_info checkbox check-default\"><input name=\"ids[]\" id=\"checkbox#{item.id}\" type=\"checkbox\" value=\"#{item.id}\"><label for=\"checkbox#{item.id}\"></label></div>",
               '<div class="text-left nowrap">'+item.name+"</div>",
               '<div class="text-left">'+item.description+"</div>",
-              '<div class="text-center">'+item.created_at.strftime("%d-%b-%Y")+"</div>",
+              '<div class="text-center text-nowrap">'+(item.end_at.nil? ? "" : item.end_at.strftime("%d-%b-%Y"))+"</div>",
+              '<div class="text-center text-nowrap">'+item.created_at.strftime("%d-%b-%Y")+"</div>",
               '<div class="text-center">'+item.display_statuses+"</div>",
               '<div class="text-center">'+item.user.staff_col+"</div>",
               "", 
@@ -131,6 +132,7 @@ class ContactTag < ActiveRecord::Base
   end
   def self.active_contact_tags
     self.main_contact_tags.where("status IS NOT NULL AND status LIKE ?", "%[active]%")
+            .where("end_at IS NULL OR end_at >= ?", Time.now.beginning_of_day)
   end
   
   def draft?

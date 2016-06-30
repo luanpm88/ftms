@@ -87,10 +87,10 @@ module ContactsHelper
       actions = "<div class=\"contact_tag_box\" rel=\""+item.id.to_s+"\">"
     
       actions += '<div class="" rel="'+item.id.to_s+'"><div class="btn-group actions">
-                    <button class="btn btn-mini btn-white btn-demo-space dropdown-toggle tag_button " data-toggle="dropdown" title="">Tags ('+item.contact_tags.count.to_s+') <span class="caret"></span></button>'
+                    <button class="btn btn-mini btn-white btn-demo-space dropdown-toggle tag_button " data-toggle="dropdown" title="">Tags ('+item.active_contact_tags.count.to_s+') <span class="caret"></span></button>'
       actions += '<ul class="dropdown-menu">'      
       
-      item.contact_tags.each do |tag|
+      item.active_contact_tags.each do |tag|
         actions += '<li type="remove" rel="'+item.id.to_s+'" tag_id="'+tag.id.to_s+'" class="contact_tag_item '+tag.name.downcase.gsub(" ","_")+'">'+ActionController::Base.helpers.link_to((tag.name+" <i class=\"icon-minus\"></i>").html_safe, "#", title: "Remove Tag: "+tag.description)+' </li>'        
       end
       

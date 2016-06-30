@@ -435,7 +435,8 @@ CREATE TABLE contact_tags (
     annoucing_user_ids text,
     parent_id integer,
     status text,
-    user_id integer
+    user_id integer,
+    end_at timestamp without time zone
 );
 
 
@@ -4533,4 +4534,6 @@ INSERT INTO schema_migrations (version) VALUES ('20160219025221');
 INSERT INTO schema_migrations (version) VALUES ('20160301032416');
 
 INSERT INTO schema_migrations (version) VALUES ('20160604034730');
+
+INSERT INTO schema_migrations (version) VALUES ('20160630072700');
 
