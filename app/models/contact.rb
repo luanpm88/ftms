@@ -96,7 +96,8 @@ class Contact < ActiveRecord::Base
   before_validation :check_type
   
   def active_contact_tags
-    contact_tags.where(parent_id: nil).where("status IS NOT NULL AND status LIKE ?", "%[active]%")
+    contact_tags.where(parent_id: nil).where("contact_tags.status IS NOT NULL AND contact_tags.status LIKE ?", "%[active]%")
+                .where("contact_tags.end_at IS NULL OR contact_tags.end_at >= ?", Time.now.beginning_of_day)
   end
   
   def company_contacts
