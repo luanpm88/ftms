@@ -35,6 +35,11 @@ module TransfersHelper
         group_2 += 1
       end
       
+      if can? :pay_by_credit, item
+        actions += '<li>'+ActionController::Base.helpers.link_to('Pay by credit money', {controller: "transfers", action: "pay_by_credit", id: item.id}, title: "#{item.contact.name}: Pay by deffered/transferred money", class: "approve_link")+'</li>'
+        group_1 += 1
+      end
+      
       actions += '<li class="divider"></li>' if group_2 > 0
       
       group_3 = 0

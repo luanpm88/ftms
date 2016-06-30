@@ -1926,16 +1926,21 @@ class Contact < ActiveRecord::Base
   def budget_money(datetime=nil)
     if datetime.present?
       result = active_received_transfers.where("transfers.created_at <= ?", datetime).where(to_type: "money").sum(:money)
+      result += active_transfers.where("transfers.created_at <= ?", datetime).where(to_type: "money").sum(:money_credit)
       result -= active_contacts_courses.where("contacts_courses.created_at <= ?", datetime).sum(:money)
       result -= active_books_contacts.where("books_contacts.created_at <= ?", datetime).sum(:money)
     else
       result = active_received_transfers.where(to_type: "money").sum(:money)
+      result += active_transfers.where(to_type: "money").sum(:money_credit)
       result -= active_contacts_courses.sum(:money)
       result -= active_books_contacts.sum(:money)
     end
     
     # custom payment
     result += active_payment_records.sum(:amount)
+    
+    # transfer credit
+    result -= active_transfers.sum(:credit_money)
     
     return result
   end
@@ -1951,6 +1956,18 @@ class Contact < ActiveRecord::Base
       row[:creator] = t.user.staff_col
       row[:sign] = "+"
       row[:money] = t.money
+      logs << row
+    end
+    
+    active_transfers.where(to_type: "money").each do |t|
+      row = {}
+      row[:datetime] = t.created_at
+      by = t.contact != t.to_contact ? " of #{t.contact.contact_link}" : ""
+      row[:content] = t.from_hour.nil? ? "Deferred/Transferred course#{by}:" : "Deferred/Transferred hour#{by}:"
+      row[:content] += t.diplay_from_course(true)
+      row[:creator] = t.user.staff_col
+      row[:sign] = "+"
+      row[:money] = t.money_credit
       logs << row
     end
     
@@ -1999,6 +2016,16 @@ class Contact < ActiveRecord::Base
       row[:creator] = t.user.staff_col
       row[:sign] = "+"
       row[:money] = t.amount
+      logs << row
+    end
+    
+    active_transfers.each do |t|
+      row = {}
+      row[:datetime] = t.created_at
+      row[:content] = "Pay defer/transfer fee by credit" 
+      row[:creator] = t.user.staff_col
+      row[:sign] = "-"
+      row[:money] = t.credit_money
       logs << row
     end
     

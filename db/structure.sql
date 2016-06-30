@@ -2568,7 +2568,9 @@ CREATE TABLE transfers (
     hour_money numeric,
     note text,
     full_course boolean,
-    to_full_course boolean
+    to_full_course boolean,
+    credit_money numeric,
+    money_credit numeric
 );
 
 
@@ -4585,4 +4587,8 @@ INSERT INTO schema_migrations (version) VALUES ('20160604034730');
 INSERT INTO schema_migrations (version) VALUES ('20160630072700');
 
 INSERT INTO schema_migrations (version) VALUES ('20160630111410');
+
+INSERT INTO schema_migrations (version) VALUES ('20160630145144');
+
+INSERT INTO schema_migrations (version) VALUES ('20160630154125');
 

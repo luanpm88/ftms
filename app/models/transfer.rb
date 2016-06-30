@@ -269,7 +269,11 @@ class Transfer < ActiveRecord::Base
   
   def display_money
     if to_type == "money"
-      ApplicationController.helpers.format_price_round(money.to_f)
+      str = ApplicationController.helpers.format_price_round(money.to_f)
+      if money_credit.to_f > 0
+        str += "<br /><br /><label class=\"col_label top0 text-nowrap\">#{contact.name}:</label>".html_safe+ ApplicationController.helpers.format_price_round(money_credit.to_f)
+      end
+      return str
     else
       "N/A"
     end
@@ -281,6 +285,9 @@ class Transfer < ActiveRecord::Base
   
   def money=(new)
     self[:money] = new.to_s.gsub(/\,/, '')
+  end
+  def money_credit=(new)
+    self[:money_credit] = new.to_s.gsub(/\,/, '')
   end
   def admin_fee=(new)
     self[:admin_fee] = new.to_s.gsub(/\,/, '')
@@ -646,11 +653,11 @@ class Transfer < ActiveRecord::Base
   end
   
   def remain(from_date=nil, to_date=nil)
-    total - paid(from_date=nil, to_date=nil)
+    total - paid(from_date=nil, to_date=nil) - credit_money.to_f
   end
   
   def paid?
-    paid == total
+    paid + credit_money.to_f == total
   end
   
   def payment_status
@@ -875,5 +882,19 @@ class Transfer < ActiveRecord::Base
 
     return result_arr
   end
+  
+  def pay_by_credit
+    available_money = contact.budget_money
+    if self.to_type == "money"
+      available_money += self.money
+    end
+    pay = available_money >= remain ? remain : available_money
+    self.update_column(:credit_money, pay)
+    self.update_statuses
+    self.update_cache_search
+    self.update_contact_info
+  end
+  
+  
   
 end

@@ -75,7 +75,7 @@
 					 <div class="row transfer_type_box transfer_type_box_money" style="display:none">
 							  <div class="col-md-12 to_money_box">
 								   <div class="form-group">
-										 <label class="form-label"><label>Money</label></label>
+										 <label class="form-label"><label>Money (<%= @to_contact.name %>)</label></label>
 										 <span class="help">(required)</span>
 										 <div class="input-with-iconz right">                                       
 											  <i class=""></i>
@@ -84,6 +84,18 @@
 											   </div>
 										 </div>
 								   </div>
-								   
+									
+									<% if @contact != @to_contact %>
+										<div class="form-group">
+											 <label class="form-label"><label>Money (<%= @contact.name %>)</label></label>
+											 <span class="help"></span>
+											 <div class="input-with-iconz right">                                       
+												  <i class=""></i>
+												   <div class="input-with_add_butz">
+													 <%= text_field_tag "transfer[money_credit]", "0", class: "form-control price_input price_discount" %>
+												   </div>
+											 </div>
+									   </div>
+									<% end %>
 							  </div>
 					 </div>

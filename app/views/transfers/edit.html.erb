@@ -300,8 +300,22 @@
 																   </div>
 															 </div>
 													   </div>
+													
+														<% if @transfer.contact != @transfer.to_contact %>
+															<div class="form-group">
+																 <label class="form-label"><label>Money (<%= @transfer.contact.name %>)</label></label>
+																 <span class="help"></span>
+																 <div class="input-with-iconz right">                                       
+																	  <i class=""></i>
+																	   <div class="input-with_add_butz">
+																		 <%= text_field_tag "transfer[money_credit]", @transfer.money_credit, class: "form-control price_input price_discount" %>
+																	   </div>
+																 </div>
+														   </div>
+														<% end %>
 													   
 												  </div>
+												
 										</div>
 								   
 								   <% elsif @transfer.to_type == "course" %>

@@ -559,6 +559,10 @@ class Ability
         !t.paid?
       end
       
+      can :pay_by_credit, Transfer do |t|
+        !t.paid? and t.contact.budget_money > 0.0
+      end
+      
     end
     
     if user.has_role?("manager") || user.has_role?("admin")

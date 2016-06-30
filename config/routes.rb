@@ -67,6 +67,7 @@ Hkerp::Application.routes.draw do
       
       post :approve_all
       
+      get :pay_by_credit
     end
   end
   resources :activities do
