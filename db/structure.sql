@@ -1932,6 +1932,38 @@ ALTER SEQUENCE old_user_roles_id_seq OWNED BY old_user_roles.id;
 
 
 --
+-- Name: options; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE TABLE options (
+    id integer NOT NULL,
+    name character varying,
+    value text,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL
+);
+
+
+--
+-- Name: options_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE options_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: options_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE options_id_seq OWNED BY options.id;
+
+
+--
 -- Name: parent_contacts; Type: TABLE; Schema: public; Owner: -; Tablespace: 
 --
 
@@ -3002,6 +3034,13 @@ ALTER TABLE ONLY old_user_roles ALTER COLUMN id SET DEFAULT nextval('old_user_ro
 -- Name: id; Type: DEFAULT; Schema: public; Owner: -
 --
 
+ALTER TABLE ONLY options ALTER COLUMN id SET DEFAULT nextval('options_id_seq'::regclass);
+
+
+--
+-- Name: id; Type: DEFAULT; Schema: public; Owner: -
+--
+
 ALTER TABLE ONLY parent_contacts ALTER COLUMN id SET DEFAULT nextval('parent_contacts_id_seq'::regclass);
 
 
@@ -3537,6 +3576,14 @@ ALTER TABLE ONLY old_user_levels
 
 ALTER TABLE ONLY old_user_roles
     ADD CONSTRAINT old_user_roles_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: options_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+--
+
+ALTER TABLE ONLY options
+    ADD CONSTRAINT options_pkey PRIMARY KEY (id);
 
 
 --
@@ -4536,4 +4583,6 @@ INSERT INTO schema_migrations (version) VALUES ('20160301032416');
 INSERT INTO schema_migrations (version) VALUES ('20160604034730');
 
 INSERT INTO schema_migrations (version) VALUES ('20160630072700');
+
+INSERT INTO schema_migrations (version) VALUES ('20160630111410');
 
