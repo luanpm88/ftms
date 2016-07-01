@@ -382,6 +382,10 @@ class Ability
       can :do_transfer_hour, Transfer
       can :approve_all, Transfer
       
+      can :pay_by_credit, Transfer do |t|
+        !t.paid? and t.contact.budget_money > 0.0
+      end
+      
       can :datatable, CourseRegister
       can :student_course_registers, CourseRegister
       can :read, CourseRegister
