@@ -15,6 +15,12 @@ class BooksContact < ActiveRecord::Base
   after_create :update_statuses
   before_destroy :remove_delivery_details
   
+  after_save :update_info
+  
+  def update_info
+    contact.update_info
+  end
+  
   def remove_delivery_details
     delivery_details.destroy_all
   end

@@ -9,6 +9,11 @@ class ContactsCourse < ActiveRecord::Base
   
   after_create :update_statuses
   after_create :enable_report
+  after_save :update_info
+  
+  def update_info
+    contact.update_info
+  end
   
   
   def enable_report

@@ -889,6 +889,9 @@ class CourseRegister < ActiveRecord::Base
     
     # payment
     self.update_attribute(:cache_payment_status, self.payment_status.join(","))
+    
+    # update contact info
+    contact.update_info
   end
   
   def delivery_status
