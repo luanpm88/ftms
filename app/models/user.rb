@@ -633,6 +633,7 @@ class User < ActiveRecord::Base
     
     course_types = CourseType.main_course_types.order("short_name")
     course_types << CourseType.new(id: -1, short_name: "Defer/Transfer")
+    course_types << CourseType.new(id: -2, short_name: "Custom payment")
     course_type_ids = course_types.map(&:id)
       
     # prepaire array
@@ -715,6 +716,7 @@ class User < ActiveRecord::Base
                           .where.not(contact_id: nil)
                           .where(contacts: {account_manager_id: user_ids})
     @records.each do |pr|
+      users_statistics[pr.paid_contact.account_manager_id][:details][-2][:sales] += pr.amount
       users_statistics[pr.paid_contact.account_manager_id][:sales] += pr.amount
     end
     
