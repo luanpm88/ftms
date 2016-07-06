@@ -234,7 +234,7 @@ class PaymentRecord < ActiveRecord::Base
     elsif !transfer.nil?
       payment_date.strftime("%d-%b-%Y")
     elsif !contact_id.nil?
-      created_at.strftime("%d-%b-%Y")
+      payment_date.strftime("%d-%b-%Y")
     else
       self.payment_record_link      
     end    
