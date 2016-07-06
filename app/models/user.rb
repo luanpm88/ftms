@@ -715,6 +715,7 @@ class User < ActiveRecord::Base
                           .where(status: 1)
                           .where.not(contact_id: nil)
                           .where(contacts: {account_manager_id: user_ids})
+                          .where("payment_records.payment_date >= ? AND payment_records.payment_date <= ? ", from_date, to_date)
     @records.each do |pr|
       users_statistics[pr.paid_contact.account_manager_id][:details][-2][:sales] += pr.amount
       users_statistics[pr.paid_contact.account_manager_id][:sales] += pr.amount
