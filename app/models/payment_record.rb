@@ -297,7 +297,7 @@ class PaymentRecord < ActiveRecord::Base
     elsif !transfer.nil?
       "Defer/Transfer at [#{transfer.created_at.strftime("%d-%b-%Y")}]"
     elsif !contact_id.nil?
-      "Custom payment at [#{created_at.strftime("%d-%b-%Y")}]"
+      "<span class='text-nowrap'>[Custom payment]</span><br /><br />" + self.note
     else
       course_register.course_list(false)+course_register.book_list(false)
     end

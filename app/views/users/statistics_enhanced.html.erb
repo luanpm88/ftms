@@ -180,6 +180,11 @@
                                 <td></td>
                                 <td class="text-right">
                                     <%= format_price(ct_values[:sales]) %>
+				    <div>
+                                        <% ct_values[:cutom_payment_contacts].uniq.each do |c| %>
+                                          <div><%= c.contact_link %></div>		
+                                        <% end %>
+                                    </div>
                                 </td>
                                 <td class="text-right">
                                     <strong>
