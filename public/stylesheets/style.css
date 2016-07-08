@@ -8667,3 +8667,8 @@ h5.list_title {
 .text-nowrap {
     white-space: nowrap;
 }
+.his-icon {
+    cursor: pointer;
+    color: brown;
+    font-size: 18px;
+}

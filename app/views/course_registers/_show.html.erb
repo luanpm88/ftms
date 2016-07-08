@@ -110,7 +110,7 @@
 													  <label class="form-label">Total</label>
 													  <span class="help"></span>
 													  <div class="input-with-iconz text-right">                                       
-															<strong style="font-size: 18px"><%= cc.price == -1 ? "No price" : format_price(cc.total) %></strong>
+														<strong style="font-size: 18px"><%= cc.price == -1 ? "No price" : format_price(cc.total) %></strong>
 													  </div>
 												</div>
 												<% if cc.is_write_off? %>
@@ -348,10 +348,12 @@
 											 <span class="help"></span>
 											 <div class="input-with-icon right">
 												  <div class="text-right" style="font-size: 20px;" width="100%">
-														<strong class=""><%= format_price(@course_register.total) %></strong>
+													<strong class=""><%= format_price(@course_register.total) %></strong>
+													
 												  </div>
 												 
 											 </div>
+											 <%= @course_register.older_total.html_safe %>
 											 
 												
 										</div>										

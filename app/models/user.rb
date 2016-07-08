@@ -719,7 +719,7 @@ class User < ActiveRecord::Base
                           .where("payment_records.payment_date >= ? AND payment_records.payment_date <= ? ", from_date, to_date)
     @records.each do |pr|
       users_statistics[pr.paid_contact.account_manager_id][:details][-2][:sales] += pr.amount
-      users_statistics[pr.paid_contact.account_manager_id][:details][-2][:cutom_payment_contacts] << pr.contact
+      users_statistics[pr.paid_contact.account_manager_id][:details][-2][:cutom_payment_contacts] << {contact: pr.contact, amount: pr.amount}
       
       users_statistics[pr.paid_contact.account_manager_id][:sales] += pr.amount
     end

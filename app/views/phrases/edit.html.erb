@@ -9,7 +9,7 @@
 
 		<div class="page-title <%= "draft" if @phrase.draft? %>""> <i class="icon-briefcase"></i>
 		  <h3 class=""><span class="semi-bold"><%= @phrase.name %></span>
-		  <br /><%= "Changed at: #{@phrase.created_at.strftime("%d-%b-%Y %I:%M %p")} / By: #{@phrase.user.name}" if @phrase.draft? %>
+		  <br /><%= "Changed at: #{@phrase.created_at.strftime("%d-%b-%Y %I:%M %p")} / By: #{@phrase.editor.name}" if @phrase.draft? %>
 		  </h3>
 		</div>
 	  

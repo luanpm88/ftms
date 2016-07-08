@@ -169,7 +169,7 @@
                       </tr>
                       <% user_values[:details].each do |row2| %>
                         <% ct_id, ct_values = row2 %>
-                          <% if ct_values[:show] %>
+                          <% if true %>
                             <tr class="details_row detail-u-<%= user_id %>" style="display: none">
                                 <td>
 					<%= user_values[:user].name %>
@@ -182,7 +182,7 @@
                                     <%= format_price(ct_values[:sales]) %>
 				    <div>
                                         <% ct_values[:cutom_payment_contacts].uniq.each do |c| %>
-                                          <div><%= c.contact_link %></div>		
+                                          <div><%= c[:contact].contact_link %><br />(<%= format_price(c[:amount]) %>)</div>		
                                         <% end %>
                                     </div>
                                 </td>

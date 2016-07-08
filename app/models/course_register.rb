@@ -429,12 +429,35 @@ class CourseRegister < ActiveRecord::Base
     
   end
   
+  def older_total
+    if older.present?
+      olds = []
+      drafts.order("created_at DESC").each do |i|
+        if i.total > 0.0 and i.total != total and !i.statuses.include?("active")
+          olds << ApplicationController.helpers.format_price_round(i.total) + " - " + i.editor.name
+        end
+      end
+      if !olds.empty?
+        total_older = '<div><i class="icon icon-time his-icon" onclick="$(\'.old_' + self.id.to_s + '\').toggle()"></i><div class="old_' + self.id.to_s + '" style="display:none">(' +
+        olds.join('<br />') +
+        ')</div></div>'
+      end
+    end
+    return total_older.to_s
+  end
+  
   def display_amounts
     str = []
     if is_no_price? && total == 0.0
       "No price!"
     else
-      '<label class="col_label top0">Total:</label>'+ApplicationController.helpers.format_price_round(total)+"<label class=\"col_label top0\">Paid:</label>"+ApplicationController.helpers.format_price_round(paid_amount)+"<label class=\"col_label top0\">Receivable:</label>"+ApplicationController.helpers.format_price_round(remain_amount)
+      '<label class="col_label top0">Total:</label>' +
+      ApplicationController.helpers.format_price_round(total) + older_total +
+      "<label class=\"col_label top0\">Paid:</label>" +
+      ApplicationController.helpers.format_price_round(paid_amount) +
+      "<label class=\"col_label top0\">Receivable:</label>" +
+      ApplicationController.helpers.format_price_round(remain_amount)
+      
     end
   end
   

@@ -9,7 +9,7 @@
       
 		<div class="page-title <%= "draft" if @bank_account.draft? %>""> <i class="icon-briefcase"></i>
 		  <h3 class=""><span class="semi-bold"><%= @bank_account.name %></span>
-		  <br /><%= "Changed at: #{@bank_account.created_at.strftime("%d-%b-%Y %I:%M %p")} / By: #{@bank_account.user.name}" if @bank_account.draft? %>
+		  <br /><%= "Changed at: #{@bank_account.created_at.strftime("%d-%b-%Y %I:%M %p")} / By: #{@bank_account.editor.name}" if @bank_account.draft? %>
 		  </h3>
 		</div>
 	  

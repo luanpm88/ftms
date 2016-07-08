@@ -10,7 +10,7 @@
 
       <div class="page-title <%= "draft" if @seminar.draft? %>""> <i class="icon-briefcase"></i>
 		  <h3 class=""><span class="semi-bold"><%= @seminar.name %></span>
-		  <br /><%= "Changed at: #{@seminar.created_at.strftime("%d-%b-%Y %I:%M %p")} / By: #{@seminar.user.name}" if @seminar.draft? %>
+		  <br /><%= "Changed at: #{@seminar.created_at.strftime("%d-%b-%Y %I:%M %p")} / By: #{@seminar.editor.name}" if @seminar.draft? %>
 		  </h3>
 		</div>
 	  

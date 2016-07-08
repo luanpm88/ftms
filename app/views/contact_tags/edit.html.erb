@@ -9,7 +9,7 @@
 		
 		<div class="page-title <%= "draft" if @contact_tag.draft? %>""> <i class="icon-briefcase"></i>
 		  <h3 class=""><span class="semi-bold"><%= @contact_tag.name %></span>
-		  <br /><%= "Changed at: #{@contact_tag.created_at.strftime("%d-%b-%Y %I:%M %p")} / By: #{@contact_tag.user.name}" if @contact_tag.draft? %>
+		  <br /><%= "Changed at: #{@contact_tag.created_at.strftime("%d-%b-%Y %I:%M %p")} / By: #{@contact_tag.editor.name}" if @contact_tag.draft? %>
 		  </h3>
 		</div>
 	  

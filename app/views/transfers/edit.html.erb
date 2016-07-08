@@ -1,6 +1,6 @@
 		  <div class="page-title <%= "draft" if @transfer.draft? %>""> <i class="icon-briefcase"></i>
 			   <h3 class="">Defer/Transfer: <span class="semi-bold"><%= @transfer.contact.name %></span>
-			   <br /><%= "Changed at: #{@transfer.created_at.strftime("%d-%b-%Y %I:%M %p")} / By: #{@transfer.older.user.name}" if @transfer.draft? %>
+			   <br /><%= "Changed at: #{@transfer.created_at.strftime("%d-%b-%Y %I:%M %p")} / By: #{@transfer.editor.name}" if @transfer.draft? %>
 			   </h3>
 			 </div>
 		   
