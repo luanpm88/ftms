@@ -433,7 +433,7 @@ class CourseRegister < ActiveRecord::Base
     if older.present?
       olds = []
       drafts.where("status LIKE ?", "%[active]%").order("created_at DESC").each do |i|
-        if i.total != total
+        if i != current
           olds << ApplicationController.helpers.format_price_round(i.total) + " - " + i.editor.name
         end
       end
