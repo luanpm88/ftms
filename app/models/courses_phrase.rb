@@ -44,7 +44,7 @@ class CoursesPhrase < ActiveRecord::Base
     total = cc.price
     hours = 0
     ContactsCourse.find(cc.id).courses_phrases.each do |cp|
-      hours += cp.hour
+      hours += cp.hour.to_f
     end
     
     return (total/hours)*hour
