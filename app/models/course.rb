@@ -275,10 +275,11 @@ class Course < ActiveRecord::Base
     actions_col = 6
 
     @records.each do |item|
-      transferred = !item[:contacts_courses].present? ? "<strong>Last transferred on:</strong><br />" : ""
-      by_staff = (!item[:contacts_courses].present? and @student.active_received_transfers.where(to_course_id: item[:course].id).last.present?) ? "<br /><strong>by:</strong><br />"+@student.active_received_transfers.where(to_course_id: item[:course].id).last.user.staff_col :
+      last_transfer = @student.active_received_transfers.where(to_course_id: item[:course].id).last
+      transferred = (!item[:contacts_courses].present? and last_transfer.present?) ? "<strong>Last transferred on:</strong><br />" : ""
+      by_staff = (!item[:contacts_courses].present? and last_transfer.present?) ? "<br /><strong>by:</strong><br />"+@student.active_received_transfers.where(to_course_id: item[:course].id).last.user.staff_col :
                   "<br /><strong>by:</strong><br />"+(item[:contacts_courses].map{|cc| ContactsCourse.find(cc.id).course_register.user.staff_col}).join("<br />")
-      created_at_col = (!item[:contacts_courses].present? and @student.active_received_transfers.where(to_course_id: item[:course].id).last.present?) ? @student.active_received_transfers.where(to_course_id: item[:course].id).last.created_at.strftime("%d-%b-%Y") :
+      created_at_col = (!item[:contacts_courses].present? and last_transfer.present?) ? @student.active_received_transfers.where(to_course_id: item[:course].id).last.created_at.strftime("%d-%b-%Y") :
                   (item[:contacts_courses].map{|cc| ContactsCourse.find(cc.id).course_register.created_at.strftime("%d-%b-%Y")}).join("<br />")
       itemz = [
               '<div class="text-left nowrap">'+item[:course].display_intake+"</div>",
