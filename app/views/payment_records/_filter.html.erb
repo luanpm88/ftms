@@ -28,12 +28,12 @@
 					  </div>
 						
 						<% if current_user.has_role?("manager") || current_user.has_role?("admin") || current_user.has_role?("accountant") %>
-						  <div class="col-md-2">
+						  <!--<div class="col-md-2">
 							  <h4>Consultant</h4>
 							  <div class="">
 								  <input style="width:100%;margin-bottom: 5px;" name="account_manager" data="<%= users_path %>" class="select2-ajax-users multiple" />
 							  </div>
-						  </div>
+						  </div>-->
 						<% end %>
 						
 						<div class="col-md-3">
