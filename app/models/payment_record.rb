@@ -100,8 +100,8 @@ class PaymentRecord < ActiveRecord::Base
         @records = @records.where.not(transfer_id: nil)
       elsif params["payment_for"] == "custom"
         @records = @records.where.not(contact_id: nil)
-      else
-        @records = @records.where(company_id: nil).where(transfer_id: nil)
+      #else
+      #  @records = @records.where(company_id: nil).where(transfer_id: nil)
       end      
     end    
     
