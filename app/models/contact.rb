@@ -2339,7 +2339,7 @@ class Contact < ActiveRecord::Base
     str << "0" + phone.to_s.gsub(/^84/,"")
     str << email.to_s
     str << email_2s.join(" ")    
-    str << address.to_s
+    # str << address.to_s
     str << birthday.strftime("%d-%b-%Y") if birthday.present?
     str << referrer.name.squish if !referrer.nil?
     str << display_bases.to_s
