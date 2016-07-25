@@ -594,7 +594,7 @@ class PaymentRecord < ActiveRecord::Base
     elsif !transfer.nil?
       str << "EC["+transfer.user_id.to_s+"]"
     elsif !contact_id.nil?
-      str << "EC["+account_manager_id.to_s+"]"
+      str << "EC["+contact.account_manager_id.to_s+"]"
     else
       str << "EC["+course_register.account_manager_id.to_s+"]"      
     end 
