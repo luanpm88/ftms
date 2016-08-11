@@ -8672,3 +8672,22 @@ h5.list_title {
     color: brown;
     font-size: 18px;
 }
+.old_cr_box_his {
+    position: absolute;
+    background: #fff;
+    width: 400px;
+    padding: 10px;
+    border: solid 1px #ddd;
+    box-shadow: 3px 3px 6px #ddd;
+}
+.old_cr_box_his div.row {
+    margin-bottom: 10px;
+    padding-bottom: 10px;
+    margin: 0 -10px 10px -10px;
+    border-bottom: solid 1px #ddd;    
+}
+.old_cr_box_his div.row:last-child {
+    margin-bottom: 0;
+    padding-bottom: 0;
+    border-bottom: solid 0 #ddd;    
+}

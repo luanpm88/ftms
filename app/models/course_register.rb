@@ -432,15 +432,29 @@ class CourseRegister < ActiveRecord::Base
   def older_total
     if older.present?
       olds = []
-      drafts.where("status LIKE ?", "%[active]%").order("created_at DESC").each do |i|
-        if i != current
-          olds << ApplicationController.helpers.format_price_round(i.total) + " - " + i.editor.name
+      drafts.order("created_at DESC").each do |i|
+        if true
+          str = '<div class="row">' +
+                    '<div class="col-md-4">' +
+                        i.created_at.strftime("%d-%b-%Y") +
+                        '<br />' + i.display_statuses +
+                    '</div>' +
+                    '<div class="col-md-4">' +
+                        i.user.name +
+                    '</div>' +
+                    '<div class="col-md-4">' +                        
+                        '<strong>' + ApplicationController.helpers.format_price_round(i.total) + '</strong>' +
+                    '</div>' +
+                '</div>'
+          olds << str
         end
       end
       if !olds.empty?
-        total_older = '<div><i class="icon icon-time his-icon" onclick="$(\'.old_' + self.id.to_s + '\').toggle()"></i><div class="old_' + self.id.to_s + '" style="display:none">(' +
-        olds.join('<br />') +
-        ')</div></div>'
+        total_older = '<div><i class="icon icon-time his-icon" onclick="$(\'.old_' + self.id.to_s + '\').toggle()"></i><div class="old_' + self.id.to_s + '" style="display:none">' +
+        '<div class="old_cr_box_his">' +
+          olds.join('') +
+        '</div>' +
+        '</div></div>'
       end
     end
     return total_older.to_s
