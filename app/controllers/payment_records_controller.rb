@@ -80,12 +80,20 @@ class PaymentRecordsController < ApplicationController
   # PATCH/PUT /payment_records/1
   # PATCH/PUT /payment_records/1.json
   def update
+    @payment_record.update_payment_record_detail_amount(params[:payment_record_details]) if params[:payment_record_details].present?
+    
     respond_to do |format|
       if @payment_record.update(payment_record_params)
-        format.html { redirect_to params[:tab_page].present? ? "/home/close_tab" : @payment_record, notice: 'Payment record was successfully updated.' }
-        format.json { head :no_content }
+        @payment_record.update_statuses
+        @payment_record.update_cache_search
+        @payment_record.update_course_register_statuses
+        @payment_record.company.update_info
+        
+        @tab = {url: {controller: "payment_records", action: "index", tab_page: 1, tab: "course_registration"}, title: "Payment Record"}
+        format.html { render "/home/close_tab", layout: nil }
+        format.json { render action: 'show', status: :created, location: @payment_record }
       else
-        format.html { render action: 'edit', tab_page: params[:tab_page] }
+        format.html { render action: 'new', tab_page: params[:tab_page] }
         format.json { render json: @payment_record.errors, status: :unprocessable_entity }
       end
     end

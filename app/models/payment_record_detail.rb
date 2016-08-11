@@ -2,6 +2,7 @@ class PaymentRecordDetail < ActiveRecord::Base
   belongs_to :payment_record
   belongs_to :contacts_course
   belongs_to :books_contact
+  belongs_to :course_type
   
   def amount=(new)
     self[:amount] = new.to_s.gsub(/\,/, '')

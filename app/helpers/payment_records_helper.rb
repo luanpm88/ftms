@@ -13,6 +13,10 @@ module PaymentRecordsHelper
           actions += '<li>'+ActionController::Base.helpers.link_to("<i class=\"icon icon-print\"></i> Receipt [#{item.payment_date.strftime("%d-%b-%Y")}]".html_safe, {controller: "payment_records", action: "show", id: item.id, tab_page: 1}, title: "Receipt [#{item.payment_date.strftime("%d-%b-%Y")}]", class: "tab_page")+'</li>'        
         end
       else
+        if can? :update, item
+          actions += '<li>'+ActionController::Base.helpers.link_to("Edit", {controller: "payment_records", action: "edit", id: item.id, tab_page: 1}, title: "Update Payment", class: "tab_page")+'</li>'        
+        end
+        
         item.company_records.each do |pr|
           if can? :print, pr
             actions += '<li>'+ActionController::Base.helpers.link_to("<i class=\"icon icon-print\"></i> Receipt [#{pr.payment_date.strftime("%d-%b-%Y")}]".html_safe, {controller: "payment_records", action: "show", id: pr.id, tab_page: 1}, title: "Receipt [#{pr.payment_date.strftime("%d-%b-%Y")}]", class: "tab_page")+'</li>'        

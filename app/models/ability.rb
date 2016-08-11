@@ -815,6 +815,8 @@ class Ability
       
       can :manage, ReportPeriod
       can :manage, SalesTarget
+      
+      can :update, PaymentRecord
     end
   end
 end

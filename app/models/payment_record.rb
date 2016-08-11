@@ -7,6 +7,7 @@ class PaymentRecord < ActiveRecord::Base
   belongs_to :paid_contact, class_name: "Contact", foreign_key: "contact_id"
   belongs_to :transfer
   
+  
   belongs_to :account_manager, class_name: "User"
   
   belongs_to :parent, class_name: "PaymentRecord"
@@ -519,6 +520,17 @@ class PaymentRecord < ActiveRecord::Base
         pd = self.payment_record_details.new
         pd.amount = row[1]["amount"]
         pd.course_type_id = row[1]["course_type_id"]       
+      end
+    end
+
+  end
+  
+  def update_payment_record_detail_amount(params)
+    params.each do |row|
+      if row[1]["amount"].present?
+        pd = PaymentRecordDetail.find(row[1]["id"].to_i)
+        pd.amount = row[1]["amount"]
+        pd.save
       end
     end
 
