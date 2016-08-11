@@ -816,7 +816,9 @@ class Ability
       can :manage, ReportPeriod
       can :manage, SalesTarget
       
-      can :update, PaymentRecord
+      can :update, PaymentRecord do |o|
+        !o.company.nil?
+      end
     end
   end
 end
