@@ -449,7 +449,7 @@ class CourseRegister < ActiveRecord::Base
           olds << str
         end
       end
-      if !olds.empty?
+      if drafts.count > 2
         total_older = '<div><i class="icon icon-time his-icon" onclick="$(\'.old_' + self.id.to_s + '\').toggle()"></i><div class="old_' + self.id.to_s + '" style="display:none">' +
         '<div class="old_cr_box_his">' +
           olds.join('') +
