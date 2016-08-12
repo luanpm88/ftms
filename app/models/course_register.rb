@@ -438,11 +438,11 @@ class CourseRegister < ActiveRecord::Base
         if current_user_id != i.user.id and current_total != i.total
           str = '<div class="row">' +
                     '<div class="col-md-4">' +
-                        i.created_at.strftime("%d-%b-%Y") +
-                        '<br />' + i.display_statuses +
+                        i.last_updated.created_at.strftime("%d-%b-%Y") +
+                        #'<br />' + i.display_statuses +
                     '</div>' +
                     '<div class="col-md-4">' +
-                        i.user.name +
+                        i.editor.name +
                     '</div>' +
                     '<div class="col-md-4">' +                        
                         '<strong>' + ApplicationController.helpers.format_price_round(i.total) + '</strong>' +
