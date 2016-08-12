@@ -434,8 +434,8 @@ class CourseRegister < ActiveRecord::Base
       olds = []
       current_user_id = 0
       current_total = 0
-      drafts.order("created_at DESC").each do |i|
-        if current_user_id != i.user.id and current_total != i.total
+      revisions.each do |i|
+        if current_total != i.total
           str = '<div class="row">' +
                     '<div class="col-md-4">' +
                         i.last_updated.created_at.strftime("%d-%b-%Y") +
