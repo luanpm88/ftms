@@ -430,10 +430,12 @@ class CourseRegister < ActiveRecord::Base
   end
   
   def older_total
-    if older.present?
+    if older.present? and drafts.count > 2
       olds = []
+      current_user_id = 0
+      current_total = 0
       drafts.order("created_at DESC").each do |i|
-        if true
+        if current_user_id != i.user.id and current_total != i.total
           str = '<div class="row">' +
                     '<div class="col-md-4">' +
                         i.created_at.strftime("%d-%b-%Y") +
@@ -447,6 +449,9 @@ class CourseRegister < ActiveRecord::Base
                     '</div>' +
                 '</div>'
           olds << str
+          
+          current_user_id = i.user.id
+          current_total = i.total
         end
       end
       if drafts.count > 2
