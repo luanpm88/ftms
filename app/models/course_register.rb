@@ -435,7 +435,7 @@ class CourseRegister < ActiveRecord::Base
       current_user_id = 0
       current_total = 0
       drafts.order("created_at DESC").each do |i|
-        if current_user_id != i.user.id or current_total != i.total
+        if current_user_id != i.user.id and current_total != i.total
           str = '<div class="row">' +
                     '<div class="col-md-4">' +
                         i.created_at.strftime("%d-%b-%Y") +
@@ -454,7 +454,7 @@ class CourseRegister < ActiveRecord::Base
           current_total = i.total
         end
       end
-      if drafts.count > 2
+      if olds.count > 1
         total_older = '<div><i class="icon icon-time his-icon" onclick="$(\'.old_' + self.id.to_s + '\').toggle()"></i><div class="old_' + self.id.to_s + '" style="display:none">' +
         '<div class="old_cr_box_his">' +
           olds.join('') +
