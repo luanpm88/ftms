@@ -335,7 +335,7 @@ class User < ActiveRecord::Base
     end
     
     if File.exist?("tmp/backup#{bk_dir}/#{name.gsub(".zip","")}/data.dump") && params[:database].present?
-      `RAILS_ENV=#{rails_env} rake mytask:drop_all_table && RAILS_ENV=#{rails_env} rake db:migrate && pg_restore -d #{database} tmp/backup#{bk_dir}/#{name.gsub(".zip","")}/data.dump`
+      `RAILS_ENV=#{rails_env} rake mytask:drop_all_table && RAILS_ENV=#{rails_env} rake db:migrate && psql #{database} < tmp/backup#{bk_dir}/#{name.gsub(".zip","")}/data.dump`
     end
     
     `rm -rf tmp/backup#{bk_dir} && rm #{path}`

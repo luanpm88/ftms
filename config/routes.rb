@@ -197,6 +197,7 @@ Hkerp::Application.routes.draw do
       
       get :undo_delete
       post :approve_all
+      post :delete_all
     end
   end
   resources :contacts_course_types
@@ -337,6 +338,7 @@ Hkerp::Application.routes.draw do
       get :report_toggle
       get :undo_delete
       post :approve_all
+      post :delete_all
       
       get :intake_options
       
@@ -362,6 +364,7 @@ Hkerp::Application.routes.draw do
       
       get :undo_delete
       post :approve_all
+      post :delete_all
     end
   end
   
@@ -382,6 +385,7 @@ Hkerp::Application.routes.draw do
       
       get :undo_delete
       post :approve_all
+      post :delete_all
     end
   end
   

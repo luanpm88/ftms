@@ -169,6 +169,7 @@ class Ability
       can :report_toggle, Course
       can :transfer_to_box, Course
       can :approve_all, Course
+      can :delete_all, Course
       can :intake_options, Course
       can :print_list, Course
       
@@ -183,6 +184,7 @@ class Ability
       end
       can :field_history, CourseType
       can :approve_all, CourseType
+      can :delete_all, CourseType
       
       
       ## STOCK TYPE
@@ -216,6 +218,7 @@ class Ability
       end
       can :field_history, Subject
       can :approve_all, Subject
+      can :delete_all, Subject
       
       
       can :datatable, Book
@@ -299,6 +302,7 @@ class Ability
       end
       can :field_history, Phrase
       can :approve_all, Phrase
+      can :delete_all, Phrase
       
       
       can :datatable, DiscountProgram

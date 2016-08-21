@@ -193,6 +193,30 @@ class SubjectsController < ApplicationController
     end
   end
   
+  def delete_all
+    if params[:ids].present?
+      if !params[:check_all_page].nil?
+        @items = Subject.filter(params, current_user)
+      else
+        @items = Subject.where(id: params[:ids])
+      end
+    end
+    
+    @items.each do |c|
+      if current_user.can?(:delete, c)
+        c.delete
+        c.save_draft(current_user)
+        #c.approve_delete(current_user)
+        #c.save_draft(current_user)
+      end
+    end
+    
+    respond_to do |format|
+      format.html { render text: "All items were deleted!" }
+      format.json { render action: 'show', status: :created, location: @course_type }
+    end
+  end
+  
   ########## BEGIN REVISION ###############
 
   private

@@ -341,6 +341,33 @@ class CoursesController < ApplicationController
     end
   end
   
+  def delete_all
+    if params[:ids].present?
+      if !params[:check_all_page].nil?
+        params[:intake_year] = params["filter"]["intake(1i)"] if params["filter"].present?
+        params[:intake_month] = params["filter"]["intake(2i)"] if params["filter"].present?
+        
+        @items = Course.filters(params, current_user)
+      else
+        @items = Course.where(id: params[:ids])
+      end
+    end
+    
+    @items.each do |c|
+      if current_user.can?(:delete, c)
+        c.delete
+        c.save_draft(current_user)
+        #c.approve_delete(current_user)
+        #c.save_draft(current_user)
+      end
+    end
+    
+    respond_to do |format|
+      format.html { render text: "All items were deleted!" }
+      format.json { render action: 'show', status: :created, location: @course }
+    end
+  end
+  
   def print_list
     if params[:ids].present?
       if !params[:check_all_page].nil?
