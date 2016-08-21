@@ -130,11 +130,11 @@ class UsersController < ApplicationController
   
   def download_backup
     bk_dir = Setting.get("backup_dir")
-    send_file "/media/sdb1/ftms-backup/"+params[:filename].gsub(bk_dir + "/",""), :type=>"application/zip"
+    send_file bk_dir + "/"+params[:filename].gsub(bk_dir + "/",""), :type=>"application/zip"
   end
   
   def delete_backup
-    `rm #{"/media/sdb1/ftms-backup/"+params[:filename].gsub(bk_dir + "/","")}`
+    `rm #{bk_dir + "/"+params[:filename].gsub(bk_dir + "/","")}`
     respond_to do |format|
       format.html { redirect_to backup_users_path(tab_page: params[:tab_page]) }
       format.json { head :no_content }
