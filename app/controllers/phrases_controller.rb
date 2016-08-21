@@ -214,8 +214,10 @@ class PhrasesController < ApplicationController
       if current_user.can?(:delete, c)
         c.delete
         c.save_draft(current_user)
-        #c.approve_delete(current_user)
-        #c.save_draft(current_user)
+        if current_user.can?(:approve_delete, c)
+          c.approve_delete(current_user)
+          c.save_draft(current_user)
+        end
       end
     end
     
