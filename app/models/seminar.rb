@@ -345,7 +345,6 @@ class Seminar < ActiveRecord::Base
         cond1 = "FALSE"
       end
       
-      
       #cond << "LOWER(contacts.cache_search) LIKE '%#{data[:email].to_s.strip.downcase}%'" if data[:email].to_s.strip.downcase.present?
       #cond << "LOWER(contacts.cache_search) LIKE '%#{data[:name].to_s.strip.downcase}%'" if data[:name].to_s.strip.downcase.present?
       #cond << "LOWER(contacts.cache_search) LIKE '%#{Contact.format_mobile(data[:mobile].to_s)}%'" if data[:mobile].to_s.strip.downcase.present?
@@ -357,7 +356,7 @@ class Seminar < ActiveRecord::Base
       cond << "#{cond3}" if cond3.present?
       puts cond
       puts "zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz"
-      result += Contact.main_contacts.where(cond.join(" OR ")) if cond.present?
+      result += Contact.main_contacts.where("contacts.status IS NOT NULL AND contacts.status NOT LIKE ?", "%[deleted]%").where(cond.join(" OR ")) if cond.present?
     end
     
     return result
