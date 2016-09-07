@@ -338,7 +338,7 @@ class User < ActiveRecord::Base
       puts `RAILS_ENV=#{rails_env} rake mytask:drop_all_table && RAILS_ENV=#{rails_env} rake db:migrate && psql #{database} < tmp/backup#{bk_dir}/#{name.gsub(".zip","")}/data.dump`
     end
     
-    puts 'RAILS_ENV=#{rails_env} rake mytask:drop_all_table && RAILS_ENV=#{rails_env} rake db:migrate && psql #{database} < tmp/backup#{bk_dir}/#{name.gsub(".zip","")}/data.dump'
+    puts 'RAILS_ENV=#{rails_env} rake mytask:drop_all_table && psql #{database} < tmp/backup#{bk_dir}/#{name.gsub(".zip","")}/data.dump'
     
     `rm -rf tmp/backup#{bk_dir} && rm #{path}`
     
