@@ -350,13 +350,14 @@ class Seminar < ActiveRecord::Base
       #cond << "LOWER(contacts.cache_search) LIKE '%#{data[:name].to_s.strip.downcase}%'" if data[:name].to_s.strip.downcase.present?
       #cond << "LOWER(contacts.cache_search) LIKE '%#{Contact.format_mobile(data[:mobile].to_s)}%'" if data[:mobile].to_s.strip.downcase.present?
       
-      cond << "(#{cond1} AND #{cond2})"
-      cond << "(#{cond1} AND #{cond3})"
-      cond << "(#{cond2} AND #{cond3})"
-      cond << "#{cond1}"
-      cond << "#{cond3}"
-      
-      result += Contact.main_contacts.where(cond.join(" OR "))
+      cond << "(#{cond1} AND #{cond2})" if cond1.present? and cond2.present?
+      cond << "(#{cond1} AND #{cond3})" if cond1.present? and cond3.present?
+      cond << "(#{cond2} AND #{cond3})" if cond2.present? and cond3.present?
+      cond << "#{cond1}" if cond1.present?
+      cond << "#{cond3}" if cond3.present?
+      puts cond
+      puts "zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz"
+      result += Contact.main_contacts.where(cond.join(" OR ")) if cond.present?
     end
     
     return result

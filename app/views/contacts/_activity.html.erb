@@ -74,7 +74,7 @@
             <div class="grid simple ">
                 <h4><span class="semi-bold">Old Tag List</span></h4>
                 <div class="grid-body no-border">
-                    <p><span class="semi-bold"><%= @contact.old_student.student_name + " - " + @contact.old_student.student_id + " - " + @contact.old_student.old_consultant.consultant_name %></span></p>
+                    <p><span class="semi-bold"><%= @contact.old_student.student_name + " - " + @contact.old_student.student_id + " - " + @contact.old_student.consultant_name %></span></p>
                     <div class="table-box">
                         <%= render 'tag_list', tag_list: @contact.old_tags.order("old_tags.created_at DESC") %>
                     </div>
@@ -88,7 +88,7 @@
                 <h4><span class="semi-bold">Old Remark List</span></h4>
                 
                 <div class="grid-body no-border">
-                    <p><span class="semi-bold"><%= @contact.old_student.student_name + " - " + @contact.old_student.student_id + " - " + @contact.old_student.old_consultant.consultant_name %></span></p>
+                    <p><span class="semi-bold"><%= @contact.old_student.student_name + " - " + @contact.old_student.student_id + " - " + @contact.old_student.consultant_name %></span></p>
                     <div class="table-box">
                         <%= render 'remark_list', remark_list: @contact.old_note_details.order("old_note_details.note_date DESC")  %>
                     </div>
@@ -110,7 +110,7 @@
                     <div class="grid simple ">
                         <h4><span class="semi-bold">Related Tag List</span></h4>
                         <div class="grid-body no-border">
-                            <p><span class="semi-bold"><%= c.old_student.student_name + " - " + c.old_student.student_id + " - " + c.old_student.old_consultant.consultant_name %></span></p>
+                            <p><span class="semi-bold"><%= c.old_student.student_name + " - " + c.old_student.student_id + " - " + c.old_student.consultant_name %></span></p>
                             <div class="table-box">
                                 <%= render 'tag_list', tag_list: c.old_tags.order("old_tags.created_at DESC") %>
                             </div>
@@ -123,7 +123,7 @@
                         <h4><span class="semi-bold">Related Remark List</span></h4>
                         
                         <div class="grid-body no-border">
-                            <p><span class="semi-bold"><%= c.old_student.student_name + " - " + c.old_student.student_id + " - " + c.old_student.old_consultant.consultant_name %></span></p>
+                            <p><span class="semi-bold"><%= c.old_student.student_name + " - " + c.old_student.student_id + " - " + c.old_student.consultant_name %></span></p>
                             <div class="table-box">
                                 <%= render 'remark_list', remark_list: c.old_note_details.order("old_note_details.note_date DESC") %>
                             </div>

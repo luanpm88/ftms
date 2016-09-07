@@ -45,7 +45,7 @@
                     </div>
     
                     <div class="grid-body no-border">
-                        <p><span class="semi-bold"><%= @contact.old_student.student_name + " - " + @contact.old_student.student_id + " - " + @contact.old_student.old_consultant.consultant_name %></span></p>
+                        <p><span class="semi-bold"><%= @contact.old_student.student_name + " - " + @contact.old_student.student_id + " - " + @contact.old_student.consultant_name %></span></p>
     
                         <div class="table-box">
                             <%= render 'course_list', course_list: @contact.old_link_students %>
@@ -66,7 +66,7 @@
                         </div>
     
                         <div class="grid-body no-border">                        
-                            <p><span class="semi-bold"><%= c.old_student.student_name + " - " + c.old_student.student_id + " - " + c.old_student.old_consultant.consultant_name %></span></p>
+                            <p><span class="semi-bold"><%= c.old_student.student_name + " - " + c.old_student.student_id + " - " + c.old_student.consultant_name %></span></p>
     
                             <div class="table-box">
                                 <%= render 'course_list', course_list: c.old_link_students %>

@@ -47,7 +47,7 @@
 						<h4>Old Book List</h4>
 					</div>
 					<div class="grid-body no-border">
-						<p><span class="semi-bold"><%= @contact.old_student.student_name + " - " + @contact.old_student.student_id + " - " + @contact.old_student.old_consultant.consultant_name %></span></p>
+						<p><span class="semi-bold"><%= @contact.old_student.student_name + " - " + @contact.old_student.student_id + " - " + @contact.old_student.consultant_name %></span></p>
 						<div class="table-box">
 							<%= render 'book_list', book_list: @contact.old_deliverys %>
 						</div>
@@ -67,7 +67,7 @@
 							<h4>Related Book List</h4>
 						</div>
 						<div class="grid-body no-border">
-							<p><span class="semi-bold"><%= c.old_student.student_name + " - " + c.old_student.student_id + " - " + c.old_student.old_consultant.consultant_name %></span></p>
+							<p><span class="semi-bold"><%= c.old_student.student_name + " - " + c.old_student.student_id + " - " + c.old_student.consultant_name %></span></p>
 							<div class="table-box">
 								<%= render 'book_list', book_list: c.old_deliverys %>
 							</div>

@@ -31,5 +31,9 @@ class OldStudent < ActiveRecord::Base
 			student.save
 		end	
 	end
+	
+	def consultant_name
+		old_consultant.present? ? old_consultant.consultant_name : "NO-EC"
+	end
 
 end

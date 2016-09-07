@@ -32,7 +32,6 @@ class System < ActiveRecord::Base
     dir += "_db" if !params[:database].nil?
     dir += "_source" if !params[:file].nil? 
     
-    
     #`mkdir backup` if !File.directory?("backup")
     #`mkdir #{bk_dir}/#{dir}`
     
