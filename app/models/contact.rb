@@ -1936,8 +1936,8 @@ class Contact < ActiveRecord::Base
       result -= active_books_contacts.sum(:money)
     end
     
-    # custom payment
-    result += active_payment_records.sum(:amount)
+    ## custom payment
+    #result += active_payment_records.sum(:amount)
     
     # transfer credit
     result -= active_transfers.sum(:credit_money)
@@ -2009,15 +2009,16 @@ class Contact < ActiveRecord::Base
       logs << row
     end
     
-    active_payment_records.each do |t|
-      row = {}
-      row[:datetime] = t.created_at
-      row[:content] = "Custom payment" 
-      row[:creator] = t.user.staff_col
-      row[:sign] = "+"
-      row[:money] = t.amount
-      logs << row
-    end
+    ## custom payment
+    #active_payment_records.each do |t|
+    #  row = {}
+    #  row[:datetime] = t.created_at
+    #  row[:content] = "Custom payment" 
+    #  row[:creator] = t.user.staff_col
+    #  row[:sign] = "+"
+    #  row[:money] = t.amount
+    #  logs << row
+    #end
     
     active_transfers.each do |t|
       row = {}

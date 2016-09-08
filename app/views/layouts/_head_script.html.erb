@@ -83,7 +83,7 @@
 				var vv = parseFloat(box.find(".input_hour").val().replace(/,/g,""))
 				if(vv > input_remain_hour) {
 					vv = input_remain_hour
-					box.find(".input_hour").val(ReplaceNumberWithDots(vv.toFixed(0)))
+					box.find(".input_hour").val(ReplaceNumberWithDots(vv.toFixed(2)))
 				}
 				input_hour = vv
 			} else {
@@ -94,7 +94,7 @@
 			var input_new_hour = input_remain_hour - input_hour
 			var input_new_money = input_remain_money - rate*input_hour
 			
-			box.find(".input_remain_hour").html(ReplaceNumberWithDots(input_new_hour.toFixed(0)))
+			box.find(".input_remain_hour").html(ReplaceNumberWithDots(input_new_hour.toFixed(2)))
 			box.find(".input_remain_money").html(ReplaceNumberWithDots(input_new_money.toFixed(0)))
 			
 			money += rate*input_hour
