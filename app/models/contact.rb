@@ -2076,7 +2076,7 @@ class Contact < ActiveRecord::Base
         row = {}
         row[:datetime] = transfer.created_at
         row[:content] = "Deferred/Transferred <strong>"+total.to_s+"</strong> hour(s) for <strong>#{ApplicationController.helpers.format_price_round(transfer.money)}</strong>"
-        row[:creator] = transfer.staff_col
+        row[:creator] = transfer.user.staff_col
         row[:sign] = "-"
         row[:hour] = total
         logs << row
