@@ -178,7 +178,7 @@ class User < ActiveRecord::Base
                 }
   
   def self.full_text_search(q)
-    result = self.order("name")
+    result = self.order("name").where(status: 1)
     result = result.search(q) if q.present?
     result = result.limit(50).map {|model| {:id => model.id, :text => model.name} }
     
