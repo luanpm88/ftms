@@ -317,6 +317,7 @@ class Ability
       end
       can :field_history, DiscountProgram
       can :approve_all, DiscountProgram
+      can :delete_all, DiscountProgram
       
       
       can :datatable, BankAccount
@@ -534,6 +535,7 @@ class Ability
         c.statuses.include?("delete_pending")
       end
       can :approve_all, Book
+      can :delete_all, Book
       
       can :delete_all, BooksContact
     end

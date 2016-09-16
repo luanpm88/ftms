@@ -172,6 +172,7 @@ Hkerp::Application.routes.draw do
       ####################
       
       post :approve_all
+      post :delete_all
     end
   end
   resources :courses_phrases do
@@ -312,6 +313,7 @@ Hkerp::Application.routes.draw do
       get :stock_statistics
       get :undo_delete
       post :approve_all
+      post :delete_all
     end
   end
   
