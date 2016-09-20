@@ -16,7 +16,7 @@ class PaymentRecordsController < ApplicationController
       col_5: '<div class="text-center">'+item.bank_account_name+"</div>",
       col_6: '<div class="text-right">'+ApplicationController.helpers.format_price(item.remain)+"</div>",
       col_7: '<div class="text-center">'+item.staff_col+"</div>",
-      col_8: '<div class="text-center">'+item.display_statuses+"</div>",
+      col_8: '<div class="text-center">'+item.display_statuses+item.display_created_on+"</div>",
     }
   end
 

@@ -201,6 +201,10 @@ class PaymentRecord < ActiveRecord::Base
     
   end
   
+  def display_created_on
+    "<div style='padding-top: 10px'>Created on:<br>" + created_at.strftime("%d-%b-%Y") + "</div>"
+  end
+  
   def staff
     if !company.nil?
       account_manager
