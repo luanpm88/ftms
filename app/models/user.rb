@@ -38,6 +38,10 @@ class User < ActiveRecord::Base
     self.order("name")
   end
   
+  def self.active_users
+    self.main_users.where(status: 1)
+  end
+  
   def ability
     @ability ||= Ability.new(self)
   end

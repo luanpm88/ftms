@@ -93,7 +93,7 @@
 							<div class="col-md-3">
 								<h4>Education Consultant</h4>
 								<div class="">
-									<%= select_tag 'user', options_for_select(User.main_users.collect{ |u| [u.name, u.id] }) , {:include_blank => 'All', class: "modern_select width100"} %>
+									<%= select_tag 'user', options_for_select(User.active_users.collect{ |u| [u.name, u.id] }) , {:include_blank => 'All', class: "modern_select width100"} %>
 								</div>
 							</div>
 							
