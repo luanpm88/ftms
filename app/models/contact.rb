@@ -382,7 +382,8 @@ class Contact < ActiveRecord::Base
     end
     
     if params["old_tag"].present?      
-      @records = @records.includes(:old_tags).where(old_tags: {tag_name: params["old_tag"].split(",")})
+      # @records = @records.includes(:old_tags).where(old_tags: {tag_name: params["old_tag"].split(",")})
+      @records = @records.where("contacts.cache_old_tags LIKE ? ", '%['+params["old_tag"]+']%')
     end
     
     if params["old_course"].present?      
