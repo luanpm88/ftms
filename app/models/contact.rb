@@ -184,6 +184,7 @@ class Contact < ActiveRecord::Base
     self.update_cache_search
     self.update_cache_transferred_courses_phrases
     self.update_cache_old_courses
+    self.update_cache_old_tags
     self.check_bases
   end
   
@@ -3013,6 +3014,15 @@ class Contact < ActiveRecord::Base
   def update_cache_old_courses
     cache = "["+old_courses.join("][")+"]"
     self.update_attribute(:cache_old_courses, cache)
+  end
+  
+  def update_cache_old_tags
+    tags = old_tags.map(&:tag_name)
+    related_contacts.each do |c|
+      tags += c.old_tags.map(&:tag_name)
+    end
+    cache = "["+tags.join("][")+"]"
+    self.update_attribute(:cache_old_tags, cache)
   end
   
   def merge_all_infos

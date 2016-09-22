@@ -621,7 +621,8 @@ CREATE TABLE contacts (
     cache_group_id integer,
     cache_books text,
     remark_to_admin text,
-    cache_old_courses text
+    cache_old_courses text,
+    cache_old_tags text
 );
 
 
@@ -4591,4 +4592,6 @@ INSERT INTO schema_migrations (version) VALUES ('20160630111410');
 INSERT INTO schema_migrations (version) VALUES ('20160630145144');
 
 INSERT INTO schema_migrations (version) VALUES ('20160630154125');
+
+INSERT INTO schema_migrations (version) VALUES ('20160922013949');
 

@@ -10,9 +10,9 @@
 					<div class="budget_money"><%= @contact.budget_money %></div>
 					<% if @contact.budget_money <= 0 %>
 						 <style>
-							  .transfer_money_form {
-								   display: none;
-							  }
+							.transfer_money_form {
+								display: none;
+							}
 						 </style>
 					<% end %>
 					<% @contact.budget_hour.each do |val| %>
