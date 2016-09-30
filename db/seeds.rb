@@ -25,6 +25,9 @@ Role.create(name: "accountant")
 Role.create(name: "storage_manager")
 
 Role.create(name: "export_contact_information")
+Role.create(name: "export_contact_excel")
+Role.create(name: "export_contact_mobile")
+Role.create(name: "export_contact_email")
 
 
 # Default role for user

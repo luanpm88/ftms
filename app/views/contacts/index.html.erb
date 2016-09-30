@@ -27,9 +27,15 @@
 						<div class="listing_box_actions" style="margin-bottom: 0; position: relative">
 							<div class="btn-group listing_actions" style="margin-top: 9px;"> <a href="#" data-toggle="dropdown" class="btn btn-primary dropdown-toggle btn-demo-space"> List Actions (<span class="listing_checked_count">0</span>)<span class="caret"></span> </a>
 								<ul class="dropdown-menu">
-									<li><a href="#" rel="<%= export_list_contacts_path(format: "xls") %>">Export List (Excel)</a></li>
-									<li><a href="#" rel="<%= export_mobiles_contacts_path %>">Export Mobiles</a></li>
-									<li><a href="#" rel="<%= export_emails_contacts_path %>">Export Emails</a></li>
+									<% if can? :export_list, Contact %>
+										<li><a href="#" rel="<%= export_list_contacts_path(format: "xls") %>">Export List (Excel)</a></li>
+									<% end %>
+									<% if can? :export_mobiles, Contact %>
+										<li><a href="#" rel="<%= export_mobiles_contacts_path %>">Export Mobiles</a></li>
+									<% end %>
+									<% if can? :export_emails, Contact %>
+										<li><a href="#" rel="<%= export_emails_contacts_path %>">Export Emails</a></li>
+									<% end %>
 									<li class="divider"></li>
 									<li><a href="#" rel="<%= add_stocks_course_registers_path(tab_page: 1) %>" type="tab" title="Add Stock">Add Stock</a></li>
 									<li class="divider"></li>

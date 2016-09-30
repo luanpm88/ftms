@@ -256,8 +256,28 @@
 										<div class="col-md-12">												
 											 <div class="row-fluid user-role sales_admin">
 											   <div class="checkbox check-info">
-												 <input type="checkbox" <%= 'checked="checked"'.html_safe if @user.has_role?("export_contact_information") %> value="<%= Role.get("export_contact_information").id %>" id="role_<%= Role.get("export_contact_information").id %>" name="user[role_ids][]">
-												 <label for="role_<%= Role.get("export_contact_information").id %>">Export Contact Mobiles/Emails</label>
+												 <input type="checkbox" <%= 'checked="checked"'.html_safe if @user.has_role?("export_contact_excel") %> value="<%= Role.get("export_contact_excel").id %>" id="role_<%= Role.get("export_contact_excel").id %>" name="user[role_ids][]">
+												 <label for="role_<%= Role.get("export_contact_excel").id %>">Export Contact - Excel</label>
+											   </div>
+											 </div>
+										</div>
+									</div>
+									<div class="row">
+										<div class="col-md-12">												
+											 <div class="row-fluid user-role sales_admin">
+											   <div class="checkbox check-info">
+												 <input type="checkbox" <%= 'checked="checked"'.html_safe if @user.has_role?("export_contact_mobile") %> value="<%= Role.get("export_contact_mobile").id %>" id="role_<%= Role.get("export_contact_mobile").id %>" name="user[role_ids][]">
+												 <label for="role_<%= Role.get("export_contact_mobile").id %>">Export Contact Mobiles</label>
+											   </div>
+											 </div>
+										</div>
+									</div>
+									<div class="row">
+										<div class="col-md-12">												
+											 <div class="row-fluid user-role sales_admin">
+											   <div class="checkbox check-info">
+												 <input type="checkbox" <%= 'checked="checked"'.html_safe if @user.has_role?("export_contact_email") %> value="<%= Role.get("export_contact_email").id %>" id="role_<%= Role.get("export_contact_email").id %>" name="user[role_ids][]">
+												 <label for="role_<%= Role.get("export_contact_email").id %>">Export Contact Emails</label>
 											   </div>
 											 </div>
 										</div>

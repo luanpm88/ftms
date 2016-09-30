@@ -109,8 +109,7 @@ class Ability
       can :create, Contact
       can :update_tag, Contact
       can :course_students, Contact
-      can :seminar_students, Contact
-      can :export_list, Contact
+      can :seminar_students, Contact      
       can :related_info_box, Contact
       can :field_history, Contact
       can :ajax_quick_info, Contact
@@ -127,8 +126,16 @@ class Ability
       can :transfer_money_history, Contact
       can :transfer_hour_history, Contact
       
-      if user.has_role? "export_contact_information"
-        can :export_mobiles, Contact
+      
+      if user.has_role? "export_contact_excel"
+        can :export_list, Contact
+      end
+      
+      if user.has_role? "export_contact_mobile"
+        can :export_mobiles, Contact      
+      end
+      
+      if user.has_role? "export_contact_email"
         can :export_emails, Contact
       end
         
