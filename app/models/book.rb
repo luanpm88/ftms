@@ -295,7 +295,7 @@ class Book < ActiveRecord::Base
     @records = @records.limit(params[:length]).offset(params["start"])
     data = []
     
-    actions_col = 7
+    actions_col = 9
     @records.each do |item|
       item = [
               item.cover_link,
@@ -303,7 +303,9 @@ class Book < ActiveRecord::Base
               '<div class="text-left">'+item.publisher.to_s+"</div>",
               '<div class="text-center">'+item.active_books_contacts.where(contact_id: @student.id).sum(:quantity).to_s+"</div>", #'<div class="text-right">'+ApplicationController.helpers.format_price(@student.books_contact(item).total)+"</div>",
               '<div class="text-center">'+ item.display_registerd_at(@student)+"</div>",
-              '<div class="text-center">'+ item.display_delivery_status(@student)+"</div>", 
+              '<div class="text-right">'+ item.display_price(@student)+"</div>",
+              '<div class="text-center">'+ item.display_upfront(@student)+"</div>",
+              '<div class="text-center">'+ item.display_delivery_status(@student)+"</div>",
               '<div class="text-center">'+item.display_creator(@student)+"</div>",
               ""
             ]
@@ -320,6 +322,22 @@ class Book < ActiveRecord::Base
     
     return {result: result, items: @records, actions_col: actions_col}
     
+  end
+  
+  def display_upfront(student)
+    str = []
+    student.active_books_contacts.where(book_id: self.id).each do |bc|
+      str << bc.display_upfront
+    end
+    str.join("<br />").html_safe
+  end
+  
+  def display_price(student)
+    total = 0.0
+    student.active_books_contacts.where(book_id: self.id).each do |bc|
+      total += bc.total
+    end
+    ApplicationController.helpers.format_price(total)
   end
   
   def course_registers

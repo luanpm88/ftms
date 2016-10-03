@@ -111,7 +111,7 @@ class DiscountProgram < ActiveRecord::Base
     
     data = []
     
-    actions_col = 9
+    actions_col = 10
     @records.each do |item|
       ############### BEGIN REVISION #########################
       # update approved status
@@ -124,7 +124,8 @@ class DiscountProgram < ActiveRecord::Base
               "<div item_id=\"#{item.id.to_s}\" class=\"main_part_info checkbox check-default\"><input name=\"ids[]\" id=\"checkbox#{item.id}\" type=\"checkbox\" value=\"#{item.id}\"><label for=\"checkbox#{item.id}\"></label></div>",
               item.name,
               item.description,
-              '<div class="text-center">'+item.programs_name+"</div>",
+              '<div class="text-center">'+item.contacts_link+"</div>",
+              '<div class="text-center">'+item.programs_name+"</div>",              
               '<div class="text-center">'+item.display_rate+"</div>",
               '<div class="text-center">'+item.start_at.strftime("%d-%b-%Y")+"</div>",
               '<div class="text-center">'+item.end_at.strftime("%d-%b-%Y")+"</div>",              
@@ -460,6 +461,16 @@ class DiscountProgram < ActiveRecord::Base
   def json_encode_course_type_ids_names
     json = course_types.map {|t| {id: t.id.to_s, text: t.short_name}}
     json.to_json
+  end
+  
+  def contacts
+    Contact.joins(:contacts_courses).where("contacts_courses.discount_programs LIKE ?", "%\"id\"\:\"#{self.id}\"%").uniq("contacts.id")
+  end
+  
+  def contacts_link
+    link_helper = ActionController::Base.helpers
+    
+    link_helper.link_to(contacts.count.to_s, {controller: "contacts", action: "index", tab_page: 1, discount_program_id: self.id, hide_filter: true}, title: "#{self.name}: contacts", class: "tab_page")
   end
   
 end

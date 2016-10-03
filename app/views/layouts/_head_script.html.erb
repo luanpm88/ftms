@@ -1559,6 +1559,10 @@
 					if($(".contact-filter input[name='no_added_books']").val()) {
 						d.no_added_books =  $(".contact-filter input[name='no_added_books']").val()
 					}
+					
+					if($(".contact-filter input[name='discount_program_id']").val()) {
+						d.discount_program_id =  $(".contact-filter input[name='discount_program_id']").val()
+					}
 				}
 			},
 			"columnDefs": [ { "targets": [0,2,3,4,6,8], "orderable": false } ],

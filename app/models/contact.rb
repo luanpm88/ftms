@@ -422,6 +422,12 @@ class Contact < ActiveRecord::Base
       @records = @records.where(city_id: cities_ids)
     end
     
+    # Discount Program
+    if params["discount_program_id"].present?
+      dp = DiscountProgram.find(params["discount_program_id"]);
+      @records = @records.where(id: dp.contacts.map(&:id))
+    end
+    
     @records = @records.where("LOWER(contacts.cache_search) LIKE ? OR LOWER(contacts.name) LIKE ? OR UPPER(contacts.name) LIKE ?", "%#{params["search"]["value"].mb_chars.strip.downcase}%", "%#{params["search"]["value"].mb_chars.strip.downcase}%", "%#{params["search"]["value"].mb_chars.strip.upcase}%") if params["search"].present? && !params["search"]["value"].empty? #.search(params["search"]["value"])
     
     return @records
