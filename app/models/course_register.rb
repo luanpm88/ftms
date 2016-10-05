@@ -687,6 +687,7 @@ class CourseRegister < ActiveRecord::Base
           d_intake = I18n.t("date.abbr_month_names")[row[:books_contact].intake.month.to_i] + "-" + row[:books_contact].intake.year.to_s
         else
           intake = "##"
+          d_intake = "##"
         end
         
         if params.nil? or !params["intakes"].present? or (!params.nil? and params["intakes"].present? and params["intakes"].split(',').include?(intake))
