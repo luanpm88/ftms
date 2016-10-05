@@ -573,7 +573,7 @@ class CourseRegister < ActiveRecord::Base
   def description(params=nil)
     str = []
     str << "<h5 class=\"list_title\"><i class=\"icon-suitcase\"></i> Courses: </h5>#{course_list}" if !contacts_courses.empty?
-    str << "<h5 class=\"list_title\"><i class=\"icon-book\"></i> Stocks: </h5>#{book_list(true, params)}" if !books_contacts.empty?
+    str << "<h5 class=\"list_title\"><i class=\"icon-book\"></i> Stocks: </h5>#{book_list(true, params)}" if !books_contacts.empty? and book_list(true, params).present?
     
     return str.join("<br />")
   end
