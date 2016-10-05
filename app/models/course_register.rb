@@ -517,7 +517,7 @@ class CourseRegister < ActiveRecord::Base
       item = [
               "<div class=\"checkbox check-default\"><input name=\"ids[]\" id=\"checkbox#{item.id}\" type=\"checkbox\" value=\"#{item.id}\"><label for=\"checkbox#{item.id}\"></label></div>",
               item.contact.contact_link,
-              item.description,
+              item.description(params),
               '<div class="text-right">'+item.total_col+"</div>",
               '<div class="text-right">'+item.paid_col+"</div>",
               '<div class="text-right">'+item.remain_col+"</div>",
@@ -570,10 +570,10 @@ class CourseRegister < ActiveRecord::Base
   def bank_account_name
     self.all_payment_records.empty? ? "" : self.all_payment_records.last.bank_account.name
   end
-  def description
+  def description(params=nil)
     str = []
     str << "<h5 class=\"list_title\"><i class=\"icon-suitcase\"></i> Courses: </h5>#{course_list}" if !contacts_courses.empty?
-    str << "<h5 class=\"list_title\"><i class=\"icon-book\"></i> Stocks: </h5>#{book_list}" if !books_contacts.empty?
+    str << "<h5 class=\"list_title\"><i class=\"icon-book\"></i> Stocks: </h5>#{book_list(true, params)}" if !books_contacts.empty?
     
     return str.join("<br />")
   end
@@ -678,13 +678,24 @@ class CourseRegister < ActiveRecord::Base
     return arr
   end
   
-  def book_list(long=true)
+  def book_list(long=true, params=nil)
     arr = []
     books.each do |row|
-      if long == false
-        arr << "<div><strong><span class=\"badge badge-success\">#{row[:books_contact].quantity}</span> "+row[:book].display_name+"</strong><div>"
-      else
-        arr << "<div><strong><span class=\"badge badge-success\">#{row[:books_contact].quantity}</span> "+row[:book].display_name+"<div>"+row[:books_contact].display_valid_time+"</div></strong> <div class=\"nowrap\"><span>"+row[:books_contact].display_upfront+"</span> | <span>"+row[:books_contact].display_delivery_status+"</span><div></div><br />"
+      if true
+        if row[:books_contact].intake.present?
+          intake = sprintf('%02d', row[:books_contact].intake.month) + "-" + row[:books_contact].intake.year.to_s
+          d_intake = I18n.t("date.abbr_month_names")[row[:books_contact].intake.month.to_i] + "-" + row[:books_contact].intake.year.to_s
+        else
+          intake = "##"
+        end
+        
+        if params.nil? or !params["intakes"].present? or (!params.nil? and params["intakes"].present? and params["intakes"].split(',').include?(intake))
+          if long == false
+            arr << "<div><strong><span class=\"badge badge-success\">#{row[:books_contact].quantity}</span> "+d_intake+"-"+row[:book].display_name+"</strong><div>"
+          else
+            arr << "<div><strong><span class=\"badge badge-success\">#{row[:books_contact].quantity}</span> "+d_intake+"-"+row[:book].display_name+"<div>"+row[:books_contact].display_valid_time+"</div></strong> <div class=\"nowrap\"><span>"+row[:books_contact].display_upfront+"</span> | <span>"+row[:books_contact].display_delivery_status+"</span><div></div><br />"
+          end
+        end
       end
     end
     

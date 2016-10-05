@@ -302,18 +302,28 @@ class PaymentRecordsController < ApplicationController
     
     @course_registers.each do |cr|        
       cr.books_contacts.each do |bc|
-        row = {}
-        row[:contact_name] = bc.contact.name
-        row[:stock] = bc.book.display_name
-        row[:company] = !cr.sponsored_company.nil? ? cr.sponsored_company.name : ""         
-        
-        row[:papers] = {}          
-        row[:papers][bc.book.subject_id] = "X"          
-        paper_ids << bc.book.subject_id         
-        
-        if (params[:course_types].present? && !params[:course_types].include?(bc.book.course_type_id.to_s)) || (params[:subjects].present? && !params[:subjects].include?(bc.book.subject_id.to_s))
+        # get intake
+        if bc.intake.present?
+          intake = sprintf('%02d', bc.intake.month) + "-" + bc.intake.year.to_s
         else
-          @list << row
+          intake = "##"
+        end
+        
+        # check intake
+        if params.nil? or !params["intakes"].present? or (!params.nil? and params["intakes"].present? and params["intakes"].split(',').include?(intake))
+            row = {}
+            row[:contact_name] = bc.contact.name
+            row[:stock] = bc.book.display_name
+            row[:company] = !cr.sponsored_company.nil? ? cr.sponsored_company.name : ""         
+            
+            row[:papers] = {}          
+            row[:papers][bc.book.subject_id] = "X"          
+            paper_ids << bc.book.subject_id         
+            
+            if (params[:course_types].present? && !params[:course_types].include?(bc.book.course_type_id.to_s)) || (params[:subjects].present? && !params[:subjects].include?(bc.book.subject_id.to_s))
+            else
+              @list << row
+            end
         end
       end
     end
