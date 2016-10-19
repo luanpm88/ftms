@@ -95,7 +95,9 @@ class Course < ActiveRecord::Base
                                 .joins("LEFT JOIN subjects sjs ON sjs.id=courses.subject_id")
                                 .order("cts.short_name, sjs.name, courses.upfront, courses.intake DESC")
                                 
-    result = result.where("courses.cache_last_date >= ? OR courses.upfront", Time.now.beginning_of_day)
+    if params[:show_past] == "false"
+      result = result.where("courses.cache_last_date >= ? OR courses.upfront", Time.now.beginning_of_day)
+    end
     
     if !params.nil?
       if params[:student_id].present?
