@@ -96,7 +96,7 @@ class Course < ActiveRecord::Base
                                 .order("cts.short_name, sjs.name, courses.upfront, courses.intake DESC")
                                 
     if params[:show_past] == "false"
-      result = result.where("courses.cache_last_date >= ? OR courses.upfront", Time.now.beginning_of_day)
+      # result = result.where("courses.cache_last_date >= ? OR courses.upfront", Time.now.beginning_of_day)
     end
     
     if !params.nil?
