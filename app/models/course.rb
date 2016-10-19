@@ -96,7 +96,7 @@ class Course < ActiveRecord::Base
                                 .order("cts.short_name, sjs.name, courses.upfront, courses.intake DESC")
                                 
     if params[:show_past] == "false"
-      # result = result.where("courses.cache_last_date >= ? OR courses.upfront", Time.now.beginning_of_day)
+      result = result.where("courses.cache_last_date >= ? OR courses.upfront", Time.now.beginning_of_day)
     end
     
     if !params.nil?
@@ -909,7 +909,7 @@ class Course < ActiveRecord::Base
   def update_cache_last_date
     return nil if self.courses_phrases.empty?
     
-    last_date = self.courses_phrases.order("updated_at desc").first.updated_at
+    last_date = self.courses_phrases.order("start_at desc").first.start_at
     self.update_column(:cache_last_date, last_date)
   end
   
