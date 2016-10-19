@@ -29,6 +29,8 @@ class Course < ActiveRecord::Base
   has_one :current, -> { order created_at: :desc }, class_name: 'Course', foreign_key: "parent_id"
   ########## END REVISION ###############
   
+  after_save :update_cache_last_date
+  
   pg_search_scope :search,
                   against: [:description],
                   associated_against: {
@@ -89,10 +91,12 @@ class Course < ActiveRecord::Base
        result = self.main_courses.where("courses.status IS NOT NULL AND courses.status NOT LIKE ?", "%deleted%")
     end
     
-    
     result = result.joins("LEFT JOIN course_types cts ON cts.id=courses.course_type_id")
                                 .joins("LEFT JOIN subjects sjs ON sjs.id=courses.subject_id")
                                 .order("cts.short_name, sjs.name, courses.upfront, courses.intake DESC")
+                                
+    result = result.where("courses.cache_last_date >= ? OR courses.upfront", Time.now.beginning_of_day)
+    
     if !params.nil?
       if params[:student_id].present?
         contact = Contact.find(params[:student_id])
@@ -900,6 +904,11 @@ class Course < ActiveRecord::Base
   #  end
   #end
   
-  
+  def update_cache_last_date
+    return nil if self.courses_phrases.empty?
+    
+    last_date = self.courses_phrases.order("updated_at desc").first.updated_at
+    self.update_column(:cache_last_date, last_date)
+  end
   
 end

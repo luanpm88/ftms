@@ -3,6 +3,12 @@ class CoursesPhrase < ActiveRecord::Base
   belongs_to :course
   validates :phrase_id, :presence => true
   
+  after_save :update_cache_last_date
+  
+  def update_cache_last_date
+    course.update_cache_last_date if course.present?
+  end
+  
   def all_transfer_details
     TransferDetail.where("courses_phrase_ids LIKE ?","%[#{self.id}]%")
   end

@@ -1031,7 +1031,8 @@ CREATE TABLE courses (
     annoucing_user_ids text,
     upfront boolean,
     no_report_contact_ids text,
-    cache_search text
+    cache_search text,
+    cache_last_date date
 );
 
 
@@ -4594,4 +4595,6 @@ INSERT INTO schema_migrations (version) VALUES ('20160630145144');
 INSERT INTO schema_migrations (version) VALUES ('20160630154125');
 
 INSERT INTO schema_migrations (version) VALUES ('20160922013949');
+
+INSERT INTO schema_migrations (version) VALUES ('20161019020222');
 
