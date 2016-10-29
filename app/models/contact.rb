@@ -2153,7 +2153,7 @@ class Contact < ActiveRecord::Base
         th += cp.hour if cp.hour.present?
       end
       row[:hour] = th == 0 ? "N/A" : th
-      row[:money] = ContactsCourse.find(cc.id).paid
+      row[:money] = ContactsCourse.find(cc.id).total
       row[:remain] = ContactsCourse.find(cc.id).remain
       row[:courses_phrases] = ContactsCourse.find(cc.id).courses_phrases
       row[:created_at] = ContactsCourse.find(cc.id).course_register.created_at
