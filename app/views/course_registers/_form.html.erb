@@ -67,7 +67,7 @@
 					
 					 
 					<div class="phrase_box_list">
-						 <% (0..9).each do |number| %>
+						 <% (0..20).each do |number| %>
 							  <div class="row column-seperation item_box phrase_box phrase_box_<%= number.to_s %> <%= 'hidden'.html_safe if number >= 0 %>" rel="<%= number %>">
 								   <div class="phrase_box_label">Course #<%= number+1 %></div>
 								   <div class="phrase_box_close" rel="<%= number.to_s %>"><i class="icon icon-remove"></i></div>

@@ -659,9 +659,6 @@ class Ability
       can :delete_all, Contact
       
       
-      
-      
-      
       ## CONTACT TAG
       can :approved, ContactTag
       can :approve_new, ContactTag do |c|
@@ -673,7 +670,6 @@ class Ability
       can :approve_delete, ContactTag do |c|
         c.statuses.include?("delete_pending")
       end
-      
       
       
       ## COURSE REGISTER
@@ -707,7 +703,6 @@ class Ability
       can :undo_delete, Phrase do |c|
         c.statuses.include?("delete_pending")
       end
-      
       
       
       ## DISCOUNT PROGRAM
