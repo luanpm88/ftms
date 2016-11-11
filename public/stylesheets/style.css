@@ -8691,3 +8691,18 @@ h5.list_title {
     padding-bottom: 0;
     border-bottom: solid 0 #ddd;    
 }
+.cancel-books-contact {
+    margin-bottom: 20px;
+}
+.cancel-books-contact form {
+    position: absolute;
+    padding: 5px 12px 12px 12px;
+    background: #fff;
+    box-shadow: 2px 2px 2px rgba(0,0,0,0.2);
+    border: solid 1px #ccc;
+    display: none;
+    z-index: 10;
+}
+.cancel-books-contact {
+    position: relative;
+}

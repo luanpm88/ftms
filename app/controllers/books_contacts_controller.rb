@@ -2,7 +2,7 @@ class BooksContactsController < ApplicationController
   load_and_authorize_resource
   include BooksContactsHelper
   
-  before_action :set_books_contact, only: [:delete, :upfront_book_select_box, :remove, :check_upfront, :show, :edit, :update, :destroy]
+  before_action :set_books_contact, only: [:cancel, :delete, :upfront_book_select_box, :remove, :check_upfront, :show, :edit, :update, :destroy]
 
   # GET /books_contacts
   # GET /books_contacts.json
@@ -133,12 +133,14 @@ class BooksContactsController < ApplicationController
       render text: "Stock registration was successfully removed!"
     else
       render text: "<span class='out_of_date'>Error: Too many records! Maximum 100 items per time.</span>"
-    end
-    
-    
-      
+    end    
   end
-
+  
+  def cancel
+    @books_contact.cancel(params[:reason])
+    
+    render text: "Stock registration was successfully cancel!"
+  end
 
   private
     # Use callbacks to share common setup or constraints between actions.

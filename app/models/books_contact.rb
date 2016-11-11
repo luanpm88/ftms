@@ -326,6 +326,14 @@ class BooksContact < ActiveRecord::Base
     end
   end
   
+  def display_cancel_books_contact  
+    if !canceled
+      '<div class="cancel-books-contact"><a class="badge badge-success cancel-books-contact-button" href="#cancel">Cancel</a><form><input type="hidden" value="' + self.id.to_s + '" name="id" /><label>Reason:</label><textarea name="reason"></textarea><button>Save</button></form></div>'
+    else
+      '<div class="cancel-books-contact"><a rel="' + self.id.to_s + '" class="badge badge-danger cancel-books-contact-button" href="#cancel">Canceled: ' + self.canceled_reason + '</a></div>'
+    end
+  end
+  
   def display_deliveries
     str = []
     Delivery.where(id: BooksContact.find(self.id).delivery_details.map(&:delivery_id)).each do |d|
@@ -412,6 +420,12 @@ class BooksContact < ActiveRecord::Base
     
     self.contact.update_info
     
+  end
+  
+  def cancel(reason)
+    self.canceled = true
+    self.canceled_reason = reason
+    self.save
   end
 
 end

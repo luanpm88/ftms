@@ -4330,6 +4330,34 @@
 			}
 		});
 		
+		// Cancel stock registration
+		$(document).on("click", ".cancel-books-contact-button", function(e) {
+			var box = $(this).parents(".cancel-books-contact");
+			var form = box.find("form");
+
+			form.toggle();
+		});
+		// Cancel stock registration
+		$(document).on("click", ".cancel-books-contact form button", function(e) {
+			var box = $(this).parents(".cancel-books-contact");
+			var form = box.find("form");
+			var url = '<%= cancel_books_contacts_path %>';
+			var table = $(this).parents("table")
+			
+			$.ajax({
+				url: url,
+				data: form.serialize(),
+				success: function(data, textStatus, jqXHR)
+				{
+					modernAlert(data);
+					
+					table.dataTable().fnFilter();
+				}
+			})
+			
+			e.preventDefault();
+		});
+		
 	})
 	
 

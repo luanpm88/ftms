@@ -316,7 +316,9 @@ CREATE TABLE books_contacts (
     discount_programs text,
     description text,
     money numeric,
-    course_id integer
+    course_id integer,
+    canceled boolean DEFAULT false,
+    canceled_reason text
 );
 
 
@@ -4597,4 +4599,8 @@ INSERT INTO schema_migrations (version) VALUES ('20160630154125');
 INSERT INTO schema_migrations (version) VALUES ('20160922013949');
 
 INSERT INTO schema_migrations (version) VALUES ('20161019020222');
+
+INSERT INTO schema_migrations (version) VALUES ('20161111013621');
+
+INSERT INTO schema_migrations (version) VALUES ('20161111041052');
 

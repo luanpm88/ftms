@@ -128,6 +128,8 @@ Hkerp::Application.routes.draw do
       
       get :delete
       post :delete_all
+      
+      get :cancel
     end
   end
   resources :book_prices

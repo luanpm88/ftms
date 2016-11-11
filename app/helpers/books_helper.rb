@@ -55,7 +55,9 @@ module BooksHelper
       actions += '<ul class="dropdown-menu">'
       
       
-      
+      if can? :cancel, item
+        actions += '<li>'+ActionController::Base.helpers.link_to('Cancel', "#cancel_book", title: "#{item.name}: cancel", class: "cancel_books_contact")+'</li>'        
+      end
             
       
       delivery_details = item.delivery_details.joins(:delivery => :course_register).where(deliveries: {status: 1}).where(course_registers: {contact_id: student.id})

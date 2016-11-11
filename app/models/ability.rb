@@ -250,14 +250,15 @@ class Ability
       can :delivery_counting, Book
       can :stock_statistics, Book
       can :statistics, Book
-      can :approve_all, Book
-      
+      can :approve_all, Book      
       
       can :datatable, BooksContact
       can :check_upfront, BooksContact
       can :upfront_book_select_box, BooksContact
       can :delete, BooksContact
       can :remove, BooksContact
+      can :cancel, BooksContact
+      
       
       can :view, ContactTag
       can :datatable, ContactTag

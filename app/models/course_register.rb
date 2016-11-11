@@ -694,9 +694,12 @@ class CourseRegister < ActiveRecord::Base
           if long == false
             arr << "<div><strong><span class=\"badge badge-success\">#{row[:books_contact].quantity}</span> "+d_intake+"-"+row[:book].display_name+"</strong><div>"
           else
-            arr << "<div><strong><span class=\"badge badge-success\">#{row[:books_contact].quantity}</span> "+d_intake+"-"+row[:book].display_name+"<div>"+row[:books_contact].display_valid_time+"</div></strong> <div class=\"nowrap\"><span>"+row[:books_contact].display_upfront+"</span> | <span>"+row[:books_contact].display_delivery_status+"</span><div></div><br />"
+            arr << "<div><strong><span class=\"badge badge-success\">#{row[:books_contact].quantity}</span> "+d_intake+"-"+row[:book].display_name+"<div>"+row[:books_contact].display_valid_time+"</div></strong> <div class=\"nowrap\"><span>"+row[:books_contact].display_upfront+"</span> | <span>"+row[:books_contact].display_delivery_status+"</span><div></div>"
           end
         end
+        
+        # Cancel stock
+        arr << row[:books_contact].display_cancel_books_contact
       end
     end
     
