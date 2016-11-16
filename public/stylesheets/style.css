@@ -8706,3 +8706,6 @@ h5.list_title {
 .cancel-books-contact {
     position: relative;
 }
+.cancel-books-contact-button {
+    background: #888;
+}
