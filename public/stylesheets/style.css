@@ -8694,7 +8694,7 @@ h5.list_title {
 .cancel-books-contact {
     margin-bottom: 20px;
 }
-.cancel-books-contact form {
+.cancel-books-contact .form {
     position: absolute;
     padding: 5px 12px 12px 12px;
     background: #fff;
