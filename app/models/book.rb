@@ -62,12 +62,13 @@ class Book < ActiveRecord::Base
   
   def self.active_books_contacts
     BooksContact.joins("LEFT JOIN course_registers ON course_registers.id = books_contacts.course_register_id")
-                    .where(course_registers: {parent_id: nil}).where("course_registers.status IS NOT NULL AND course_registers.status LIKE ?", "%[active]%")
-                    .uniq
+      .where(course_registers: {parent_id: nil}).where("course_registers.status IS NOT NULL AND course_registers.status LIKE ?", "%[active]%")
+      .where(canceled: false)
+      .uniq
   end
   
   def active_books_contacts
-    Book.active_books_contacts.where(book_id: self.id).uniq
+    Book.active_books_contacts.where(book_id: self.id).where(canceled: false).uniq
   end
   
   def cover_path(version = nil)

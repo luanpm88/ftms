@@ -246,7 +246,7 @@ class BooksContact < ActiveRecord::Base
   end
   
   def self.datatable(params, user)
-    @records = self.filter(params, user)
+    @records = self.filter(params, user).where(canceled: false)
     
     @records = @records.joins(:course_register, :book => [:course_type, :subject, :stock_type])
                         .where("course_registers.status IS NOT NULL AND course_registers.status LIKE ?", "%[active]%")
