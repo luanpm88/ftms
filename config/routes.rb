@@ -130,6 +130,10 @@ Hkerp::Application.routes.draw do
       post :delete_all
       
       get :cancel
+      
+      post :export_list
+      post :export_mobiles
+      post :export_emails
     end
   end
   resources :book_prices

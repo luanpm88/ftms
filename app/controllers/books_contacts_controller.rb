@@ -136,6 +136,30 @@ class BooksContactsController < ApplicationController
     end    
   end
   
+  def export_list    
+    if params[:ids].present?
+      if !params[:check_all_page].nil?
+        params[:intake_year] = params["filter"]["intake(1i)"] if params["filter"].present?
+        params[:intake_month] = params["filter"]["intake(2i)"] if params["filter"].present?
+        
+        if params[:is_individual] == "false"
+          params[:contact_types] = nil
+        end        
+        
+        @books_contacts = BooksContact.filter(params, current_user)
+      else
+        @books_contacts = BooksContact.where(id: params[:ids])
+      end
+    end
+    
+    @contacts = Contact.where(id: @books_contacts.map(&:contact_id))
+      
+    respond_to do |format|
+      format.html
+      format.xls
+    end
+  end
+  
   def cancel
     @books_contact.cancel(params[:reason])
     

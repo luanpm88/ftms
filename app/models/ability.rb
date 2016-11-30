@@ -258,6 +258,7 @@ class Ability
       can :delete, BooksContact
       can :remove, BooksContact
       can :cancel, BooksContact
+      can :export_list, BooksContact
       
       
       can :view, ContactTag
