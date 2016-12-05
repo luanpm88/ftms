@@ -132,6 +132,9 @@ class ContactsCourse < ActiveRecord::Base
   end
   
   def paid(from_date=nil, to_date=nil)
+    # Company payment
+    return total if self.course_register.company_payment_records(to_date).count > 0
+    
     records = course_register.all_payment_records
     
     total = 0.00
