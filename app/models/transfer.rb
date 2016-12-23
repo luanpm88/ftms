@@ -855,7 +855,7 @@ class Transfer < ActiveRecord::Base
     end    
   end
   
-  def all_to_courses
+  def all_to_courses(options={})
     result = Course.where(parent_id: nil)
     result = result.where("courses.status IS NOT NULL AND courses.status NOT LIKE ?", "%[deleted]%")
     
@@ -874,6 +874,10 @@ class Transfer < ActiveRecord::Base
     #    result = result.where(upfront: true)
     #  end
     #end
+    
+    if options[:show_past].present? and options[:show_past] == "false"
+      result = result.where("courses.cache_last_date >= ? OR courses.upfront", Time.now.beginning_of_day)
+    end
     
     result_arr = []
     result.each do |c|

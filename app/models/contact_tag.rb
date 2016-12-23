@@ -130,6 +130,11 @@ class ContactTag < ActiveRecord::Base
   def self.main_contact_tags
     self.where(parent_id: nil)
   end
+  
+  def self.active_contact_tags_with_old
+    self.main_contact_tags.where("status IS NOT NULL AND status LIKE ?", "%[active]%")
+  end
+  
   def self.active_contact_tags
     self.main_contact_tags.where("status IS NOT NULL AND status LIKE ?", "%[active]%")
             .where("end_at IS NULL OR end_at >= ?", Time.now.beginning_of_day)

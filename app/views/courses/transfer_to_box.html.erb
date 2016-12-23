@@ -36,7 +36,7 @@
 											  <i class=""></i>
 											  <div class="input-with_add_but">
 												   <%= link_to '<i class="icon-plus"></i>'.html_safe, new_course_path(tab_page: 1), title: "New Course", :class => 'btn btn-sm btn-small btn-white tab_page' %>
-												   <%= select_tag 'transfer[to_course_id]', options_for_select(@transfer.all_to_courses.collect{ |u| [u.name, u.id] }), {include_blank: "None", class: "modern_select course_select width100 to_course required"} %>
+												   <%= select_tag 'transfer[to_course_id]', options_for_select(@transfer.all_to_courses({show_past: 'false'}).collect{ |u| [u.name, u.id] }), {include_blank: "None", class: "modern_select course_select width100 to_course required"} %>
 											  </div>
 										 </div>
 								   </div>
