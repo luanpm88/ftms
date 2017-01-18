@@ -742,7 +742,7 @@ class User < ActiveRecord::Base
               contacts_courses.each do |cc|                
                 if !cc.course_register.paid?(to_date.end_of_day)
                   if users_statistics[cc.course_register.account_manager_id][:details][cc.course.course_type_id].present?
-                    users_statistics[cc.course_register.account_manager_id][:details][cc.course.course_type_id][:receivable] += cc.remain(from_date, to_date)
+                    users_statistics[cc.course_register.account_manager_id][:details][cc.course.course_type_id][:receivable] += cc.remain(nil, to_date)
                     users_statistics[cc.course_register.account_manager_id][:details][cc.course.course_type_id][:receivable_contacts] << cc.contact
                   end
                   users_statistics[cc.course_register.account_manager_id][:receivable] += cc.remain(from_date, to_date)
@@ -761,7 +761,7 @@ class User < ActiveRecord::Base
               books_contacts.each do |cc|                
                 if !cc.course_register.paid?(to_date.end_of_day)
                   if users_statistics[cc.course_register.account_manager_id][:details][cc.book.course_type_id].present?
-                    users_statistics[cc.course_register.account_manager_id][:details][cc.book.course_type_id][:receivable] += cc.remain_amount(from_date, to_date)
+                    users_statistics[cc.course_register.account_manager_id][:details][cc.book.course_type_id][:receivable] += cc.remain_amount(nil, to_date)
                     users_statistics[cc.course_register.account_manager_id][:details][cc.book.course_type_id][:receivable_contacts] << cc.contact
                   end
                   users_statistics[cc.course_register.account_manager_id][:receivable] += cc.remain_amount(from_date, to_date)
@@ -777,7 +777,7 @@ class User < ActiveRecord::Base
               transfers.each do |tsf|
                 if tsf.remain(from_date, to_date) != 0.0 
                   if users_statistics[tsf.contact.account_manager_id][:details][tsf.course.course_type_id].present?
-                    users_statistics[tsf.contact.account_manager_id][:details][-1][:receivable] += tsf.remain(from_date, to_date)
+                    users_statistics[tsf.contact.account_manager_id][:details][-1][:receivable] += tsf.remain(nil, to_date)
                     users_statistics[tsf.contact.account_manager_id][:details][-1][:receivable_contacts] << tsf.contact
                   end
                   users_statistics[tsf.contact.account_manager_id][:receivable] += tsf.remain(from_date, to_date)
