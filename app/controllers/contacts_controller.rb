@@ -846,6 +846,7 @@ class ContactsController < ApplicationController
   def add_custom_payment
     @payment_record = PaymentRecord.new
     @payment_record.paid_contact = Contact.find(params[:contact_id]) if params[:contact_id].present?
+    @payment_record.account_manager_id = Contact.find(params[:contact_id]).account_manager_id if params[:contact_id].present?
     
     if request.post?
       @payment_record = PaymentRecord.new(payment_record_params)

@@ -211,7 +211,7 @@ class PaymentRecord < ActiveRecord::Base
     elsif !transfer.nil?
       transfer.contact.account_manager
     elsif !contact_id.nil?
-      paid_contact.account_manager
+      account_manager
     else
       course_register.account_manager
     end    
@@ -227,7 +227,7 @@ class PaymentRecord < ActiveRecord::Base
     elsif !transfer.nil?
       transfer.user
     elsif !contact_id.nil?
-      contact.account_manager
+      account_manager
     else
       course_register.account_manager
     end    
@@ -610,7 +610,7 @@ class PaymentRecord < ActiveRecord::Base
     elsif !transfer.nil?
       str << "EC["+transfer.user_id.to_s+"]"
     elsif !contact_id.nil?
-      str << "EC["+contact.account_manager_id.to_s+"]"
+      str << "EC["+account_manager_id.to_s+"]"
     else
       str << "EC["+course_register.account_manager_id.to_s+"]"      
     end 
