@@ -1552,7 +1552,7 @@ class Contact < ActiveRecord::Base
   end
   
   def editor
-    return last_updated.user
+    return last_updated.nil? ? self : last_updated.user
   end
   
   
@@ -2405,6 +2405,8 @@ class Contact < ActiveRecord::Base
   end
 
   def self.import_contact_from_old_student
+      uu = User.where(:email => "soft.support@hoangkhang.com.vn").first
+      uu = User.first if uu.nil?
       ##STUDENT
       Contact.where.not(tmp_StudentID: nil).destroy_all
       OldStudent.all.each do |item|
@@ -2448,13 +2450,14 @@ class Contact < ActiveRecord::Base
         contact.account_manager = User.where(:tmp_ConsultantID => item.consultant_id).first
         contact.user = User.where(:tmp_ConsultantID => item.consultant_id).first
         
+        # default user
+        contact.user = uu if contact.user.nil?
+        
         if contact.save        
           # import contact type/course type
           contact.update_contact_type_from_old_student
           
-          contact.add_status("active")
-          uu = User.where(:email => "soft.support@hoangkhang.com.vn").first
-          uu = User.first if uu.nil?
+          contact.add_status("active")          
           contact.save_draft(uu)
           contact.update_info
         end
