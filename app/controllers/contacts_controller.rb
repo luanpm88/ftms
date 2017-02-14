@@ -759,7 +759,7 @@ class ContactsController < ApplicationController
       col_2: '<div class="text-left">'+@contact.course_types_name_col+"</div>",
       col_3: '<div class="text-center">'+@contact.course_count_link+@contact.display_not_learned_course(params[:courses],true)+"</div>",
       col_4: '<div class="text-center contact_tag_box" rel="'+@contact.id.to_s+'">'+ContactsController.helpers.render_contact_tags_selecter(@contact)+"</div>",
-      col_5: '<div class="text-center">'+@contact.created_at.strftime("%d-%b-%Y")+"<br /><strong>by:</strong><br />"+@contact.user.staff_col+"</div>",
+      col_5: '<div class="text-center">'+@contact.created_at.strftime("%d-%b-%Y")+"<br /><strong>by:</strong><br />"+@contact.user_staff_col+"</div>",
       col_6: '<div class="text-center">'+@contact.account_manager_col+"</div>",
       col_7: '<div class="text-center">'+@contact.display_statuses+@contact.display_bases("<br />")+"</div>"
     }
