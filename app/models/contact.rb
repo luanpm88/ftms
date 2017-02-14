@@ -805,7 +805,7 @@ class Contact < ActiveRecord::Base
               #'<div class="text-left">'+item.referrer_link+"</div>",
               '<div class="text-center contact_tag_box" rel="'+item.id.to_s+'">'+ContactsController.helpers.render_contact_tags_selecter(item)+"</div>",
               '<div class="text-center">'+item.display_present_with_seminar(@seminar)+"</div>",
-              '<div class="text-center">'+item.created_at.strftime("%d-%b-%Y")+"<br /><strong>by:</strong><br />"+item.user.staff_col+"</div>",
+              '<div class="text-center">'+item.created_at.strftime("%d-%b-%Y")+"<br /><strong>by:</strong><br />"+item.user_staff_col+"</div>",
               '<div class="text-center">'+item.account_manager_col+"</div>",
               "<div class=\"text-right\"><div rel=\"#{@seminar.id}\" contact_ids=\"#{item.id}\" class=\"remove_contact_from_seminar_but btn btn-mini btn-danger\">Remove</div></div>",
             ]
@@ -2137,6 +2137,10 @@ class Contact < ActiveRecord::Base
   
   def staff_col
     account_manager.nil? ? "" : account_manager.staff_col
+  end
+  
+  def user_staff_col
+    user.nil? ? "" : user.staff_col
   end
   
   def active_courses_with_phrases(datetime=nil, type="active")
