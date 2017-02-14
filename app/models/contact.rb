@@ -2468,31 +2468,31 @@ class Contact < ActiveRecord::Base
     return false if old_student.nil? # || !contact_types.empty?
     
     inquiry_partten = "inquiry"
-    is_inquiry = old_student.student_type.strip.downcase.scan(/(#{inquiry_partten})/).count > 0
+    is_inquiry = old_student.student_type.to_s.strip.downcase.scan(/(#{inquiry_partten})/).count > 0
     
     partten = "members|affiliate|affliliate|charterholder"
-    is_completed = old_student.student_type.strip.downcase.scan(/(#{partten})/).count > 0
+    is_completed = old_student.student_type.to_s.strip.downcase.scan(/(#{partten})/).count > 0
     
     
     if is_inquiry
       contact_types << ContactType.inquiry if !contact_types.include?(ContactType.inquiry)
-      program_name = old_student.student_type.strip.downcase.scan(/(.*?)(#{inquiry_partten})/)[0][0].strip
+      program_name = old_student.student_type.to_s.strip.downcase.scan(/(.*?)(#{inquiry_partten})/)[0][0].strip
       #program_name = "ENGLISH" if program_name.strip.downcase == "english for a & f"
       #program_name = "FIA" if program_name.strip.downcase == "cat"
       ct = CourseType.main_course_types.where("course_types.status IS NOT NULL AND course_types.status NOT LIKE ?", "%[deleted]%").where("LOWER(short_name) = '#{program_name}'").first
 
       # create course type
-      if ct.nil?
-        ct = CourseType.create(short_name: program_name.upcase, name: program_name.upcase)
-        ct.add_status("new_pending")
+      if ct.nil? && program_name.present?
         uu = User.where(:email => "soft.support@hoangkhang.com.vn").first
-        uu = User.first if uu.nil?
+        uu = User.first if uu.nil?        
+        ct = CourseType.create(short_name: program_name.upcase, name: program_name.upcase, user_id: uu.id)
+        ct.add_status("new_pending")        
         ct.save_draft(uu)
       end
 
       course_types << ct if !ct.nil? and !course_types.include?(ct)
     else
-      program_name = is_completed ? old_student.student_type.strip.downcase.scan(/(.*?)(#{partten})/)[0][0].strip : old_student.student_type.strip.downcase
+      program_name = is_completed ? old_student.student_type.to_s.strip.downcase.scan(/(.*?)(#{partten})/)[0][0].to_s.strip : old_student.student_type.to_s.strip.downcase
       #program_name = "ENGLISH" if program_name.strip.downcase == "english for a & f"
       #program_name = "FIA" if program_name.strip.downcase == "cat"
       ct = CourseType.main_course_types.where("course_types.status IS NOT NULL AND course_types.status NOT LIKE ?", "%[deleted]%").where("LOWER(short_name) = '#{program_name}'").first

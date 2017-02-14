@@ -565,11 +565,11 @@ class User < ActiveRecord::Base
     return {data: report, subjects: subjects}
   end
 
-  def self.import_from_old_system(file)
-    dir = "tmp"
-    file_name =  file.original_filename
-    file_path = File.join(dir, file_name)
-    File.open(file_path, "wb") { |f| f.write(file.read) }
+  def self.import_from_old_system(file_path)
+    #dir = "tmp"
+    #file_name =  file.original_filename
+    #file_path = File.join(dir, file_name)
+    #File.open(file_path, "wb") { |f| f.write(file.read) }
     
     database = Mdb.open(file_path)
     
@@ -591,13 +591,13 @@ class User < ActiveRecord::Base
     OldUserRole.import_old_user_role(database)
     
     # import consultant
-    self.import_from_old_consultant
+    # self.import_from_old_consultant
     
     # import contact
-    Contact.import_contact_from_old_student
+    # Contact.import_contact_from_old_student
     
     # update company
-    Contact.update_company_info_from_old_system
+    # Contact.update_company_info_from_old_system
     
     return true
   end
