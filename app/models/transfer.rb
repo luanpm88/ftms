@@ -777,7 +777,7 @@ class Transfer < ActiveRecord::Base
     from_message += " to <strong>#{to_contact.display_name}<strong>" if to_contact != contact
     
     # insert transfer note
-    note_log_message = self.note.present? ? "<br /><br /> Note: " + self.note : ''
+    note_log_message = self.note.present? ? "<br /> Note: " + self.note : ''
     
     contact.activities.create(user_id: user.id, note: from_message + note_log_message, item_code: "transfer_#{self.id.to_s}")
     
@@ -831,7 +831,7 @@ class Transfer < ActiveRecord::Base
     end
     
     # insert transfer note
-    note_log_message = self.note.present? ? "<br /><br /> Note: " + self.note : ''
+    note_log_message = self.note.present? ? "<br /> Note: " + self.note : ''
     
     if c == contact
       return from_message+credit_note+note_log_message
