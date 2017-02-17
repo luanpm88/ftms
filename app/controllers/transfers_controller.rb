@@ -56,10 +56,6 @@ class TransfersController < ApplicationController
         @transfer.update_status("create", current_user)        
         @transfer.save_draft(current_user)
         
-        if @transfer.note.present?
-          @transfer.contact.activities.create(user_id: current_user.id, note: @transfer.note)
-        end
-        
         @tab = {url: {controller: "contacts", action: "edit", id: @transfer.contact.id, tab_page: 1, tab: "transfer"}, title: @transfer.contact.display_name}
         format.html { render "/home/close_tab", layout: nil }
         format.json { render action: 'show', status: :created, location: @transfer }

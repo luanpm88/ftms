@@ -776,13 +776,16 @@ class Transfer < ActiveRecord::Base
     from_message = "Deferred/Transferred <strong>#{from_item}</strong> into <strong>#{to_item}</strong>"
     from_message += " to <strong>#{to_contact.display_name}<strong>" if to_contact != contact
     
-    contact.activities.create(user_id: user.id, note: from_message, item_code: "transfer_#{self.id.to_s}")
+    # insert transfer note
+    note_log_message = self.note.present? ? "<br /> Note: " + self.note : ''
+    
+    contact.activities.create(user_id: user.id, note: from_message + note_log_message, item_code: "transfer_#{self.id.to_s}")
     
     # for receiver
     if to_contact != contact
       to_message = "Received <strong>#{to_item}</strong> from <strong>#{contact.display_name}</strong> by deferring <strong>#{from_item}</strong>"
       
-      to_contact.activities.create(user_id: user.id, note: to_message, item_code: "transfer_#{self.id.to_s}")
+      to_contact.activities.create(user_id: user.id, note: to_message + note_log_message, item_code: "transfer_#{self.id.to_s}")
     end
     
     return from_message
@@ -827,10 +830,13 @@ class Transfer < ActiveRecord::Base
       to_message = "Received <strong>#{to_item}</strong> from <strong>#{contact.display_name}</strong> by deferring <strong>#{from_item}</strong>"      
     end
     
+    # insert transfer note
+    note_log_message = self.note.present? ? "<br /> Note: " + self.note : ''
+    
     if c == contact
-      return from_message+credit_note
+      return from_message+credit_note+note_log_message
     else
-      return to_message+credit_note
+      return to_message+credit_note+note_log_message
     end
   end
   
