@@ -509,7 +509,7 @@ class Contact < ActiveRecord::Base
       #  item.find_related_contacts.each do |child|
       #    row = [
       #            "<div item_id=\"#{child.id.to_s}\" class=\"main_part_info checkbox check-default\"><input name=\"ids[]\" id=\"checkbox#{child.id}\" type=\"checkbox\" value=\"#{child.id}\"><label for=\"checkbox#{child.id}\"></label></div>",
-      #            "[#{child.cache_group_id}]"+'<div class="text-left re_merge"><strong class="label_name" val="'+child.name.unaccent.to_s+'">'+child.contact_link+"</strong></div>"+'<div class="text-left">'+child.html_info_line.html_safe+child.referrer_link+"</div>"+child.picture_link,              
+      #            "[#{child.cache_group_id}]"+'<div class="text-left re_merge"><strong class="label_name" val="'+child.name.to_ascii.to_s+'">'+child.contact_link+"</strong></div>"+'<div class="text-left">'+child.html_info_line.html_safe+child.referrer_link+"</div>"+child.picture_link,              
       #            "",
       #            "",
       #            "",
@@ -609,7 +609,7 @@ class Contact < ActiveRecord::Base
       
       groups = RelatedContact.all
       # .where("related_contacts.cache_search NOT LIKE '%[single_group]%'")
-      groups = groups.where("LOWER(related_contacts.cache_search) LIKE ?", "%#{params["search"]["value"].unaccent.strip.downcase}%") if params["search"].present? && !params["search"]["value"].empty?
+      groups = groups.where("LOWER(related_contacts.cache_search) LIKE ?", "%#{params["search"]["value"].to_ascii.strip.downcase}%") if params["search"].present? && !params["search"]["value"].empty?
       total = groups.count
       groups = groups.order("related_contacts.created_at DESC").limit(params[:length]).offset(params["start"])
       
@@ -640,7 +640,7 @@ class Contact < ActiveRecord::Base
       
       row = [
               "<div item_id=\"#{item[:parent].id.to_s}\" last_id=\"#{session[:last_id]}\" class=\"main_part_info main_merge_row row-color-#{(index%2 == 0).to_s} checkbox check-default\"><input name=\"ids[]\" id=\"checkbox#{item[:parent].id}\" type=\"checkbox\" value=\"#{item[:parent].id}\"><label for=\"checkbox#{item[:parent].id}\"></label></div>",              
-              '<div class="text-left"><strong class="label_name" val="'+item[:parent].name.unaccent.to_s+'">'+item[:parent].contact_link+"</strong></div>"+'<div class="text-left">'+item[:parent].html_info_line.html_safe+item[:parent].referrer_link+"</div>"+item[:parent].picture_link,
+              '<div class="text-left"><strong class="label_name" val="'+item[:parent].name.to_ascii.to_s+'">'+item[:parent].contact_link+"</strong></div>"+'<div class="text-left">'+item[:parent].html_info_line.html_safe+item[:parent].referrer_link+"</div>"+item[:parent].picture_link,
               "",
               "",
               "",
@@ -662,7 +662,7 @@ class Contact < ActiveRecord::Base
       item[:children].each do |child|
         row = [
                 "<div item_id=\"#{child.id.to_s}\" class=\"main_part_info row-color-#{(index%2 == 0).to_s} checkbox check-default\"><input name=\"ids[]\" id=\"checkbox#{child.id}\" type=\"checkbox\" value=\"#{child.id}\"><label for=\"checkbox#{child.id}\"></label></div>",
-                '<div class="text-left"><strong class="label_name" val="'+child.name.unaccent.to_s+'">'+child.contact_link+"</strong></div>"+'<div class="text-left">'+child.html_info_line.html_safe+child.referrer_link+"</div>"+child.picture_link,              
+                '<div class="text-left"><strong class="label_name" val="'+child.name.to_ascii.to_s+'">'+child.contact_link+"</strong></div>"+'<div class="text-left">'+child.html_info_line.html_safe+child.referrer_link+"</div>"+child.picture_link,              
                 "",
                 "",
                 "",
@@ -2340,8 +2340,8 @@ class Contact < ActiveRecord::Base
   def render_cache_search
     str = []
     str << display_name.to_s.squish
-    str << display_name.unaccent.squish
-    str << "[search_name: "+name.unaccent.downcase.squish+" ]"
+    str << display_name.to_ascii.squish
+    str << "[search_name: "+name.to_ascii.downcase.squish+" ]"
     str << "[tag:"+(contact_tags.map {|ct| ct.name}).join("][tag:")+"]"
     str << mobile.to_s
     str << mobile.to_s.gsub(/^84/,"")
@@ -2558,7 +2558,7 @@ class Contact < ActiveRecord::Base
 
   def find_related_contacts
     cond_other = []
-    cond_other << "LOWER(contacts.cache_search) LIKE '%[search_name: #{name.unaccent.downcase.gsub("'","\\'")} ]%'"
+    cond_other << "LOWER(contacts.cache_search) LIKE '%[search_name: #{name.to_ascii.downcase.gsub("'","\\'")} ]%'"
     emails_like = ([email.to_s.downcase]+email_2s).select { |h| !h.to_s.strip.empty? and h.to_s.length > 6 }
     emails_like = emails_like.empty? ? nil : emails_like.join("|")
     cond_other << "LOWER(contacts.email) SIMILAR TO '%(#{emails_like})%'" if emails_like.present?
