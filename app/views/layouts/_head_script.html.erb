@@ -367,7 +367,7 @@
 	
 	function getDeliveryCounting() {
 		var count = $('input[name="ids[]"]:checked').length
-		//if (count > 0) {
+		if ($(".delivery_counting").length > 0) {
 			$.ajax({
 				type: "POST",
 				url: "<%= delivery_counting_books_path %>",
@@ -377,7 +377,7 @@
 						$(".delivery_counting").html(data)
 					}
 			})
-		//}
+		}
 	}
 	
 	function updateImportExportList(stock_type_id, program_id, subject_id, valid_on) {

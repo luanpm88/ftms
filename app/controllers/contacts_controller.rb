@@ -588,7 +588,10 @@ class ContactsController < ApplicationController
     log.save
     
     
-    render layout: "content"
+    respond_to do |format|
+      format.html
+      format.xls
+    end
   end
   
   def export_emails
@@ -619,7 +622,10 @@ class ContactsController < ApplicationController
     log.render_content(@contacts, params)
     log.save
     
-    render layout: "content"
+    respond_to do |format|
+      format.html
+      format.xls
+    end
   end
   
   def remove_related_contact
