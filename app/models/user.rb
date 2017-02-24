@@ -737,12 +737,12 @@ class User < ActiveRecord::Base
                                                 .where(course_registers: {parent_id: nil}).where("course_registers.status IS NOT NULL AND course_registers.status NOT LIKE ?", "%[deleted]%")
                                                 .where(course_types: {id: course_type_ids})
                                                 .where(course_registers: {account_manager_id: user_ids})
-                                                .where("course_registers.created_at >= ? AND course_registers.created_at <= ? ", from_date, to_date)
+                                                .where("course_registers.created_at <= ? ", to_date)
               
               contacts_courses.each do |cc|                
                 if !cc.course_register.paid?(to_date.end_of_day)
                   if users_statistics[cc.course_register.account_manager_id][:details][cc.course.course_type_id].present?
-                    users_statistics[cc.course_register.account_manager_id][:details][cc.course.course_type_id][:receivable] += cc.remain(from_date, to_date)
+                    users_statistics[cc.course_register.account_manager_id][:details][cc.course.course_type_id][:receivable] += cc.remain(nil, to_date)
                     users_statistics[cc.course_register.account_manager_id][:details][cc.course.course_type_id][:receivable_contacts] << cc.contact
                   end
                   users_statistics[cc.course_register.account_manager_id][:receivable] += cc.remain(from_date, to_date)
@@ -756,15 +756,15 @@ class User < ActiveRecord::Base
                                                 .where(course_registers: {parent_id: nil}).where("course_registers.status IS NOT NULL AND course_registers.status NOT LIKE ?", "%[deleted]%")
                                                 .where(course_types: {id: course_type_ids})
                                                 .where(course_registers: {account_manager_id: user_ids})
-                                                .where("course_registers.created_at >= ? AND course_registers.created_at <= ? ", from_date, to_date)
+                                                .where("course_registers.created_at <= ? ", to_date)
               
               books_contacts.each do |cc|                
                 if !cc.course_register.paid?(to_date.end_of_day)
                   if users_statistics[cc.course_register.account_manager_id][:details][cc.book.course_type_id].present?
-                    users_statistics[cc.course_register.account_manager_id][:details][cc.book.course_type_id][:receivable] += cc.remain_amount(from_date, to_date)
+                    users_statistics[cc.course_register.account_manager_id][:details][cc.book.course_type_id][:receivable] += cc.remain_amount(nil, to_date)
                     users_statistics[cc.course_register.account_manager_id][:details][cc.book.course_type_id][:receivable_contacts] << cc.contact
                   end
-                  users_statistics[cc.course_register.account_manager_id][:receivable] += cc.remain_amount(from_date, to_date)
+                  users_statistics[cc.course_register.account_manager_id][:receivable] += cc.remain_amount(nil, to_date)
                 end
               end
               
@@ -772,15 +772,15 @@ class User < ActiveRecord::Base
               #transfers
               transfers = Transfer.includes(:contact).where(parent_id: nil).where("transfers.status IS NOT NULL AND transfers.status NOT LIKE ?", "%[deleted]%")
                                                 .where(contacts: {account_manager_id: user_ids})
-                                                .where("transfers.created_at >= ? AND transfers.created_at <= ? ", from_date, to_date)
+                                                .where("transfers.created_at <= ? ", to_date)
                                      
               transfers.each do |tsf|
-                if tsf.remain(from_date, to_date) != 0.0 
+                if tsf.remain(nil, to_date) != 0.0 
                   if users_statistics[tsf.contact.account_manager_id][:details][tsf.course.course_type_id].present?
-                    users_statistics[tsf.contact.account_manager_id][:details][-1][:receivable] += tsf.remain(from_date, to_date)
+                    users_statistics[tsf.contact.account_manager_id][:details][-1][:receivable] += tsf.remain(nil, to_date)
                     users_statistics[tsf.contact.account_manager_id][:details][-1][:receivable_contacts] << tsf.contact
                   end
-                  users_statistics[tsf.contact.account_manager_id][:receivable] += tsf.remain(from_date, to_date)
+                  users_statistics[tsf.contact.account_manager_id][:receivable] += tsf.remain(nil, to_date)
                 end
               end
                 
