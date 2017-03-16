@@ -1273,7 +1273,7 @@ class Contact < ActiveRecord::Base
   end
   
   def payment_count
-    count = 0
+    count = self.payment_records.where(status: 1).count
     main_course_registers.each do |cr|
       count += cr.all_payment_records.count
     end
