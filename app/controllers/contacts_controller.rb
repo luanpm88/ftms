@@ -504,7 +504,7 @@ class ContactsController < ApplicationController
       end
     end
     
-    if @contacts.count < 100
+    if @contacts.count < 501
       @contacts.each do |c|
         c.approve_delete(current_user) if current_user.can?(:approve_delete, c)
         c.approve_new(current_user) if current_user.can?(:approve_new, c)
