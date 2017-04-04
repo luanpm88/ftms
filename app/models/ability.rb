@@ -361,7 +361,7 @@ class Ability
       can :create, PaymentRecord
       can :print, PaymentRecord
       can :trash, PaymentRecord do |pr|
-        (pr.user == user || pr.ec == user) && pr.status == 1 # && !pr.transferred?
+        pr.status == 1 # && !pr.transferred?
       end
       can :payment_list, PaymentRecord
       can :datatable_payment_list, PaymentRecord
