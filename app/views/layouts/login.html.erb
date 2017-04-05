@@ -26,23 +26,23 @@
 <body class="error-body no-top">
 <div class="container">
   <div class="row login-container column-seperation">
-    
+
     <div class="col-md-5 col-md-offset-1">
           <h2>Welcome to</h2>
 		  <br />
-		  <img src="<%= url_for("/img/FTMSGlobalNew_transparent.png") %>" class="login-logo" />
-          
+		  <img src="<%= url_for("/img/Logo-ktdc.png") %>" class="login-logo" />
+
         </div>
         <div class="col-md-5 "> <br>
-    
-    
+
+
         <% if notice %><p class="alert alert-success notice"><%= notice %></p><% end %>
 		<% if alert %><p class="alert"><%= alert %></p><% end %>
-    
-        <%= yield %> 
-  
+
+        <%= yield %>
+
     </div>
-  
+
   </div>
 </div>
 <!-- END CONTAINER -->
