@@ -350,7 +350,7 @@ class BooksContact < ActiveRecord::Base
 
   def update_statuses
     # delivery
-    self.update_attribute(:cache_delivery_status, self.delivery_status)
+    self.update_column(:cache_delivery_status, self.delivery_status)
   end
 
   def all_deliveries

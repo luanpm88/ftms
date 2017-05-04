@@ -1,8 +1,8 @@
 class Contact < ActiveRecord::Base
   mount_uploader :image, LogoUploader
-  
+
   include PgSearch
-  
+
   #validates :address, presence: true
   #validates :email, presence: true
   validates :name, presence: true
@@ -10,71 +10,71 @@ class Contact < ActiveRecord::Base
   #validates :birthday, presence: true, if: :is_individual?
   #validates :sex, presence: true, if: :is_individual?
   #validates :account_manager_id, presence: true, if: :is_individual?
-  
+
   #validate :not_exist
-  
+
   has_many :parent_contacts, :dependent => :destroy
   has_many :parent, :through => :parent_contacts, :source => :parent
   has_many :child_contacts, :class_name => "ParentContact", :foreign_key => "parent_id", :dependent => :destroy
   has_many :children, :through => :child_contacts, :source => :contact
-  
+
   has_many :agents_contacts, :dependent => :destroy
   has_many :agents, :through => :agents_contacts, :source => :agent, :dependent => :destroy
   has_many :companies_contacts, :class_name => "AgentsContact", :foreign_key => "agent_id", :dependent => :destroy
   has_many :companies, :through => :companies_contacts, :source => :contact
-  
+
   has_many :contact_types_contacts
-  
+
   belongs_to :contact_type
   belongs_to :user
-  
+
   belongs_to :referrer, :class_name => "Contact", :foreign_key => "referrer_id"
   has_many :contacts, :class_name => "Contact", :foreign_key => "referrer_id"
-  
+
   belongs_to :invoice_info, :class_name => "Contact", :foreign_key => "invoice_info_id"
 
   belongs_to :city
   has_one :state, :through => :city
-  
+
   has_and_belongs_to_many :contact_types
-  
+
   has_and_belongs_to_many :contact_tags
   has_many :contact_tags_contacts, :dependent => :destroy
-  
+
   belongs_to :tag, :class_name => "ContactTagsContact", :foreign_key => "tag_id"
-  
+
   has_many :contacts_courses
   has_and_belongs_to_many :courses
-  
+
   has_many :books_contacts
   has_and_belongs_to_many :books
-  
+
   has_many :contacts_seminars, :dependent => :destroy
   has_and_belongs_to_many :seminars
-  
+
   belongs_to :account_manager, :class_name => "User"
   belongs_to :creator, :class_name => "User"
-  
+
   has_and_belongs_to_many :course_types
-  
+
   has_many :contacts_lecturer_course_types
   has_many :lecturer_course_types, :through => :contacts_lecturer_course_types, :source => :course_type
-  
+
   has_many :course_registers, :dependent => :destroy
-  
+
   has_many :drafts, :class_name => "Contact", :foreign_key => "draft_for", :dependent => :destroy
   belongs_to :draft_for_contact, :class_name => "Contact", :foreign_key => "draft_for"
-  
+
   has_one :current_revision, -> { order created_at: :desc }, class_name: 'Contact', foreign_key: "draft_for"
-  
+
   has_many :transfers
   has_many :received_transfers, class_name: "Transfer", foreign_key: "to_contact_id"
-  
+
   has_many :transferred_records, :class_name => "Transfer", :foreign_key => "transfer_for"
-  
+
   has_many :payment_records
   has_many :company_payment_records, :class_name => "PaymentRecord", :foreign_key => "company_id"
-  
+
   has_many :activities, :dependent => :destroy
 
   belongs_to :old_student, foreign_key: 'tmp_StudentID', primary_key: 'student_id'
@@ -91,90 +91,90 @@ class Contact < ActiveRecord::Base
 
   # has_many :related_contacts, class_name: "Contact", primary_key: 'id', foreign_key: 'related_id'
   has_many :child_contacts, class_name: "Contact", primary_key: 'id', foreign_key: 'related_id'
-  
+
   after_validation :update_cache
   before_validation :check_type
-  
+
   def active_contact_tags
     contact_tags.where(parent_id: nil).where("contact_tags.status IS NOT NULL AND contact_tags.status LIKE ?", "%[active]%")
                 .where("contact_tags.end_at IS NULL OR contact_tags.end_at >= ?", Time.now.beginning_of_day)
   end
-  
+
   def company_contacts
     contacts.where(draft_for: nil).where("contacts.status IS NOT NULL AND contacts.status NOT LIKE ?", "%[deleted]%")
   end
-  
+
   def related_contacts
     return [] if group.nil?
     return group.contacts.where.not(id: self.id)
   end
-  
+
   def active_books
     books.includes(:books_contacts).joins("LEFT JOIN course_registers ON course_registers.id = books_contacts.course_register_id")
           .where(course_registers: {parent_id: nil}).where("course_registers.status IS NOT NULL AND course_registers.status LIKE ?", "%[active]%")
           .uniq
   end
-  
+
   def added_books
     books.includes(:books_contacts).joins("LEFT JOIN course_registers ON course_registers.id = books_contacts.course_register_id")
           .where(course_registers: {parent_id: nil}).where("course_registers.status IS NOT NULL AND course_registers.status NOT LIKE ?", "%[deleted]%")
           .uniq
   end
-  
+
   def active_courses
     courses.includes(:contacts_courses).joins("LEFT JOIN course_registers ON course_registers.id = contacts_courses.course_register_id")
           .where(course_registers: {parent_id: nil}).where("course_registers.status IS NOT NULL AND course_registers.status LIKE ?", "%[active]%")
           .uniq
   end
-  
+
   def active_contacts_courses
     contacts_courses.joins("LEFT JOIN course_registers ON course_registers.id = contacts_courses.course_register_id")
                     .where(course_registers: {parent_id: nil}).where("course_registers.status IS NOT NULL AND course_registers.status LIKE ?", "%[active]%")
                     .uniq
   end
-  
+
   def active_books_contacts
     books_contacts.joins("LEFT JOIN course_registers ON course_registers.id = books_contacts.course_register_id")
                     .where(course_registers: {parent_id: nil}).where("course_registers.status IS NOT NULL AND course_registers.status LIKE ?", "%[active]%")
                     .uniq
   end
-  
+
   def active_course_registers
     course_registers.where("course_registers.parent_id IS NULL AND course_registers.status IS NOT NULL AND course_registers.status LIKE ?", "%[active]%")
   end
-  
+
   def main_course_registers
     course_registers.where("course_registers.parent_id IS NULL AND course_registers.status IS NOT NULL AND course_registers.status NOT LIKE ?", "%[deleted]%")
   end
-  
+
   def self.format_mobile(string)
     result = string.to_s.gsub(/\D/, '')
     return "" if result.to_s.length < 5 # check valid number
-    
+
     if (result =~ /84/i) != 0
       if result[0] == "0"
-        result[0] = ""        
+        result[0] = ""
       end
-      result = "84"+result      
+      result = "84"+result
     end
-    
+
     return result
   end
-  
+
   def display_mobile
     "+"+mobile
   end
-  
+
   def self.update_all_info
     self.all.each do |c|
       c.update_info
     end
   end
-  
+
   def update_info
     self.check_type
     self.save
-    
+
     self.update_cache_course_type_ids
     self.update_cache_intakes
     self.update_cache_subjects
@@ -187,7 +187,7 @@ class Contact < ActiveRecord::Base
     self.update_cache_old_tags
     self.check_bases
   end
-  
+
   def check_type
     self.course_types = [] if !contact_types.include?(ContactType.inquiry)
     self.lecturer_course_types = [] if !contact_types.include?(ContactType.lecturer)
@@ -198,14 +198,14 @@ class Contact < ActiveRecord::Base
       self.contact_types.delete(ContactType.inquiry) if self.course_types.empty?
     end
   end
-  
+
   def is_not_individual?
     !is_individual
   end
   def is_individual?
     is_individual
   end
-  
+
   def first_name=(str)
     self[:first_name] = str.to_s.strip
   end
@@ -243,42 +243,42 @@ class Contact < ActiveRecord::Base
   end
   def not_exist
     return true if self.draft?
-    
+
     if !exist_contacts.empty?
       cs = exist_contacts.map {|c| c.contact_link}
       errors.add(:base, "There are/is contact(s) with the same information: #{cs.join(";")}".html_safe)
     end
   end
-  
+
   def exist_contacts
-    exist = []    
+    exist = []
     if is_individual
       exist += Contact.main_contacts.where("contacts.status NOT LIKE ?","%[deleted]%").where("(LOWER(name) = ? AND LOWER(email) = ?) OR (LOWER(name) = ? AND LOWER(mobile) = ?)", name.downcase, email.downcase, name.downcase, mobile.downcase) if mobile.present? && name.present? && email.present?
     else
       exist += Contact.main_contacts.where("contacts.status NOT LIKE ?","%[deleted]%").where("LOWER(name) = ?", name.downcase) if name.present?
     end
-    
+
     cs = []
-    if exist.length > 0 && !self.id.present?      
+    if exist.length > 0 && !self.id.present?
       exist.each do |c|
         cs << c
-      end      
+      end
     end
-    
+
     return cs
   end
-  
+
   def self.filters(params, user)
     @records = self.main_contacts
-    
+
     @records = @records.where_by_types(params[:contact_types]) if params[:contact_types].present?
     @records = @records.where("contacts.is_individual = #{params[:is_individual]}") if params[:is_individual].present?
     @records = @records.where("contacts.referrer_id IN (#{params[:companies]})") if params[:companies].present?
-    
+
     if params[:courses].present?
       @records = @records.where("contacts.cache_courses LIKE ?", "%[#{params[:courses]},%")
     end
-    
+
     if params[:phrases].present?
       conds = []
       params[:phrases].split(",").each do |ccid|
@@ -288,14 +288,14 @@ class Contact < ActiveRecord::Base
           conds << "contacts.cache_phrases LIKE '%,#{ccid}]%'"
         end
       end
-      
+
       @records = @records.where(conds.join(" OR "))
     end
-    
+
     if params[:base_status].present?
       if params["course_types"].present?
         conds = []
-        params["course_types"].each do |ctid|          
+        params["course_types"].each do |ctid|
           conds << "bases SIMILAR TO '%_id\":\"#{ctid}\",\"status\":\"#{params[:base_status]}%'"
           conds << "bases SIMILAR TO '%_id\":#{ctid},\"status\":\"#{params[:base_status]}%'"
         end
@@ -304,18 +304,18 @@ class Contact < ActiveRecord::Base
         @records = @records.where("contacts.bases LIKE '%#{params[:base_status]}%'")
       end
     end
-    
+
     if params[:courses_phrases].present?
        @records = @records.joins(:contacts_courses)
       @records = @records.where("contacts_courses.courses_phrase_ids LIKE ?","%[#{params[:courses_phrases]}]%")
     end
-    
+
     if params[:seminars].present?
       @seminar = Seminar.find(params[:seminars])
       c_ids = @seminar.contacts.map(&:id)
       @records = @records.where(id: c_ids)
     end
-    
+
     if params[:tags].present?
       cond = []
       params[:tags].each do |t|
@@ -323,22 +323,22 @@ class Contact < ActiveRecord::Base
       end
       @records = @records.where(cond.join(" OR "))
     end
-    
+
     if params["course_types"].present? && !params[:base_status].present?
       conds = []
       params["course_types"].each do |ccid|
         conds << "contacts.cache_course_type_ids LIKE '%[#{ccid}]%'"
         conds << "contacts.old_student_course_type_ids LIKE '%[#{ccid}]%'"
       end
-      
+
       @records = @records.joins("LEFT JOIN contacts_course_types ON contacts_course_types.contact_id = contacts.id")
       #@records = @records.joins("LEFT JOIN contacts_lecturer_course_types ON contacts_lecturer_course_types.contact_id = contacts.id")
       conds << "contacts_course_types.course_type_id IN (#{params["course_types"].join(", ")})"
       #conds << "contacts_lecturer_course_types.course_type_id IN (#{params["course_types"].join(", ")})"
-      
+
       @records = @records.where(conds.join(" OR "))
     end
-    
+
     if params["intake_year"].present? && params["intake_month"].present?
       @records = @records.where("contacts.cache_intakes LIKE '%{:year=>#{params["intake_year"]}, :month=>#{params["intake_month"]}}%'")
     elsif params["intake_year"].present?
@@ -346,7 +346,7 @@ class Contact < ActiveRecord::Base
     elsif params["intake_month"].present?
       @records = @records.where("contacts.cache_intakes LIKE '%:month=>#{params["intake_month"]}}%'")
     end
-    
+
     if params["subjects"].present?
       conds = []
       params["subjects"].each do |sid|
@@ -354,7 +354,7 @@ class Contact < ActiveRecord::Base
       end
       @records = @records.where(conds.join(" OR "))
     end
-    
+
     if params[:status].present?
       if params[:status] == "pending"
         @records = @records.where("contacts.status LIKE ?","%_pending]%")
@@ -371,34 +371,34 @@ class Contact < ActiveRecord::Base
     if params["created_to"].present?
       @records = @records.where("contacts.created_at <= ?", params["created_to"].to_date.end_of_day)
     end
-    if params["payment_type"].present?      
+    if params["payment_type"].present?
       @records = @records.where(payment_type: params["payment_type"])
     end
-    if params["company"].present?      
+    if params["company"].present?
       @records = @records.where(referrer_id: params["company"])
     end
-    if params["user"].present?      
+    if params["user"].present?
       @records = @records.where(account_manager_id: params["user"])
     end
-    
-    if params["old_tag"].present?      
+
+    if params["old_tag"].present?
       # @records = @records.includes(:old_tags).where(old_tags: {tag_name: params["old_tag"].split(",")})
       @records = @records.where("contacts.cache_old_tags LIKE ? ", '%['+params["old_tag"]+']%')
     end
-    
-    if params["old_course"].present?      
+
+    if params["old_course"].present?
       #@records = @records.includes(:old_link_students).where(old_link_students: {subject_id: params["old_course"].split(",")})
       @records = @records.where("contacts.cache_old_courses LIKE ? ", '%['+params["old_course"]+']%')
     end
-    
-    if params["online_id"].present?      
+
+    if params["online_id"].present?
       @records = @records.where("LOWER(contacts.bases) LIKE ?", "%#{params["online_id"].strip.downcase}%")
     end
-    
+
     if !params[:status].present? || params[:status] != "deleted"
       @records = @records.where("contacts.status NOT LIKE ?","%[deleted]%")
     end
-    
+
     if params["no_added_books"].present?
       ors = []
       params["no_added_books"].split(",").each do |b|
@@ -406,7 +406,7 @@ class Contact < ActiveRecord::Base
       end
       @records = @records.where(ors.join(" OR "))
     end
-    
+
     # Areas filter
     cities_ids = []
     if params[:area_ids].present?
@@ -416,29 +416,29 @@ class Contact < ActiveRecord::Base
         if area_type == "c"
           cities_ids << area_id
         elsif area_type == "s"
-          cities_ids << State.find(area_id.to_i).cities.map{|c| c.id}          
+          cities_ids << State.find(area_id.to_i).cities.map{|c| c.id}
         end
       end
       @records = @records.where(city_id: cities_ids)
     end
-    
+
     # Discount Program
     if params["discount_program_id"].present?
       dp = DiscountProgram.find(params["discount_program_id"]);
       @records = @records.where(id: dp.contacts.map(&:id))
     end
-    
+
     @records = @records.where("LOWER(contacts.cache_search) LIKE ? OR LOWER(contacts.name) LIKE ? OR UPPER(contacts.name) LIKE ?", "%#{params["search"]["value"].mb_chars.strip.downcase}%", "%#{params["search"]["value"].mb_chars.strip.downcase}%", "%#{params["search"]["value"].mb_chars.strip.upcase}%") if params["search"].present? && !params["search"]["value"].empty? #.search(params["search"]["value"])
-    
+
     return @records
   end
-  
+
   def self.datatable(params, user)
     ActionView::Base.send(:include, Rails.application.routes.url_helpers)
     link_helper = ActionController::Base.helpers
-    
+
     @records = self.filters(params, user)
-    
+
     if !params["order"].nil?
       case params["order"]["0"]["column"]
       when "1"
@@ -455,22 +455,22 @@ class Contact < ActiveRecord::Base
     else
       order = "contacts.name"
     end
-    
+
     total = @records.count
-    
+
     order = "contacts.name, contacts.email DESC, contacts.mobile DESC" if params["search"]["value"].present?
-    
-    
+
+
     if params[:courses].present? and !Course.find(params[:courses]).courses_phrases.empty?
       phrase_pattern = (Course.find(params[:courses]).courses_phrases.map {|cp| "contacts.cache_transferred_courses_phrases LIKE '%[#{cp.id.to_s}]%'"}).join(" OR ")
       @records = @records.select("*, CASE WHEN (#{phrase_pattern}) THEN 0 WHEN contacts.cache_courses LIKE '%[#{params[:courses]},half]%' THEN 1 ELSE 2 END AS transferred_order")
       order = "transferred_order, "+order
     end
-    
+
     @records = @records.order(order) if !order.nil?
     #@records = @records.order(order) if !order.nil? && !params["search"]["value"].present?
-    
-    
+
+
     @records = @records.limit(params[:length]).offset(params["start"])
     data = []
     arr = []
@@ -482,7 +482,7 @@ class Contact < ActiveRecord::Base
         item.remove_annoucing_users([user])
       end
       ############### END REVISION #########################
-      
+
       itemz = [
               "<div item_id=\"#{item.id.to_s}\" class=\"main_part_info checkbox check-default\"><input name=\"ids[]\" id=\"checkbox#{item.id}\" type=\"checkbox\" value=\"#{item.id}\"><label for=\"checkbox#{item.id}\"></label></div>",
               '<div class="text-left"><strong>'+item.contact_link+"</strong></div>"+'<div class="text-left">'+item.html_info_line.html_safe+item.referrer_link+"</div>"+item.picture_link+item.display_not_added_stock(params[:no_added_books]),
@@ -493,7 +493,7 @@ class Contact < ActiveRecord::Base
               "",
               "",
               ""
-              #'<div class="text-left"><strong>'+item.contact_link+"</strong></div>"+'<div class="text-left">'+item.html_info_line.html_safe+item.referrer_link+"</div>"+item.picture_link,              
+              #'<div class="text-left"><strong>'+item.contact_link+"</strong></div>"+'<div class="text-left">'+item.html_info_line.html_safe+item.referrer_link+"</div>"+item.picture_link,
               #'<div class="text-left">'+item.course_types_name_col+"</div>",
               #'<div class="text-center">'+item.course_count_link+item.display_transferred_courses_phrases(params[:courses])+"</div>",
               #'<div class="text-center contact_tag_box" rel="'+item.id.to_s+'">'+ContactsController.helpers.render_contact_tags_selecter(item)+"</div>",
@@ -504,12 +504,12 @@ class Contact < ActiveRecord::Base
             ]
       data << itemz
       arr << item
-      
+
       #if item.statuses.include?("deleted") # and item.cache_group_id.nil? and item.find_old_group_id.present?
       #  item.find_related_contacts.each do |child|
       #    row = [
       #            "<div item_id=\"#{child.id.to_s}\" class=\"main_part_info checkbox check-default\"><input name=\"ids[]\" id=\"checkbox#{child.id}\" type=\"checkbox\" value=\"#{child.id}\"><label for=\"checkbox#{child.id}\"></label></div>",
-      #            "[#{child.cache_group_id}]"+'<div class="text-left re_merge"><strong class="label_name" val="'+child.name.to_ascii.to_s+'">'+child.contact_link+"</strong></div>"+'<div class="text-left">'+child.html_info_line.html_safe+child.referrer_link+"</div>"+child.picture_link,              
+      #            "[#{child.cache_group_id}]"+'<div class="text-left re_merge"><strong class="label_name" val="'+child.name.to_ascii.to_s+'">'+child.contact_link+"</strong></div>"+'<div class="text-left">'+child.html_info_line.html_safe+child.referrer_link+"</div>"+child.picture_link,
       #            "",
       #            "",
       #            "",
@@ -531,55 +531,55 @@ class Contact < ActiveRecord::Base
       #    arr << child
       #  end
       #end
-      
+
     end
-    
+
     result = {
               "drawn" => params[:drawn],
               "recordsTotal" => total,
               "recordsFiltered" => total
     }
     result["data"] = data
-    
+
     return {result: result, items: @records, actions_col: actions_col}
   end
-  
+
   def self.find_related_contacts(params, user, session)
     # PAGE SESSION
     if params[:last_id].present?
       page = (params["start"].to_i/params[:length].to_i)
-      
+
       # check next ori previous
       if !session[:current_page].present? || session[:current_page] < page
         current_id = params[:last_id].to_i
         session[:merge_pages][page] = params[:last_id].to_i
       else
         current_id = session[:merge_pages][page]
-      end     
-      
+      end
+
       # store pages page
-      session[:current_page] = page      
-      
+      session[:current_page] = page
+
     else
       current_id = 0
       session[:merge_pages] = {0 => 0}
       session[:current_page] = 0
     end
-    
+
     max = params[:length].to_i
     records = []
     used_ids = []
-    loop do     
+    loop do
       record = self.filters(params, user)
-      
+
       record = record.where("contacts.is_individual = #{params[:is_individual]}") if params[:is_individual].present?
-      
+
       record = record.where(cache_group_id: nil).where("id > ?", current_id).order("id").first
       current_id = record.id if record.present?
       used_ids << record.id if record.present?
       if record.present?
         row = {}
-        row[:parent] = record        
+        row[:parent] = record
         row[:children] = record.find_related_contacts.where.not(id: used_ids)
         if !row[:children].empty?
           rcs = Contact.where(id: ([row[:parent].id]+row[:children].map(&:id))).order("name,email DESC,mobile DESC")
@@ -587,32 +587,32 @@ class Contact < ActiveRecord::Base
           row[:children] = rcs.where.not(id: row[:parent].id)
           records << row
           used_ids += row[:children].map(&:id)
-        end        
-      end      
-      
-      if records.count >= max || record.nil?        
+        end
+      end
+
+      if records.count >= max || record.nil?
         break
       else
         session[:last_id] = record.id
       end
     end
-    
+
     return records
   end
 
   def self.merge_contacts_datatable(params, user, session)
     ActionView::Base.send(:include, Rails.application.routes.url_helpers)
     link_helper = ActionController::Base.helpers
-    
-    
+
+
     if params["type"] == "merged"
-      
+
       groups = RelatedContact.all
       # .where("related_contacts.cache_search NOT LIKE '%[single_group]%'")
       groups = groups.where("LOWER(related_contacts.cache_search) LIKE ?", "%#{params["search"]["value"].to_ascii.strip.downcase}%") if params["search"].present? && !params["search"]["value"].empty?
       total = groups.count
       groups = groups.order("related_contacts.created_at DESC").limit(params[:length]).offset(params["start"])
-      
+
       @records = []
       groups.each do |g|
         @records << {parent: g.contacts.first, children: g.contacts.first.related_contacts}
@@ -622,11 +622,11 @@ class Contact < ActiveRecord::Base
       @records = self.find_related_contacts(params, user, session)
       total = 9999 #@records.count
     end
-    
-      
-    
+
+
+
     data = []
-    
+
     actions_col = 8
     arr = []
     @records.each_with_index do |item,index|
@@ -636,10 +636,10 @@ class Contact < ActiveRecord::Base
         item.remove_annoucing_users([user])
       end
       ############### END REVISION #########################
-      
-      
+
+
       row = [
-              "<div item_id=\"#{item[:parent].id.to_s}\" last_id=\"#{session[:last_id]}\" class=\"main_part_info main_merge_row row-color-#{(index%2 == 0).to_s} checkbox check-default\"><input name=\"ids[]\" id=\"checkbox#{item[:parent].id}\" type=\"checkbox\" value=\"#{item[:parent].id}\"><label for=\"checkbox#{item[:parent].id}\"></label></div>",              
+              "<div item_id=\"#{item[:parent].id.to_s}\" last_id=\"#{session[:last_id]}\" class=\"main_part_info main_merge_row row-color-#{(index%2 == 0).to_s} checkbox check-default\"><input name=\"ids[]\" id=\"checkbox#{item[:parent].id}\" type=\"checkbox\" value=\"#{item[:parent].id}\"><label for=\"checkbox#{item[:parent].id}\"></label></div>",
               '<div class="text-left"><strong class="label_name" val="'+item[:parent].name.to_ascii.to_s+'">'+item[:parent].contact_link+"</strong></div>"+'<div class="text-left">'+item[:parent].html_info_line.html_safe+item[:parent].referrer_link+"</div>"+item[:parent].picture_link,
               "",
               "",
@@ -658,11 +658,11 @@ class Contact < ActiveRecord::Base
             ]
       data << row
       arr << item[:parent]
-      
+
       item[:children].each do |child|
         row = [
                 "<div item_id=\"#{child.id.to_s}\" class=\"main_part_info row-color-#{(index%2 == 0).to_s} checkbox check-default\"><input name=\"ids[]\" id=\"checkbox#{child.id}\" type=\"checkbox\" value=\"#{child.id}\"><label for=\"checkbox#{child.id}\"></label></div>",
-                '<div class="text-left"><strong class="label_name" val="'+child.name.to_ascii.to_s+'">'+child.contact_link+"</strong></div>"+'<div class="text-left">'+child.html_info_line.html_safe+child.referrer_link+"</div>"+child.picture_link,              
+                '<div class="text-left"><strong class="label_name" val="'+child.name.to_ascii.to_s+'">'+child.contact_link+"</strong></div>"+'<div class="text-left">'+child.html_info_line.html_safe+child.referrer_link+"</div>"+child.picture_link,
                 "",
                 "",
                 "",
@@ -682,18 +682,18 @@ class Contact < ActiveRecord::Base
         arr << child
         data << row
       end
-      
+
     end
-    
-    result = {    
+
+    result = {
               "recordsTotal" => total,
               "recordsFiltered" => total
     }
     result["data"] = data
-    
+
     return {result: result, items: arr , actions_col: actions_col}
   end
-  
+
   def account_manager_col
     if is_individual
       result = !account_manager.nil? ? account_manager.staff_col : ""
@@ -702,26 +702,26 @@ class Contact < ActiveRecord::Base
       contacts.each do |c|
         arr << c.account_manager if !c.account_manager.nil? && !arr.include?(c.account_manager)
       end
-      
+
       result = (arr.map {|u| u.staff_col}).join("<br /><br />")
     end
-    return result    
+    return result
   end
-  
+
   def account_manager_list
     if is_individual
       result = !account_manager.nil? ? account_manager.name : ""
     else
       result = User.where(id: company_contacts.map(&:account_manager_id).uniq).map(&:name).join(", ")
     end
-    return result 
+    return result
   end
-  
+
   def self.course_students(params, user)
     @course = Course.find(params[:courses])
-    
+
     @records = self.filters(params, user)
-    
+
     if !params["order"].nil?
       case params["order"]["0"]["column"]
       when "2"
@@ -734,18 +734,18 @@ class Contact < ActiveRecord::Base
       order = "contacts.name"
     end
     @records = @records.order(order) if !order.nil? && !params["search"]["value"].present?
-    
+
     total = @records.count
     @records = @records.limit(params[:length]).offset(params["start"])
     data = []
-    
+
     actions_col = 9
     @records.each do |item|
       item = [
               "<div class=\"checkbox check-default\"><input name=\"ids[]\" id=\"checkbox#{item.id}\" type=\"checkbox\" value=\"#{item.id}\"><label for=\"checkbox#{item.id}\"></label></div>",
               item.picture_link,
               '<div class="text-left">'+item.contact_link+"</div>",
-              '<div class="text-left">'+item.html_info_line.html_safe+item.referrer_link+"</div>",               
+              '<div class="text-left">'+item.html_info_line.html_safe+item.referrer_link+"</div>",
               '<div class="text-center">'+item.joined_course_types_name+"</div>",
               '<div class="text-center">'+item.course_count_link+"</div>",
               #'<div class="text-left">'+item.referrer_link+"</div>",
@@ -755,27 +755,27 @@ class Contact < ActiveRecord::Base
               '',
             ]
       data << item
-      
+
     end
-    
+
     result = {
               "drawn" => params[:drawn],
               "recordsTotal" => total,
               "recordsFiltered" => total
     }
     result["data"] = data
-    
+
     return {result: result, items: @records, actions_col: actions_col}
   end
-  
+
   def self.seminar_students(params, user)
     ActionView::Base.send(:include, Rails.application.routes.url_helpers)
     link_helper = ActionController::Base.helpers
-    
+
     @seminar = Seminar.find(params[:seminars])
-    
+
     @records = self.filters(params, user)
-    
+
     if !params["order"].nil?
       case params["order"]["0"]["column"]
       when "2"
@@ -788,18 +788,18 @@ class Contact < ActiveRecord::Base
       order = "contacts.name"
     end
     @records = @records.order(order) if !order.nil? && !params["search"]["value"].present?
-    
+
     total = @records.count
     @records = @records.limit(params[:length]).offset(params["start"])
     data = []
-    
+
     actions_col = 10
     @records.each do |item|
       item = [
               "<div class=\"checkbox check-default\"><input name=\"ids[]\" id=\"checkbox#{item.id}\" type=\"checkbox\" value=\"#{item.id}\"><label for=\"checkbox#{item.id}\"></label></div>",
               item.picture_link,
               '<div class="text-left">'+item.contact_link+"</div>",
-              '<div class="text-left">'+item.html_info_line.html_safe+item.referrer_link+"</div>",               
+              '<div class="text-left">'+item.html_info_line.html_safe+item.referrer_link+"</div>",
               '<div class="text-left">'+item.course_types_name_col+"</div>",
               '<div class="text-center">'+item.course_count_link+"</div>",
               #'<div class="text-left">'+item.referrer_link+"</div>",
@@ -810,51 +810,51 @@ class Contact < ActiveRecord::Base
               "<div class=\"text-right\"><div rel=\"#{@seminar.id}\" contact_ids=\"#{item.id}\" class=\"remove_contact_from_seminar_but btn btn-mini btn-danger\">Remove</div></div>",
             ]
       data << item
-      
+
     end
-    
+
     result = {
               "drawn" => params[:drawn],
               "recordsTotal" => total,
               "recordsFiltered" => total
     }
     result["data"] = data
-    
+
     return {result: result, items: @records, actions_col: actions_col}
   end
-  
+
   def display_present_with_seminar(seminar, link=true)
     ActionView::Base.send(:include, Rails.application.routes.url_helpers)
     link_helper = ActionController::Base.helpers
-    
+
     url = link ? link_helper.url_for({controller: "seminars", action: "check_contact", value: !present_with_seminar?(seminar), id: seminar.id, contact_id: self.id}) : "#none"
-    
-    ApplicationController.helpers.check_ajax_button(present_with_seminar?(seminar), url)    
+
+    ApplicationController.helpers.check_ajax_button(present_with_seminar?(seminar), url)
   end
-  
+
   def present_with_seminar?(seminar)
     cs = contacts_seminar(seminar)
     cs.nil? ? false : cs.present?
   end
-  
+
   def contacts_seminar(seminar)
     contacts_seminars.where(seminar_id: seminar.id).first
   end
-  
+
   def course_register(course)
     CourseRegister.find(contacts_courses.where(course_id: course.id).first.course_register_id)
   end
-  
+
   def joined_course_types
     # active_contacts_courses.map {|cc| cc.course.course_type}.uniq
     cts = []
     active_courses_with_phrases.each do |row|
       cts << row[:course].course_type
     end
-    
+
     return cts.uniq
   end
-  
+
   def intakes
     # active_contacts_courses.map {|cc| {year: cc.course.intake.year, month: cc.course.intake.month}}.uniq
     result = []
@@ -863,29 +863,29 @@ class Contact < ActiveRecord::Base
     end
     return result.uniq
   end
-  
+
   def update_cache_intakes
-    self.update_attribute(:cache_intakes, intakes.to_s)
+    self.update_column(:cache_intakes, intakes.to_s)
   end
-  
+
   def subjects
     # contacts_courses.map {|cc| cc.course.subject}.uniq
     sus = []
     active_courses_with_phrases.each do |row|
       sus << row[:course].subject
-    end    
+    end
     return sus.uniq
   end
-  
+
   def update_cache_subjects
     cache = "["+subjects.map(&:id).join("][")+"]"
-    self.update_attribute(:cache_subjects, cache)
+    self.update_column(:cache_subjects, cache)
   end
-  
+
   def joined_course_types_name
     joined_course_types.map(&:short_name).join(", ")
   end
-  
+
   def contact_type_name
     if is_individual
       result = ""
@@ -894,58 +894,58 @@ class Contact < ActiveRecord::Base
       else
         result += "none"
       end
-      
+
       #if !course_types.empty?
       #  result += "<div class=\"text-center\"><label class=\"col_label text-center\">Inquiry:</label>"
       #  result += course_types.map(&:short_name).join(", ")
       #  result += "</div>"
       #end
-      
+
       return result
     else
       "Company/Organization"
-    end    
+    end
   end
-  
+
   def course_types_name_col
     result = []
     result << "<strong>Student</strong>: <div class=\"contact_type_line\">#{joined_course_types_name}#{display_old_student_course_types}</div>" if contact_types.include?(ContactType.student)
     result << "<strong>Inquiry</strong>: <div class=\"contact_type_line\">#{course_types.map(&:short_name).join(", ")}</div>" if contact_types.include?(ContactType.inquiry)
     result << "<strong>Lecturer</strong>: <div class=\"contact_type_line\">#{lecturer_course_types.map(&:short_name).join(", ")}</div>" if contact_types.include?(ContactType.lecturer)
-    
+
     return result.join("<br />")
   end
-  
+
   def display_old_student_course_types
     return "" if !old_student_course_type_ids.present?
     ct_ids = old_student_course_type_ids.to_s.split("][").map {|s| s.gsub("[","").gsub("]","")}
     return "<div><span class=\"nowrap col_label\">Old program(s):</span> #{(CourseType.where(id: ct_ids).map(&:short_name).join(", "))}</div>"
   end
-  
+
   def referrer_link
     referrer.nil? ? "" : ('<i class="icon-building"></i> '+referrer.contact_link).html_safe
   end
-  
+
   def contact_link(title=nil)
     ActionView::Base.send(:include, Rails.application.routes.url_helpers)
     link_helper = ActionController::Base.helpers
-    
+
     title = title.nil? ? display_name : title
-    
+
     link_helper.link_to(title, {controller: "contacts", action: "edit", id: id, tab_page: 1}, class: "tab_page", title: display_name+(related_contacts.empty? ? "" : " #"+id.to_s))
   end
-  
+
   def picture_link
     ActionView::Base.send(:include, Rails.application.routes.url_helpers)
     link_helper = ActionController::Base.helpers
-    
+
     link_helper.link_to(display_picture(:thumb), logo+".png?v=#{Time.now.to_i}", class: "fancybox.image fancybox logo", title: display_name)
   end
-  
+
   def city_name
     city.present? ? city.system_name : ""
   end
-  
+
   def self.where_by_types(types)
     wheres = []
     types.each do |t|
@@ -953,35 +953,35 @@ class Contact < ActiveRecord::Base
     end
     where("(#{wheres.join(" OR ")})")
   end
-  
+
   def is_main
     parent.first.nil? && !is_agent
   end
-  
+
   def is_agent
     contact_types.include?(ContactType.agent)
   end
-  
-  
-  
+
+
+
   def self.import(file)
     require 'roo'
-    
+
     spreadsheet = Roo::Excelx.new(file.path, nil, :ignore)
-    puts spreadsheet.sheets() 
+    puts spreadsheet.sheets()
     header = spreadsheet.row(1)
-    
+
     result = Array.new
-    
+
     (2..spreadsheet.last_row).each do |i|
       row = Hash[[header, spreadsheet.row(i, "KH2014")].transpose]
-      
+
       str = String.new
       contact = Contact.new
       if !row["TÊN ĐƠN VỊ"].nil?
         str = row["TÊN ĐƠN VỊ"].strip
 
-        
+
         contact.name = row["TÊN ĐƠN VỊ"].strip
         contact.contact_type_id = ContactType.supplier
         contact.tax_code = row["MST"].to_s.strip if !row["MST"].nil?
@@ -989,7 +989,7 @@ class Contact < ActiveRecord::Base
         contact.phone = row["SỐ ĐIỆN THOẠI"].to_s.strip if !row["ĐIỆN THOẠI"].nil?
         contact.fax = row["SỐ FAX"].to_s.strip if !row["SỐ FAX"].nil?
         contact.email = row["EMAIL CÔNG TY"].to_s.strip if !row["EMAIL CÔNG TY"].nil?
-        
+
         contact.website = row["WEBSITE"].to_s.strip if !row["WEBSITE"].nil?
         contact.account_number = row["SỐ TÀI KHOẢN"].to_s.strip if !row["SỐ TÀI KHOẢN"].nil?
         contact.bank = row["NGÂN HÀNG"].to_s.strip if !row["NGÂN HÀNG"].nil?
@@ -997,72 +997,72 @@ class Contact < ActiveRecord::Base
         contact.representative_role = row["CHỨC VỤ"].to_s.strip if !row["CHỨC VỤ"].nil?
         contact.representative_phone = row["SỐ ĐT ĐẠI DIỆN"].to_s.strip if !row["SỐ ĐT ĐẠI DIỆN"].nil?
         contact.note = row["NOTE"].to_s.strip if !row["NOTE"].nil?
-        
+
         contact.save
-        
+
         if !row["TÊN NGƯỜI LIÊN HỆ"].nil?
           agent = Contact.new
-          
+
           if row["TÊN NGƯỜI LIÊN HỆ"].strip.split(/,/).length > 1
             names = row["TÊN NGƯỜI LIÊN HỆ"].strip.split(/,/)
-            
-            names.each_with_index {|name, index|            
+
+            names.each_with_index {|name, index|
               agent = Contact.new
-              
+
               agent.contact_type_id = ContactType.agent
               agent.name = name.strip
-              
-              
+
+
               agent.phone = row["SỐ ĐT NGƯỜI LIÊN HỆ"].to_s.split(/,/)[index].to_s.strip if !row["SỐ ĐT NGƯỜI LIÊN HỆ"].nil?
               agent.email = row["EMAIL NGƯỜI LIÊN HỆ"].to_s.split(/,/)[index].to_s.strip if !row["EMAIL NGƯỜI LIÊN HỆ"].nil?
               agent.account_number = row["SỐ TÀI KHOẢN NGƯỜI LIÊN HỆ"].to_s.split(/,/)[index].to_s.strip if !row["SỐ TÀI KHOẢN NGƯỜI LIÊN HỆ"].nil?
               agent.bank = row["NGÂN HÀNG NGƯỜI LH"].to_s.split(/,/)[index].to_s.strip if !row["NGÂN HÀNG NGƯỜI LH"].nil?
-              
+
               agent.companies << contact
-            
+
               agent.save
             }
-            
+
           else
             agent = Contact.new
-            
+
             agent.contact_type_id = ContactType.agent
             agent.name = row["TÊN NGƯỜI LIÊN HỆ"].strip
             agent.phone = row["SỐ ĐT NGƯỜI LIÊN HỆ"].to_s.strip if !row["SỐ ĐT NGƯỜI LIÊN HỆ"].nil?
             agent.email = row["EMAIL NGƯỜI LIÊN HỆ"].to_s.strip if !row["EMAIL NGƯỜI LIÊN HỆ"].nil?
             agent.account_number = row["SỐ TÀI KHOẢN NGƯỜI LIÊN HỆ"].to_s.strip if !row["SỐ TÀI KHOẢN NGƯỜI LIÊN HỆ"].nil?
             agent.bank = row["NGÂN HÀNG NGƯỜI LH"].to_s.strip if !row["NGÂN HÀNG NGƯỜI LH"].nil?
-            
+
             agent.companies << contact
-          
+
             agent.save
           end
-          
+
         end
-        
-        
+
+
         #note = String.new
         #note = row["STK"].to_s.strip if !row["STK"].nil?
         #note += " / "+row["TẠI NH"].to_s.strip if !row["TẠI NH"].nil?
         #contact.note = note
-        
+
         #contact.save
       end
-      
+
       result << str
     end
-    
+
     return result
   end
-  
+
   def html_info_line
     line = "";
-    
+
     line += "<span class=\"box_mini_info nowrap\"><i class=\"icon-#{sex}\"></i> #{sex}</span>" if sex.present?
 
     display_email_2 = (email_2s.map {|e| "<span class=\"box_mini_info label_email nowrap\" val=\"#{e.to_s.strip.downcase}\"><i class=\"icon-envelope\"></i> " + e + "</span> "}).join(" ")
     display_mobile_2 = (mobile_2s.map {|e| "<span class=\"box_mini_info label_mobile nowrap\" val=\"+#{e}\"><i class=\"icon-phone\"></i> +" + e + "</span> "}).join(" ")
-    
+
     if is_individual
       birth = !birthday.nil? ? birthday.strftime("%d-%b-%Y") : ""
       line += "<span class=\"box_mini_info nowrap\"><i class=\"icon-calendar\"></i> " + birth + "</span> " if !mobile.nil? && !mobile.empty?
@@ -1077,11 +1077,11 @@ class Contact < ActiveRecord::Base
       line += "Tax Code: " + tax_code + "</span><br />" if tax_code.present?
     end
     line += "<div class=\"address_info_line\"><i class=\"icon-truck\"></i> " + address + "</div>" if address.present?
-    
-    
+
+
     return line
   end
-  
+
   def html_agent_line
     line = "";
     line += "<strong>" + name + "</strong><br /> "
@@ -1095,10 +1095,10 @@ class Contact < ActiveRecord::Base
     if !email.nil? && !email.empty?
       line += "email: " + email + " "
     end
-    
+
     return line
   end
-  
+
   def html_agent_input
     line = "";
     line += name
@@ -1112,14 +1112,14 @@ class Contact < ActiveRecord::Base
     if !email.nil? && !email.empty?
       line += "; email: " + email + " "
     end
-    
+
     return line
   end
-  
+
   def self.HK
     Contact.where(is_mine: true).first
   end
-  
+
   pg_search_scope :search,
                 against: [:cache_search, :name, :address, :website, :phone, :mobile, :fax, :email, :tax_code, :note, :account_number, :bank, :bases],
                 using: {
@@ -1129,7 +1129,7 @@ class Contact < ActiveRecord::Base
                     prefix: true
                   }
                 }
-  
+
   def self.full_text_search(params)
     records = self.main_contacts.where("contacts.status IS NOT NULL AND contacts.status NOT LIKE ?", "%deleted%")
     if params[:is_individual].present?
@@ -1142,21 +1142,21 @@ class Contact < ActiveRecord::Base
     records = records.where("LOWER(contacts.cache_search) LIKE ? OR LOWER(contacts.name) LIKE ? OR UPPER(contacts.name) LIKE ?", "%#{params[:q].mb_chars.strip.downcase}%", "%#{params[:q].mb_chars.strip.downcase}%", "%#{params[:q].mb_chars.strip.upcase}%") if params[:q].present?
     records.order("name").limit(50).map {|model| {:id => model.id, :text => model.display_name_long} }
   end
-  
+
   def short_name
     name.gsub(/công ty /i,'').gsub(/TNHH /i,'').gsub(/cổ phần /i,'')
   end
-  
+
   def full_address
     ad = ""
     if city.present?
       ad += ", "+city.name_with_state
     end
     ad = address+ad if address.present?
-    
+
     return ad
   end
-  
+
   def agent_list_html
     html = ""
     if !agents.nil?
@@ -1166,16 +1166,16 @@ class Contact < ActiveRecord::Base
         html += '</div>'
       end
     end
-    
+
     return html
   end
-  
+
   def update_cache
     types = contact_types.map{|t| t.id}
     types_cache = types.empty? ? "" : "["+types.join("][")+"]"
-    self.update_attribute(:contact_types_cache, types_cache)
+    self.update_column(:contact_types_cache, types_cache)
   end
-  
+
   def logo_path(version = nil)
     if self.image_url.nil?
       return "public/img/avatar.jpg"
@@ -1185,139 +1185,139 @@ class Contact < ActiveRecord::Base
       return self.image_url
     end
   end
-  
+
   def logo(version = nil)
     ActionView::Base.send(:include, Rails.application.routes.url_helpers)
     link_helper = ActionController::Base.helpers
-    
+
     link_helper.url_for(controller: "contacts", action: "logo", id: self.id, type: version)
   end
-  
+
   def display_name(params=nil)
     #sirname = sex == "female" ? "[Ms]" : (sex == "male" ? "[Mr]" : "[?]")
     result = is_individual ? (name).html_safe.mb_chars.titleize : name
     result = result
-    
+
     if params.present?
       result = result+" (#{self.email})" if params[:email].present?
     end
-    
+
     return result
   end
-  
+
   def display_name_long(params=nil)
     result = []
     # sirname = sex == "female" ? "[Ms]" : (sex == "male" ? "[Mr]" : "[?]")
     result << (is_individual ? (name).html_safe.mb_chars.titleize : name)
-    
+
     more = []
     more << "#{self.email}" if self.email.present?
     more << "#{self.mobile}" if self.mobile.present?
-    
+
     result << "("+more.join(", ")+")" if !more.empty?
-    
+
     return result.join(" ")
   end
-  
+
   def name
     return "" if self[:name].nil?
     is_individual ? self[:name].mb_chars.titleize : self[:name]
   end
-  
+
   def display_picture(version = nil)
     self.image_url.nil? ? "<i class=\"icon-picture icon-nopic-60\"></i>".html_safe : "<img width='60' src='#{logo(version)}' />".html_safe
   end
-  
+
   def course_register_count
     active_course_registers.count
   end
-  
+
   def pending_transfers
     transfers.where("transfers.parent_id IS NULL AND transfers.status IS NOT NULL AND transfers.status LIKE ?", "%_pending]%")
   end
-  
+
   def pending_received_transfers
     received_transfers.where("transfers.parent_id IS NULL AND transfers.status IS NOT NULL AND transfers.status LIKE ?", "%_pending]%")
   end
-  
+
   def pending_transfer_count
     pending_transfers.count + pending_received_transfers.count
   end
-  
+
   def pending_transfer_course_ids
     pending_transfers.map(&:course_id) + pending_received_transfers.map(&:to_course_id)
   end
-  
+
   def active_transfers
     transfers.where("transfers.parent_id IS NULL AND transfers.status IS NOT NULL AND transfers.status LIKE ?", "%[active]%")
   end
-  
+
   def active_received_transfers
     received_transfers.where("transfers.parent_id IS NULL AND transfers.status IS NOT NULL AND transfers.status LIKE ?", "%[active]%")
   end
-  
+
   def active_all_transfers
     Transfer.where("transfers.parent_id IS NULL AND transfers.status IS NOT NULL AND transfers.status LIKE ?", "%[active]%")
             .where("transfers.contact_id = ? OR transfers.to_contact_id = ?", self.id, self.id)
             .order("created_at ASC")
   end
-  
+
   def main_all_transfers
     Transfer.where("transfers.parent_id IS NULL AND transfers.status IS NOT NULL AND (transfers.status LIKE ? OR transfers.status LIKE ?)", "%[active]%", "%[new_pending]%")
             .where("transfers.contact_id = ? OR transfers.to_contact_id = ?", self.id, self.id)
             .order("created_at ASC")
   end
-  
+
   def transfer_count
     active_all_transfers.count
   end
-  
+
   def payment_count
     count = self.payment_records.where(status: 1).count
     main_course_registers.each do |cr|
       count += cr.all_payment_records.count
     end
-    
+
     count += PaymentRecord.where(status: 1).where(company_id: self.id).count
-    
+
     return count
   end
-  
+
   def contact_tag
     tag.nil? ? ContactTag.new(id: nil, name: "No Tag", description: "") : ContactTag.find(tag.contact_tag_id)
   end
-  
+
   def update_tag(contact_tag, user)
     if self.contact_tag.id == contact_tag.id
       return false
-    end    
-    
+    end
+
     if !contact_tag.nil?
       tag = ContactTagsContact.create(contact_id: self.id, contact_tag_id: contact_tag.id, user_id: user.id)
       if !tag.id.nil?
-        self.update_attribute(:tag_id, tag.id)
+        self.update_column(:tag_id, tag.id)
         return true
       else
         return false
-      end      
+      end
     end
     return false
   end
-  
+
   def update_cache_course_type_ids
     cache = "["+joined_course_types.map(&:id).join("][")+"]"
-    self.update_attribute(:cache_course_type_ids,cache)
+    self.update_column(:cache_course_type_ids,cache)
   end
-  
+
   def students
     ContactType.student.contacts
   end
-  
+
   def course_list_link(title=nil)
     title = title.nil? ? "Course List (#{active_courses_with_phrases.count.to_s})" : title
     ActionController::Base.helpers.link_to(title, {controller: "contacts", action: "edit", id: self.id, tab_page: 1, tab: "course"}, title: "#{display_name}: Course List", class: "tab_page")
   end
-  
+
   def course_count_link
     if is_individual
       result = active_courses_with_phrases.count == 0 ? "" : self.course_list_link("["+active_courses_with_phrases.count.to_s+"]")
@@ -1325,35 +1325,35 @@ class Contact < ActiveRecord::Base
       result = contacts_link
     end
   end
-  
+
   def contacts_link
     ActionController::Base.helpers.link_to("["+company_contacts.count.to_s+"]", {controller: "contacts", action: "index", company_id: self.id, tab_page: 1}, title: "#{display_name}: Contact List", class: "tab_page")
   end
-  
+
   def students_by_course_type(course_type_id)
     company_contacts.where("contacts.cache_course_type_ids LIKE ? OR contacts.old_student_course_type_ids LIKE ?", "%[#{course_type_id}]%", "%[#{course_type_id}]%")
   end
-  
+
   def json_encode_course_type_ids_names
     json = course_types.map {|t| {id: t.id.to_s, text: t.short_name}}
     json.to_json
   end
-  
+
   def json_encode_contact_tag_ids_names
     json = contact_tags.map {|t| {id: t.id.to_s, text: t.name}}
     json.to_json
   end
-  
+
   def json_encode_lecturer_course_type_ids_names
     json = lecturer_course_types.map {|t| {id: t.id.to_s, text: t.short_name}}
     json.to_json
   end
-  
+
   def set_present_in_seminar(seminar, checked)
-    contacts_seminar = seminar.contacts_seminars.where(contact_id: self.id).first    
-    contacts_seminar.update_attribute(:present, checked)
+    contacts_seminar = seminar.contacts_seminars.where(contact_id: self.id).first
+    contacts_seminar.update_column(:present, checked)
   end
-  
+
   def default_mailing_address
     if preferred_mailing == "home"
       return address
@@ -1364,9 +1364,9 @@ class Contact < ActiveRecord::Base
     else
       return mailing_address
     end
-    
+
   end
-  
+
   def default_mailing_title
     if preferred_mailing == "home"
       return "Home Address"
@@ -1376,13 +1376,13 @@ class Contact < ActiveRecord::Base
       return "FTMS Address"
     else
       return "Address"
-    end    
+    end
   end
-  
+
   def course_count
     active_courses_with_phrases.count
   end
-  
+
   def learned_courses(current_time=nil)
     arr = []
     active_courses_with_phrases(current_time).each do |row|
@@ -1392,24 +1392,24 @@ class Contact < ActiveRecord::Base
     end
     return arr
   end
-  
+
   def book_count
     active_books.count
   end
-  
+
   def vat_name
     if invoice_required == true
       return invoice_info.nil? ? "" : invoice_info.name
     else
       return ""
-    end    
+    end
   end
   def vat_code
     if invoice_required == true
       return invoice_info.nil? ? "" : invoice_info.tax_code
     else
       return ""
-    end 
+    end
   end
   def vat_address
     if invoice_required == true
@@ -1418,7 +1418,7 @@ class Contact < ActiveRecord::Base
       return ""
     end
   end
-  
+
   def update_bases(bases)
     result = []
     bases.each do |row|
@@ -1428,15 +1428,15 @@ class Contact < ActiveRecord::Base
         item[:status] = row[1]["status"]
         item[:name] = row[1]["name"]
         item[:password] = row[1]["password"]
-        
-        
+
+
         result << item
       end
     end
-    
+
     self.bases = result.to_json
   end
-  
+
   def base_items
     arr = self.bases.present? ? JSON.parse(self.bases) : []
     result = []
@@ -1444,58 +1444,58 @@ class Contact < ActiveRecord::Base
       one = item
       one["course_type"] = CourseType.where(id: one["course_type_id"]).first
       one["course_type"] = CourseType.new(short_name: "NaN") if one["course_type"].nil?
-      
+
       result << one
     end
-    
+
     return result
   end
-  
+
   def books_contact(book)
     books_contacts.where(book_id: book.id).first
   end
-  
-  
+
+
   ############### BEGIN REVISION #########################
-  
+
   def self.main_contacts
     self.where(draft_for: nil)
   end
-  
+
   def self.active_contacts
     self.main_contacts.where("status IS NOT NULL AND status LIKE ?", "%[active]%")
   end
-  
-  
-  
+
+
+
   def draft?
     !draft_for.nil?
   end
-  
+
   def update_status(action, user, older = nil)
     # when create new contact
-    if action == "create"      
-      
+    if action == "create"
+
       # admin / manager
       #if user.has_role?("manager") || user.has_role?("admin")
       #  self.add_status("active")
       #else
         # check if the contact is student
-        if is_individual?        
+        if is_individual?
           self.add_status("new_pending")
-          
+
           # check if education consultant peding
           if self.account_manager.present?
             self.add_status("education_consultant_pending")
-          end        
+          end
         else
           # auto active if contact is company/organization
           self.add_status("active")
         end
-      #end      
-        
+      #end
+
     end
-    
+
     # when update exist contact
     if action == "update"
       # admin / manager
@@ -1505,7 +1505,7 @@ class Contact < ActiveRecord::Base
         # check if the contact is student
         if is_individual?
           self.add_status("update_pending") if !self.has_status("new_pending") && is_changed?
-          
+
           # check if education consultant peding
           if self.account_manager != self.current.account_manager
             self.add_status("education_consultant_pending")
@@ -1514,10 +1514,10 @@ class Contact < ActiveRecord::Base
         end
       #end
     end
-    
+
     self.check_statuses
   end
-  
+
   def is_changed?
     is_changed = false
     if older.present?
@@ -1534,112 +1534,112 @@ class Contact < ActiveRecord::Base
     end
     return is_changed
   end
-  
+
   def statuses
     status.to_s.split("][").map {|s| s.gsub("[","").gsub("]","")}
   end
-  
+
   def display_statuses
     return "" if statuses.empty?
     edit_by = ((statuses.include?("active") or statuses.include?("deleted")) and !older.nil?) ? " by: #{older.user.name}, approved " : ""
     result = statuses.map {|s| "<span title=\"Last updated: #{last_updated.created_at.strftime("%d-%b-%Y, %I:%M %p")} /#{edit_by} by: #{current.user.name}\" class=\"badge user-role badge-info contact-status #{s}\">#{s}</span>"}
     result.join(" ").html_safe
   end
-  
+
   def last_updated
     return current if older.nil? or current.statuses.include?("new_pending") or current.statuses.include?("education_consultant_pending") or current.statuses.include?("update_pending") or current.statuses.include?("delete_pending")
     return older
   end
-  
+
   def editor
     return last_updated.nil? ? self : last_updated.user
   end
-  
-  
+
+
   def approve_new(user)
-    if statuses.include?("new_pending")          
-      self.delete_status("new_pending")      
+    if statuses.include?("new_pending")
+      self.delete_status("new_pending")
       self.check_statuses
-      
+
       # Annoucing users
       add_annoucing_users([self.current.user])
-      
+
       self.save_draft(user)
     end
   end
-  
+
   def approve_education_consultant(user)
     if statuses.include?("education_consultant_pending")
-      self.delete_status("education_consultant_pending")      
+      self.delete_status("education_consultant_pending")
       self.check_statuses
-      
+
       # Annoucing users
       add_annoucing_users([self.current.user, self.account_manager])
-      
+
       self.save_draft(user)
     end
   end
-  
+
   def approve_update(user)
     if statuses.include?("update_pending")
       self.delete_status("update_pending")
       self.check_statuses
-      
+
       # Annoucing users
       add_annoucing_users([self.current.user])
-      
+
       self.save_draft(user)
     end
   end
-  
+
   def approve_delete(user)
     if statuses.include?("delete_pending")
       self.set_statuses(["deleted"])
       self.check_statuses
-      
+
       # Annoucing users
       add_annoucing_users([self.current.user])
-      
+
       # remove related contacts
       # self.group.remove_contact(self)
-      
+
       self.save_draft(user)
     end
   end
-  
+
   def undo_delete(user)
     if statuses.include?("delete_pending")  || statuses.include?("deleted")
       recent = older
       while recent.statuses.include?("delete_pending") || recent.statuses.include?("deleted")
         recent = recent.older
       end
-      self.update_attribute(:status, recent.status)
+      self.update_column(:status, recent.status)
 
       self.check_statuses
-      
+
       # Annoucing users
       add_annoucing_users([self.current.user])
-      
+
       self.save_draft(user)
     end
   end
-  
+
   def check_statuses
     if !statuses.include?("deleted") && !statuses.include?("delete_pending") && !statuses.include?("update_pending") && !statuses.include?("new_pending") && !statuses.include?("education_consultant_pending") && !statuses.include?("no_education_consultant")
       add_status("active")
       if self.account_manager.present? && !self.creator.present?
-        self.creator = self.account_manager 
+        self.creator = self.account_manager
         self.save
       end
     else
       delete_status("active")
-    end    
+    end
   end
-  
+
   def set_statuses(arr)
-    self.update_attribute(:status, "["+arr.join("][")+"]")    
+    self.update_column(:status, "["+arr.join("][")+"]")
   end
-  
+
   def add_status(st)
     sts = self.statuses
     if !sts.include?(st)
@@ -1647,50 +1647,50 @@ class Contact < ActiveRecord::Base
       self.set_statuses(sts)
     end
   end
-  
+
   def delete_status(st)
     sts = self.statuses
     sts.delete(st)
-    
+
     self.set_statuses(sts)
   end
-  
+
   def has_status(st)
     self.statuses.include?(st)
   end
-  
+
   def save_draft(user)
     new_contact = self.dup
     new_contact.draft_for = self.id
     new_contact.user_id = user.id
-    
+
     new_contact.contact_types = self.contact_types
     new_contact.course_types = self.course_types
     new_contact.lecturer_course_types = self.lecturer_course_types
     new_contact.contact_tags = self.contact_tags
-    
+
     new_contact.save
-    
+
     # copy image
     new_contact = self.current
-    new_contact.image = File.open(self.image_url) if self.image.present?    
+    new_contact.image = File.open(self.image_url) if self.image.present?
     new_contact.save
-    
+
     return new_contact
   end
-  
+
   def current
     return drafts.order("created_at DESC").first
   end
-  
+
   def revisions
     drafts.where("status LIKE ?", "%[active]%")
   end
-  
+
   def first_revision
     revisions.order("created_at").first
   end
-  
+
   def older
     if !draft?
       return drafts.order("created_at DESC").second
@@ -1698,7 +1698,7 @@ class Contact < ActiveRecord::Base
       return draft_for_contact.drafts.where("created_at < ?", self.created_at).order("created_at DESC").first
     end
   end
-  
+
   def active_older
     if !draft?
       olders = drafts.order("created_at DESC").where("status LIKE ?", "%[active]%")
@@ -1707,31 +1707,31 @@ class Contact < ActiveRecord::Base
       return draft_for_contact.drafts.where("created_at < ?", self.created_at).where("status LIKE ?", "%[active]%").order("created_at DESC").first
     end
   end
-  
+
   def field_history(type,value=nil)
     # return [] if !self.current.nil? && self.current.statuses.include?("active")
-        
-    
+
+
     if self.draft?
       drafts = self.draft_for_contact.drafts #.where("contacts.status LIKE ?","%[active]%")
       drafts = drafts.where("created_at >= ?", self.created_at)
     else
       drafts = self.drafts
-      drafts = drafts.where("created_at <= ?", self.current.created_at) if self.current.present?    
+      drafts = drafts.where("created_at <= ?", self.current.created_at) if self.current.present?
       # drafts = drafts.where("created_at >= ?", self.active_older.created_at) if !self.active_older.nil?
     end
-    
+
     drafts = drafts.order("created_at")
-    
+
     arr = []
     value = "-1"
     drafts.each do |c|
       if type == "inquiry_course_type"
-        arr << c if c.course_types.order("short_name").map(&:short_name).join("") != value        
+        arr << c if c.course_types.order("short_name").map(&:short_name).join("") != value
         value = c.course_types.order("short_name").map(&:short_name).join("")
       elsif type == "lecturer_course_type"
-        arr << c if c.lecturer_course_types.order("short_name").map(&:short_name).join("")   != value  
-        value = c.lecturer_course_types.order("short_name").map(&:short_name).join("")        
+        arr << c if c.lecturer_course_types.order("short_name").map(&:short_name).join("")   != value
+        value = c.lecturer_course_types.order("short_name").map(&:short_name).join("")
       elsif type == "contact_type"
         arr << c if c.contact_types.order("name").map(&:name).join("") != value
         value = c.contact_types.order("name").map(&:name).join("")
@@ -1741,12 +1741,12 @@ class Contact < ActiveRecord::Base
       else
         arr << c if !c[type].nil? && c[type] != value
         value = c[type]
-      end      
+      end
     end
-    
+
     return (arr.count > 1) ? arr : []
   end
-  
+
   def self.status_options
     [
       ["All",""],
@@ -1760,51 +1760,51 @@ class Contact < ActiveRecord::Base
       ["Deleted","deleted"]
     ]
   end
-  
-  def delete    
+
+  def delete
     self.set_statuses(["delete_pending"])
     return true
   end
-  
+
   def rollback(user)
     older = self.active_older
-    
+
     self.update_attributes(older.attributes.select {|k,v| !["draft_for","id", "created_at", "updated_at"].include?(k) })
-    
+
     self.contact_types = older.contact_types
     self.course_types = older.course_types
     self.lecturer_course_types = older.lecturer_course_types
-    
+
     self.save
-    
+
     self.save_draft(user)
   end
-  
+
   def add_annoucing_users(users)
     us = self.annoucing_users.map(&:id)
     users.each do |user|
       us << user.id if !us.include?(user.id)
-    end    
-    self.update_attribute(:annoucing_user_ids, "["+us.join("][")+"]")
+    end
+    self.update_column(:annoucing_user_ids, "["+us.join("][")+"]")
   end
-  
+
   def remove_annoucing_users(users)
     us = self.annoucing_users
     users.each do |user|
       us.delete(user.id) if us.include?(user.id)
-    end    
-    self.update_attribute(:annoucing_user_ids, "["+us.join("][")+"]")
+    end
+    self.update_column(:annoucing_user_ids, "["+us.join("][")+"]")
   end
-  
+
   def annoucing_users
     return [] if annoucing_user_ids.nil?
     ids = self.annoucing_user_ids.split("][").map {|s| s.gsub("[","").gsub("]","") }
     return User.where(id: ids)
   end
-  
+
   ############### END REVISION #########################
-  
-  
+
+
   def preferred_mailing_address
     case preferred_mailing
     when "ftms"
@@ -1817,24 +1817,24 @@ class Contact < ActiveRecord::Base
       result = self.mailing_address
     else
     end
-    
+
     return result
   end
-  
+
   #def display_bases
   #  result = []
   #  base_items.each do |b|
   #    result << b["name"]
   #  end
   #end
-  
+
   def current_contacts_courses
     self.contacts_courses.includes(:course).order("courses.intake DESC")
   end
-  
+
   def budget_hour
     hours = {}
-    
+
     active_received_transfers.where(to_type: "hour").each do |transfer|
       hour_id = transfer.course.course_type_id.to_s+"-"+transfer.course.subject_id.to_s
       hours[hour_id] = hours[hour_id].nil? ? transfer.hour.to_f :  hours[hour_id] + transfer.hour.to_f
@@ -1843,7 +1843,7 @@ class Contact < ActiveRecord::Base
       hour_id = cc.course.course_type_id.to_s+"-"+cc.course.subject_id.to_s
       hours[hour_id] = (hours[hour_id].nil? ? -cc.hour.to_f : hours[hour_id] - cc.hour.to_f) if !hours[hour_id].nil?
     end
-    
+
     active_transfers.where.not(from_hour: nil).each do |transfer|
         JSON.parse(transfer.from_hour).each do |row|
           tr = Transfer.find(row[0])
@@ -1851,17 +1851,17 @@ class Contact < ActiveRecord::Base
           hours[hour_id] = hours[hour_id].nil? ? -row[1].to_f : hours[hour_id] - row[1].to_f
         end
     end
-  
+
     return hours
   end
-  
+
   def recent_hour_transfers(hid)
     origin = []
     active_received_transfers.where(to_type: "hour").order("created_at").each do |transfer|
       hour_id = transfer.course.course_type_id.to_s+"-"+transfer.course.subject_id.to_s
       origin << transfer if hid == hour_id
     end
-    
+
     # total used
     used_hours = {}
 
@@ -1869,12 +1869,12 @@ class Contact < ActiveRecord::Base
       hour_id = cc.course.course_type_id.to_s+"-"+cc.course.subject_id.to_s
       used_hours[hour_id] = used_hours[hour_id].nil? ? cc.hour.to_f : used_hours[hour_id] + cc.hour.to_f
     end
-    
+
     # calculate used hour
     arr = []
-    origin.each do |transfer|      
+    origin.each do |transfer|
       hour_id = transfer.course.course_type_id.to_s+"-"+transfer.course.subject_id.to_s
-      
+
       row = {}
       row[:transfer] = transfer
       row[:remain_hour] = transfer.remain_hour(self)
@@ -1889,26 +1889,26 @@ class Contact < ActiveRecord::Base
           row[:remain_hour] -= used_hours[hour_id]
           row[:remain_money] -= used_hours[hour_id]*rate
           used_hours[hour_id] = 0
-        end        
+        end
       end
-      
+
       arr << row if row[:remain_hour] > 0
     end
-    
+
     return arr
   end
-  
+
   def recent_hour_rate
     rates = {}
-    
+
     active_received_transfers.where(to_type: "hour").order("created_at").each do |transfer|
       hour_id = transfer.course.course_type_id.to_s+"-"+transfer.course.subject_id.to_s
       rates[hour_id] = transfer.hour_money.to_f / transfer.hour.to_f if rates[hour_id].nil?
     end
-    
+
     return rates
   end
-  
+
   def budget_hour_sum
     total = 0
     budget_hour.each do |col|
@@ -1916,7 +1916,7 @@ class Contact < ActiveRecord::Base
     end
     return total
   end
-  
+
   def display_budget_hour
     str = []
     budget_hour.each do |col|
@@ -1943,16 +1943,16 @@ class Contact < ActiveRecord::Base
       result -= active_contacts_courses.sum(:money)
       result -= active_books_contacts.sum(:money)
     end
-    
+
     ## custom payment
     #result += active_payment_records.sum(:amount)
-    
+
     # transfer credit
     result -= active_transfers.sum(:credit_money)
-    
+
     return result
   end
-  
+
   def budget_money_logs
     logs = []
     active_received_transfers.where(to_type: "money").each do |t|
@@ -1966,7 +1966,7 @@ class Contact < ActiveRecord::Base
       row[:money] = t.money
       logs << row
     end
-    
+
     active_transfers.where(to_type: "money").each do |t|
       row = {}
       row[:datetime] = t.created_at
@@ -1978,7 +1978,7 @@ class Contact < ActiveRecord::Base
       row[:money] = t.money_credit
       logs << row
     end
-    
+
     active_contacts_courses.where("money > 0").each do |t|
       t = ContactsCourse.find(t.id)
       row = {}
@@ -1992,60 +1992,60 @@ class Contact < ActiveRecord::Base
       row[:money] = t.money
       logs << row
     end
-    
+
     active_books_contacts.where("money > 0").each do |t|
       t = BooksContact.find(t.id)
       row = {}
       row[:datetime] = t.created_at
       row[:content] = "Registered Stock:"
-      row[:content] += "<div class=\"nowrap\"><strong>"+t.book.display_name+"</strong></div>"      
+      row[:content] += "<div class=\"nowrap\"><strong>"+t.book.display_name+"</strong></div>"
       row[:creator] = t.course_register.user.staff_col
       row[:sign] = "-"
       row[:money] = t.money
       logs << row
     end
-    
+
     active_books_contacts.where("money > 0").each do |t|
       t = BooksContact.find(t.id)
       row = {}
       row[:datetime] = t.created_at
       row[:content] = "Registered Stock:"
-      row[:content] += "<div class=\"nowrap\"><strong>"+t.book.display_name+"</strong></div>"      
+      row[:content] += "<div class=\"nowrap\"><strong>"+t.book.display_name+"</strong></div>"
       row[:creator] = t.course_register.user.staff_col
       row[:sign] = "-"
       row[:money] = t.money
       logs << row
     end
-    
+
     ## custom payment
     #active_payment_records.each do |t|
     #  row = {}
     #  row[:datetime] = t.created_at
-    #  row[:content] = "Custom payment" 
+    #  row[:content] = "Custom payment"
     #  row[:creator] = t.user.staff_col
     #  row[:sign] = "+"
     #  row[:money] = t.amount
     #  logs << row
     #end
-    
+
     active_transfers.each do |t|
       row = {}
       row[:datetime] = t.created_at
-      row[:content] = "Pay defer/transfer fee by credit" 
+      row[:content] = "Pay defer/transfer fee by credit"
       row[:creator] = t.user.staff_col
       row[:sign] = "-"
       row[:money] = t.credit_money
       logs << row
     end
-    
+
     return (logs.sort! { |a,b| a[:datetime] <=> b[:datetime] })
   end
-  
+
   def budget_hour_logs(program_id, subject_id)
     logs = []
-    
+
     active_received_transfers.where(to_type: "hour").each do |transfer|
-      if transfer.course.course_type_id == program_id.to_i and transfer.course.subject_id == subject_id.to_i        
+      if transfer.course.course_type_id == program_id.to_i and transfer.course.subject_id == subject_id.to_i
         row = {}
         row[:datetime] = transfer.created_at
         by = transfer.contact != transfer.to_contact ? " of #{transfer.contact.contact_link}" : ""
@@ -2072,7 +2072,7 @@ class Contact < ActiveRecord::Base
         logs << row
       end
     end
-    
+
     active_transfers.where.not(from_hour: nil).each do |transfer|
         total = 0.0
         JSON.parse(transfer.from_hour).each do |row|
@@ -2090,35 +2090,35 @@ class Contact < ActiveRecord::Base
         logs << row
     end
 
-    
+
     return (logs.sort! { |a,b| a[:datetime] <=> b[:datetime] })
   end
-  
+
   def active_transferred_records
     transferred_records.where("transfers.parent_id IS NULL AND transfers.status IS NOT NULL AND transfers.status LIKE ?", "%[active]%")
   end
-  
-  
-  
+
+
+
   def self.base_status_options
     [["None",""],["In Progress","in_progress"],["Completed","completed"],["Dropped Out","dropped_out"]]
   end
-  
+
   def activity_count
     activities.where(deleted: 0).count
   end
-  
+
   def active_activities
     activities.where(deleted: 0).order("created_at DESC")
   end
-  
+
   def seminar_count
     seminars.where(parent_id: nil).where("seminars.status IS NOT NULL AND seminars.status NOT LIKE ?", "%[deleted]%").count
   end
-  
+
   def base_id_by_program_id(course_type_id)
     return "" if bases.nil?
-    
+
     b_arr = JSON.parse(bases)
     b_arr.each do |item|
       #return CourseType.find(course_type_id).short_name+"-"+item["name"].to_s if item["course_type_id"].to_i == course_type_id.to_i
@@ -2126,7 +2126,7 @@ class Contact < ActiveRecord::Base
     end
     return ""
   end
-  
+
   def base_ids_by_program_id(ids)
     arr = []
     ids.each do |bid|
@@ -2134,15 +2134,15 @@ class Contact < ActiveRecord::Base
     end
     return arr.join("\n")
   end
-  
+
   def staff_col
     account_manager.nil? ? "" : account_manager.staff_col
   end
-  
+
   def user_staff_col
     user.nil? ? "" : user.staff_col
   end
-  
+
   def active_courses_with_phrases(datetime=nil, type="active")
     origin = []
     accs = active_contacts_courses
@@ -2163,7 +2163,7 @@ class Contact < ActiveRecord::Base
       row[:created_at] = ContactsCourse.find(cc.id).course_register.created_at
       origin << row
     end
-    
+
     # transferred to others
     #if type == "main"
       transfers = main_all_transfers
@@ -2172,8 +2172,8 @@ class Contact < ActiveRecord::Base
     #end
     transfers = transfers.where("transfers.created_at <= ?", datetime) if !datetime.nil?
     transfers.each do |transfer|
-      
-      # TRANSFER      
+
+      # TRANSFER
       if self == transfer.contact
         new_origin = []
         origin.each do |row|
@@ -2199,7 +2199,7 @@ class Contact < ActiveRecord::Base
                   row[:full_course] = false
                 end
               end
-              
+
               remove_course = true if row[:courses_phrases].empty?
             end
           end
@@ -2209,32 +2209,32 @@ class Contact < ActiveRecord::Base
         end
         origin = new_origin
       end
-      
+
       # RECEIVED
       if self == transfer.to_contact
         if transfer.to_type == "course"
           # add or update course
           course = transfer.to_course
           courses_phrases = transfer.to_courses_phrases
-          
+
           exist = false
           origin.each do |row|
             if row[:course] == transfer.to_course
               row[:courses_phrases] += transfer.to_courses_phrases
               row[:courses_phrases] = row[:courses_phrases].uniq
               row[:full_course] = transfer.to_full_course
-              
+
               exist = true
-            end           
+            end
           end
           origin << {full_course: transfer.to_full_course,remain: 0,contacts_courses: [],course: course, courses_phrases: courses_phrases, hour: transfer.to_course_hour, money: transfer.to_course_money, created_at: transfer.created_at} if exist == false
-          
-          
+
+
         end
       end
-      
+
     end
-    
+
     # uniq courses
     #row[:course] = cc.course
     #  th = 0
@@ -2264,55 +2264,55 @@ class Contact < ActiveRecord::Base
         merged_courses[item[:course].id][:money] = item[:money]
         merged_courses[item[:course].id][:courses_phrases] = item[:courses_phrases]
         merged_courses[item[:course].id][:created_at] = item[:created_at]
-      end     
+      end
     end
-    
+
     new_origin = []
     merged_courses.each do |mc|
       new_origin << mc[1]
     end
-    
+
     return new_origin
   end
-  
+
   def active_course(course_id, datetime=nil)
     active_courses_with_phrases(datetime).each do |row|
       if row[:course].id == course_id
         return row
-      end      
+      end
     end
     return nil
   end
-  
+
   def display_active_course(course_id)
     course = Course.find(course_id)
-    
+
     full_course_subfix = (active_course(course_id)[:full_course] == true && course.upfront != true) ? " <span class=\"active\">[full]</span>" : ""
-    
+
     arr = []
     arr << "<div class=\"nowrap\"><strong>"+active_course(course_id)[:course].display_name+full_course_subfix+"</strong> <span>#{course.report_toggle(self)}</span></div>"
     arr << "<div class=\"courses_phrases_list\">"+Course.render_courses_phrase_list(active_course(course_id)[:courses_phrases])+"</div>" if !active_course(course_id)[:courses_phrases].empty?
     arr << "<br /><div>Hour: <strong>#{self.active_course(course_id)[:hour]}</strong> <br /> Money: <strong>#{ApplicationController.helpers.format_price_round(self.active_course(course_id)[:money])}</trong></div>"
     return arr.join("")
   end
-  
+
   def courses_phrase_registered?(courses_phrase,datetime=nil)
     active_courses_with_phrases(datetime).each do |row|
       row[:courses_phrases].each do |cp|
         if cp.id == courses_phrase.id
           return true
-        end        
+        end
       end
     end
     return false
   end
-  
+
   def all_mobiles
     all_mobiles = mobile_2s
     all_mobiles << mobile if mobile.present?
     return all_mobiles
   end
-  
+
   def has_emails(arr)
     all_emails.each do |e|
       arr.each do |m|
@@ -2321,7 +2321,7 @@ class Contact < ActiveRecord::Base
     end
     return false
   end
-  
+
   def has_mobiles(arr)
     all_mobiles.each do |e|
       arr.each do |m|
@@ -2330,13 +2330,13 @@ class Contact < ActiveRecord::Base
     end
     return false
   end
-  
+
   def all_emails
     all_emails = (email_2s.map {|m| m.strip.downcase })
     all_emails << email.strip.downcase if email.present?
     return all_emails
   end
-  
+
   def render_cache_search
     str = []
     str << display_name.to_s.squish
@@ -2351,57 +2351,57 @@ class Contact < ActiveRecord::Base
     str << phone.to_s.gsub(/^84/,"")
     str << "0" + phone.to_s.gsub(/^84/,"")
     str << email.to_s
-    str << email_2s.join(" ")    
+    str << email_2s.join(" ")
     # str << address.to_s
     str << birthday.strftime("%d-%b-%Y") if birthday.present?
     str << referrer.name.squish if !referrer.nil?
     str << display_bases.to_s
-    
+
     # update name
-    self.update_attribute(:name, self.name.squish)
-    
+    self.update_column(:name, self.name.squish)
+
     return str.join(" ")
   end
-  
+
   def update_cache_search
     return false if !self.draft_for.nil?
-    
-    self.update_attribute(:cache_search, self.render_cache_search)
+
+    self.update_column(:cache_search, self.render_cache_search)
   end
-  
+
   def real_courses
     arr = []
     active_courses_with_phrases.each do |row|
       arr << row
     end
-    
+
     return arr
   end
-  
+
   def real_phrase_ids
     arr = []
     active_courses_with_phrases.each do |row|
       arr += (row[:courses_phrases].map{|cp| cp.course_id.to_s+","+cp.phrase_id.to_s}).uniq
     end
-    
+
     return arr
   end
-  
+
   def update_cache_courses
-    self.update_attribute(:cache_courses, "["+(real_courses.map {|c| "#{c[:course].id.to_s},#{(c[:full_course] == true ? "full" : "half")}"}).join("][")+"]")
+    self.update_column(:cache_courses, "["+(real_courses.map {|c| "#{c[:course].id.to_s},#{(c[:full_course] == true ? "full" : "half")}"}).join("][")+"]")
   end
-  
+
   def update_cache_books
-    self.update_attribute(:cache_books, "["+self.added_books.map(&:id).join("][")+"]")
+    self.update_column(:cache_books, "["+self.added_books.map(&:id).join("][")+"]")
   end
-  
+
   def update_cache_phrases
-    self.update_attribute(:cache_phrases, "["+real_phrase_ids.join("][")+"]")
+    self.update_column(:cache_phrases, "["+real_phrase_ids.join("][")+"]")
   end
-  
+
   def update_cache_transferred_courses_phrases
     #"["+transferred_courses_phrases.map(&:id).join("][")+"]"
-    self.update_attribute(:cache_transferred_courses_phrases, "["+transferred_courses_phrases.map(&:id).join("][")+"]")
+    self.update_column(:cache_transferred_courses_phrases, "["+transferred_courses_phrases.map(&:id).join("][")+"]")
   end
 
   def self.import_contact_from_old_student
@@ -2417,7 +2417,7 @@ class Contact < ActiveRecord::Base
         contact.sex = item.student_title == "2" ? "female" : (item.student_title == "1" ? "male" : nil)
         contact.birthday = item.student_birth
         #contact. = item.student_acca_no
-        #contact. = item.student_company 
+        #contact. = item.student_company
         contact.tax_code = item.student_vat_code.to_s
         #contact. = item.student_office
         #contact. = item.student_location
@@ -2425,58 +2425,58 @@ class Contact < ActiveRecord::Base
         contact.preferred_mailing = item.student_preffer_mailing.to_s
         contact.email = item.student_email_1.to_s
         contact.email_2 = item.student_email_2.to_s
-        
-        
-        contact.email = item.student_email_1.to_s.split(/[\,\;]/)[0].strip if item.student_email_1.present?        
+
+
+        contact.email = item.student_email_1.to_s.split(/[\,\;]/)[0].strip if item.student_email_1.present?
         other_emails = []
         other_emails = item.student_email_1.to_s.split(/[\,\;]/)[1..-1] if item.student_email_1.to_s.split(/[\,\;]/).count > 1
         contact.email_2 = other_emails+item.student_email_2.to_s.split(/[\,\;]/)
-        
-        
+
+
         # Mobiles
         contact.mobile = item.student_hand_phone.to_s
-        contact.mobile = item.student_hand_phone.to_s.split(/[\,\;]/)[0].strip if item.student_hand_phone.present?        
+        contact.mobile = item.student_hand_phone.to_s.split(/[\,\;]/)[0].strip if item.student_hand_phone.present?
         other_mobiles = []
         other_mobiles = item.student_hand_phone.to_s.split(/[\,\;]/)[1..-1] if item.student_hand_phone.to_s.split(/[\,\;]/).count > 1
         contact.mobile_2 = other_mobiles+item.student_home_phone.to_s.split(/[\,\;]/)
-         
-         
-        #contact. = item.student_off_phone       
+
+
+        #contact. = item.student_off_phone
         contact.fax = item.student_fax.to_s
         contact.contact_type_id = item.student_type.to_s
         #contact. = item.student_tags
         #contact. = item.student_home_phone
-        
+
         contact.account_manager = User.where(:tmp_ConsultantID => item.consultant_id).first
         contact.user = User.where(:tmp_ConsultantID => item.consultant_id).first
-        
+
         # default user
         contact.user = uu if contact.user.nil?
-        
-        if contact.save        
+
+        if contact.save
           # import contact type/course type
           contact.update_contact_type_from_old_student
-          
-          contact.add_status("active")          
+
+          contact.add_status("active")
           contact.save_draft(uu)
           contact.update_info
         end
-        
+
         puts item
       end
 
   end
-  
+
   def update_contact_type_from_old_student
     return false if old_student.nil? # || !contact_types.empty?
-    
+
     inquiry_partten = "inquiry"
     is_inquiry = old_student.student_type.to_s.strip.downcase.scan(/(#{inquiry_partten})/).count > 0
-    
+
     partten = "members|affiliate|affliliate|charterholder"
     is_completed = old_student.student_type.to_s.strip.downcase.scan(/(#{partten})/).count > 0
-    
-    
+
+
     if is_inquiry
       contact_types << ContactType.inquiry if !contact_types.include?(ContactType.inquiry)
       program_name = old_student.student_type.to_s.strip.downcase.scan(/(.*?)(#{inquiry_partten})/)[0][0].strip
@@ -2487,9 +2487,9 @@ class Contact < ActiveRecord::Base
       # create course type
       if ct.nil? && program_name.present?
         uu = User.where(:email => "soft.support@hoangkhang.com.vn").first
-        uu = User.first if uu.nil?        
+        uu = User.first if uu.nil?
         ct = CourseType.create(short_name: program_name.upcase, name: program_name.upcase, user_id: uu.id)
-        ct.add_status("new_pending")        
+        ct.add_status("new_pending")
         ct.save_draft(uu)
       end
 
@@ -2499,7 +2499,7 @@ class Contact < ActiveRecord::Base
       #program_name = "ENGLISH" if program_name.strip.downcase == "english for a & f"
       #program_name = "FIA" if program_name.strip.downcase == "cat"
       ct = CourseType.main_course_types.where("course_types.status IS NOT NULL AND course_types.status NOT LIKE ?", "%[deleted]%").where("LOWER(short_name) = '#{program_name}'").first
-      
+
       # create course type
       if ct.nil?
         ct = CourseType.create(short_name: program_name.upcase, name: program_name.upcase)
@@ -2507,34 +2507,34 @@ class Contact < ActiveRecord::Base
         uu = User.where(:email => "soft.support@hoangkhang.com.vn").first
         uu = User.first if uu.nil?
         ct.save_draft(uu)
-      end   
-     
+      end
+
       old_courses = []
       old_courses << ct.id if !ct.nil?
-      
+
       if !old_courses.empty?
-        self.update_attribute(:old_student_course_type_ids, "["+old_courses.join("][")+"]")
+        self.update_column(:old_student_course_type_ids, "["+old_courses.join("][")+"]")
         contact_types << ContactType.student if !contact_types.include?(ContactType.student)
       end
     end
-    
-    # add default program id    
+
+    # add default program id
     if old_student.student_acca_no.present? or ct.present?
         arr = self.bases.present? ? JSON.parse(self.bases) : []
-        
+
         item = {}
         item[:course_type_id] = nil
         item[:course_type_id] = ct.id if !ct.nil?
         item[:status] = is_completed ? "completed" : "in_progress"
         item[:name] = old_student.student_acca_no
         item[:name] = program_name.upcase+"-"+old_student.student_acca_no if ct.nil?
-        item[:password] = nil        
-        
+        item[:password] = nil
+
         arr << item
-        
-        self.update_attribute(:bases, arr.to_json)
+
+        self.update_column(:bases, arr.to_json)
     end
-        
+
     return self
   end
 
@@ -2563,60 +2563,60 @@ class Contact < ActiveRecord::Base
     emails_like = emails_like.empty? ? nil : emails_like.join("|")
     cond_other << "LOWER(contacts.email) SIMILAR TO '%(#{emails_like})%'" if emails_like.present?
     cond_other << "LOWER(contacts.email_2) SIMILAR TO '%(#{emails_like})%'" if emails_like.present?
-    
+
     mobiles_like = ([mobile.to_s.downcase]+mobile_2s).select { |h| !h.to_s.strip.empty? and h.to_s.length > 6 }
     mobiles_like = mobiles_like.empty? ? nil : mobiles_like.join("|")
     cond_other << "LOWER(contacts.mobile) LIKE '%#{mobiles_like}%'" if mobiles_like.present?
     cond_other << "LOWER(contacts.mobile_2) LIKE '%#{mobiles_like}%'" if mobiles_like.present?
 
     return [] if cond_other.empty?
-    
+
     cond_other = cond_other.join(" OR ")
     return Contact.main_contacts.where("contacts.status IS NOT NULL AND contacts.status NOT LIKE ?","%[deleted]%")
                                 .where.not(id: self.id)
                                 .where("contacts.cache_group_id IS NULL")
                                 .where(cond_other)
-                                .where("contacts.no_related_ids IS NULL OR contacts.no_related_ids NOT LIKE ?", "%[#{self.id.to_s}]%")                                
+                                .where("contacts.no_related_ids IS NULL OR contacts.no_related_ids NOT LIKE ?", "%[#{self.id.to_s}]%")
                                 .order("name DESC,email DESC,mobile DESC")
   end
-  
+
   def transferred_courses_phrases
     res_cp_ids = (self.active_contacts_courses.map{|cc| cc.courses_phrase_ids}).join("").split("][").map {|s| s.gsub("[","").gsub("]","") }
     res_cps = CoursesPhrase.where(id: res_cp_ids)
-    
+
     active_cps = []
     (self.active_courses_with_phrases(nil, "main").map{|r| r[:courses_phrases]}).each do |cps|
       active_cps += cps
     end
-    
+
     return (res_cps - active_cps)
   end
-  
+
   def display_transferred_courses_phrases(course_id,show_title=true)
     aa = []
-    if course_id.present?      
+    if course_id.present?
       transferred_courses_phrases.each do |cp|
         aa << cp if cp.course_id == course_id.to_i
       end
     end
-    
+
     list = {}
     aa.each do |cp|
       list[cp.course_id] = list[cp.course_id].nil? ? [cp] : list[cp.course_id] + [cp]
     end
-    
+
     str = []
     list.each do |row|
       title = show_title ? "<h5 class=\"text-left\">Deferred Phrase(s):</h5>" : ""
       str << ("<div class=\"text-left items_confirmed\">#{title}<h5><strong>#{Course.find(row[0]).display_name}</strong></h5>"+Course.render_courses_phrase_list(row[1])+"</div>").html_safe
     end
-    
+
     return str.join("<br />")
   end
-  
+
   def display_not_learned_course(cid, show_title=false)
     half_course = ""
-    if cid.present? 
+    if cid.present?
       c = self.active_course(cid.to_i)
       title = show_title ? "<hr><div><strong class=\"\">#{c[:course].name}</strong> <div>#{c[:course].report_toggle(self)}</div><div>" : ""
       if !c[:course].upfront
@@ -2627,38 +2627,38 @@ class Contact < ActiveRecord::Base
         end
       end
     end
-    
+
     return half_course
   end
-  
+
   def display_note
     note.to_s.gsub("\n","<br />").html_safe
   end
-  
+
   def no_related_ids_array
     no_related_ids.to_s.split("][").map {|s| s.gsub("[","").gsub("]","").to_i}
   end
-  
+
   def no_related_contacts
     Contact.where(id: no_related_ids_array)
   end
-  
+
   def add_no_related_contact(contact)
     aa = no_related_ids_array
     aa << contact.id if !no_related_ids_array.include?(contact.id)
-    
-    self.update_attribute(:no_related_ids, "["+aa.join("][")+"]")
+
+    self.update_column(:no_related_ids, "["+aa.join("][")+"]")
   end
-  
+
   def remove_no_related_contact(contact)
     aa = []
     no_related_ids_array.each do |id|
       aa << id if contact.id != id
     end
-    
-    self.update_attribute(:no_related_ids, "["+aa.join("][")+"]")
+
+    self.update_column(:no_related_ids, "["+aa.join("][")+"]")
   end
-  
+
   def self.add_no_related_contacts(cs)
     cs.each do |x|
       cs.where.not(id: x.id).each do |y|
@@ -2666,7 +2666,7 @@ class Contact < ActiveRecord::Base
       end
     end
   end
-  
+
   def display_bases(divider="-")
     return "" if base_items.empty?
     str = ["<div class=\"display_bases\"><div class=\"col_label\">Online #ID:</div>"]
@@ -2690,19 +2690,19 @@ class Contact < ActiveRecord::Base
     end
     return str.join("<br />")
   end
-  
+
   def self.migrate_program_from_old_system
     hash = {"fia": ["cat"], "english": ["english for a & f"]}
     hash.each do |row|
       main_ct = CourseType.main_course_types.where("course_types.status IS NOT NULL AND course_types.status NOT LIKE ?", "%[deleted]%").where("LOWER(short_name) = '#{row[0]}'").first
       row[1].each do |old|
         old_ct = CourseType.main_course_types.where("course_types.status IS NOT NULL AND course_types.status NOT LIKE ?", "%[deleted]%").where("LOWER(short_name) = '#{old}'").first
-        if old_ct.present? && main_ct.present?     
+        if old_ct.present? && main_ct.present?
           old_ct.set_statuses(["deleted"])
           uu = User.where(:email => "soft.support@hoangkhang.com.vn").first
           uu = User.first if uu.nil?
           old_ct.save_draft(uu)
-          
+
           # Update Contact Course Types
           Contact.all.each do |c|
             if c.course_types.include?(old_ct)
@@ -2716,7 +2716,7 @@ class Contact < ActiveRecord::Base
               ccs << main_ct
               c.lecturer_course_types = ccs
             end
-            
+
             c.save
             c.update_info
           end
@@ -2731,31 +2731,31 @@ class Contact < ActiveRecord::Base
       end
     end
   end
-  
+
   def check_bases
     currents = base_items.map {|item| item["course_type"]}
     arr = base_items
-    joined_course_types.each do |jct|      
+    joined_course_types.each do |jct|
       if !currents.include?(jct)
         b = {}
         b[:course_type_id] = jct.id
         b[:status] = "in_progress"
         b[:name] = ""
         b[:password] = ""
-        
+
         arr << b
-      end     
+      end
     end
-    
-    self.update_attribute(:bases, arr.to_json)
+
+    self.update_column(:bases, arr.to_json)
   end
-  
+
   def background_logs
     logs = []
     value = "-1"
     drafts.order("created_at").each do |c|
       logs << c if value != c.note && c.note.present?
-      
+
       value = c.note
     end
     logs = logs.sort! { |a,b| b.created_at <=> a.created_at }
@@ -2763,7 +2763,7 @@ class Contact < ActiveRecord::Base
     #logs = logs[1..-1] if !logs.empty?
     return {logs: logs, last: last}
   end
-  
+
   #def check_remove_from_merge_list
   #  # find parent merge
   #  if related_id == 0
@@ -2772,44 +2772,44 @@ class Contact < ActiveRecord::Base
   #      return true
   #    end
   #    if self.statuses.include?("deleted")
-  #      
+  #
   #      self.related_contacts.update_all(related_contact: )
-  #    end      
+  #    end
   #  elsif related_id.to_f > 0
   #    p = Contact.find(related_id)
   #    p.remove_from_merge_list
   #  end
-  #  
+  #
   #  return false
   #end
-  
+
   def self.merge_contacts(cs)
     groups = []
     cs.each do |c|
       groups << c.group if !groups.include?(c.group) && !c.group.nil?
     end
-    
+
     return false if groups.count > 1
-    
+
     # merge
     group = groups.count == 1 ? groups.first : RelatedContact.create
-    
+
     cs.each do |c|
       group.add_contact(c)
     end
-    
+
     return group
   end
-  
+
   def self.merge_companies(cs)
     mainc = cs.first
-    
+
     cs.each do |c|
       if c.company_contacts.count > mainc.company_contacts.count
         mainc = c
-      end      
+      end
     end
-    
+
     names = [mainc.name]
     tax_codes = [mainc.tax_code]
     addresses = [mainc.address]
@@ -2818,49 +2818,49 @@ class Contact < ActiveRecord::Base
       names << c.name if c.name.present?
       tax_codes << c.tax_code if c.tax_code.present?
       addresses << c.address if c.address.present?
-      
+
       company_payment_records += c.company_payment_records
-      
+
       c.contacts.update_all(referrer_id: mainc.id)
-      
+
       uu = User.where(:email => "soft.support@hoangkhang.com.vn").first
       uu = User.first if uu.nil?
       c.set_statuses(["deleted"])
       c.update_info
       c.save_draft(uu)
     end
-    mainc.update_attribute(:name, names.join(" | "))
-    mainc.update_attribute(:tax_code, tax_codes.join(" | "))
-    mainc.update_attribute(:address, addresses.join(" | "))
+    mainc.update_column(:name, names.join(" | "))
+    mainc.update_column(:tax_code, tax_codes.join(" | "))
+    mainc.update_column(:address, addresses.join(" | "))
     mainc.save
     mainc.update_info
-    
+
     # move payment records
     company_payment_records.each do |pr|
       rc = pr.company
-      pr.update_attribute(:company_id, mainc.id)
+      pr.update_column(:company_id, mainc.id)
       pr.update_statuses
       rc.update_info
     end
     mainc.update_info
-    
+
     return mainc
   end
-  
+
   def group
     return nil if cache_group_id.nil?
     RelatedContact.where(id: cache_group_id).first
   end
-  
+
   def self.update_company_info_from_old_system
     # Find all
     contacts = Contact.main_contacts.where.not(tmp_StudentID: nil)
-    
+
     contacts.each do |c|
       c.update_company_info_from_old_system
     end
   end
-  
+
   def update_company_info_from_old_system
     old_com = self.old_student.student_company
     if old_com.present?
@@ -2870,7 +2870,7 @@ class Contact < ActiveRecord::Base
       if !com.present?
         uu = User.where(:email => "soft.support@hoangkhang.com.vn").first
         uu = User.first if uu.nil?
-        
+
         new_com = Contact.create(name: old_com.strip,
                                   is_individual: false,
                                   user_id: uu.id,
@@ -2878,20 +2878,20 @@ class Contact < ActiveRecord::Base
                                   address: self.old_student.student_office,
                                   phone: self.old_student.student_off_phone
                                 )
-        new_com.add_status("new_pending")          
+        new_com.add_status("new_pending")
         new_com.save_draft(uu)
         new_com.update_info
-        
-        self.update_attribute(:referrer_id, new_com.id) if !self.referrer_id.present?
+
+        self.update_column(:referrer_id, new_com.id) if !self.referrer_id.present?
       else
-        self.update_attribute(:referrer_id, com.id) if !self.referrer_id.present?
+        self.update_column(:referrer_id, com.id) if !self.referrer_id.present?
       end
     end
-    self.update_attribute(:preferred_mailing, "other") if self.old_student.student_preffer_mailing.present?
-    self.update_attribute(:preferred_mailing, "ftms") if self.old_student.student_preffer_mailing.to_s.downcase == "ftms"
-    self.update_attribute(:mailing_address, self.old_student.student_preffer_mailing) if self.old_student.student_preffer_mailing.present?
+    self.update_column(:preferred_mailing, "other") if self.old_student.student_preffer_mailing.present?
+    self.update_column(:preferred_mailing, "ftms") if self.old_student.student_preffer_mailing.to_s.downcase == "ftms"
+    self.update_column(:mailing_address, self.old_student.student_preffer_mailing) if self.old_student.student_preffer_mailing.present?
   end
-  
+
   def self.update_company_info_from_old_system_2
     count = 0
     Contact.main_contacts.where(is_individual: false).each do |c|
@@ -2903,14 +2903,14 @@ class Contact < ActiveRecord::Base
         c.save
       end
     end
-    
+
     count
   end
-  
+
   def self.update_emails_mobiles_info_from_old_system
     # Find all
     contacts = Contact.main_contacts.where.not(tmp_StudentID: nil)
-    
+
     contacts.each do |c|
       c.update_email_from_old_student
       c.update_mobile_from_old_student
@@ -2919,35 +2919,35 @@ class Contact < ActiveRecord::Base
 
   def update_email_from_old_student
     if self.old_student.present? && self.email == self.old_student.student_email_1 && self.email_2 == self.old_student.student_email_2
-      self.email = self.old_student.student_email_1.to_s.split(/[\,\;]/)[0].strip if self.old_student.student_email_1.present?        
+      self.email = self.old_student.student_email_1.to_s.split(/[\,\;]/)[0].strip if self.old_student.student_email_1.present?
       other_emails = []
       other_emails = self.old_student.student_email_1.to_s.split(/[\,\;]/)[1..-1] if self.old_student.student_email_1.to_s.split(/[\,\;]/).count > 1
       self.email_2 = other_emails+self.old_student.student_email_2.to_s.split(/[\,\;]/)
-      
+
       self.save
     end
     return self
   end
-  
+
   def update_mobile_from_old_student
     if self.old_student.present? # && self.mobile == Contact.format_mobile(self.old_student.student_hand_phone) && self.email_2 == Contact.format_mobile(self.old_student.student_off_phone)
-      self.mobile = self.old_student.student_hand_phone.to_s.split(/[\,\;]/)[0].strip if self.old_student.student_hand_phone.present?        
+      self.mobile = self.old_student.student_hand_phone.to_s.split(/[\,\;]/)[0].strip if self.old_student.student_hand_phone.present?
       other_mobiles = []
       other_mobiles = self.old_student.student_hand_phone.to_s.split(/[\,\;]/)[1..-1] if self.old_student.student_hand_phone.to_s.split(/[\,\;]/).count > 1
       self.mobile_2 = other_mobiles+self.old_student.student_home_phone.to_s.split(/[\,\;]/)
-      
+
       self.save
     end
     return self
   end
-  
+
   def remove_redundant_bases
     if contact_types.include?(ContactType.inquiry) && !contact_types.include?(ContactType.student)
       puts contact_types.map(&:name).join(",") + "/" + (base_items.map{|b| b["status"]}).to_s
-      self.update_attribute(:bases, nil)
+      self.update_column(:bases, nil)
     end
   end
-  
+
   def display_not_added_stock(pr)
     return "" if !pr.present?
     str = ["<br><br><strong>Not added stock(s):</strong><div class=\"price_confirmed\">"]
@@ -2958,9 +2958,9 @@ class Contact < ActiveRecord::Base
     str << "<div>"
     return str.join("")
   end
-  
+
   # FOR FIX MERGE DELETE
-  
+
   def self.restore_group
     count = 0
     self.old_group_ids.each do |group_id|
@@ -2968,7 +2968,7 @@ class Contact < ActiveRecord::Base
       if Contact.where.not(draft_for: nil).where(cache_group_id: group_id).map(&:draft_for).uniq.count > 1
         groups = RelatedContact.where(id: group_id)
         group = groups.empty? ? RelatedContact.create : groups.first
-        
+
         Contact.where.not(draft_for: nil).where(cache_group_id: group_id).each do |c|
           group.add_contact(c.draft_for_contact)
         end
@@ -2977,18 +2977,18 @@ class Contact < ActiveRecord::Base
     end
     return count
   end
-  
+
   def self.old_group_ids
     count = []
-    Contact.joins(:drafts).where("contacts.status IS NOT NULL AND contacts.status NOT LIKE '%deleted%' AND contacts.draft_for IS NULL AND contacts.cache_group_id IS NULL").where("drafts_contacts.cache_group_id IS NOT NULL").uniq.each do |c| 
+    Contact.joins(:drafts).where("contacts.status IS NOT NULL AND contacts.status NOT LIKE '%deleted%' AND contacts.draft_for IS NULL AND contacts.cache_group_id IS NULL").where("drafts_contacts.cache_group_id IS NOT NULL").uniq.each do |c|
       group_id = c.find_old_group_id
       if !group_id.nil?
-        count << group_id        
+        count << group_id
       end
     end
     return count.uniq
   end
-  
+
   def find_old_group_id
     cgs = self.drafts.order("created_at DESC").where.not(cache_group_id: nil)
     if cgs.empty?
@@ -2997,54 +2997,54 @@ class Contact < ActiveRecord::Base
       return cgs.first.cache_group_id
     end
   end
-  
+
   def find_main_group_contacts(group_id)
     parent_ids = Contact.where.not(draft_for: nil).where(cache_group_id: group_id).where.not(id: ([self.id]+[self.drafts.map(&:id)]))
   end
-  
+
   def add_tag(contact_tag)
     self.contact_tags << contact_tag if !self.contact_tags.include?(contact_tag)
     self.save
   end
-  
+
   def remove_tag(contact_tag)
     n_tags = []
     self.contact_tags.each do |tag|
       n_tags << tag if contact_tag != tag
     end
-    self.update_attribute(:contact_tag_ids, n_tags.map(&:id))
+    self.update_column(:contact_tag_ids, n_tags.map(&:id))
   end
-  
+
   def old_courses
     arr = []
     arr += old_link_students.map(&:subject_id)
     related_contacts.each do |c|
       arr += c.old_link_students.map(&:subject_id)
     end
-    
+
     return arr
   end
-  
+
   def update_cache_old_courses
     cache = "["+old_courses.join("][")+"]"
-    self.update_attribute(:cache_old_courses, cache)
+    self.update_column(:cache_old_courses, cache)
   end
-  
+
   def update_cache_old_tags
     tags = old_tags.map(&:tag_name)
     related_contacts.each do |c|
       tags += c.old_tags.map(&:tag_name)
     end
     cache = "["+tags.join("][")+"]"
-    self.update_attribute(:cache_old_tags, cache)
+    self.update_column(:cache_old_tags, cache)
   end
-  
+
   def merge_all_infos
     related_contacts.each do |c|
       #self.course_registers << c.course_registers
       #self.contacts_courses << c.contacts_courses
       #self.books_contacts << c.books_contacts
-      
+
       # copy seminars
       c.contacts_seminars.each do |item|
         if !self.present_with_seminar?(item.seminar)
@@ -3053,23 +3053,23 @@ class Contact < ActiveRecord::Base
           self.contacts_seminars << new_item
         end
       end
-      
+
       # copy activities
       c.activities.each do |item|
         new_item = item.dup
         new_item.save
         self.activities << new_item
       end
-      
+
       #self.transfers << c.transfers
       #self.received_transfers << c.received_transfers
-      
+
       c.save
       c.update_info
-    end    
-    
+    end
+
     self.save
     self.update_info
   end
-  
+
 end
