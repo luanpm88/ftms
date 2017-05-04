@@ -34,7 +34,7 @@ class PaymentRecord < ActiveRecord::Base
 
   def update_last_company_record
     if !company.nil?
-      self.previous.update_attribute(:parent_id, nil) if !self.previous.nil?
+      self.previous.update_column(:parent_id, nil) if !self.previous.nil?
     end
   end
 
@@ -499,8 +499,8 @@ class PaymentRecord < ActiveRecord::Base
   end
 
   def trash
-    self.update_attribute(:status, 0)
-    self.previous.update_attribute(:parent_id, nil) if !self.previous.nil?
+    self.update_column(:status, 0)
+    self.previous.update_column(:parent_id, nil) if !self.previous.nil?
   end
 
   def update_payment_record_details(params)
@@ -615,7 +615,7 @@ class PaymentRecord < ActiveRecord::Base
       str << "EC["+course_register.account_manager_id.to_s+"]"
     end
 
-    update_attribute(:cache_search, str.join(" "))
+    update_column(:cache_search, str.join(" "))
   end
 
   def self.status_options

@@ -439,7 +439,7 @@ class Transfer < ActiveRecord::Base
       while recent.statuses.include?("delete_pending") || recent.statuses.include?("deleted")
         recent = recent.older
       end
-      self.update_attribute(:status, recent.status)
+      self.update_column(:status, recent.status)
 
       self.check_statuses
 
@@ -469,7 +469,7 @@ class Transfer < ActiveRecord::Base
   end
 
   def set_statuses(arr)
-    self.update_attribute(:status, "["+arr.join("][")+"]")
+    self.update_column(:status, "["+arr.join("][")+"]")
   end
 
   def add_status(st)
@@ -597,7 +597,7 @@ class Transfer < ActiveRecord::Base
     users.each do |user|
       us << user.id if !us.include?(user.id)
     end
-    self.update_attribute(:annoucing_user_ids, "["+us.join("][")+"]")
+    self.update_column(:annoucing_user_ids, "["+us.join("][")+"]")
   end
 
   def remove_annoucing_users(users)
@@ -605,7 +605,7 @@ class Transfer < ActiveRecord::Base
     users.each do |user|
       us.delete(user.id) if us.include?(user.id)
     end
-    self.update_attribute(:annoucing_user_ids, "["+us.join("][")+"]")
+    self.update_column(:annoucing_user_ids, "["+us.join("][")+"]")
   end
 
   def annoucing_users
@@ -708,15 +708,15 @@ class Transfer < ActiveRecord::Base
     str << to_contact.display_name.unaccent
     str << diplay_from_course
     str << diplay_to_course
-    str << display_hour
-    str << display_money
-    str << total.to_s
-    str << paid.to_s
-    str << remain.to_s
-    str << display_statuses
-    str << display_payment_status
+    #str << display_hour
+    #str << display_money
+    #str << total.to_s
+    #str << paid.to_s
+    #str << remain.to_s
+    #str << display_statuses
+    #str << display_payment_status
 
-    update_attribute(:cache_search, str.join(" "))
+    update_column(:cache_search, str.join(" "))
   end
 
   def remain_hour(ct)

@@ -56,7 +56,7 @@ class CourseRegister < ActiveRecord::Base
   def add_note_log
     if !contacts_courses.empty? and note_logs.empty? and parent_id == nil
       a = contact.activities.create(user_id: user.id, note: "auto", item_code: "registration_#{self.id.to_s}", created_at: self.created_at)
-      a.update_attribute(:created_at, self.created_at)
+      a.update_column(:created_at, self.created_at)
     end
   end
 
@@ -149,7 +149,7 @@ class CourseRegister < ActiveRecord::Base
         cccc_cr.update_statuses
         cccc_prs.each do |pr|
           pr.payment_record.update_statuses
-          pr.payment_record.update_attribute(:status, 0) if pr.payment_record.total == 0.0
+          pr.payment_record.update_column(:status, 0) if pr.payment_record.total == 0.0
         end
       end
     end
@@ -1094,7 +1094,7 @@ class CourseRegister < ActiveRecord::Base
 
       return false if !recent.is_valid?
 
-      self.update_attribute(:status, recent.status)
+      self.update_column(:status, recent.status)
 
       self.check_statuses
 
@@ -1120,7 +1120,7 @@ class CourseRegister < ActiveRecord::Base
   end
 
   def set_statuses(arr)
-    self.update_attribute(:status, "["+arr.join("][")+"]")
+    self.update_column(:status, "["+arr.join("][")+"]")
   end
 
   def add_status(st)
@@ -1256,7 +1256,7 @@ class CourseRegister < ActiveRecord::Base
     users.each do |user|
       us << user.id if !us.include?(user.id)
     end
-    self.update_attribute(:annoucing_user_ids, "["+us.join("][")+"]")
+    self.update_column(:annoucing_user_ids, "["+us.join("][")+"]")
   end
 
   def remove_annoucing_users(users)
@@ -1264,7 +1264,7 @@ class CourseRegister < ActiveRecord::Base
     users.each do |user|
       us.delete(user.id) if us.include?(user.id)
     end
-    self.update_attribute(:annoucing_user_ids, "["+us.join("][")+"]")
+    self.update_column(:annoucing_user_ids, "["+us.join("][")+"]")
   end
 
   def annoucing_users
