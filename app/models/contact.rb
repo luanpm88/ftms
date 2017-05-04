@@ -2632,7 +2632,9 @@ class Contact < ActiveRecord::Base
   end
 
   def display_note
-    note.to_s.gsub("\n","<br />").html_safe
+    # note.to_s.gsub("\n","<br />").html_safe
+    c = self.background_logs[:logs].first
+    return (c.nil? ? '' : c.note)
   end
 
   def no_related_ids_array
