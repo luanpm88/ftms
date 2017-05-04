@@ -1173,7 +1173,7 @@ class Contact < ActiveRecord::Base
   def update_cache
     types = contact_types.map{|t| t.id}
     types_cache = types.empty? ? "" : "["+types.join("][")+"]"
-    self.update_column(:contact_types_cache, types_cache)
+    self.update_attribute(:contact_types_cache, types_cache)
   end
 
   def logo_path(version = nil)
