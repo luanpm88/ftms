@@ -1,12 +1,12 @@
 <script>
-	
+
 	function fullCourseCheck() {
 		$(".phrase_list_container").each(function() {
 			var container = $(this)
 			var input = container.find(".full_course_checkbox")
-			var checked = input.attr("checked") == "checked"			
+			var checked = input.attr("checked") == "checked"
 			var inputs = container.find("input.phrase_checkable")
-			
+
 			if(checked) {
 				inputs.attr("checked", true)
 				inputs.attr("disabled", true)
@@ -18,7 +18,7 @@
 			}
 		})
     }
-	
+
 	function main_menu() {
 		$.ajax({
 			url: '<%= url_for("/home/main_menu") %>',
@@ -28,7 +28,7 @@
 			}
 		})
 	}
-	
+
 	function ajaxSubjectSelect(input) {
 		$.ajax({
 			url: '<%= ajax_select_box_subjects_path %>?program_id='+input.select2("val")+'&input_name='+input.attr("input_name")+'&input_required='+input.attr("input_required")+'&input_multiple='+input.attr("input_multiple"),
@@ -40,16 +40,16 @@
 			}
 		})
 	}
-	
+
 	function modernAlert(sms) {
 		$("#mainModal .modal-message").html(sms)
 		$('#mainModalButton').trigger("click")
 	}
-	
-	function approve_ajax(input) {		
+
+	function approve_ajax(input) {
 		var url = input.attr("href")
 		var table = input.parents("table")
-		
+
 		$.ajax({
 			url: url,
 			success: function(data, textStatus, jqXHR)
@@ -64,7 +64,7 @@
 			}
 		})
 	}
-	
+
 	function calculateTransferHourFrom() {
 		var money = 0
 		$('.hour_input_group').each(function() {
@@ -72,12 +72,12 @@
 			var input_remain_hour = 0
 			var input_remain_money = 0
 			var input_hour = 0
-			
+
 			if (box.find(".input_remain_hour").attr("value") != "") {
-				input_remain_hour = parseFloat(box.find(".input_remain_hour").attr("value").replace(/,/g,""))  
+				input_remain_hour = parseFloat(box.find(".input_remain_hour").attr("value").replace(/,/g,""))
 			}
 			if (box.find(".input_remain_money").attr("value") != "") {
-				input_remain_money = parseFloat(box.find(".input_remain_money").attr("value").replace(/,/g,""))  
+				input_remain_money = parseFloat(box.find(".input_remain_money").attr("value").replace(/,/g,""))
 			}
 			if (box.find(".input_hour").val() != "") {
 				var vv = parseFloat(box.find(".input_hour").val().replace(/,/g,""))
@@ -89,20 +89,20 @@
 			} else {
 				box.find(".input_hour").val(0)
 			}
-			
+
 			var rate = input_remain_money/input_remain_hour
 			var input_new_hour = input_remain_hour - input_hour
 			var input_new_money = input_remain_money - rate*input_hour
-			
+
 			box.find(".input_remain_hour").html(ReplaceNumberWithDots(input_new_hour.toFixed(2)))
 			box.find(".input_remain_money").html(ReplaceNumberWithDots(input_new_money.toFixed(0)))
-			
+
 			money += rate*input_hour
-			
+
 		})
 		$(".transfer_hour_money_total").val(ReplaceNumberWithDots(money.toFixed(0)))
 	}
-	
+
 	function calculateTransferPayForm() {
 		var total = parseFloat($(".transfer_payment_form .payment-record-total").html().replace(/,/g,""))
 		var remain = parseFloat($(".transfer_payment_form .payment-record-remain").attr("rel").replace(/,/g,""))
@@ -110,39 +110,39 @@
 		if($(".transfer_payment_form .payment-record-paid").val() != "") {
 			paid = parseFloat($(".transfer_payment_form .payment-record-paid").val().replace(/,/g,""))
 		}
-		
+
 		$(".transfer_payment_form .payment-record-remain").html(ReplaceNumberWithDots((remain-paid).toFixed(0)))
 	}
-	
+
 	function transferToTypeCheck() {
 		if ($("select[name='transfer[to_type]']").length) {
 			var value = $("select[name='transfer[to_type]']").select2("val")
 			$(".transfer_type_box").hide()
 			$(".transfer_type_box_"+value).show()
 		}
-			
+
 	}
-	
+
 	function calculateBudgetValues() {
 		var budget_money = parseFloat($(".budget_money").html())
 		var input_budget_money = 0
 		$(".input_budget_money").each(function() {
 		  if($(this).val() != "") {
 			var vv = parseFloat($(this).val().replace(/,/g,""))
-			
+
 			if (vv > budget_money) {
 				vv = budget_money
 				$(this).val(ReplaceNumberWithDots(budget_money.toFixed(0)))
 			}
-			
+
 			input_budget_money += vv
 		  }
 		})
 		var remain = budget_money - input_budget_money
 		$(".item_budget_money").html(ReplaceNumberWithDots(remain.toFixed(0)))
-		
-		
-		
+
+
+
 		$(".phrase_box .input_budget_hour").each(function() {
 			var id = $(this).attr("rel")
 			var input_budget_hour = 0
@@ -154,33 +154,33 @@
 		  })
 		  $(".budget_hour").each(function() {
 			var id = $(this).attr("rel")
-			
+
 			var budget_hour = parseFloat($(".budget_hour_"+id).html())
 			var input_budget_hour = 0
 			$(".phrase_box .input_budget_hour_"+id).each(function() {
 			  if($(this).val() != "") {
 				var vv = parseFloat($(this).val().replace(/,/g,""))
-				
+
 				if (vv > budget_hour) {
 					vv = budget_hour
 					$(this).val(ReplaceNumberWithDots(budget_hour.toFixed(2)))
 				}
-				
+
 				input_budget_hour += vv
 			  }
 			})
 			var remain = budget_hour - input_budget_hour
 			$(".item_budget_hour_"+id).html(ReplaceNumberWithDots(remain.toFixed(2)))
 		  })
-		
-		
-		
+
+
+
 	}
-	
+
 	function updatePhraseListBoxHour() {
 			$(".from_phrase_list_box_hour_money").each(function() {
 				var box = $(this)
-				if (box.find(".courses_phrase_item").length) {					
+				if (box.find(".courses_phrase_item").length) {
 					var total = 0.0
 					var money = 0.0
 					var per_hour = 0.0
@@ -196,26 +196,26 @@
 					})
 					box.find(".total_phrase_hour").html(total)
 					if(total > 0) {
-						
+
 						box.find(".total_phrase_money").html(ReplaceNumberWithDots((per_hour*total).toFixed(0)))
 						//alert(per_hour)
 					}
 				}
 			})
-			
+
 			var hour = ""
 			var money = ""
-			
+
 			if ($(".transfer_course_box .total_phrase_hour").length && $(".transfer_course_box .total_phrase_hour").html() != "N/A") {
 				hour = parseFloat($(".transfer_course_box .total_phrase_hour").html().replace(/,/g,""))
 			}
-			
+
 			if($("input[name='transfer[hour]']").hasClass("keep_change")) {
-				
+
 			} else {
 				$("input[name='transfer[hour]']").val(hour)
 			}
-			
+
 			// to hour
 			var to_hour = 0
 			var to_money = 0
@@ -223,51 +223,51 @@
 				var box = $(this)
 				var h = 0
 				var m = 0.0
-				if (box.find(".courses_phrase_item").length) {					
-					
+				if (box.find(".courses_phrase_item").length) {
+
 					box.find(".courses_phrase_item").each(function() {
 						if ($(this).prop('checked')) {
 							h += parseFloat($(this).attr("hour"))
 							m += parseInt($(this).attr("money"))
 						}
-					})		
+					})
 				}
 				to_hour = h
 				to_money = m
 			})
 			$(".to_total_phrase_hour").html(to_hour)
-			
+
 			if (hour == "") {
 				hour = to_hour
 			}
-			
+
 			if ($(".transfer_course_box .total_phrase_money").length && $(".transfer_course_box .total_phrase_money").html() != "N/A") {
 				money = parseFloat($(".transfer_course_box .total_phrase_money").html().replace(/,/g,""))
 				money = ReplaceNumberWithDots(money.toFixed(0))
 			}
-			
+
 			if(!$("input[name='transfer[to_course_hour]']").hasClass("keep_change")) {
 				$("input[name='transfer[to_course_hour]']").val(hour)
 			}
 			if(!$("input[name='transfer[to_course_money]']").hasClass("keep_change")) {
 				$("input[name='transfer[to_course_money]']").val(money)
 			}
-			
+
 			if(!$("input[name='transfer[hour_money]']").hasClass("keep_change")) {
 				$("input[name='transfer[hour_money]']").val(money)
 			}
-			
+
 			if(!$("input[name='transfer[money]']").hasClass("keep_change")) {
 				$("input[name='transfer[money]']").val(money)
 			}
 	}
-	
+
 	function checkTransferToBoxes() {
 		var to_course = $("select[name='transfer[to_course_id]']").val()
 		var to_hour = $("select[name='transfer[to_hour]']").val()
 		var to_money = $("select[name='transfer[to_money]']").val()
 	}
-	
+
 	function ajaxTransferToBox(course_id, contact_id, to_contact_id) {
 		if (course_id == "") {
 			$(".transfer_to_box").html("")
@@ -280,7 +280,7 @@
 				$(".transfer_to_box").html(data)
 				$(".transfer_to_box").find(".modern_select").select2()
 				format_price($('.transfer_to_box').find('input.price_input'));
-				
+
 				//ajax select2 for contacts
 				$(".transfer_to_box").find('.select2-ajax-contacts').select2({
 					placeholder: "Search for a contact",
@@ -292,24 +292,24 @@
 					  dataType: 'json',
 					  data: function (term, page) { // page is the one-based page number tracked by Select2
 						return {
-						  q: term, //search term				  
+						  q: term, //search term
 						};
 					  },
 					  results: function (data, page) {
 						return {results: data};
 					  }
 					},
-					initSelection: function (element, callback) {				      
+					initSelection: function (element, callback) {
 					  callback({ id: element.val(), text: element.attr('text') });
 					}
 				});
-				
+
 				transferToTypeCheck()
 				updatePhraseListBoxHour()
 			}
 		})
 	}
-	
+
 	function ajaxCoursePhrasesList(input) {
 		var box = input.parents(".transfer_course_box")
 		var course_id = input.select2("val")
@@ -335,27 +335,27 @@
 				fullCourseCheck()
 			}
 		})
-		
+
 	}
-	
+
 	function calculateCompanyPayment() {
 		var paid = 0
 		var total = 0
-		
+
 		if($('.company_payment_detail_total').val() != "") {
 			total = parseFloat($('.company_payment_detail_total').val().replace(/,/g,""))
 		}
-		
+
 		$('.company_payment_detail_paid').each(function() {
 			if($(this).val() != "") {
 				paid += parseFloat($(this).val().replace(/,/g,""))
 			}
 		})
-		
+
 		var remain = total - paid
 		$(".company_payment_detail_remain").html(ReplaceNumberWithDots(remain.toFixed(0)))
 	}
-	
+
 	function noPriceCheck(input) {
 		var box = input.parents(".item_box")
 		if (input.select2("val") == "no_price") {
@@ -364,7 +364,7 @@
 			box.find(".no_price_group").show()
 		}
 	}
-	
+
 	function getDeliveryCounting() {
 		var count = $('input[name="ids[]"]:checked').length
 		if ($(".delivery_counting").length > 0) {
@@ -379,7 +379,7 @@
 			})
 		}
 	}
-	
+
 	function updateImportExportList(stock_type_id, program_id, subject_id, valid_on) {
 		if(typeof(program_id) == 'undefined') {
 			program_id = ""
@@ -397,7 +397,7 @@
 			}
 		});
 	}
-	
+
 	function updateStockFormList(stock_type_id, program_id, subject_id, valid_on) {
 		var contact_id = $("input[name='course_register[contact_id]']").val()
 		if(typeof(program_id) == 'undefined') {
@@ -412,10 +412,10 @@
 			{
 				$(".stock_box_list").html(data)
 				$('.stock_box_list').find(".modern_select").select2({allowClear: true})
-				
+
 				calculateStockPriceForm()
-				
-				//ajax select2 for contacts		
+
+				//ajax select2 for contacts
 				$('.stock_box_list').find('.select2-ajax-discount-programs').select2({
 					placeholder: "Search for a discount program",
 					minimumInputLength: 0,
@@ -433,17 +433,17 @@
 						return {results: data};
 					  }
 					},
-					initSelection: function (element, callback) {				      
+					initSelection: function (element, callback) {
 					  callback({ id: element.val(), text: element.attr('text') });
 					}
 				});
-				
+
 				format_price($('.stock_box_list').find('input.price_input'));
 				$('.stock_box_list').find('select').select2()
 			}
 		});
 	}
-	
+
 	function checkCourseRegisterSponsoredCompany() {
 		var val = $("select[name='course_register[payment_type]']").val()
 		if (val == "company-sponsored") {
@@ -452,7 +452,7 @@
 			$(".company_sponsored_group").hide()
 		}
 	}
-	
+
 	function checkUpfrontButton(input) {
 		var val = input.parents(".intake_box").find("input.upfront_radio:checked").val()
 		if (val == "true") {
@@ -464,7 +464,7 @@
 		}
 	}
 
-	
+
 	function calculatePhraseHour() {
 		if($(".new_course_register").length > 0) {
 			return
@@ -473,12 +473,12 @@
 		$(".phrase_hour").each(function () {
 			if ($(this).val() != "" && $(this).parents(".phrase_boxx").find("select.main_input").val() != "") {
 				count += parseFloat($(this).val().replace(/,/g,""))
-			}			
+			}
 		})
 		$(".total_phrase_hour").html(count)
 	}
-	
-	function renderPhraseSelect(course_id, program_paper) {		
+
+	function renderPhraseSelect(course_id, program_paper) {
 		$.ajax({
 			url : '<%= course_phrases_form_courses_path %>?value='+program_paper+'&course_id='+course_id,
 			success:function(data, textStatus, jqXHR)
@@ -493,7 +493,7 @@
 			}
 		});
 	}
-	
+
 	function updatePaymentRecord() {
 		var paid_amount = 0
 		var addition_total = 0
@@ -504,21 +504,21 @@
 			if($(this).find('.detail_total').val() != "") {
 				addition_total += parseFloat($(this).find('.detail_total').val().replace(/,/g,""))
 			}
-		})		
+		})
 		$(".payment-record-paid").html(ReplaceNumberWithDots(paid_amount.toFixed(0)))
-		
+
 		//Total
 		var total = parseFloat($('.payment-record-total').attr("rel"))
 		var new_total = total + addition_total
-		
+
 		// remain
 		var receivable = parseFloat($('.payment-record-remain').attr("rel"))
 		var remain = receivable + addition_total - paid_amount
-		
+
 		$(".payment-record-remain").html(ReplaceNumberWithDots(remain.toFixed(0)))
 		$(".payment-record-total").html(ReplaceNumberWithDots(new_total.toFixed(0)))
 	}
-	
+
 	function updatePaymentRecordDetails(input) {
 		var box = input.parents(".payment_box")
 		var paid = 0
@@ -530,47 +530,47 @@
 			addition_total = parseFloat(box.find('.detail_total').val().replace(/,/g,""))
 		}
 		var total = parseFloat(box.find('.detail_remain').attr("rel"))
-		
+
 		var remain = total + addition_total - paid
-		
+
 		box.find('.detail_remain').html(ReplaceNumberWithDots(remain.toFixed(0)))
 		updatePaymentRecord()
 	}
-	
-	function updateTransferInfo() {		
+
+	function updateTransferInfo() {
 		if($('input[name="course_register[transfer]"]').length && $('input[name="course_register[transfer]"]').val() != "") {
 			var transfer = parseFloat($('input[name="course_register[transfer]"]').val().replace(/,/g,""))
 			var total = parseFloat($('.transfer-total').html().replace(/,/g,""))
 			var remain = total - transfer
 			$(".transfer-used").html($('input[name="course_register[transfer]"]').val())
 			$(".transfer-remain").html(ReplaceNumberWithDots(remain.toFixed(0)))
-			
-			// Transfer Hour			
+
+			// Transfer Hour
 			var hour_total = parseFloat($('.transfer-total-hour').html().replace(/,/g,""))
 			var hour_transfer = (parseFloat(transfer)/parseFloat(total))*parseFloat(hour_total)
 			if (hour_total == 0) {
 				hour_transfer = 0
 			}
 			var hour_remain = hour_total - hour_transfer
-			
+
 			$(".transfer-used-hour").html(hour_transfer.toFixed(2))
 			$(".transfer-remain-hour").html(hour_remain.toFixed(2))
 			$("input[name='course_register[transfer_hour]']").val(hour_transfer)
 		}
 	}
-	
-	function updateStockPriceForm(input) {		
+
+	function updateStockPriceForm(input) {
 		var url = "<%= stock_price_form_books_path %>"
 		var book_id = input.select2("val")
 		var number = input.attr("box_number")
 		var full_url = url+'?id='+book_id+'&number='+number
 		var box = $('.form_stock_price_'+number)
-		
+
 		if (book_id == "") {
 			box.html("")
 			return
 		}
-		
+
 		$.ajax({
 			url : full_url,
 			type: "GET",
@@ -578,8 +578,8 @@
 			{
 				box.html(data)
 				box.find(".modern_select").select2()
-				
-				//ajax select2 for contacts		
+
+				//ajax select2 for contacts
 				box.find('.select2-ajax-discount-programs').select2({
 					placeholder: "Search for a discount program",
 					minimumInputLength: 0,
@@ -597,32 +597,32 @@
 						return {results: data};
 					  }
 					},
-					initSelection: function (element, callback) {				      
+					initSelection: function (element, callback) {
 					  callback({ id: element.val(), text: element.attr('text') });
 					}
 				});
-				
+
 				format_price(box.find('input.price_input'))
-				
-				
+
+
 				calculateStockPriceForm()
 			}
 		});
 	}
-	
+
 	function updateVolumnForm(input) {
-		
+
 		var url = "<%= volumn_checkboxs_books_path %>"
 		var book_id = input.select2("val")
 		var number = input.attr("box_number")
 		var full_url = url+'?id='+book_id+'&number='+number
 		var box = $('.form_volumn_list_'+number)
-		
+
 		if (book_id == "") {
 			box.html("")
 			return
 		}
-		
+
 		$.ajax({
 			url : full_url,
 			type: "GET",
@@ -632,26 +632,26 @@
 			}
 		});
 	}
-	
+
 	function updateBookForm(program, subject, number) {
 		if ($(".new_course_register_page").length == 0){
 			return
 		}
-		
+
 		var url = "<%= stock_select_books_path %>"
 		var program_id = ""
 		var subject_id = ""
-		
+
 		if (program && program.val() != "") {
 			program_id = program.val()
-		}		
+		}
 		if (subject && subject.val() != "") {
 			subject_id = subject.val()
 		}
-		
+
 		var full_url = url+'?program_id='+program_id+'&subject_id='+subject_id+'&number='+number
 		var box = $('.form_stock_list_'+number)
-		
+
 		$.ajax({
 			url : full_url,
 			type: "GET",
@@ -662,11 +662,11 @@
 			}
 		});
 	}
-	
+
 	function updateTotalRegistration() {
 		$(total_registration_price)
 	}
-	
+
 	function calculateStockPriceForm() {
 		var total = 0
 		var total_list =  0
@@ -674,16 +674,16 @@
 		var total_discount = 0
 		var count = 0
 		calculateBudgetValues()
-		$('.stock_box_list .stock_box').each(function() {	
+		$('.stock_box_list .stock_box').each(function() {
 			var number = $(this).attr("rel")
 			var box = $(this)
-			
+
 			if (box.find("input.stock_check").length && !box.find("input.stock_check:checked").length) {
 				box.addClass("not_selected")
 			} else {
 				box.removeClass("not_selected")
 			}
-			
+
 			if (box.find("input.stock_check:checked").length && !$(this).hasClass("hidden") && box.find('input[name="contacts_courses['+number+'][course_id]"]').val() != "") {
 				if (box.find(".price_stock").select2("val") != "no_price") {
 						var line_total = 0
@@ -692,10 +692,10 @@
 						var price_discount_program = 0
 						var price_discount = 0
 						var money = 0
-						
+
 						if(box.find('input[name="books_contacts['+number+'][quantity]"]').length) {
 						  quantity = parseFloat(box.find('input[name="books_contacts['+number+'][quantity]"]').val())
-						}				
+						}
 						if(box.find('select[name="books_contacts['+number+'][price]"]').length) {
 						  price = parseFloat(box.find('select[name="books_contacts['+number+'][price]"]').select2("val"))*quantity
 						}
@@ -712,83 +712,83 @@
 								if(pp_type=="%") {
 									dp = (dp/100)*price
 								}
-							  
+
 							  price_discount_program += dp
 							}
 						})
-						
+
 						// Use Money
 						if(box.find('input[name="books_contacts['+number+'][money]"]').length && box.find('input[name="books_contacts['+number+'][money]"]').val() != "") {
 						  money = parseFloat(box.find('input[name="books_contacts['+number+'][money]"]').val().replace(/,/g,""))
 						}
 						price = price - money
-						
-						
+
+
 						line_total = price - price_discount - price_discount_program
-						
+
 						box.find(".total_stock").html(ReplaceNumberWithDots(line_total.toFixed(0)))
-						
-						
+
+
 						total = total + line_total
 						total_list = total_list + price
 						total_program = total_program + price_discount_program
 						total_discount = total_discount + price_discount
 				}
-				
+
 				count = count + 1
 			}
-			
+
 		})
 		$(".total_stock_price").html(ReplaceNumberWithDots(total.toFixed(0)))
 		$(".total_stock_list_price").html(ReplaceNumberWithDots(total_list.toFixed(0)))
 		$(".total_stock_discount_program_price").html(ReplaceNumberWithDots(total_program.toFixed(0)))
 		$(".total_stock_other_discount_price").html(ReplaceNumberWithDots(total_discount.toFixed(0)))
 		$(".total_stock_count").html(count)
-		
+
 		updateTotalRegsitrationPrice()
 		return total
 	}
-	
+
 	function updateTotalRegsitrationPrice() {
-		
+
 		if ($(".total_course_price").length == 0) {
 			return false
 		}
-		
+
 		var course = parseFloat($(".total_course_price").html().replace(/,/g,""))
 		var stock = parseFloat($(".total_stock_price").html().replace(/,/g,""))
 		var price_discount_program = 0
 		var price_discount = 0
 		var price_transfer = 0
-		
+
 		if($('input[name="course_register[discount_program_id]"]').length && $('input[name="course_register[discount_program_id]"]').val() != "") {
 			var text = $('input[name="course_register[discount_program_id]"]').select2("data").text
 			var dd_v = parseFloat(text.split("[")[1].split("]")[0].split(" ")[0].replace(/,/g,""))
 			var pp_type = text.split("[")[1].split("]")[0].split(" ")[1]
 			price_discount_program = parseFloat($('input[name="course_register[discount_program_id]"]').select2("data").text.split("[")[1].split("]")[0].replace(/,/g,""))
-			
+
 			if(pp_type=="%") {
 				price_discount_program = (price_discount_program/100)*(course + stock)
 			}
 		}
-		
+
 		if($('input[name="course_register[discount]"]').length && $('input[name="course_register[discount]"]').val() != "") {
 			price_discount = parseFloat($('input[name="course_register[discount]"]').val().replace(/,/g,""))
 		}
 		if($('input[name="course_register[transfer]"]').length && $('input[name="course_register[transfer]"]').val() != "") {
 			price_transfer = parseFloat($('input[name="course_register[transfer]"]').val().replace(/,/g,""))
 		}
-		
+
 		var total = course + stock - price_discount_program - price_discount - price_transfer
-		
+
 		$(".total_registration_discount_program").html(ReplaceNumberWithDots(price_discount_program.toFixed(0)))
-		$(".total_registration_discount").html(ReplaceNumberWithDots(price_discount.toFixed(0)))		
+		$(".total_registration_discount").html(ReplaceNumberWithDots(price_discount.toFixed(0)))
 		$(".total_registration_transfer").html(ReplaceNumberWithDots(price_transfer.toFixed(0)))
 		$(".total_registration_price").html(ReplaceNumberWithDots(total.toFixed(0)))
-		
+
 		updateTransferInfo()
 	}
-	
+
 	function calculateCoursePriceForm() {
 		var total = 0
 		var total_list =  0
@@ -796,11 +796,11 @@
 		var total_discount = 0
 		var count = 0
 		calculateBudgetValues()
-		$('.phrase_box_list .phrase_box').each(function() {	
+		$('.phrase_box_list .phrase_box').each(function() {
 			var number = $(this).attr("rel")
 			var box = $(this)
 			if (!$(this).hasClass("hidden") && box.find('input[name="contacts_courses['+number+'][course_id]"]').val() != "") {
-				
+
 				if (box.find(".price_course").select2("val") != "no_price") {
 					var line_total = 0
 					var list_price = 0
@@ -810,12 +810,12 @@
 					var hour = 0
 					var money = 0
 					var additional_money = 0
-			
+
 					if(box.find('select[name="contacts_courses['+number+'][price]"]').length) {
-					  price = parseFloat(box.find('select[name="contacts_courses['+number+'][price]"]').val())					  
+					  price = parseFloat(box.find('select[name="contacts_courses['+number+'][price]"]').val())
 					}
 					list_price = price
-					
+
 					// Use Hour
 					if(box.find('input[name="contacts_courses['+number+'][hour]"]').length && box.find('input[name="contacts_courses['+number+'][hour]"]').val() != "") {
 					  hour = parseFloat(box.find('input[name="contacts_courses['+number+'][hour]"]').val().replace(/,/g,""))
@@ -826,70 +826,70 @@
 					if (hour > 0) {
 						price = additional_money
 					}
-					
-					
-					
-					
-					
-					
+
+
+
+
+
+
 					//if(box.find('input[name="contacts_courses['+number+'][discount]"]').length && box.find('input[name="contacts_courses['+number+'][discount]"]').val() != "") {
 					//  price_discount = parseFloat(box.find('input[name="contacts_courses['+number+'][discount]"]').val().replace(/,/g,""))
-					//}       
+					//}
 					//
 					// Discount Programs
 					box.find(".discount_program_box").each(function() {
-						
+
 						if ($(this).find('select.price_discount_program').val() != "") {
 							var text = $(this).find('select.price_discount_program').select2("data").text
 							var dd_v = parseFloat(text.split("[")[1].split("]")[0].split(" ")[0].replace(/,/g,""))
 							var pp_type = text.split("[")[1].split("]")[0].split(" ")[1]
 							var d_value = parseFloat(text.split("[")[1].split("]")[0].replace(/,/g,""))
-							
+
 							if(pp_type=="%") {
 								if ($(this).find("input.discount_program_type:checked").val() == "list_price") {
 									d_value = (d_value/100)*list_price
 								} else {
 									d_value = (d_value/100)*price
 								}
-								
+
 							}
-							
+
 							price = price - d_value
-						}					
+						}
 					})
-					
-					
+
+
 					// Use Money
 					if(box.find('input[name="contacts_courses['+number+'][money]"]').length && box.find('input[name="contacts_courses['+number+'][money]"]').val() != "") {
 					  money = parseFloat(box.find('input[name="contacts_courses['+number+'][money]"]').val().replace(/,/g,""))
 					}
 					price = price - money
-					
-					
+
+
 					//Other Discounts
-					box.find(".other_discount_box").each(function() {					
+					box.find(".other_discount_box").each(function() {
 						if ($(this).find('input.price_other_discount').val() != "") {
 							var d_value = parseFloat($(this).find('input.price_other_discount').val().replace(/,/g,""))
-							
+
 							price_discount = price_discount + d_value
-						}					
+						}
 					})
-					
+
 					line_total = price - price_discount // - price_discount_program
 					total_list = total_list + price
 					total_program = total_program + price_discount_program
 					total_discount = total_discount + price_discount
-					
+
 					box.find(".total_course").html(ReplaceNumberWithDots(line_total.toFixed(0)))
-					
-					
+
+
 					total = total + line_total
-				}	
-				
+				}
+
 				count = count + 1
 			}
-			
-			
+
+
 		})
 		$(".total_course_price").html(ReplaceNumberWithDots(total.toFixed(0)))
 		$(".total_course_list_price").html(ReplaceNumberWithDots(total_list.toFixed(0)))
@@ -900,19 +900,19 @@
 		calculateBudgetValues()
 		return total
 	}
-	
+
 	function updateCoursePriceForm(input) {
 		var url = "<%= course_price_select_courses_path %>"
 		var course_id = input.val()
 		var number = input.attr("box_number")
 		var full_url = url+'?id='+course_id+'&number='+number
 		var box = $('.registration_course_price_box_'+number)
-		
+
 		if (course_id == "") {
 			box.html("")
 			return
 		}
-		
+
 		$.ajax({
 			url : full_url,
 			type: "GET",
@@ -920,8 +920,8 @@
 			{
 				box.html(data)
 				box.find(".modern_select").select2({allowClear: true})
-				
-				//ajax select2 for contacts		
+
+				//ajax select2 for contacts
 				box.find('.select2-ajax-discount-programs').select2({
 					placeholder: "Search for a discount program",
 					minimumInputLength: 0,
@@ -939,15 +939,15 @@
 						return {results: data};
 					  }
 					},
-					initSelection: function (element, callback) {				      
+					initSelection: function (element, callback) {
 					  callback({ id: element.val(), text: element.attr('text') });
 					}
 				});
-				
-				format_price(box.find('input.price_input'));				
-				
+
+				format_price(box.find('input.price_input'));
+
 				calculateCoursePriceForm()
-				
+
 				$("input[name='total_course']").each(function() {
 					$(this).rules('add', {
 						 total_course: true
@@ -956,19 +956,19 @@
 			}
 		});
 	}
-	
+
 	function updateCoursePhraseForm(input) {
 		var url = "<%= courses_phrases_checkboxs_courses_path %>"
 		var course_id = input.val()
 		var number = input.attr("box_number")
 		var full_url = url+'?id='+course_id+'&number='+number+'&contact_id='+$('input[name="course_register[contact_id]"]').select2("val")
 		var box = $('.registration_phrase_box_'+number)
-		
+
 		if (course_id == "") {
 			box.html("")
 			return
 		}
-		
+
 		$.ajax({
 			url : full_url,
 			type: "GET",
@@ -980,35 +980,35 @@
 			}
 		});
 	}
-	
+
 	function toggleLinePrice() {
 		$('.line_price').each(function() {
-			
+
 		})
 	}
-	
+
 	function updateProgramsBox() {
 		var types = $('input[name="contact[contact_type_ids][]"]:checked').map(function(){
 			return $(this).val();
 		}).get();
 
 		$('.programs_box').hide()
-		
+
 		$('.programs_box').each(function() {
 			$(this).select2("val","")
 		})
-		
+
 		types.forEach(function(a){
 		  $('.programs_box_'+a).show()
 		});
 	}
-	
-	function changeMailingPreferred(input) {		
+
+	function changeMailingPreferred(input) {
 		if (input.select2("val") == "company" && $('input[name="contact[referrer_id]"]').select2("val") == "") {
 			alert("Must choose company first!")
 			input.select2("val", 'ftms');
 		}
-		
+
 		if (input.select2("val") == "company" || input.select2("val") == "home" || input.select2("val") == "ftms") {
 			$('.mailing_address_box').hide()
 			$('.mailing_address_box').select2("val", "")
@@ -1016,7 +1016,7 @@
 			$('.mailing_address_box').show()
 		}
 	}
-	
+
 	function changeComanyTrigger(input) {
 		if (input.select2("val") == "") {
 			$('select[name="contact[payment_type]"]').select2("val","self-financed")
@@ -1025,13 +1025,13 @@
 			}
 		}
 	}
-	
+
 	function updateSeminarContactsCount() {
-		var total = $('.datatable-seminar-students').dataTable().fnSettings().fnRecordsTotal()				
+		var total = $('.datatable-seminar-students').dataTable().fnSettings().fnRecordsTotal()
 		$('.seminar_students_count').html(total)
 	}
-	
-	function removeContactToSeminar(seminar_id, contact_ids) {		
+
+	function removeContactToSeminar(seminar_id, contact_ids) {
 		$.ajax({
 			url : '<%= remove_contacts_seminars_path %>?id='+seminar_id+'&contact_ids='+contact_ids.join(","),
 			type: "GET",
@@ -1039,12 +1039,12 @@
 			{
 				$('.datatable-seminar-students').dataTable().fnFilter();
 				clearListCheck()
-				
+
 			}
 		});
 	}
-	
-	function addContactToSeminar(seminar_id, contact_ids) {		
+
+	function addContactToSeminar(seminar_id, contact_ids) {
 		$.ajax({
 			url : '<%= add_contacts_seminars_path %>?id='+seminar_id+'&contact_ids='+contact_ids.join(","),
 			type: "GET",
@@ -1056,17 +1056,17 @@
 			}
 		});
 	}
-	
+
 	var related_info_input
 	function checkRelatedInfo(input) {
 		var url = input.attr("rel")
 		var value = input.val()
 		var box = input.parent().find(".related_info_box")
 		var msg = input.parent().find(".related_info_msg")
-			
+
 		if(typeof(related_info_input) != "undefined") {
 			related_info_input.abort()
-		}			
+		}
 		related_info_input = $.ajax({
 			url : url,
 			type: "GET",
@@ -1086,26 +1086,26 @@
 			}
 		});
 	}
-	
+
 	function clearListCheck() {
 		$('.listing_form table input[type="checkbox"]').attr("checked",false);
 		$('.check_all_page').attr("checked",false);
-		
+
 		$('.listing_form table tr').removeClass("row_selected")
-		
+
 		$('.listing_box_actions .listing_checked_count').html("0")
 	}
-	
-	function allListCheck() {		
+
+	function allListCheck() {
 		$('.check_all_page').attr("checked",true);
 		$('.listing_form table input[type="checkbox"]').attr("checked",true);
 		$('.listing_form table tr').addClass("row_selected")
-		
+
 		var total = $('.dataTable ').dataTable().fnSettings().fnRecordsTotal()
-		
+
 		$('.listing_box_actions .listing_checked_count').html(total)
 	}
-	
+
 	function updateSubjectsFilterBox() {
 		var box = $('.subjects-filter-box')
 		var program_val = ""
@@ -1121,12 +1121,12 @@
 			}
 		});
 	}
-	
-	function ajaxQuickContactInfo(cid,box) {		
+
+	function ajaxQuickContactInfo(cid,box) {
 		if (typeof(cid) == "undefined" || typeof(box) == "undefined") {
 			return
 		}
-		
+
 		if (cid == "") {
 			box.html("")
 			return
@@ -1140,18 +1140,18 @@
 			}
 		});
 	}
-	
+
 	function updateContactTag(c_id, t_id, type) {
 		$.ajax({
 			url : '<%= update_tag_contacts_path %>?id='+c_id+'&tag_id='+t_id+'&type='+type,
 			type: "GET",
 			success:function(data, textStatus, jqXHR)
-			{				
+			{
 				$('.contact_tag_box[rel="'+c_id+'"]').html(data);
 			}
 		});
 	}
-	
+
 	function checkContactType() {
 		if($('input[name="contact[is_individual]"]:checked').val() == "true" || $('select[name="is_individual"]').val() == "true") {
 			$(".personal-box").show();
@@ -1165,7 +1165,7 @@
 			$("input[name='contact[account_manager_id]']").removeClass("required");
 		}
 	}
-	
+
 	function checkInvoiceRequired() {
 		if($('.invoice_required:checked').val() == "true") {
 			$(".invoice-info-box").show();
@@ -1173,64 +1173,64 @@
 			$(".invoice-info-box").hide();
 		}
 	}
-	
+
 	function reloadTab(tid, force) {
 		if (typeof(force) == "undefined") {
 			force = false
 		}
-		
+
 		//if ($(".main-frame").length && !force) {
 		//	$(".main-frame")[0].contentWindow.reloadDatatable()
 		//} else {
 			$('iframe#'+tid).attr("src",$('iframe#'+tid).attr("src"))
 		//}
-		
+
 	}
 	function closeTab(tid) {
-		//open parent		
+		//open parent
 		var pname = $("#main-tab li.active a").attr("pname")
 		var psrc = $("#main-tab li.active a").attr("psrc")
-		
+
 		if (typeof(pname) != 'undefined') {
 		  openTab(psrc,pname)
 		}
-		
+
 		//close current
-		var active = $('#main-tab a[rel="'+tid+'"]').parent().hasClass("active")		
+		var active = $('#main-tab a[rel="'+tid+'"]').parent().hasClass("active")
         $('#main-tab a[rel="'+tid+'"]').parent().remove()
 		$('.tab-content div#'+tid).remove()
-		
+
 		if(active) {
 			$('#main-tab li:last-child a').tab('show')
-			
+
 			if($(".tab-pane.active .main-frame").length > 0) {
 				$(".tab-pane.active .main-frame")[0].contentWindow.reloadDatatable()
 			} else {
 				//reloadTab($('#main-tab li.active a').attr("rel"))
 			}
         }
-        
+
         $(document).scrollTop(0);
-		
+
 		clearInterval(tabs[tid])
-		
-		
+
+
 	}
 	var tabs = Array()
 	function openTab(tsrc, tname, psrc, pname) {
 		if (typeof(tname) == 'undefined' || tname == 'undefined') {
 			tname = $('a[href="'+tsrc+'"]').html().trim();
 		}
-		
+
 		var tid = "tab_"+tname.replace(/\s/g, "_").replace(/[^a-zA-Z0-9\_]/g, "").toLowerCase();
-		
+
 		if($('a[rel="'+tid+'"]').length == 0) {
-			
+
 			var parent = ""
 			if (psrc) {
 				parent = ' psrc="'+psrc+'" pname="'+pname+'" '
 			}
-			
+
 		  $('#main-tab').append('<li class=""><a tsrc="'+tsrc+'" tname="'+tname+'" '+parent+' rel="'+tid+'" href="#'+tid+'">'+tname+'<i class="but but-reload icon-refresh"></i><i class="but but-del icon-remove-sign"></i></a></li>')
 		  $('.tab-content').append('<div id="'+tid+'" class="tab-pane"><iframe class="main-frame" id="'+tid+'" seamless="seamless" scrolling="yes" src="'+tsrc+'"></iframe></div>')
 			$('#main-tab a').click(function (e) {
@@ -1239,15 +1239,15 @@
 			});
 		  $('#main-tab a[rel="'+tid+'"]').tab('show')
 			tabs[tid] = resizeIframe(tid)
-		  
+
 			$('#main-tab a[rel="'+tid+'"]').parent().find(".but-del").click(function (e) {
                 closeTab(tid)
 			});
 			$('#main-tab a[rel="'+tid+'"]').parent().find(".but-reload").click(function (e) {
                 reloadTab(tid, true)
 			});
-			
-			
+
+
 
 			$('iframe#'+tid).load(function(){
 				$(document).scrollTop(0);
@@ -1258,19 +1258,19 @@
 		  $('#main-tab a[rel="'+tid+'"]').tab('show')
 		  $('iframe#'+tid).attr("src",tsrc)
 		}
-		
-		
-		
+
+
+
 		$(document).scrollTop(0);
 		if($(window).width() <= 750 && $('.page-sidebar').css("display") == "block") {
 			$('#main-menu-toggle').trigger("click");
 		}
-		
+
 		return tid
 	}
-	
+
 	function resizeIframe(tid) {
-		
+
 		var obj = $('iframe#'+tid)
 		var lastHeight = 0, curHeight = 0, $frame = obj;
 		iid = setInterval(function(){
@@ -1279,20 +1279,20 @@
 			$frame.css('height', ((lastHeight = curHeight)+500) + 'px' );
 		  }
 		},500);
-		
+
 		return iid
     }
-	
+
 	function readURL(input, image) {
 		if (input.files && input.files[0]) {
-			var reader = new FileReader();	
+			var reader = new FileReader();
 			reader.onload = function (e) {
 				image.attr('src', e.target.result);
-			}	
+			}
 			reader.readAsDataURL(input.files[0]);
 		}
 	}
-	
+
 	function updateBoxesOrder() {
 		var ord = 1
 		$('.image-boxes .image-box').each(function() {
@@ -1300,12 +1300,12 @@
 			ord++
 		})
 	}
-	
+
 	function uploaderBoxes() {
 		$('.image-boxes .image-box a').click(function(e) {
 			e.preventDefault();
 			$(this).parent().find("input[type='file']").trigger("click")
-		})		
+		})
 		$('.image-boxes .image-box input[type="file"]').change(function() {
 			img = $(this).parents('.image-box').find("img.new_picture")
 			icon = $(this).parents('.image-box').find(".current_img")
@@ -1314,7 +1314,7 @@
 			img.removeClass("hidden");
 			icon.addClass("hidden");
 			del_icon.removeClass("hidden");
-			
+
 			$(this).parents('.image-box').find(".destroy_tag").val("")
 		});
 		$('.image-boxes .image-box .delete-but').click(function(e) {
@@ -1323,20 +1323,20 @@
 			$(this).parents(".image-box").find("input[type='file']").val("")
 			img.addClass("hidden");
 			icon.removeClass("hidden");
-			
+
 			$(this).parents('.image-box').find(".current_image_pic").addClass("hidden");
 			$(this).parents('.image-box').find(".current_image_icon").removeClass("hidden");
-			
+
 			$(this).addClass("hidden");
-			
+
 			$(this).parents('.image-box').find(".destroy_tag").val(1)
 		})
 	}
-	
+
 	function format_price(element) {
 		element.inputmask("decimal", { radixPoint: ".", autoGroup: true, groupSeparator: ",", digits: 2, groupSize: 3 });
 	}
-	
+
 	function show_city_select_tag() {
 		state = ""
 		if($('#state_id').length > 0) {
@@ -1346,60 +1346,60 @@
 			url : '<%= select_tag_cities_url %>'+state,
 			type: "GET",
 			success:function(data, textStatus, jqXHR)
-			{		    
+			{
 				$(".city_select_box").html(data);
 				$(".city_select_tag").select2();
 			}
 		});
 	}
-	
+
 	function read_notification() {
 		$.ajax({
 			url : '<%= read_notification_notifications_url %>',
 			type: "GET",
 			success:function(data, textStatus, jqXHR)
-			{		    
+			{
 				//update_notification();
 			}
 		});
 	}
-	
+
 	function update_notification() {
 		$.ajax({
 			url : '<%= update_notification_notifications_url %>',
 			type: "GET",
 			success:function(data, textStatus, jqXHR)
-			{		    
-				$('.top_notification').html(data);				
+			{
+				$('.top_notification').html(data);
 				$('.notification_count').html($('<div>').html(data).find('.notification_count').html().trim());
 			}
 		});
-	}	
-    
+	}
+
     function ReplaceNumberWithDots(yourNumber) {
 		yourNumber = yourNumber.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 		return yourNumber
     }
-    
-      
-    
+
+
+
     $(document).ready(function() {
-  
+
 		////TABLES
-		//Too Small for new file - Helps the to tick all options in the table 
-		$('table .checkbox input').click( function() {			
-			if($(this).is(':checked')){			
-				$(this).parent().parent().parent().toggleClass('row_selected');					
+		//Too Small for new file - Helps the to tick all options in the table
+		$('table .checkbox input').click( function() {
+			if($(this).is(':checked')){
+				$(this).parent().parent().parent().toggleClass('row_selected');
 			}
-			else{	
-			$(this).parent().parent().parent().toggleClass('row_selected');		
+			else{
+			$(this).parent().parent().parent().toggleClass('row_selected');
 			}
 		});
-		// Demo charts - not required 
-		$('.customer-sparkline').each(function () {	
-			$(this).sparkline('html', { type:$(this).attr("data-sparkline-type"), barColor:$(this).attr("data-sparkline-color") , enableTagOptions: true });	
+		// Demo charts - not required
+		$('.customer-sparkline').each(function () {
+			$(this).sparkline('html', { type:$(this).attr("data-sparkline-type"), barColor:$(this).attr("data-sparkline-color") , enableTagOptions: true });
 		});
-	
+
 		//Multiselect for all
 		$(".multi_select").select2();
 		$(".modern_select").select2({
@@ -1411,17 +1411,17 @@
 			placeholder: "None"
 		});
 		$(".datetime select").select2();
-	
+
 		//filter table
 		$('table').not('.no-filter').filterTable();
-	
+
 		//prevent submit while submitting form
 		$('.btn-submitting').live("click", function(e){ e.preventDefault(); });
-	
+
 	    //format typping price
 	    //$('input.price_input').number( true, 2 );
 		format_price($('input.price_input'));
-	    
+
 	    //show order
 	    //action for add agent button
 	    $('.ajax_iframe').fancybox({
@@ -1434,10 +1434,10 @@
 			}
 		    }
 	    });
-	    
+
 	    //NICE FILE INPUT
 	    $("input[type=file]").nicefileinput();
-	    
+
 	    //Datatable products
 	    $('.datatable-users').dataTable( {
 			"processing": true,
@@ -1455,7 +1455,7 @@
 			"aLengthMenu": [[10, 25, 50, 75, 100], [10, 25, 50, 75, 100]],
 			"iDisplayLength": 10
 	    });
-		
+
 		var datatable_contact_hash = {};
 		var datatable_contact_xhr;
 		//Datatable contacts
@@ -1472,94 +1472,94 @@
 					var types = $(".contact-filter .contact_types input:checkbox:checked").map(function(){
 						return $(this).val();
 					}).get();
-					
-					if($(".contact-filter select[name=is_individual]").select2("val") == "true") {						
+
+					if($(".contact-filter select[name=is_individual]").select2("val") == "true") {
 						d.contact_types = types;
 					}
-					
+
 					if($(".contact-filter select[name=is_individual]").val()) {
 						d.is_individual = $(".contact-filter select[name=is_individual]").select2("val");
 					}
-					
+
 					if($(".contact-filter select[name='tags[]']").val()) {
 						d.tags = $(".contact-filter select[name='tags[]'").val()
 					}
-					
+
 					if($(".contact-filter select[name='course_types[]']").val()) {
 						d.course_types = $(".contact-filter select[name='course_types[]']").val()
 					}
-					
+
 					if($(".contact-filter select[name='subjects[]']").val()) {
 						d.subjects = $(".contact-filter select[name='subjects[]']").val()
 					}
-					
+
 					if($(".contact-filter select[name='filter[intake(2i)]']").val()) {
 						d.intake_month =  $(".contact-filter select[name='filter[intake(2i)]']").val()
 					}
-					
+
 					if($(".contact-filter select[name='filter[intake(1i)]']").val()) {
 						d.intake_year =  $(".contact-filter select[name='filter[intake(1i)]']").val()
 					}
-					
+
 					if($(".contact-filter input[name='courses']").val()) {
 						d.courses =  $(".contact-filter input[name='courses']").val()
 					}
-					
+
 					if($(".contact-filter input[name='seminars']").val()) {
 						d.seminars =  $(".contact-filter input[name='seminars']").val()
 					}
-					
+
 					if($(".contact-filter input[name='courses_phrases']").val()) {
 						d.courses_phrases =  $(".contact-filter input[name='courses_phrases']").val()
 					}
-					
+
 					if($(".contact-filter select[name='status']").val()) {
 						d.status =  $(".contact-filter select[name='status']").val()
 					}
-					
+
 					if($(".contact-filter input[name='created_from']").val()) {
 						d.created_from =  $(".contact-filter input[name='created_from']").val()
 					}
-					
+
 					if($(".contact-filter input[name='created_to']").val()) {
 						d.created_to =  $(".contact-filter input[name='created_to']").val()
 					}
-					
+
 					if($(".contact-filter select[name='payment_type']").val()) {
 						d.payment_type =  $(".contact-filter select[name='payment_type']").val()
 					}
-					
+
 					if($(".contact-filter input[name='company']").val()) {
 						d.company =  $(".contact-filter input[name='company']").val()
 					}
-					
+
 					if($(".contact-filter select[name='user']").val()) {
 						d.user =  $(".contact-filter select[name='user']").val()
 					}
-					
+
 					if($(".contact-filter input[name='old_tag']").val()) {
 						d.old_tag =  $(".contact-filter input[name='old_tag']").val()
 					}
-					
+
 					if($(".contact-filter input[name='old_course']").val()) {
 						d.old_course =  $(".contact-filter input[name='old_course']").val()
 					}
 					if($(".contact-filter input[name='online_id']").val()) {
 						d.online_id =  $(".contact-filter input[name='online_id']").val()
 					}
-					
+
 					if($(".contact-filter input[name='phrases']").val()) {
 						d.phrases =  $(".contact-filter input[name='phrases']").val()
 					}
-					
+
 					if($(".contact-filter select[name='base_status']").val()) {
 						d.base_status =  $(".contact-filter select[name='base_status']").val()
 					}
-					
+
 					if($(".contact-filter input[name='no_added_books']").val()) {
 						d.no_added_books =  $(".contact-filter input[name='no_added_books']").val()
 					}
-					
+
 					if($(".contact-filter input[name='discount_program_id']").val()) {
 						d.discount_program_id =  $(".contact-filter input[name='discount_program_id']").val()
 					}
@@ -1576,7 +1576,7 @@
                     }
                 }
 			},
-			"drawCallback": function( settings ) {			
+			"drawCallback": function( settings ) {
 				var count = 0
 				$(".datatable-contacts tr").each(function() {
 					if (count > 0) {
@@ -1590,7 +1590,7 @@
 						}
 						var row = $(this)
                         var iid = row.find(".main_part_info").attr("item_id")
-						
+
 						datatable_contact_hash[count] = $.ajax({
 						  url: '<%= part_info_contacts_path %>?id='+iid+'&courses='+cf+'&no_added_books='+no_added_books,
 						  success: function(data, textStatus, jqXHR)
@@ -1606,30 +1606,30 @@
                     }
 					count += 1
 				})
-				
+
 				var color = ["blue", "gray", "green"]
 				$(".label_email").each(function() {
 				  if($(".label_email[val='"+$(this).attr("val")+"']").length > 1) {
 					$(".label_email[val='"+$(this).attr("val")+"']").addClass("label_color_blue")
 				  }
-				  
+
 				})
 				$(".label_mobile").each(function() {
 				  if($(".label_mobile[val='"+$(this).attr("val")+"']").length > 1) {
 					$(".label_mobile[val='"+$(this).attr("val")+"']").addClass("label_color_green")
 				  }
-				  
+
 				})
 				$(".label_name").each(function() {
 				  if($(".label_name[val='"+$(this).attr("val")+"']").length > 1) {
 					$(".label_name[val='"+$(this).attr("val")+"']").addClass("label_color_grey")
 				  }
-				  
+
 				})
 			}
 	    });
 
-		
+
 		//Datatable merge contacts
 		var datatable_m_contact_hash = {}
 		var datatable_m_contact_xhr;
@@ -1663,7 +1663,7 @@
                     }
                 }
 			},
-			"drawCallback": function( settings ) {			
+			"drawCallback": function( settings ) {
 				var count = 0
 				$(".datatable-merge-contacts tr").each(function() {
 					if (count > 0) {
@@ -1692,29 +1692,29 @@
                     }
 					count += 1
 				})
-				
+
 				var color = ["blue", "gray", "green"]
 				$(".label_email").each(function() {
 				  if($(".label_email[val='"+$(this).attr("val")+"']").length > 1) {
 					$(".label_email[val='"+$(this).attr("val")+"']").addClass("label_color_blue")
 				  }
-				  
+
 				})
 				$(".label_mobile").each(function() {
 				  if($(".label_mobile[val='"+$(this).attr("val")+"']").length > 1) {
 					$(".label_mobile[val='"+$(this).attr("val")+"']").addClass("label_color_green")
 				  }
-				  
+
 				})
 				$(".label_name").each(function() {
 				  if($(".label_name[val='"+$(this).attr("val")+"']").length > 1) {
 					$(".label_name[val='"+$(this).attr("val")+"']").addClass("label_color_grey")
 				  }
-				  
+
 				})
 			}
 	    });
-		
+
 		//Datatable contacts
 	    $('.datatable-seminar-students').dataTable( {
 			"processing": true,
@@ -1725,92 +1725,92 @@
 					var types = $(".contact-filter .contact_types input:checkbox:checked").map(function(){
 						return $(this).val();
 					}).get();
-					
-					if($(".contact-filter select[name=is_individual]").select2("val") == "true") {						
+
+					if($(".contact-filter select[name=is_individual]").select2("val") == "true") {
 						d.contact_types = types;
 					}
-					
+
 					d.is_individual = $(".contact-filter select[name=is_individual]").select2("val");
-					
+
 					if($(".contact-filter select[name='tags[]']").val()) {
 						d.tags = $(".contact-filter select[name='tags[]'").val()
 					}
-					
+
 					if($(".contact-filter select[name='course_types[]']").val()) {
 						d.course_types = $(".contact-filter select[name='course_types[]']").val()
 					}
-					
+
 					if($(".contact-filter select[name='subjects[]']").val()) {
 						d.subjects = $(".contact-filter select[name='subjects[]']").val()
 					}
-					
+
 					if($(".contact-filter select[name='filter[intake(2i)]']").val()) {
 						d.intake_month =  $(".contact-filter select[name='filter[intake(2i)]']").val()
 					}
-					
+
 					if($(".contact-filter select[name='filter[intake(1i)]']").val()) {
 						d.intake_year =  $(".contact-filter select[name='filter[intake(1i)]']").val()
 					}
-					
+
 					if($(".contact-filter input[name='courses']").val()) {
 						d.courses =  $(".contact-filter input[name='courses']").val()
 					}
-					
+
 					if($(".contact-filter input[name='seminars']").val()) {
 						d.seminars =  $(".contact-filter input[name='seminars']").val()
 					}
-					
+
 					if($(".contact-filter input[name='courses_phrases']").val()) {
 						d.courses_phrases =  $(".contact-filter input[name='courses_phrases']").val()
 					}
-					
+
 					if($(".contact-filter select[name='status']").val()) {
 						d.status =  $(".contact-filter select[name='status']").val()
 					}
-					
+
 					if($(".contact-filter input[name='created_from']").val()) {
 						d.created_from =  $(".contact-filter input[name='created_from']").val()
 					}
-					
+
 					if($(".contact-filter input[name='created_to']").val()) {
 						d.created_to =  $(".contact-filter input[name='created_to']").val()
 					}
-					
+
 					if($(".contact-filter select[name='payment_type']").val()) {
 						d.payment_type =  $(".contact-filter select[name='payment_type']").val()
 					}
-					
+
 					if($(".contact-filter input[name='company']").val()) {
 						d.company =  $(".contact-filter input[name='company']").val()
 					}
-					
+
 					if($(".contact-filter select[name='user']").val()) {
 						d.user =  $(".contact-filter select[name='user']").val()
 					}
-					
+
 					if($(".contact-filter input[name='old_tag']").val()) {
 						d.old_tag =  $(".contact-filter input[name='old_tag']").val()
 					}
-					
+
 					if($(".contact-filter input[name='old_course']").val()) {
 						d.old_course =  $(".contact-filter input[name='old_course']").val()
 					}
 					if($(".contact-filter input[name='online_id']").val()) {
 						d.online_id =  $(".contact-filter input[name='online_id']").val()
 					}
-					
+
 					if($(".contact-filter input[name='phrases']").val()) {
 						d.phrases =  $(".contact-filter input[name='phrases']").val()
 					}
-					
+
 					if($(".contact-filter select[name='base_status']").val()) {
 						d.base_status =  $(".contact-filter select[name='base_status']").val()
 					}
-					
+
 					if($(".contact-filter input[name='no_added_books']").val()) {
 						d.no_added_books =  $(".contact-filter input[name='no_added_books']").val()
 					}
-				}				
+				}
 			},
 			"columnDefs": [ { "targets": [0,1,3,4,5,6,7,8,9,10], "orderable": false } ],
 			"order": [],
@@ -1820,7 +1820,7 @@
 				updateSeminarContactsCount()
 			}
 	    });
-		
+
 		//Datatable contacts
 	    $('.datatable-course-students').dataTable( {
 			"processing": true,
@@ -1831,89 +1831,89 @@
 					var types = $(".contact-filter .contact_types input:checkbox:checked").map(function(){
 						return $(this).val();
 					}).get();
-					
-					if($(".contact-filter select[name=is_individual]").select2("val") == "true") {						
+
+					if($(".contact-filter select[name=is_individual]").select2("val") == "true") {
 						d.contact_types = types;
 					}
-					
+
 					d.is_individual = $(".contact-filter select[name=is_individual]").select2("val");
-					
+
 					if($(".contact-filter select[name='tags[]']").val()) {
 						d.tags = $(".contact-filter select[name='tags[]'").val()
 					}
-					
+
 					if($(".contact-filter select[name='course_types[]']").val()) {
 						d.course_types = $(".contact-filter select[name='course_types[]']").val()
 					}
-					
+
 					if($(".contact-filter select[name='subjects[]']").val()) {
 						d.subjects = $(".contact-filter select[name='subjects[]']").val()
 					}
-					
+
 					if($(".contact-filter select[name='filter[intake(2i)]']").val()) {
 						d.intake_month =  $(".contact-filter select[name='filter[intake(2i)]']").val()
 					}
-					
+
 					if($(".contact-filter select[name='filter[intake(1i)]']").val()) {
 						d.intake_year =  $(".contact-filter select[name='filter[intake(1i)]']").val()
 					}
-					
+
 					if($(".contact-filter input[name='courses']").val()) {
 						d.courses =  $(".contact-filter input[name='courses']").val()
 					}
-					
+
 					if($(".contact-filter input[name='seminars']").val()) {
 						d.seminars =  $(".contact-filter input[name='seminars']").val()
 					}
-					
+
 					if($(".contact-filter input[name='courses_phrases']").val()) {
 						d.courses_phrases =  $(".contact-filter input[name='courses_phrases']").val()
 					}
-					
+
 					if($(".contact-filter select[name='status']").val()) {
 						d.status =  $(".contact-filter select[name='status']").val()
 					}
-					
+
 					if($(".contact-filter input[name='created_from']").val()) {
 						d.created_from =  $(".contact-filter input[name='created_from']").val()
 					}
-					
+
 					if($(".contact-filter input[name='created_to']").val()) {
 						d.created_to =  $(".contact-filter input[name='created_to']").val()
 					}
-					
+
 					if($(".contact-filter select[name='payment_type']").val()) {
 						d.payment_type =  $(".contact-filter select[name='payment_type']").val()
 					}
-					
+
 					if($(".contact-filter input[name='company']").val()) {
 						d.company =  $(".contact-filter input[name='company']").val()
 					}
-					
+
 					if($(".contact-filter select[name='user']").val()) {
 						d.user =  $(".contact-filter select[name='user']").val()
 					}
-					
+
 					if($(".contact-filter input[name='old_tag']").val()) {
 						d.old_tag =  $(".contact-filter input[name='old_tag']").val()
 					}
-					
+
 					if($(".contact-filter input[name='old_course']").val()) {
 						d.old_course =  $(".contact-filter input[name='old_course']").val()
 					}
-					
+
 					if($(".contact-filter input[name='online_id']").val()) {
 						d.online_id =  $(".contact-filter input[name='online_id']").val()
 					}
-					
+
 					if($(".contact-filter input[name='phrases']").val()) {
 						d.phrases =  $(".contact-filter input[name='phrases']").val()
 					}
-					
+
 					if($(".contact-filter select[name='base_status']").val()) {
 						d.base_status =  $(".contact-filter select[name='base_status']").val()
 					}
-					
+
 					if($(".contact-filter input[name='no_added_books']").val()) {
 						d.no_added_books =  $(".contact-filter input[name='no_added_books']").val()
 					}
@@ -1924,8 +1924,8 @@
 			"aLengthMenu": [[10, 25, 50, 75, 100], [10, 25, 50, 75, 100]],
 			"iDisplayLength": 10
 	    });
-		
-		
+
+
 		//Datatable course types
 	    $('.datatable-course-types').dataTable( {
 			"processing": true,
@@ -1943,7 +1943,7 @@
 			"aLengthMenu": [[10, 25, 50, 75, 100], [10, 25, 50, 75, 100]],
 			"iDisplayLength": 10
 	    });
-		
+
 		//Datatable subjects
 	    $('.datatable-subjects').dataTable( {
 			"processing": true,
@@ -1962,7 +1962,7 @@
 			"aLengthMenu": [[10, 25, 50, 75, 100], [10, 25, 50, 75, 100]],
 			"iDisplayLength": 10
 	    });
-		
+
 		//Datatable courses
 		var datatable_course_xhr;
 	    datatable_course_xhr = $('.datatable-courses').on('preXhr.dt', function ( e, settings, data ) {
@@ -1981,11 +1981,11 @@
 					d.subjects = $(".course-filter select[name='filter[subjects[]]']").val()
 					d.students = $(".course-filter input[name='filter[students[]]']").val()
 					d.lecturers = $(".course-filter input[name='filter[lecturers[]]']").val()
-					
+
 					if($(".course-filter select[name='status']").val()) {
 						d.status =  $(".course-filter select[name='status']").val()
 					}
-					
+
 					if($(".course-filter select[name='for_exam_month']").val()) {
 						d.for_exam_month =  $(".course-filter select[name='for_exam_month']").val()
 					}
@@ -1999,7 +1999,7 @@
 			"aLengthMenu": [[10, 25, 50, 75, 100], [10, 25, 50, 75, 100]],
 			"iDisplayLength": 10
 	    });
-		
+
 		//Datatable courses
 	    $('.datatable-student-courses').dataTable( {
 			"processing": true,
@@ -2013,11 +2013,11 @@
 					d.subjects = $(".course-filter select[name='filter[subjects[]]']").val()
 					d.students = $(".course-filter input[name='filter[students[]]']").val()
 					d.lecturers = $(".course-filter input[name='filter[lecturers[]]']").val()
-					
+
 					if($(".course-filter select[name='status']").val()) {
 						d.status =  $(".course-filter select[name='status']").val()
 					}
-					
+
 					if($(".course-filter select[name='for_exam_month']").val()) {
 						d.for_exam_month =  $(".course-filter select[name='for_exam_month']").val()
 					}
@@ -2031,7 +2031,7 @@
 			"aLengthMenu": [[10, 25, 50, 75, 100], [10, 25, 50, 75, 100]],
 			"iDisplayLength": 10
 	    });
-		
+
 		//Datatable books
 		var datatable_book_xhr;
 	    datatable_book_xhr = $('.datatable-books').on('preXhr.dt', function ( e, settings, data ) {
@@ -2046,23 +2046,23 @@
 				"data": function ( d ) {
 					d.program_id = $(".book-filter select[name='filter[course_types[]]']").val()
 					d.subject_id = $(".book-filter select[name='filter[subjects[]]']").val()
-					
+
 					if($(".book-filter input[name='student']").val()) {
 						d.student =  $(".book-filter input[name='student']").val()
 					}
-					
+
 					if($(".book-filter select[name='stock_types[]']").val()) {
 						d.stock_types =  $(".book-filter select[name='stock_types[]']").val()
 					}
-					
+
 					if($(".book-filter select[name='status']").val()) {
 						d.status =  $(".book-filter select[name='status']").val()
 					}
-					
+
 					if($(".book-filter input[name='valid_on']").val()) {
 						d.valid_on =  $(".book-filter input[name='valid_on']").val()
 					}
-					
+
 				}
 			},
 			"columnDefs": [ { "targets": [0,1,4,5,6,7,8,9,10,11], "orderable": false } ],
@@ -2070,7 +2070,7 @@
 			"aLengthMenu": [[10, 25, 50, 75, 100], [10, 25, 50, 75, 100]],
 			"iDisplayLength": 10
 	    });
-		
+
 		//Datatable books
 	    $('.datatable-student-books').dataTable( {
 			"processing": true,
@@ -2080,11 +2080,11 @@
 				"data": function ( d ) {
 					d.program_id = $(".book-filter select[name='filter[course_types[]]']").val()
 					d.subject_id = $(".book-filter select[name='filter[subjects[]]']").val()
-					
+
 					if($(".book-filter input[name='student']").val()) {
 						d.student =  $(".book-filter input[name='student']").val()
 					}
-					
+
 					if($(".book-filter select[name='stock_types[]']").val()) {
 						d.stock_types =  $(".book-filter select[name='stock_types[]']").val()
 					}
@@ -2095,7 +2095,7 @@
 			"aLengthMenu": [[10, 25, 50, 75, 100], [10, 25, 50, 75, 100]],
 			"iDisplayLength": 10
 	    });
-		
+
 		//Datatable books
 	    $('.datatable-stock-statistics').dataTable( {
 			"processing": true,
@@ -2116,7 +2116,7 @@
 			"aLengthMenu": [[10, 25, 50, 75, 100], [10, 25, 50, 75, 100]],
 			"iDisplayLength": 10
 	    });
-		
+
 		//Datatable courses
 	    $('.datatable-contact-tags').dataTable( {
 			"processing": true,
@@ -2134,7 +2134,7 @@
 			"aLengthMenu": [[10, 25, 50, 75, 100], [10, 25, 50, 75, 100]],
 			"iDisplayLength": 10
 	    });
-	    
+
 		//Datatable seminars
 	    $('.datatable-seminars').dataTable( {
 			"processing": true,
@@ -2144,7 +2144,7 @@
 				"data": function ( d ) {
 					d.course_types = $(".seminar-filter select[name='filter[course_types[]]']").val()
 					if($(".seminar-filter select[name='status']").val()) {
-						d.status =  $(".seminar-filter select[name='status']").val()						
+						d.status =  $(".seminar-filter select[name='status']").val()
 					}
 					if($(".seminar-filter input[name='contact_id']").val()) {
 						d.contact_id = $(".seminar-filter input[name='contact_id']").val()
@@ -2156,7 +2156,7 @@
 			"aLengthMenu": [[10, 25, 50, 75, 100], [10, 25, 50, 75, 100]],
 			"iDisplayLength": 10
 	    });
-		
+
 		//Datatable seminars
 	    $('.datatable-student-seminars').dataTable( {
 			"processing": true,
@@ -2166,7 +2166,7 @@
 				"data": function ( d ) {
 					d.course_types = $(".seminar-filter select[name='filter[course_types[]]']").val()
 					if($(".seminar-filter select[name='status']").val()) {
-						d.status =  $(".seminar-filter select[name='status']").val()						
+						d.status =  $(".seminar-filter select[name='status']").val()
 					}
 					if($(".seminar-filter input[name='contact_id']").val()) {
 						d.contact_id = $(".seminar-filter input[name='contact_id']").val()
@@ -2178,7 +2178,7 @@
 			"aLengthMenu": [[10, 25, 50, 75, 100], [10, 25, 50, 75, 100]],
 			"iDisplayLength": 10
 	    });
-		
+
 		//Datatable subjects
 	    $('.datatable-phrases').dataTable( {
 			"processing": true,
@@ -2198,7 +2198,7 @@
 			"aLengthMenu": [[10, 25, 50, 75, 100], [10, 25, 50, 75, 100]],
 			"iDisplayLength": 10
 	    });
-		
+
 		//Datatable subjects
 	    $('.datatable-bank-accounts').dataTable( {
 			"processing": true,
@@ -2216,7 +2216,7 @@
 			"aLengthMenu": [[10, 25, 50, 75, 100], [10, 25, 50, 75, 100]],
 			"iDisplayLength": 10
 	    });
-		
+
 		//Datatable subjects
 		var datatable_cr_hash = {}
 		var datatable_cr_xhr;
@@ -2233,46 +2233,46 @@
 					if($(".course-register-filter select[name='course_types[]']").val()) {
 						d.course_types = $(".course-register-filter select[name='course_types[]']").val()
 					}
-					
+
 					if($(".course-register-filter select[name='subjects[]']").val()) {
 						d.subjects = $(".course-register-filter select[name='subjects[]']").val()
 					}
-					
+
 					if($(".course-register-filter select[name='filter[intake(2i)]']").val()) {
 						d.intake_month =  $(".course-register-filter select[name='filter[intake(2i)]']").val()
 					}
-					
+
 					if($(".course-register-filter select[name='filter[intake(1i)]']").val()) {
 						d.intake_year =  $(".course-register-filter select[name='filter[intake(1i)]']").val()
 					}
-					
+
 					if($(".course-register-filter input[name='courses']").val()) {
 						d.courses =  $(".course-register-filter input[name='courses']").val()
 					}
-					
+
 					if($(".course-register-filter input[name='courses_phrases']").val()) {
 						d.courses_phrases =  $(".course-register-filter input[name='courses_phrases']").val()
 					}
-					
+
 					if($(".course-register-filter input[name='student']").val()) {
 						d.student =  $(".course-register-filter input[name='student']").val()
 					}
-					
+
 					d.delivery_statuses = $(".course-register-filter select[name='delivery_statuses']").val()
 					d.payment_statuses = $(".course-register-filter select[name='payment_statuses']").val()
-					
+
 					if($(".course-register-filter select[name='status']").val()) {
 						d.status =  $(".course-register-filter select[name='status']").val()
 					}
-					
+
 					if($(".course-register-filter select[name='user']").val()) {
 						d.user =  $(".course-register-filter select[name='user']").val()
 					}
-					
+
 					if($(".course-register-filter input[name='intakes']").val()) {
 						d.intakes =  $(".course-register-filter input[name='intakes']").val()
 					}
-					
+
 					d.full_course = $(".course-register-filter input[name='full_course']:checked").val()
 				}
 			},
@@ -2287,7 +2287,7 @@
                     }
                 }
 			},
-			"drawCallback": function( settings ) {			
+			"drawCallback": function( settings ) {
 				var count = 0
 				$(".datatable-course-registers tr").each(function() {
 					if (count > 0) {
@@ -2307,10 +2307,10 @@
 						})
                     }
 					count += 1
-				})					
+				})
 			}
 	    });
-		
+
 		//Datatable subjects
 	    $('.datatable-student-course-registers').dataTable( {
 			"processing": true,
@@ -2321,34 +2321,34 @@
 					if($(".course-register-filter select[name='course_types[]']").val()) {
 						d.course_types = $(".course-register-filter select[name='course_types[]']").val()
 					}
-					
+
 					if($(".course-register-filter select[name='subjects[]']").val()) {
 						d.subjects = $(".course-register-filter select[name='subjects[]']").val()
 					}
-					
+
 					if($(".course-register-filter select[name='filter[intake(2i)]']").val()) {
 						d.intake_month =  $(".course-register-filter select[name='filter[intake(2i)]']").val()
 					}
-					
+
 					if($(".course-register-filter select[name='filter[intake(1i)]']").val()) {
 						d.intake_year =  $(".course-register-filter select[name='filter[intake(1i)]']").val()
 					}
-					
+
 					if($(".course-register-filter input[name='courses']").val()) {
 						d.courses =  $(".course-register-filter input[name='courses']").val()
 					}
-					
+
 					if($(".course-register-filter input[name='courses_phrases']").val()) {
 						d.courses_phrases =  $(".course-register-filter input[name='courses_phrases']").val()
 					}
-					
+
 					if($(".course-register-filter input[name='student']").val()) {
 						d.student =  $(".course-register-filter input[name='student']").val()
 					}
-					
+
 					d.delivery_statuses = $(".course-register-filter select[name='delivery_statuses']").val()
 					d.payment_statuses = $(".course-register-filter select[name='payment_statuses']").val()
-					
+
 					if($(".course-register-filter select[name='user']").val()) {
 						d.user =  $(".course-register-filter select[name='user']").val()
 					}
@@ -2359,7 +2359,7 @@
 			"aLengthMenu": [[10, 25, 50, 75, 100], [10, 25, 50, 75, 100]],
 			"iDisplayLength": 10
 	    });
-		
+
 		//Datatable books
 		var datatable_pr_hash = {}
 		var datatable_pr_xhr;
@@ -2376,7 +2376,7 @@
 					d.students = $(".payment-record-filter input[name='filter[students[]]']").val()
 					if($(".payment-record-filter select[name='course_types[]']").val()) {
 						d.course_types = $(".payment-record-filter select[name='course_types[]']").val()
-					}					
+					}
 					if($(".payment-record-filter input[name='courses']").val()) {
 						d.courses =  $(".payment-record-filter input[name='courses']").val()
 					}
@@ -2400,7 +2400,7 @@
 						d.status =  $(".payment-record-filter select[name='status']").val()
 					}
 					d.payment_for = $(".payment-record-filter input[name='payment_for']:checked").val()
-					
+
 					if($(".payment-record-filter select[name='user']").val()) {
 						d.user =  $(".payment-record-filter select[name='user']").val()
 					}
@@ -2417,7 +2417,7 @@
                     }
                 }
 			},
-			"drawCallback": function( settings ) {			
+			"drawCallback": function( settings ) {
 				var count = 0
 				$(".datatable-payment-records tr").each(function() {
 					if (count > 0) {
@@ -2439,10 +2439,10 @@
 						})
                     }
 					count += 1
-				})					
+				})
 			}
 	    });
-		
+
 		//Datatable contacts
 	    $('.datatable-activities').dataTable( {
 			"processing": true,
@@ -2451,23 +2451,23 @@
 				"url": "<%= datatable_activities_path %>",
 				"data": function ( d ) {
 					d.contact_id = $(".activity-filter input[name='activity[contact_id]']").val()
-					
+
 					if($(".activity-filter input[name='from_date']").val()) {
 						d.from_date =  $(".activity-filter input[name='from_date']").val()
 					}
-					
+
 					if($(".activity-filter input[name='to_date']").val()) {
 						d.to_date =  $(".activity-filter input[name='to_date']").val()
 					}
-					
+
 					if($(".activity-filter input[name='contact']").val()) {
 						d.contact =  $(".activity-filter input[name='contact']").val()
 					}
-					
+
 					if($(".activity-filter select[name='user']").val()) {
 						d.user =  $(".activity-filter select[name='user']").val()
 					}
-					
+
 					if($(".activity-filter select[name='status']").val()) {
 						d.status =  $(".activity-filter select[name='status']").val()
 					}
@@ -2478,7 +2478,7 @@
 			"aLengthMenu": [[10, 25, 50, 75, 100], [10, 25, 50, 75, 100]],
 			"iDisplayLength": 10
 	    });
-		
+
 		//Datatable subjects
 		var datatable_tf_xhr;
 	    datatable_tf_xhr = $('.datatable-transfers').on('preXhr.dt', function ( e, settings, data ) {
@@ -2510,7 +2510,7 @@
 						d.status =  $(".transfer-filter select[name='status']").val()
 					}
 					d.payment_statuses = $(".transfer-filter select[name='payment_statuses']").val()
-					
+
 					if($(".transfer-filter select[name='user']").val()) {
 						d.user =  $(".transfer-filter select[name='user']").val()
 					}
@@ -2521,7 +2521,7 @@
 			"aLengthMenu": [[10, 25, 50, 75, 100], [10, 25, 50, 75, 100]],
 			"iDisplayLength": 10
 	    });
-		
+
 		//Datatable subjects
 	    $('.datatable-delivery').dataTable( {
 			"processing": true,
@@ -2532,52 +2532,52 @@
 					if($(".delivery-filter input[name='books']").val()) {
 						d.books = $(".delivery-filter input[name='books']").val()
 					}
-					
+
 					if($(".delivery-filter select[name='stock_types[]']").val()) {
 						d.stock_types =  $(".delivery-filter select[name='stock_types[]']").val()
 					}
-					
+
 					if($(".delivery-filter select[name='course_types[]']").val()) {
 						d.course_types = $(".delivery-filter select[name='course_types[]']").val()
 					}
-					
+
 					if($(".delivery-filter select[name='subjects[]']").val()) {
 						d.subjects = $(".delivery-filter select[name='subjects[]']").val()
 					}
-					
+
 					if($(".delivery-filter select[name='filter[intake(2i)]']").val()) {
 						d.intake_month =  $(".delivery-filter select[name='filter[intake(2i)]']").val()
 					}
-					
+
 					if($(".delivery-filter select[name='filter[intake(1i)]']").val()) {
 						d.intake_year =  $(".delivery-filter select[name='filter[intake(1i)]']").val()
 					}
-					
+
 					if($(".delivery-filter input[name='courses']").val()) {
 						d.courses =  $(".delivery-filter input[name='courses']").val()
 					}
-					
+
 					if($(".delivery-filter input[name='courses_phrases']").val()) {
 						d.courses_phrases =  $(".delivery-filter input[name='courses_phrases']").val()
 					}
-					
+
 					if($(".delivery-filter input[name='student']").val()) {
 						d.student =  $(".delivery-filter input[name='student']").val()
 					}
-					
+
 					d.delivery_statuses = $(".delivery-filter select[name='delivery_statuses']").val()
 					d.upfront = $(".delivery-filter input[name='upfront']:checked").val()
 					if($(".delivery-filter select[name='filter[intake(2i)]']").val()) {
 						d.intake_month =  $(".delivery-filter select[name='filter[intake(2i)]']").val()
-					}					
+					}
 					if($(".delivery-filter select[name='filter[intake(1i)]']").val()) {
 						d.intake_year =  $(".delivery-filter select[name='filter[intake(1i)]']").val()
 					}
-					
+
 					if($(".delivery-filter input[name='valid_on']").val()) {
 						d.valid_on =  $(".delivery-filter input[name='valid_on']").val()
 					}
-					
+
 				}
 			},
 			"columnDefs": [ { "targets": [0,2,3,4,5,6,7], "orderable": false } ],
@@ -2585,7 +2585,7 @@
 			"aLengthMenu": [[25, 50, 75, 100, 200, 500], [25, 50, 75, 100, 200, 500]],
 			"iDisplayLength": 25
 	    });
-		
+
 		//Datatable course types
 	    $('.datatable-stock-updates').dataTable( {
 			"processing": true,
@@ -2596,11 +2596,11 @@
 					if($(".stock-update-filter input[name='created_from']").val()) {
 						d.created_from =  $(".stock-update-filter input[name='created_from']").val()
 					}
-					
+
 					if($(".stock-update-filter input[name='created_to']").val()) {
 						d.created_to =  $(".stock-update-filter input[name='created_to']").val()
 					}
-					
+
 					if($(".stock-update-filter select[name='type_name']").val()) {
 						d.type_name =  $(".stock-update-filter select[name='type_name']").val()
 					}
@@ -2611,7 +2611,7 @@
 			"aLengthMenu": [[10, 25, 50, 75, 100], [10, 25, 50, 75, 100]],
 			"iDisplayLength": 10
 	    });
-		
+
 		//Datatable course types
 	    $('.datatable-payment-list').dataTable( {
 			"processing": true,
@@ -2622,34 +2622,34 @@
 					if($(".payment-list-filter select[name='course_types[]']").val()) {
 						d.course_types = $(".payment-list-filter select[name='course_types[]']").val()
 					}
-					
+
 					if($(".payment-list-filter select[name='subjects[]']").val()) {
 						d.subjects = $(".payment-list-filter select[name='subjects[]']").val()
 					}
-					
+
 					if($(".payment-list-filter select[name='filter[intake(2i)]']").val()) {
 						d.intake_month =  $(".payment-list-filter select[name='filter[intake(2i)]']").val()
 					}
-					
+
 					if($(".payment-list-filter select[name='filter[intake(1i)]']").val()) {
 						d.intake_year =  $(".payment-list-filter select[name='filter[intake(1i)]']").val()
 					}
-					
+
 					if($(".payment-list-filter input[name='student']").val()) {
 						d.student =  $(".payment-list-filter input[name='student']").val()
 					}
-					
+
 					if($(".payment-list-filter input[name='intakes']").val()) {
 						d.intakes =  $(".payment-list-filter input[name='intakes']").val()
 					}
-					
+
 					if($(".payment-list-filter input[name='company']").val()) {
 						d.company =  $(".payment-list-filter input[name='company']").val()
 					}
-					
+
 					d.payment_statuses = $(".payment-list-filter select[name='payment_statuses']").val()
 					d.upfront = $(".payment-list-filter input[name='upfront']:checked").val()
-					
+
 					if($(".payment-list-filter select[name='user']").val()) {
 						d.user =  $(".payment-list-filter select[name='user']").val()
 					}
@@ -2660,14 +2660,14 @@
 			"aLengthMenu": [[10, 25, 50, 75, 100], [10, 25, 50, 75, 100]],
 			"iDisplayLength": 10
 	    });
-		
+
 		//Datatable subjects
 	    $('.datatable-stock-types').dataTable( {
 			"processing": true,
 			"serverSide": true,
 			"ajax": {
 				"url": "<%= datatable_stock_types_path %>",
-				"data": function ( d ) {					
+				"data": function ( d ) {
 					if($(".stock-type-filter select[name='status']").val()) {
 						d.status =  $(".stock-type-filter select[name='status']").val()
 					}
@@ -2678,20 +2678,20 @@
 			"aLengthMenu": [[10, 25, 50, 75, 100], [10, 25, 50, 75, 100]],
 			"iDisplayLength": 10
 	    });
-		
+
 		//Datatable subjects
 	    $('.datatable-user-logs').dataTable( {
 			"processing": true,
 			"serverSide": true,
 			"ajax": {
 				"url": "<%= datatable_user_logs_path %>",
-				"data": function ( d ) {					
+				"data": function ( d ) {
 					if($(".user-log-filter select[name='user']").val()) {
 						d.user =  $(".user-log-filter select[name='user']").val()
 					}
 					if($(".user-log-filter input[name='created_from']").val()) {
 						d.created_from =  $(".user-log-filter input[name='created_from']").val()
-					}					
+					}
 					if($(".user-log-filter input[name='created_to']").val()) {
 						d.created_to =  $(".user-log-filter input[name='created_to']").val()
 					}
@@ -2705,8 +2705,8 @@
 			"aLengthMenu": [[10, 25, 50, 75, 100], [10, 25, 50, 75, 100]],
 			"iDisplayLength": 10
 	    });
-		
-		
+
+
 		//Datatable subjects
 	    $('.datatable-report-periods').dataTable( {
 			"processing": true,
@@ -2724,7 +2724,7 @@
 			"aLengthMenu": [[10, 25, 50, 75, 100], [10, 25, 50, 75, 100]],
 			"iDisplayLength": 10
 	    });
-		
+
 		//Datatable subjects
 	    $('.datatable-sales-targets').dataTable( {
 			"processing": true,
@@ -2748,10 +2748,10 @@
 			"aLengthMenu": [[10, 25, 50, 75, 100], [10, 25, 50, 75, 100]],
 			"iDisplayLength": 10
 	    });
-		
-		
+
+
 	    $('select[name="DataTables_Table_0_length"]').select2({allowClear: true});
-		
+
 		//ajax select2 for contacts
 	    $('.select2-ajax-contacts').select2({
 			placeholder: "Search for a contact",
@@ -2763,18 +2763,18 @@
 			  dataType: 'json',
 			  data: function (term, page) { // page is the one-based page number tracked by Select2
 				return {
-				  q: term, //search term				  
+				  q: term, //search term
 				};
 			  },
 			  results: function (data, page) {
 				return {results: data};
 			  }
 			},
-			initSelection: function (element, callback) {				      
+			initSelection: function (element, callback) {
 			  callback({ id: element.val(), text: element.attr('text') });
 			}
 	    });
-		
+
 		//ajax select2 for contacts
 	    $('.select2-ajax-transfer-contacts').select2({
 			placeholder: "Search for a contact",
@@ -2786,18 +2786,18 @@
 			  dataType: 'json',
 			  data: function (term, page) { // page is the one-based page number tracked by Select2
 				return {
-				  q: term, //search term				  
+				  q: term, //search term
 				};
 			  },
 			  results: function (data, page) {
 				return {results: data};
 			  }
 			},
-			initSelection: function (element, callback) {				      
+			initSelection: function (element, callback) {
 			  callback({ id: element.val(), text: element.attr('text') });
 			}
 	    });
-		
+
 		//ajax select2 for contacts
 	    $('.select2-ajax-companies').select2({
 			placeholder: "Search for a company",
@@ -2809,18 +2809,18 @@
 			  dataType: 'json',
 			  data: function (term, page) { // page is the one-based page number tracked by Select2
 				return {
-				  q: term, //search term				  
+				  q: term, //search term
 				};
 			  },
 			  results: function (data, page) {
 				return {results: data};
 			  }
 			},
-			initSelection: function (element, callback) {				      
+			initSelection: function (element, callback) {
 			  callback({ id: element.val(), text: element.attr('text') });
 			}
 	    });
-		
+
 		//ajax select2 for contacts
 	    $('.select2-ajax-lecturers').select2({
 			placeholder: "Search for a contact",
@@ -2832,18 +2832,18 @@
 			  dataType: 'json',
 			  data: function (term, page) { // page is the one-based page number tracked by Select2
 				return {
-				  q: term, //search term				  
+				  q: term, //search term
 				};
 			  },
 			  results: function (data, page) {
 				return {results: data};
 			  }
 			},
-			initSelection: function (element, callback) {				      
+			initSelection: function (element, callback) {
 			  callback({ id: element.val(), text: element.attr('text') });
 			}
 	    });
-		
+
 		//ajax select2 for contacts
 	    $('.select2-ajax-students').select2({
 			placeholder: "Search for a contact",
@@ -2855,18 +2855,18 @@
 			  dataType: 'json',
 			  data: function (term, page) { // page is the one-based page number tracked by Select2
 				return {
-				  q: term, //search term				  
+				  q: term, //search term
 				};
 			  },
 			  results: function (data, page) {
 				return {results: data};
 			  }
 			},
-			initSelection: function (element, callback) {				      
+			initSelection: function (element, callback) {
 			  callback({ id: element.val(), text: element.attr('text') });
 			}
 	    });
-		
+
 		//ajax select2 for state
 	    $('.select2-ajax-states').select2({
 			placeholder: "Search for a state",
@@ -2885,11 +2885,11 @@
 				return {results: data};
 			  }
 			},
-			initSelection: function (element, callback) {				      
+			initSelection: function (element, callback) {
 			  callback({ id: element.val(), text: element.attr('text') });
 			}
 	    });
-		
+
 		//ajax select2 for contacts
 	    $('.select2-ajax-course-types').select2({
 			placeholder: "Search for a program",
@@ -2908,15 +2908,15 @@
 				return {results: data};
 			  }
 			},
-			initSelection: function (element, callback) {				      
+			initSelection: function (element, callback) {
 			  if (!element.hasClass("multiple")) {
 				callback({ id: element.val(), text: element.attr('text') });
 			  } else {
-				
+
 			  }
 			}
 	    });
-		
+
 		//ajax select2 for contacts
 	    $('.select2-ajax-bases').select2({
 			placeholder: "Search for a program",
@@ -2934,16 +2934,16 @@
 				return {results: data};
 			  }
 			},
-			initSelection: function (element, callback) {				      
+			initSelection: function (element, callback) {
 			  if (!element.hasClass("multiple")) {
 				callback({ id: element.val(), text: element.attr('text') });
 			  } else {
-				
+
 			  }
 			}
 	    });
-		
-		//ajax select2 for contacts		
+
+		//ajax select2 for contacts
 	    $('.select2-ajax-subjects').select2({
 			placeholder: "Search for a subject",
 			minimumInputLength: 0,
@@ -2961,11 +2961,11 @@
 				return {results: data};
 			  }
 			},
-			initSelection: function (element, callback) {				      
+			initSelection: function (element, callback) {
 			  callback({ id: element.val(), text: element.attr('text') });
 			}
 	    });
-		
+
 		//ajax select2 for contacts
 	    $('.select2-ajax-course-types-subjects').select2({
 			placeholder: "Search for a Program - Paper",
@@ -2984,11 +2984,11 @@
 				return {results: data};
 			  }
 			},
-			initSelection: function (element, callback) {				      
+			initSelection: function (element, callback) {
 			  callback({ id: element.val(), text: element.attr('text') });
 			}
 	    });
-		
+
 		//ajax select2 for contact tags
 	    $('.select2-ajax-contact-tags').select2({
 			placeholder: "Search for a tag",
@@ -3007,11 +3007,11 @@
 				return {results: data};
 			  }
 			},
-			initSelection: function (element, callback) {				      
+			initSelection: function (element, callback) {
 			  callback({ id: element.val(), text: element.attr('text') });
 			}
 	    });
-		
+
 		//ajax select2 for contact tags
 	    $('.select2-ajax-contact-tags-list').select2({
 			placeholder: "+ Add tag to selected contact(s)",
@@ -3030,11 +3030,11 @@
 				return {results: data};
 			  }
 			},
-			initSelection: function (element, callback) {				      
+			initSelection: function (element, callback) {
 			  callback({ id: element.val(), text: element.attr('text') });
 			}
 	    });
-		
+
 		//ajax select2 for contact tags
 	    $('.select2-ajax-contact-tags-list-remove').select2({
 			placeholder: "- Remove tag from selected contact(s)",
@@ -3053,11 +3053,11 @@
 				return {results: data};
 			  }
 			},
-			initSelection: function (element, callback) {				      
+			initSelection: function (element, callback) {
 			  callback({ id: element.val(), text: element.attr('text') });
 			}
 	    });
-		
+
 		//ajax select2 for contacts
 	    $('.select2-ajax-courses').select2({
 			placeholder: "Search for a course",
@@ -3069,18 +3069,18 @@
 			  dataType: 'json',
 			  data: function (term, page) { // page is the one-based page number tracked by Select2
 				return {
-				  q: term, //search term				  
+				  q: term, //search term
 				};
 			  },
 			  results: function (data, page) {
 				return {results: data};
 			  }
 			},
-			initSelection: function (element, callback) {				      
+			initSelection: function (element, callback) {
 			  callback({ id: element.val(), text: element.attr('text') });
 			}
 	    });
-		
+
 		//ajax select2 for contacts
 	    $('.select2-ajax-books').select2({
 			placeholder: "Search for a book",
@@ -3092,20 +3092,20 @@
 			  dataType: 'json',
 			  data: function (term, page) { // page is the one-based page number tracked by Select2
 				return {
-				  q: term, //search term				  
+				  q: term, //search term
 				};
 			  },
 			  results: function (data, page) {
 				return {results: data};
 			  }
 			},
-			initSelection: function (element, callback) {				      
+			initSelection: function (element, callback) {
 			  callback({ id: element.val(), text: element.attr('text') });
 			}
 	    });
-		
-		
-		//ajax select2 for contacts		
+
+
+		//ajax select2 for contacts
 	    $('.select2-ajax-phrases').select2({
 			placeholder: "Search for a phrase",
 			minimumInputLength: 0,
@@ -3124,12 +3124,12 @@
 				return {results: data};
 			  }
 			},
-			initSelection: function (element, callback) {				      
+			initSelection: function (element, callback) {
 			  callback({ id: element.val(), text: element.attr('text') });
 			}
 	    });
-		
-		//ajax select2 for contacts		
+
+		//ajax select2 for contacts
 	    $('.select2-ajax-discount-programs').select2({
 			placeholder: "Search for a discount program",
 			minimumInputLength: 0,
@@ -3147,11 +3147,11 @@
 				return {results: data};
 			  }
 			},
-			initSelection: function (element, callback) {				      
+			initSelection: function (element, callback) {
 			  callback({ id: element.val(), text: element.attr('text') });
 			}
 	    });
-		
+
 		//ajax select2 for bank
 	    $('.select2-ajax-bank-accounts').select2({
 			placeholder: "Search for a bank account",
@@ -3163,18 +3163,18 @@
 			  dataType: 'json',
 			  data: function (term, page) { // page is the one-based page number tracked by Select2
 				return {
-				  q: term, //search term				  
+				  q: term, //search term
 				};
 			  },
 			  results: function (data, page) {
 				return {results: data};
 			  }
 			},
-			initSelection: function (element, callback) {				      
+			initSelection: function (element, callback) {
 			  callback({ id: element.val(), text: element.attr('text') });
 			}
 	    });
-		
+
 		//ajax select2 for contacts
 	    $('.select2-ajax-old-tags').select2({
 			placeholder: "Search for a tag",
@@ -3186,18 +3186,18 @@
 			  dataType: 'json',
 			  data: function (term, page) { // page is the one-based page number tracked by Select2
 				return {
-				  q: term, //search term				  
+				  q: term, //search term
 				};
 			  },
 			  results: function (data, page) {
 				return {results: data};
 			  }
 			},
-			initSelection: function (element, callback) {				      
+			initSelection: function (element, callback) {
 			  callback({ id: element.val(), text: element.attr('text') });
 			}
 	    });
-		
+
 		//ajax select2 for contacts
 	    $('.select2-ajax-old-link-students').select2({
 			placeholder: "Search for a tag",
@@ -3209,18 +3209,18 @@
 			  dataType: 'json',
 			  data: function (term, page) { // page is the one-based page number tracked by Select2
 				return {
-				  q: term, //search term				  
+				  q: term, //search term
 				};
 			  },
 			  results: function (data, page) {
 				return {results: data};
 			  }
 			},
-			initSelection: function (element, callback) {				      
+			initSelection: function (element, callback) {
 			  callback({ id: element.val(), text: element.attr('text') });
 			}
 	    });
-		
+
 		//Datatable subjects
 	    $('.datatable-discount-programs').dataTable( {
 			"processing": true,
@@ -3242,7 +3242,7 @@
 			"aLengthMenu": [[10, 25, 50, 75, 100], [10, 25, 50, 75, 100]],
 			"iDisplayLength": 10
 	    });
-		
+
 		//ajax select2 for contacts
 	    $('.select2-ajax-report-periods').select2({
 			placeholder: "Search for a period",
@@ -3254,35 +3254,35 @@
 			  dataType: 'json',
 			  data: function (term, page) { // page is the one-based page number tracked by Select2
 				return {
-				  q: term, //search term				  
+				  q: term, //search term
 				};
 			  },
 			  results: function (data, page) {
 				return {results: data};
 			  }
 			},
-			initSelection: function (element, callback) {				      
+			initSelection: function (element, callback) {
 			  callback({ id: element.val(), text: element.attr('text') });
 			}
 	    });
-	    
+
 	    $('.dataTables_length select').select2({allowClear: true});
-	    
+
 	    $('.date_select_filter select[name="filter[intake(1i)]"]').select2({
 			allowClear: true,
 			placeholder: "year"
 	    });
-	    
+
 	    $('.date_select_filter  select[name="filter[intake(2i)]"]').select2({
 			allowClear: true,
 			placeholder: "month"
 	    });
-	    
+
 	    $('.date_select_filter  select[name="filter[intake(3i)]"]').select2({
 			allowClear: true,
 			placeholder: "day"
 	    });
-	    
+
 	    $('.select2-ajax-users').select2({
 			placeholder: "Search for a user",
 			allowClear: true,
@@ -3300,11 +3300,11 @@
 				return {results: data};
 			  }
 			},
-			initSelection: function (element, callback) {				      
+			initSelection: function (element, callback) {
 			  callback({ id: element.val, text: element.attr('text') });
 			}
 	    });
-		
+
 		$('.select2-ajax-user').select2({
 			placeholder: "Search for a user",
 			allowClear: true,
@@ -3321,11 +3321,11 @@
 				return {results: data};
 			  }
 			},
-			initSelection: function (element, callback) {				      
+			initSelection: function (element, callback) {
 			  callback({ id: element.val, text: element.attr('text') });
 			}
 	    });
-		
+
 		$('.select2-ajax-seminars').select2({
 			placeholder: "Search for a seminar",
 			allowClear: true,
@@ -3343,11 +3343,11 @@
 				return {results: data};
 			  }
 			},
-			initSelection: function (element, callback) {				      
+			initSelection: function (element, callback) {
 				callback({ id: element.val, text: element.attr('text') });
 			}
 	    });
-		
+
 		$('.select2-ajax-stock-types').select2({
 			placeholder: "Search for a stock type",
 			allowClear: true,
@@ -3365,11 +3365,11 @@
 				return {results: data};
 			  }
 			},
-			initSelection: function (element, callback) {				      
+			initSelection: function (element, callback) {
 				callback({ id: element.val, text: element.attr('text') });
 			}
 	    });
-		
+
 		$('.select2-ajax-intakes').select2({
 			placeholder: "Search for intakes",
 			allowClear: true,
@@ -3387,11 +3387,11 @@
 				return {results: data};
 			  }
 			},
-			initSelection: function (element, callback) {				      
+			initSelection: function (element, callback) {
 				callback({ id: element.val, text: element.attr('text') });
 			}
 	    });
-		
+
 		$('.select2-ajax-not-added-books').select2({
 			placeholder: "Search for not added stocks",
 			allowClear: true,
@@ -3410,23 +3410,23 @@
 				return {results: data};
 			  }
 			},
-			initSelection: function (element, callback) {				      
+			initSelection: function (element, callback) {
 				callback({ id: element.val, text: element.attr('text') });
 			}
 	    });
-		
-	    
+
+
 		//number input
 	    $('input.number_input').number(true, 2);
 		$('input.number_input_0').number(true, 2);
-		
+
 		//select2 for datatable
 		setTimeout("$('.dataTables_wrapper select').select2();", 2000);
-		
+
 		//fancybox link
 		$(document).on("click", ".fancybox_link", function(e) {
 			e.preventDefault();
-			
+
 			var href = $(this).attr("href")
 			window.parent.$.fancybox({
 				width: "70%",
@@ -3437,13 +3437,13 @@
 			});
 		});
 		// $('.fancybox_link').fancybox({width: "100%",'autoDimensions': false, 'autoSize':false});
-		
+
 		//contact filter
 		$(document).on("change", "#contact_filter input, #contact_filter select", function() {
 			$('.datatable-contacts').dataTable().fnFilter();
 			$('.datatable-course-students').dataTable().fnFilter();
 			$('.datatable-seminar-students').dataTable().fnFilter();
-			
+
 			clearListCheck()
 	    });
 		//contact filter
@@ -3451,20 +3451,20 @@
 			$('.datatable-contacts').dataTable().fnFilter();
 			$('.datatable-course-students').dataTable().fnFilter();
 			$('.datatable-seminar-students').dataTable().fnFilter();
-			
+
 			clearListCheck()
-	    });	
-		
+	    });
+
 		$('#tab-01 a').click(function (e) {
 			e.preventDefault();
 			$(this).tab('show');
 		});
-		
+
 		$('#avatar_capture a').click(function (e) {
 			e.preventDefault();
 			$(this).tab('show');
 		});
-		
+
 		updateBoxesOrder()
 		$( "#sortable" ).sortable({
 			helper : 'clone',
@@ -3474,47 +3474,47 @@
 		});
 		$( "#sortable" ).disableSelection();
 
-		
+
 		//upload image boxes
 		uploaderBoxes()
-		
+
 		//form validation
 		$('form').validate();
-		
+
 		$('#main-tab a').click(function (e) {
 			e.preventDefault();
 			$(this).tab('show');
 		});
-		
+
 		$(document).on("click",".tab_page", function(e) {
 			e.preventDefault()
-			
+
 			pname = false
 			psrc = false
 			if (typeof($(this).attr("psrc")) != 'undefined') {
 				pname = $(this).attr("pname")
 				psrc = $(this).attr("psrc")
 			}
-			
+
 			if($('body.main-frame-page').length) {
               openTab($(this).attr("href"), $(this).attr("title"),psrc,pname)
             } else {
               parent.openTab($(this).attr("href"), $(this).attr("title"),psrc,pname)
             }
 		})
-        
+
         $(document).on("click",".main-content-frame .cancel-but",function(e) {
-			e.preventDefault()			
+			e.preventDefault()
 			parent.closeTab(window.parent.$("#main-tab li.active a").attr("href").replace("#",""))
 		})
-		
+
 		$('.date-group select').select2();
-		
+
 		$(document).on("change", '.report-period-filter input, .report-period-filter select, .sales-target-filter input, .sales-target-filter select, .user-log-filter select, .user-log-filter input, .user-filters select, .merge-contact-filter select, .user-filters input,.stock-type-filter select, .stock-type-filter input,.payment-list-filter select, .payment-list-filter input,.stock-update-filter select, .stock-update-filter input,.delivery-filter select, .delivery-filter input,.activity-filter select, .activity-filter input,.phrase-filter select, .phrase-filter input,.subject-filter select, .subject-filter input,.seminar-filter select, .seminar-filter input,.contact-tag-filter select, .contact-tag-filter input,.bank-account-filter select, .bank-account-filter input,.discount-program-filter select, .discount-program-filter input,.course-type-filter select, .course-type-filter input,.transfer-filter select, .transfer-filter input,.payment-record-filter select, .payment-record-filter input, .course-filter select, .course-filter input, .book-filter input, .book-filter select, .course-register-filter input, .course-register-filter select', function() {
 			if (typeof($(this).attr("name")) == "undefined") {
 				return
 			}
-			
+
 			$('.datatable-courses').dataTable().fnFilter();
 			$('.datatable-student-courses').dataTable().fnFilter();
 			$('.datatable-subjects').dataTable().fnFilter();
@@ -3542,43 +3542,43 @@
 			$('.datatable-sales-targets').dataTable().fnFilter();
 			$('.datatable-report-periods').dataTable().fnFilter();
 		});
-		
+
 		checkContactType()
 		$('input[name="contact[is_individual]"], select[name="is_individual"]').change(function() {
 			checkContactType()
 		});
-		
+
 		checkInvoiceRequired()
 		$('.invoice_required').change(function() {
 			checkInvoiceRequired()
 		});
-		
+
 		$(document).on("click",".contact_tag_item",function() {
 			updateContactTag($(this).attr("rel"), $(this).attr("tag_id"), $(this).attr("type"))
 		})
-		
+
 		ajaxQuickContactInfo($('input[name="contact[referrer_id]"]').val(),$('.selected_company_info'))
 		$('input[name="contact[referrer_id]"]').change(function() {
 			ajaxQuickContactInfo($(this).val(),$('.selected_company_info'))
 			changeComanyTrigger($(this))
 		})
-		
+
 		ajaxQuickContactInfo($('input[name="contact[invoice_info_id]"]').val(),$('.selected_invoice_info'))
 		$('input[name="contact[invoice_info_id]"]').change(function() {
 			ajaxQuickContactInfo($(this).val(),$('.selected_invoice_info'))
 		})
-		
+
 		$(document).on("click",".refresh_contact_info",function() {
 			ajaxQuickContactInfo($(this).attr("rel"),$(this).parent().parent())
 		})
-		
+
 		$('select[name="contact[payment_type]"]').change(function() {
 			if ($(this).val() == "company-sponsored" && $('input[name="contact[referrer_id]"]').val() == "") {
 				alert("Must choose company first!")
 				$(this).select2("val", 'self-financed');
 			}
 		})
-		
+
 		$(document).on("change","table .checkbox input",function() {
 			if($(this).is(":checked")) {
 				$(this).parents("tr").addClass("row_selected")
@@ -3587,12 +3587,12 @@
 			}
 			var count = $('input[name="ids[]"]:checked').length
 			$('.listing_box_actions .listing_checked_count').html(count)
-			
+
 			$('.check_all_page').attr("checked",false)
-			
+
 			getDeliveryCounting()
 		})
-		
+
 		$(document).on("click",".listing_actions li a",function() {
 			if ($(this).attr("rel").trim() == "") {
 				return
@@ -3623,7 +3623,7 @@
 			}
 			getDeliveryCounting()
 		})
-		
+
 		$(document).on("change",".listing_actions_buttons input",function() {
 			if ($(this).select2("val") == "") {
 				return
@@ -3632,7 +3632,7 @@
 			if (count > 0) {
 				var form = $(".listing_form")
 				var link = $(this)
-				
+
 					$.ajax({
 							type: "POST",
 							url: link.attr("rel"),
@@ -3650,8 +3650,8 @@
 			}
 			$(this).select2("val","")
 		})
-		
-		
+
+
 		$(document).on("change",".check_all_page",function() {
 			if($(this).is(":checked")) {
 				allListCheck()
@@ -3660,17 +3660,17 @@
 			}
 			getDeliveryCounting()
 		})
-		
-		
+
+
 		$(".related_info_input").each(function(){
 			checkRelatedInfo($(this))
-		});		
-		$(document).on("keyup",".related_info_input",function() {			
+		});
+		$(document).on("keyup",".related_info_input",function() {
 			checkRelatedInfo($(this))
 		})
 		$('.related_info_input').focus( function() {
 			checkRelatedInfo($(this))
-		});		  
+		});
 		$(document).click( function() {
 			$(".related_info_box").hide()
 		});
@@ -3680,30 +3680,30 @@
 		$('.related_info_input').change( function() {
 			checkRelatedInfo($(this))
 		});
-		
+
 		$('.datetimepicker').datetimepicker();
-		
-		
-		
-		$(document).on("click",".add_contact_to_seminar_but",function() {			
+
+
+
+		$(document).on("click",".add_contact_to_seminar_but",function() {
 			var contact_ids = $('input[name="contacts"]').select2("val")
-			
+
 			if (contact_ids.length > 0) {
 				addContactToSeminar($(this).attr("rel"), contact_ids)
 			} else {
 				alert("Contact box is empty! Let's find contact(s) first.")
 			}
 		})
-		
-		$(document).on("click",".remove_contact_from_seminar_but",function() {			
+
+		$(document).on("click",".remove_contact_from_seminar_but",function() {
 			var contact_ids = [$(this).attr("contact_ids")]
-			
+
 			if (contact_ids.length > 0) {
 				removeContactToSeminar($(this).attr("rel"), contact_ids)
 			}
 		})
-		
-		$(document).on("click",".remove_contacts_from_seminar_but",function() {			
+
+		$(document).on("click",".remove_contacts_from_seminar_but",function() {
 			var contact_ids = $('table input[name="ids[]"]:checked').map(function(){
 						return $(this).val();
 					}).get();
@@ -3716,30 +3716,30 @@
 				alert("Need to choose contact(s) first!")
 			}
 		})
-		
+
 		//$('.fancybox').fancybox();
 		//fancybox link
 		$(document).on("click", ".fancybox", function(e) {
 			e.preventDefault();
-			
+
 			var href = $(this).attr("href")
 			window.parent.$.fancybox({
 				href: href,
 				type: 'image'
 			});
 		});
-		
-		
+
+
 		$('select[name="course_register[preferred_mailing]"]').change(function() {
 			changeMailingPreferred($(this))
-		})	
+		})
 		$('select[name="contact[preferred_mailing]"]').change(function() {
 			changeMailingPreferred($(this))
 		})
 		$('select[name="contact[preferred_mailing]"]').trigger("change")
-		$('select[name="course_register[preferred_mailing]"]').trigger("change")		
-		
-		$(document).on("change",".phrase_boxx input.main_input", function() {			
+		$('select[name="course_register[preferred_mailing]"]').trigger("change")
+
+		$(document).on("change",".phrase_boxx input.main_input", function() {
 			var value = $(this).val()
 			var next_box = $(this).parents(".phrase_boxx").next()
 			if (value != "") {
@@ -3750,8 +3750,8 @@
 				next_box.hide()
 			}
 		})
-		
-		$(document).on("change",".phrase_boxx select.main_input", function() {			
+
+		$(document).on("change",".phrase_boxx select.main_input", function() {
 			var value = $(this).val()
 			var next_box = $(this).parents(".phrase_boxx").next()
 			if (value != "") {
@@ -3762,7 +3762,7 @@
 				next_box.hide()
 			}
 		})
-		
+
 		$('.base_box .main_input').change(function() {
 			var value = $(this).select2("val")
 			var next_box = $(this).parents(".base_box").next()
@@ -3772,39 +3772,39 @@
 				next_box.hide()
 			}
 		})
-		
+
 		$('.add-more-course-form').click(function() {
 			$('.phrase_box_list .phrase_box').each(function() {
 				if ($(this).hasClass("hidden")) {
 					$(this).removeClass("hidden")
 					return false
-				}				
+				}
 			})
 		});
-		
-		$(document).on("click", ".phrase_box_close", function(e) {			
+
+		$(document).on("click", ".phrase_box_close", function(e) {
 			var val = $(this).attr("rel")
 			$('.phrase_box_'+val).find(".main_input").select2("val","")
 			$('.phrase_box_'+val).find(".main_input").trigger("change")
 			$('.phrase_box_'+val).addClass("hidden")
 		});
-		
+
 		$('.registration_course').change(function() {
 			updateCoursePhraseForm($(this))
 			updateCoursePriceForm($(this))
-			
+
 		})
-		
+
 		$(document).on("click", ".ajax-check-radio", function(e) {
 			e.preventDefault();
-			
+
 			if ($(this).attr("href") == "#none") {
 				return
 			}
-			
+
 			var box = $(this).parent()
 			var url = $(this).attr("href")
-			
+
 			$.ajax({
 				url : url,
 				type: "GET",
@@ -3814,12 +3814,12 @@
 				}
 			});
 		});
-		
+
 		updateProgramsBox()
 		$(document).on("change", "input[name='contact[contact_type_ids][]']", function(e) {
 			updateProgramsBox()
 		});
-		
+
 		$('.price_line input').keyup(function() {
 			var val = $(this).val()
 			var next = $(this).parents(".price_line").next()
@@ -3838,7 +3838,7 @@
 				next.hide()
 			}
 		})
-		
+
 		calculateCoursePriceForm()
 		$(document).on("change", ".phrase_box input, .phrase_box select", function(e) {
 			calculateCoursePriceForm()
@@ -3846,8 +3846,8 @@
 		$(document).on("keyup", ".phrase_box input", function(e) {
 			calculateCoursePriceForm()
 		});
-		
-		
+
+
 		$('.add-more-stock-form').click(function() {
 			$('.stock_box_list .stock_box').each(function() {
 				if ($(this).hasClass("hidden")) {
@@ -3857,27 +3857,27 @@
 				}
 			})
 		});
-		
-		$(document).on("click", ".stock_box_close", function(e) {			
+
+		$(document).on("click", ".stock_box_close", function(e) {
 			var val = $(this).attr("rel")
 			$('.stock_box_'+val).find("select[name=book_id]").select2("val","")
 			$('.stock_box_'+val).find("select[name=book_id]").trigger("change")
 			$('.stock_box_'+val).addClass("hidden")
 		});
-		
-		//updateBookForm(false, false, 0)		
+
+		//updateBookForm(false, false, 0)
 		//$('input[name="program_id"]').change(function() {
 		//	updateBookForm($(this),false, $(this).attr("box_number"))
 		//})
 		//$('input[name="subject_id"]').change(function() {
 		//	updateBookForm(false, $(this),$(this).attr("box_number"))
 		//})
-		
-		$(document).on("change", 'select.stock_select', function() {			
+
+		$(document).on("change", 'select.stock_select', function() {
 			//updateVolumnForm($(this))
 			updateStockPriceForm($(this))
 		})
-		
+
 		calculateStockPriceForm()
 		$(document).on("change", ".stock_box input, .stock_box select", function(e) {
 			calculateStockPriceForm()
@@ -3891,8 +3891,8 @@
 		$('input[name="course_register[discount]"], input[name="course_register[transfer]"]').keyup(function() {
 			updateTotalRegsitrationPrice()
 		})
-		
-		
+
+
 		$(document).on("change", "input[name=courses]", function(e) {
 			var course_id = $(this).val()
 			var box = $(".courses_phrases_select")
@@ -3910,7 +3910,7 @@
 					box.find(".modern_select").select2()
 				}
 			});
-			
+
 			$('.select2-ajax-not-added-books').select2({
 				placeholder: "Search for not added stocks",
 				allowClear: true,
@@ -3929,24 +3929,24 @@
 					return {results: data};
 				  }
 				},
-				initSelection: function (element, callback) {				      
+				initSelection: function (element, callback) {
 					callback({ id: element.val, text: element.attr('text') });
 				}
 			});
 		});
-		
+
 		$(document).on("click", "#new_activity .submit", function(e) {
 			e.preventDefault()
-			
+
 			if (!$("#new_activity").valid()) {
 				return
 			}
-			
+
 			$( "#new_activity" ).addClass("loading")
-			
+
 			var data = $( "#new_activity" ).serialize();
 			var url = $( "#new_activity" ).attr("action");
-			
+
 			$.ajax({
 				url : url,
 				type: "POST",
@@ -3959,12 +3959,12 @@
 				}
 			});
 		});
-		
+
 		$(document).on("click", ".activity_destroy", function(e) {
 			e.preventDefault()
-			
+
 			var url = $(this).attr("href")
-			
+
 			if(confirm("Are you sure!")) {
 				$.ajax({
 					url : url,
@@ -3976,34 +3976,34 @@
 				});
 			}
 		});
-		
+
 		$(document).on("change", ".delivered_count", function() {
 			var value = $(this).val()
 			var remain_box = $(this).parents(".delivery_line_item").find(".to-be-delivered")
 			var stock_box = $(this).parents(".delivery_line_item").find(".stock")
 			var remain = parseInt(remain_box.attr("rel"))
 			var stock = parseInt(stock_box.attr("rel"))
-			
+
 			remain_box.html(remain - value)
 			stock_box.html(stock - value)
 		})
-		
+
 		$(document).on("keyup", ".transer_amount input", function() {
 			var price = 0
 			var fee = 0
-	
+
 			if($('input[name="transfer[money]"]').val() != "") {
 			  price = parseFloat($('input[name="transfer[money]"]').val().replace(/,/g,""))
 			}
 			if($('input[name="transfer[admin_fee]"]').val() != "") {
 			  fee = parseFloat($('input[name="transfer[admin_fee]"]').val().replace(/,/g,""))
 			}
-			
+
 			total = price - fee
-			
+
 			$(".transfer_total").html(ReplaceNumberWithDots(total.toFixed(0)))
 		})
-		
+
 		$(".payment_box .detail_paid,.payment_box .detail_total").keyup(function() {
 			updatePaymentRecordDetails($(this))
 		});
@@ -4013,7 +4013,7 @@
 		$(".payment_box .detail_paid,.payment_box .detail_total").click(function() {
 			updatePaymentRecordDetails($(this))
 		});
-		
+
 		$(document).on("click", ".report_toggle", function() {
 			var id = $(this).attr("rel")
 			var box = $(this).parent()
@@ -4024,12 +4024,12 @@
 					box.html(data)
 				}
 			});
-		})		
-		
-		$("input[name='program_paper']").change(function() {
-			renderPhraseSelect("", $(this).select2("val"))			
 		})
-		
+
+		$("input[name='program_paper']").change(function() {
+			renderPhraseSelect("", $(this).select2("val"))
+		})
+
 		$(document).on("keyup", ".phrase_hour", function() {
 			calculatePhraseHour()
 		});
@@ -4039,44 +4039,44 @@
 		$(document).on("change", ".phrase_boxx .main_input", function() {
 			calculatePhraseHour()
 		});
-		
+
 		$(document).on("click", ".phrase_title", function() {
 			$("."+$(this).attr("rel")).toggle()
 		});
-		
+
 		checkCourseRegisterSponsoredCompany()
 		$("select[name='course_register[payment_type]']").change(function() {
 			checkCourseRegisterSponsoredCompany()
 		})
-		
+
 		$(document).on("change", ".stock_form_filter input, .stock_form_filter select", function() {
 			updateStockFormList($(".stock_form_filter select[name='stock_type_id']").val(),$(".stock_form_filter select[name='program_id']").select2("val"),$(".stock_form_filter select[name='subject_id']").select2("val"),$(".stock_form_filter input[name='valid_on']").val())
 		})
-		
+
 		$(document).on("change", ".import_export_form_filter select[name=stock_type_id], .import_export_form_filter select[name=program_id], .import_export_form_filter select[name=subject_id], .import_export_form_filter input[name=valid_on]", function() {
 			updateImportExportList($(".import_export_form_filter select[name='stock_type_id']").val(),$(".import_export_form_filter select[name='program_id']").select2("val"),$(".import_export_form_filter select[name='subject_id']").select2("val"),$(".import_export_form_filter input[name='valid_on']").val())
 		})
-		
+
 		$(document).on("change", ".phrase_box .price_course", function() {
 			noPriceCheck($(this))
 		});
-		
+
 		$(document).on("change", ".stock_box .price_stock", function() {
 			noPriceCheck($(this))
 		});
-		
+
 		$(document).on("change", ".company_payment_form input[name='']", function() {
 			noPriceCheck($(this))
 		});
-		
+
 		$(".company_payment_form input").change(function() {
 			calculateCompanyPayment()
 		});
 		$(".company_payment_form input").keyup(function() {
 			calculateCompanyPayment()
 		});
-		
-		
+
+
 		$(document).on("change", ".transfer_course_from .course_select", function() {
 			ajaxCoursePhrasesList($(this))
 		});
@@ -4091,19 +4091,19 @@
 		if($(".transfer_course_from").length) {
 			$(".transfer_course_from .from_course").trigger("change")
 		}
-		
+
 		updatePhraseListBoxHour()
 		$(document).on("change", ".courses_phrase_item", function() {
 			updatePhraseListBoxHour()
 		});
-		
+
 		transferToTypeCheck()
 		$(document).on("change", "select[name='transfer[to_type]']", function() {
 			transferToTypeCheck()
 		});
-		
+
 		$(document).on("change", "input[name='transfer[to_contact_id]']", function() {
-			$("select[name='transfer[course_id]']").trigger("change")			
+			$("select[name='transfer[course_id]']").trigger("change")
 		});
 
 		$(document).on("keyup", ".transfer_payment_form .payment-record-paid", function() {
@@ -4112,7 +4112,7 @@
 		$(document).on("change", ".transfer_payment_form .payment-record-paid", function() {
 			calculateTransferPayForm()
 		});
-		
+
 		//Seminar check import
 		$(".seminar_group input[type=checkbox]").change(function(){
 			var group = $(this).attr("group")
@@ -4122,7 +4122,7 @@
 			  $(this).attr("checked",true)
 			}
 		})
-		
+
 		$(document).on("keyup", ".transfer_hour_from .input_hour", function() {
 			calculateTransferHourFrom()
 		});
@@ -4148,7 +4148,7 @@
 		$(document).on("click", ".uncheckable *", function(e) {
 			e.preventDefault()
 		});
-		
+
 		$(document).on("click", ".ajax-uncheck-book-upfront", function(e) {
 			var id = $(this).attr("rel")
 			var box = $(this).parents(".upfront-box")
@@ -4163,7 +4163,7 @@
 				}
 			});
 		});
-		
+
 		$(document).on("change", "select.bc-upfront-select", function(e) {
 			var id = $(this).attr("bc_id")
 			var book_id = $(this).select2("val")
@@ -4173,12 +4173,12 @@
 			$.ajax({
 				url : '<%= check_upfront_books_contacts_path %>?id='+id+'&book_id='+book_id,
 				success:function(data, textStatus, jqXHR)
-				{					
+				{
 					table.dataTable().fnDraw(true);
 				}
 			});
 		});
-		
+
 		$(document).on("click", ".ajax-check-book-upfront", function(e) {
 			var id = $(this).attr("bc_id")
 			var box = $(this).parents(".upfront-box")
@@ -4187,12 +4187,12 @@
 			$.ajax({
 				url : '<%= check_upfront_books_contacts_path %>?id='+id+'&book_id=',
 				success:function(data, textStatus, jqXHR)
-				{					
+				{
 					table.dataTable().fnDraw(true);
 				}
 			});
-		});		
-		
+		});
+
 		$(document).on("click", ".remove_related_contact_link", function(e) {
 			e.preventDefault()
 			var message = $(this).attr("confirm-message")
@@ -4202,10 +4202,10 @@
 				//	url : url,
 				//	success:function(data, textStatus, jqXHR)
 				//	{
-				//		location = url; 
+				//		location = url;
 				//	}
 				//});
-				window.location = url; 
+				window.location = url;
 			}
 		})
 		$(document).on("click", ".destroy-old-tag", function(e) {
@@ -4218,7 +4218,7 @@
 					url : url,
 					method: 'DELETE',
 					success:function(data, textStatus, jqXHR)
-					{					
+					{
 						$(".old-tag-row-"+id).hide()
 						window.parent.modernAlert("Old tag was deleted!")
 					}
@@ -4234,7 +4234,7 @@
                 }
 			})
 		});
-		
+
 		$(document).on("click", ".note_edit_button", function(e) {
 			var edit_box = $(this).parent().find(".note_log_edit_box")
 			if (edit_box.css("display") == "none") {
@@ -4264,8 +4264,8 @@
 				}
 			});
 		});
-		
-		
+
+
 		$(document).on("click", "input[name='payment_for']", function(e) {
 			if ($(this).val() == "company") {
                 $(".company_receivable_box").show()
@@ -4273,7 +4273,7 @@
 				$(".company_receivable_box").hide()
 			}
 		});
-		
+
 		$(document).on("change", "input.display_order_input", function(e) {
 			var iid = $(this).attr("rel")
 			var val = $(this).val()
@@ -4287,15 +4287,15 @@
 				}
 			});
 		});
-		
+
 		$("input[type=search]").attr("name", "datatable_search_keyword")
-		
+
 		// FULL COURSE
 		fullCourseCheck()
 		$(document).on("change", ".full_course_checkbox", function(e) {
 			fullCourseCheck()
 		});
-		
+
 		// money transfer history
 		$('.transfer_money_log_button').on('click', function(){
 			var iid = $(this).attr("contact-id");
@@ -4307,7 +4307,7 @@
 				type: 'ajax'
 			});
 		});
-		
+
 		// hour transfer history
 		$('.transfer_hour_log_button').on('click', function(){
 			var iid = $(this).attr("contact-id");
@@ -4320,8 +4320,8 @@
 				href: '<%= transfer_hour_history_contacts_path %>?id='+iid+"&program_id="+pd+"&subject_id="+sd,
 				type: 'ajax'
 			});
-		});		
-		
+		});
+
 		$('input[name=report_period]').on('change', function(){
 			if ($(this).val()) {
 				$(".none_period_dates_select").hide();
@@ -4329,7 +4329,7 @@
 				$(".none_period_dates_select").show();
 			}
 		});
-		
+
 		// Cancel stock registration
 		$(document).on("click", ".cancel-books-contact-button", function(e) {
 			var box = $(this).parents(".cancel-books-contact");
@@ -4343,7 +4343,7 @@
 			var form = box.find(".form");
 			var url = '<%= cancel_books_contacts_path %>';
 			var table = $(this).parents("table")
-			
+
 			$.ajax({
 				url: url,
 				data: {
@@ -4353,15 +4353,31 @@
 				success: function(data, textStatus, jqXHR)
 				{
 					modernAlert(data);
-					
+
 					table.dataTable().fnFilter();
 				}
 			})
-			
+
 			e.preventDefault();
 		});
-		
+
+		// fancybox link
+		$(document).on("click", ".update_info_span a", function(e) {
+			e.preventDefault();
+			e.stopPropagation();
+			e.stopImmediatePropagation();
+
+			var href = $(this).attr("href")
+			window.parent.$.fancybox({
+				width: "70%",
+				height: 400,
+				autoSize: false,
+				href: href,
+				type: 'iframe'
+			});
+		});
+
 	})
-	
+
 
 </script>

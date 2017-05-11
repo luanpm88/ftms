@@ -9,23 +9,23 @@
       <div class="page-title"> <i class="icon-edit"></i>
         <h3>Import List - <span class="semi-bold"><%= @seminar.name %></span></h3>
       </div>
-      
-		
+
+
 		<% if !@list.nil? %>
 			<%= form_for(@seminar, url: do_import_list_seminars_path, html: { multipart: true }) do |f| %>
 				<%= hidden_field_tag("tab_page", 1) %>
 				<%= hidden_field_tag("id", @seminar.id) %>
 				<div class="row">
-						<div class="col-md-12">								
+						<div class="col-md-12">
 								<h4><span class="semi-bold">Statistic</span></h4>
-										
+
 								<p><strong>Total: <span class="new_imported"><%= @list[:total] %></span></strong></p>
 								<p><strong>New Imported: <span class="new_imported"><%= @list[:new_count] %></span></strong></p>
 								<p><strong>Old Imported: <span class="new_imported"><%= @list[:old_count] %></span></strong></p>
 								<p><strong>Not Sure: <span class="price_outdated"><%= @list[:waiting_count] %></span></strong></p>
 								<br />
-								
-								
+
+
 								<div class="row">
 										<div class="col-md-6">
 												<h4>Default Education Consultant</h4>
@@ -35,7 +35,7 @@
 												<br />
 										</div>
 								</div>
-								
+
 								<h4><span class="semi-bold">Listing Result</span></h4>
 								<table class="table seminar_import_box">
 										<tr>
@@ -88,17 +88,17 @@
 																<% end %>
 														</td>
 														<td>
-																
+
 														</td>
 														<td>
 															<% if !["old_imported"].include?(row[:status]) %>
 																		<div class="checkbox check-success pull-right">
 																			<input <%= 'checked=checked' if row[:contacts].empty? %> group="<%= index %>" name="rows[<%= index %>][check]" id="checkbox_<%= index %>" type="checkbox" value="true" class="checkall">
 																			<label for="checkbox_<%= index %>"></label>
-																		</div>																	
+																		</div>
 															<% end %>
 														</td>
-														
+
 												</tr>
 												<tr class="row_<%= row[:status] %>">
 														<td colspan="5" align="right">
@@ -109,7 +109,7 @@
 														</td>
 												</tr>
 												<% row[:contacts].each do |contact| %>
-														
+
 													<% if true %>
 															<tr class="dark_row row_<%= row[:status] %> seminar_group seminar_group_<%= index %>" >
 																	<td>
@@ -117,7 +117,7 @@
 																			<%= hidden_field_tag "contacts["+contact.id.to_s+"][id]", contact.id, class: "form-control" %>
 																	</td>
 																	<td>
-																			<%= contact.referrer_link %>																		
+																			<%= contact.referrer_link %>
 																	</td>
 																	<td>
 																		<% contact.all_mobiles.each do |m| %>
@@ -158,7 +158,9 @@
 																	</td>
 																	<td class="text-center">
 
-																				<%= contact.contact_link("<span class=\"btn btn-mini btn-primary\">Update Info</span>".html_safe) %>
+																		<span class="update_info_span">
+																			<%= link_to("<span class=\"btn btn-mini btn-primary\">Update Info</span>".html_safe, {controller: "contacts", action: "edit", id: contact.id, tab_page: 1, info_only: true}, class: "", title: contact.display_name) %>
+																		</span>
 
 																	</td>
 																	<td>
@@ -172,90 +174,87 @@
 															</tr>
 													<% end %>
 												<% end %>
-												
+
 										<% end %>
 								</table>
-								
-								<!--<div class="form-actions">  
+
+								<!--<div class="form-actions">
 										<div class="pull-right">
 										<button type="submit" class="btn btn-success btn-cons"><i class="icon-ok"></i> Save</button>
 										 <%= link_to 'Cancel', users_path, :class => "btn btn-white btn-cons cancel-but" %>
 									  </div>
 								</div>-->
-								
+
 						</div>
-						<div class="form-actions">  
+						<div class="form-actions">
 							<div class="pull-right">
 							<button type="submit" class="btn btn-success btn-cons"><i class="icon-ok"></i> Import</button>
 							 <%= link_to 'Cancel', users_path, :class => "btn btn-white btn-cons cancel-but" %>
 						  </div>
 					   </div>
 				</div>
-				
-							  
+
+
 			<% end %>
-				
+
 		<% end %>
-		
-	  
+
+
         <div class="row">
             <div class="col-md-6">
               <div class="grid simple">
                 <div class="grid-titlez no-border">
                   <h4>Upload <span class="semi-bold">List</span></h4>
-                  
-                </div>     
-                
-                
-                
-                
+
+                </div>
+
+
+
+
                 <div class="grid-body no-border">
-                  
-                  
-                               
-                  
-                  
+
+
+
+
+
                   <%= form_for(@seminar, url: import_list_seminars_path, html: { multipart: true }) do |f| %>
-					
+
 					<%= hidden_field_tag("tab_page", 1) if params[:tab_page] %>
 					<%= hidden_field_tag("id", @seminar.id) %>
-					
+
 					<div class="row column-seperation">
 						 <div class="col-md-12">
-							  
+
 							  <div class="form-group">
 								<label class="form-label"><%= f.label :file %></label>
 								<span class="help">(required)</span>
-								<div class="input-with-icon nice right">                                       
+								<div class="input-with-icon nice right">
 									<i class=""></i>
 									<%= file_field_tag :file, class: "required width100" %>
 								</div>
 							  </div>
-							  
-							  							  
-							  
-							  
-							  
-							  
+
+
+
+
+
+
 						 </div>
-						 
-						 
-						 
+
+
+
 					</div>
-						 
-					<div class="form-actions">  
+
+					<div class="form-actions">
 						 <div class="pull-right">
 						 <button type="submit" class="btn btn-success btn-cons"><i class="icon-ok"></i> Upload</button>
 						  <%= link_to 'Cancel', users_path, :class => "btn btn-white btn-cons cancel-but" %>
 					   </div>
 					</div>
-							  
+
 						<% end %>
 			   </div>
 			 </div>
             </div>
-			
+
 		</div>
-		
-		
-			  
