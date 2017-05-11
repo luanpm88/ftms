@@ -3787,10 +3787,52 @@ CREATE INDEX index_contact_tags_on_status ON contact_tags USING btree (status);
 
 
 --
+-- Name: index_contacts_courses_on_cache_payment_status; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE INDEX index_contacts_courses_on_cache_payment_status ON contacts_courses USING btree (cache_payment_status);
+
+
+--
+-- Name: index_contacts_courses_on_contact_id; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE INDEX index_contacts_courses_on_contact_id ON contacts_courses USING btree (contact_id);
+
+
+--
+-- Name: index_contacts_courses_on_course_id; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE INDEX index_contacts_courses_on_course_id ON contacts_courses USING btree (course_id);
+
+
+--
+-- Name: index_contacts_courses_on_course_register_id; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE INDEX index_contacts_courses_on_course_register_id ON contacts_courses USING btree (course_register_id);
+
+
+--
 -- Name: index_contacts_courses_on_courses_phrase_ids; Type: INDEX; Schema: public; Owner: -; Tablespace: 
 --
 
 CREATE INDEX index_contacts_courses_on_courses_phrase_ids ON contacts_courses USING btree (courses_phrase_ids);
+
+
+--
+-- Name: index_contacts_courses_on_discount_programs; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE INDEX index_contacts_courses_on_discount_programs ON contacts_courses USING btree (discount_programs);
+
+
+--
+-- Name: index_contacts_courses_on_full_course; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE INDEX index_contacts_courses_on_full_course ON contacts_courses USING btree (full_course);
 
 
 --
@@ -3997,10 +4039,38 @@ CREATE INDEX index_transfers_on_annoucing_user_ids ON transfers USING btree (ann
 
 
 --
+-- Name: index_transfers_on_contact_id; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE INDEX index_transfers_on_contact_id ON transfers USING btree (contact_id);
+
+
+--
+-- Name: index_transfers_on_courses_phrase_ids; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE INDEX index_transfers_on_courses_phrase_ids ON transfers USING btree (courses_phrase_ids);
+
+
+--
 -- Name: index_transfers_on_status; Type: INDEX; Schema: public; Owner: -; Tablespace: 
 --
 
 CREATE INDEX index_transfers_on_status ON transfers USING btree (status);
+
+
+--
+-- Name: index_transfers_on_to_contact_id; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE INDEX index_transfers_on_to_contact_id ON transfers USING btree (to_contact_id);
+
+
+--
+-- Name: index_transfers_on_to_courses_phrase_ids; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE INDEX index_transfers_on_to_courses_phrase_ids ON transfers USING btree (to_courses_phrase_ids);
 
 
 --
@@ -4603,4 +4673,8 @@ INSERT INTO schema_migrations (version) VALUES ('20161019020222');
 INSERT INTO schema_migrations (version) VALUES ('20161111013621');
 
 INSERT INTO schema_migrations (version) VALUES ('20161111041052');
+
+INSERT INTO schema_migrations (version) VALUES ('20170509030742');
+
+INSERT INTO schema_migrations (version) VALUES ('20170509031023');
 

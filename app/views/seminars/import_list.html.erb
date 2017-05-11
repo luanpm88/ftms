@@ -159,7 +159,17 @@
 																	<td class="text-center">
 
 																		<span class="update_info_span">
-																			<%= link_to("<span class=\"btn btn-mini btn-primary\">Update Info</span>".html_safe, {controller: "contacts", action: "edit", id: contact.id, tab_page: 1, info_only: true}, class: "", title: contact.display_name) %>
+																			<%= link_to("<span class=\"btn btn-mini btn-primary\">Update Info</span>".html_safe, {
+																				controller: "contacts",
+																				action: "edit",
+																				id: contact.id,
+																				tab_page: 1,
+																				import_name: row[:name],
+																				import_company: row[:company],
+																				import_phone: row[:mobiles].join(";"),
+																				import_email: row[:emails].join(";"),
+																				import_background: row[:background],
+																			}, class: "", title: contact.display_name) %>
 																		</span>
 
 																	</td>

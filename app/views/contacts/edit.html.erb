@@ -12,11 +12,11 @@
 		  <br />
 		  <%= "Approved at: #{@contact.created_at.strftime("%d-%b-%Y %I:%M %p")};
 		   by: #{@contact.editor.name}" if @contact.draft? %></h3>
-		  
+
 		</div>
-	  
-	  
-	  
+
+
+
 		<div class="top-buts">
 				<%= render_contacts_actions(@contact, "big") if !@contact.draft? %>
 				<%= render_history_actions(@contact) %>
@@ -25,135 +25,138 @@
 				<%= @contact.display_statuses if !@contact.draft? %>
 		</div>
 		<br style="clear:both" />
-	  
+
 		<div class="row">
             <div class="col-md-12">
               <div class="grid simple">
                 <div class="grid-title no-border">
-                  
-                  
-                </div>     
-                
-                
-                
-                
+
+
+                </div>
+
+
+
+
 					<div class="grid-body no-border">
-					  
-					  
+
+
 						 <ul class="nav nav-pills inner-tab contact-tabs" id="tab-01">
 								<li class="<%= "active" if ["information",nil].include?(params[:tab]) %>"><a href="#information">Information</a></li>
-								
-								<% if @contact.is_individual == false %>
-										<li class="<%= "active" if ["student"].include?(params[:tab]) %>">
-												<a href="#student">Student List (<%= @contact.company_contacts.count %>)</a>
-										</li>
-								<% end %>
-								
-								<% if !@contact.draft? %>
-										<% if @contact.contact_types.include?(ContactType.student) || @contact.contact_types.include?(ContactType.inquiry) %>
-												<li class="<%= "active" if ["course_registration"].include?(params[:tab]) %>">
-														<a href="#course_registration">Course/Stock Registration
-																<span class="badge badge-info pull-right alert-level1"><%= @contact.course_register_count if @contact.course_register_count > 0 %></span>
-																<span class="badge badge-pending pull-right alert-level1"><%= Notification.course_register_pending_count(current_user, @contact) %></span>
-														</a>
-												</li>
-										<% end %>
-										
-										<li class="<%= "active" if ["payment"].include?(params[:tab]) %>">
-										  <a href="#payment">Payment Record
-												 <span class="badge badge-info pull-right alert-level1"><%= @contact.payment_count if @contact.payment_count > 0 %></span>
-										  </a>
-										</li>
-												
-										<% if @contact.contact_types.include?(ContactType.student) || @contact.contact_types.include?(ContactType.inquiry) %>
-												<li class="<%= "active" if ["course"].include?(params[:tab]) %>">
-												  <a href="#course">Course List  <span class="badge badge-info pull-right alert-level1"><%= @contact.course_count if @contact.course_count > 0 %></span></a>
-												</li>
-												<li class="<%= "active" if ["book"].include?(params[:tab]) %>">
-												  <a href="#book">Stock List   <span class="badge badge-info pull-right alert-level1"><%= @contact.book_count if @contact.book_count > 0 %></span></a>
-												</li>
-										
-										
-												<li class="<%= "active" if ["transfer"].include?(params[:tab]) %>">
-														<a href="#transfer">Defer/Transfer
-																<span class="badge badge-info pull-right alert-level1"><%= @contact.transfer_count if @contact.transfer_count > 0 %></span>
-																<span class="badge badge-pending pull-right alert-level1"><%= Notification.transfer_pending_count(current_user, @contact) %></span>
-														</a>
-												</li>
-												
-												<li class="<%= "active" if ["seminar"].include?(params[:tab]) %>">
-														<a href="#seminar">
-																Seminar
-																<span class="badge badge-info pull-right alert-level1"><%= @contact.seminar_count if @contact.seminar_count > 0 %></span>
-														</a>
-												</li>
-												
-										<% end %>
-										
-										<li class="<%= "active" if ["activity"].include?(params[:tab]) %>">
-												<a href="#activity">
-														Note Log
-														<span class="badge badge-info pull-right alert-level1"><%= @contact.activity_count if @contact.activity_count > 0 %></span>
-														<span class="badge badge-pending pull-right alert-level1"><%= Notification.activity_pending_count(current_user, @contact) %></span>
-														
-												</a>
-										</li>
-										<% if @contact.old_student.present? || !@contact.related_contacts.empty? %>
-												<li class="<%= "active" if ["old_info"].include?(params[:tab]) %>">
-														<a href="#old_info">
-																Old Information																
-														</a>
-												</li>
-										<% end %>
+								<% if !params[:import_name].present? %>
+									<% if @contact.is_individual == false %>
+											<li class="<%= "active" if ["student"].include?(params[:tab]) %>">
+													<a href="#student">Student List (<%= @contact.company_contacts.count %>)</a>
+											</li>
+									<% end %>
+
+									<% if !@contact.draft? %>
+											<% if @contact.contact_types.include?(ContactType.student) || @contact.contact_types.include?(ContactType.inquiry) %>
+													<li class="<%= "active" if ["course_registration"].include?(params[:tab]) %>">
+															<a href="#course_registration">Course/Stock Registration
+																	<span class="badge badge-info pull-right alert-level1"><%= @contact.course_register_count if @contact.course_register_count > 0 %></span>
+																	<span class="badge badge-pending pull-right alert-level1"><%= Notification.course_register_pending_count(current_user, @contact) %></span>
+															</a>
+													</li>
+											<% end %>
+
+											<li class="<%= "active" if ["payment"].include?(params[:tab]) %>">
+											  <a href="#payment">Payment Record
+													 <span class="badge badge-info pull-right alert-level1"><%= @contact.payment_count if @contact.payment_count > 0 %></span>
+											  </a>
+											</li>
+
+											<% if @contact.contact_types.include?(ContactType.student) || @contact.contact_types.include?(ContactType.inquiry) %>
+													<li class="<%= "active" if ["course"].include?(params[:tab]) %>">
+													  <a href="#course">Course List  <span class="badge badge-info pull-right alert-level1"><%= @contact.course_count if @contact.course_count > 0 %></span></a>
+													</li>
+													<li class="<%= "active" if ["book"].include?(params[:tab]) %>">
+													  <a href="#book">Stock List   <span class="badge badge-info pull-right alert-level1"><%= @contact.book_count if @contact.book_count > 0 %></span></a>
+													</li>
+
+
+													<li class="<%= "active" if ["transfer"].include?(params[:tab]) %>">
+															<a href="#transfer">Defer/Transfer
+																	<span class="badge badge-info pull-right alert-level1"><%= @contact.transfer_count if @contact.transfer_count > 0 %></span>
+																	<span class="badge badge-pending pull-right alert-level1"><%= Notification.transfer_pending_count(current_user, @contact) %></span>
+															</a>
+													</li>
+
+													<li class="<%= "active" if ["seminar"].include?(params[:tab]) %>">
+															<a href="#seminar">
+																	Seminar
+																	<span class="badge badge-info pull-right alert-level1"><%= @contact.seminar_count if @contact.seminar_count > 0 %></span>
+															</a>
+													</li>
+
+											<% end %>
+
+											<li class="<%= "active" if ["activity"].include?(params[:tab]) %>">
+													<a href="#activity">
+															Note Log
+															<span class="badge badge-info pull-right alert-level1"><%= @contact.activity_count if @contact.activity_count > 0 %></span>
+															<span class="badge badge-pending pull-right alert-level1"><%= Notification.activity_pending_count(current_user, @contact) %></span>
+
+													</a>
+											</li>
+											<% if @contact.old_student.present? || !@contact.related_contacts.empty? %>
+													<li class="<%= "active" if ["old_info"].include?(params[:tab]) %>">
+															<a href="#old_info">
+																	Old Information
+															</a>
+													</li>
+											<% end %>
+									<% end %>
 								<% end %>
 						 </ul>
 						 <div class="tools"> <a href="javascript:;" class="collapse"></a> <a href="#grid-config" data-toggle="modal" class="config"></a> <a href="javascript:;" class="reload"></a> <a href="javascript:;" class="remove"></a> </div>
 						 <div class="tab-content" style="margin-bottom: 0;">
 								<div class="tab-pane <%= "active" if ["information",nil].include?(params[:tab]) %>" id="information">
-								
+
 										<%= render 'form' %>
-								
+
 								</div>
-						 
+
+							<% if !params[:import_name].present? %>
+
 								<% if @contact.is_individual == false %>
 										<div class="tab-pane <%= "active" if ["student"].include?(params[:tab]) %>" id="student">
-								
+
 												<%= render "student" %>
-								
+
 										</div>
 								<% end %>
-						 
+
 								<% if @contact.contact_types.include?(ContactType.student) || true %>
 										<div class="tab-pane <%= "active" if ["course"].include?(params[:tab]) %>" id="course">
-												
+
 												<%= render "course" %>
-												
+
 										</div>
-							
+
 										<div class="tab-pane <%= "active" if ["course_registration"].include?(params[:tab]) %>" id="course_registration">
-												
+
 												<%= render "course_registers/filter" %>
-												
+
 												<style>
 														.student-course-register-filter {
 																position: absolute;
 																top: -90000px;
 														}
 												</style>
-												
+
 												<div class="row">
 														<div class="col-md-12">
 															<%= link_to 'New Registration', new_course_register_path(contact_id: @contact.id, tab_page: 1), title: "#{@contact.display_name}: Add Course/Stock", :class => 'btn btn-primary btn-cons tab_page' %>
 															<div class="grid simple ">
 																<div class="grid-title no-border">
 																	<h4>Course/Stock  <span class="semi-bold">Registration</span></h4>
-																	
+
 																</div>
 																<div class="grid-body no-border">
-																	 
+
 																		<table class="table table-striped no-more-tables datatable-student-course-registers no-filter">
 																			<thead>
-																				<tr>                                                
+																				<tr>
 																					<th>Student Name</th>
 																					<th class="text-left">Description</th>
 																					<!--<th class="text-center">Delivery Status</th>-->
@@ -164,52 +167,53 @@
 																					<th class="text-center" width="1%">Status</th>
 																					<th class="text-right" width="1%">Actions</th>
 																				</tr>
-																			</thead>                                        
+																			</thead>
 																		</table>
 																</div>
 															</div>
-												
+
 														</div>
-												
+
 													</div>
-												
+
 										</div>
 										<div class="tab-pane <%= "active" if ["book"].include?(params[:tab]) %>" id="book">
-										
+
 												<%= render "book" %>
-										
+
 										</div>
-					
+
 										<div class="tab-pane <%= "active" if ["payment"].include?(params[:tab]) %>" id="payment">
 												<%= render "payment" %>
 										</div>
-		
-										
-		
-						<% end %>
-						
+
+
+
+								<% end %>
+
 								<div class="tab-pane <%= "active" if ["transfer"].include?(params[:tab]) %>" id="transfer">
 												<%= render "transfer" %>
 										</div>
-								
+
 								<div class="tab-pane <%= "active" if ["seminar"].include?(params[:tab]) %>" id="seminar">
 										<%= render "seminar" %>
 								</div>
-		
+
 								<div class="tab-pane <%= "active" if ["activity"].include?(params[:tab]) %>" id="activity">
 										<%= render "activity" %>
 								</div>
-								
+
 								<% if @contact.old_student.present? || !@contact.related_contacts.empty? %>
 										<div class="tab-pane <%= "active" if ["old_info"].include?(params[:tab]) %>" id="old_info">
 												<%= render "old_info" %>
 										</div>
 								<% end %>
+							<% end %>
 						 </div>
-								  
+
 					</div>
-					
-				
+
+
               </div>
-            </div>		
+            </div>
       </div>

@@ -315,6 +315,9 @@ class Seminar < ActiveRecord::Base
     result = []
     if data[:email].present?
       cond = []
+      cond1 = "TRUE"
+      cond2 = "TRUE"
+      cond3 = "TRUE"
 
       #cond1 = data[:email].to_s.strip.downcase.present? ? "LOWER(contacts.cache_search) LIKE '%#{data[:email].to_s.strip.downcase}%'" : "FALSE"
       cond2 = data[:name].to_s.strip.downcase.present? ? "LOWER(contacts.cache_search) LIKE '%#{data[:name].to_s.strip.downcase.gsub("'","\\'")}%'" : "FALSE"
@@ -328,10 +331,8 @@ class Seminar < ActiveRecord::Base
         if cond3s.count > 0
           cond3 = "("+cond3s.join(" OR ")+")"
         else
-          cond3 = "FALSE"
+          cond3 = "TRUE"
         end
-      else
-        cond3 = "FALSE"
       end
 
       # EMAIL CONDS
@@ -340,20 +341,19 @@ class Seminar < ActiveRecord::Base
         data[:emails].each do |m|
           cond1s << "LOWER(contacts.cache_search) LIKE '%#{m.gsub("'","\\'")}%'" if m.present? && m.length > 5
         end
-        cond1 = cond1s.empty? ? "FALSE" : "("+cond1s.join(" OR ")+")"
-      else
-        cond1 = "FALSE"
+        cond1 = cond1s.empty? ? "TRUE" : "("+cond1s.join(" OR ")+")"
       end
 
       #cond << "LOWER(contacts.cache_search) LIKE '%#{data[:email].to_s.strip.downcase}%'" if data[:email].to_s.strip.downcase.present?
       #cond << "LOWER(contacts.cache_search) LIKE '%#{data[:name].to_s.strip.downcase}%'" if data[:name].to_s.strip.downcase.present?
       #cond << "LOWER(contacts.cache_search) LIKE '%#{Contact.format_mobile(data[:mobile].to_s)}%'" if data[:mobile].to_s.strip.downcase.present?
 
-      cond << "(#{cond1} AND #{cond2})" if cond1.present? and cond2.present?
-      cond << "(#{cond1} AND #{cond3})" if cond1.present? and cond3.present?
-      cond << "(#{cond2} AND #{cond3})" if cond2.present? and cond3.present?
-      cond << "#{cond1}" if cond1.present?
-      cond << "#{cond3}" if cond3.present?
+      #cond << "(#{cond1} AND #{cond2})" if cond1.present? and cond2.present?
+      #cond << "(#{cond1} AND #{cond3})" if cond1.present? and cond3.present?
+      #cond << "(#{cond2} AND #{cond3})" if cond2.present? and cond3.present?
+      #cond << "#{cond1}" if cond1.present?
+      #cond << "#{cond3}" if cond3.present?
+      cond << "(#{cond1} OR #{cond2} OR #{cond3})"
       puts cond
       puts "zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz"
       result += Contact.main_contacts.where("contacts.status IS NOT NULL AND contacts.status NOT LIKE ?", "%[deleted]%").where(cond.join(" OR ")) if cond.present?
