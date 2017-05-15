@@ -320,7 +320,7 @@ class Seminar < ActiveRecord::Base
       cond3 = "FALSE"
 
       #cond1 = data[:email].to_s.strip.downcase.present? ? "LOWER(contacts.cache_search) LIKE '%#{data[:email].to_s.strip.downcase}%'" : "FALSE"
-      cond2 = data[:name].to_s.strip.downcase.present? ? "LOWER(contacts.cache_search) LIKE '%#{data[:name].to_s.strip.downcase.gsub("'","\\'")}%'" : "FALSE"
+      cond2 = data[:name].to_s.strip.downcase.present? ? "LOWER(contacts.name) = '#{data[:name].to_s.strip.downcase.gsub("'","\\'")}'" : "FALSE"
 
       # MOBILES COND cond3 = data[:mobile].to_s.strip.downcase.present? ? "LOWER(contacts.cache_search) LIKE '%#{Contact.format_mobile(data[:mobile].to_s)}%'" : "FALSE"
       if !data[:mobiles].empty?
