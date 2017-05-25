@@ -420,12 +420,13 @@ class ContactsController < ApplicationController
       @contacts = @contacts.where("contacts.status IS NOT NULL AND contacts.status NOT LIKE ?", "%[deleted]%")
       @contacts = @contacts.where.not(id: params[:id].strip) if params[:id].present?
 
-      if params[:type] == "mobile"
-        @contacts = @contacts.where("LOWER(#{params[:type]}) = ?", Contact.format_mobile(params[:value]).strip.downcase)
+      if params[:type] == "mobile" && Contact.format_mobile(params[:value]).strip.downcase.present?
+        @contacts = @contacts.where("LOWER(contacts.cache_search) LIKE ?", "% " + Contact.format_mobile(params[:value]).strip.downcase + " %")
       else
         @contacts = @contacts.where("LOWER(#{params[:type]}) = ?", params[:value].strip.downcase)
       end
 
+      @contacts = @contacts.limit(5)
     end
 
     render layout: nil

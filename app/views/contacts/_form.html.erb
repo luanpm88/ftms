@@ -516,7 +516,11 @@
 																			 <i class=""></i>
 																			 <% (0..9).each do |number| %>
 																					<div class="input-with-icon more_field_item right <%= "hidden" if number > 0 && !@contact.mobile_2s[number].present? %>">
-																						  <%= text_field_tag "mobile_2s[]", @contact.mobile_2s[number], :class => "form-control" %>
+																						  <%= text_field_tag "mobile_2s[]", @contact.mobile_2s[number], :class => "form-control related_info_input", rel: related_info_box_contacts_path(type: "mobile", id: @contact.id) %>
+																						  <label class="related_info_msg" style="display: none">Has related contact(s)!</label>
+																		   <div class="related_info_box" style="display: none">
+
+																		   </div>
 																					</div>
 																			  <% end %>
 																			  <a href="#more_field" class="more_field pull-right">Add more <i class="icon-plus"></i></a>
