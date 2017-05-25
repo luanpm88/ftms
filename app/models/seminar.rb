@@ -313,9 +313,9 @@ class Seminar < ActiveRecord::Base
 
   def similar_contacts(data={})
     result = []
-    if data[:email].present?
+    #if data[:email].present?
       cond = []
-      cond1 = "TRUE"
+      cond1 = "FALSE"
       cond2 = "FALSE"
       cond3 = "FALSE"
 
@@ -353,9 +353,9 @@ class Seminar < ActiveRecord::Base
       #cond << "(#{cond2} AND #{cond3})" if cond2.present? and cond3.present?
       #cond << "#{cond1}" if cond1.present?
       #cond << "#{cond3}" if cond3.present?
-      cond << "(#{cond1} OR #{cond2} OR #{cond3})"
+      cond << "(#{cond1} OR #{cond3})" #"(#{cond1} OR #{cond2} OR #{cond3})"
       result += Contact.main_contacts.where("contacts.status IS NOT NULL AND contacts.status NOT LIKE ?", "%[deleted]%").where(cond.join(" OR ")) if cond.present?
-    end
+    #end
 
     return result
   end
