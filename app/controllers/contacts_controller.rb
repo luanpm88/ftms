@@ -423,7 +423,7 @@ class ContactsController < ApplicationController
       if params[:type] == "mobile" && Contact.format_mobile(params[:value]).strip.downcase.present?
         @contacts = @contacts.where("LOWER(contacts.cache_search) LIKE ?", "% " + Contact.format_mobile(params[:value]).strip.downcase + " %")
       else
-        @contacts = @contacts.where("LOWER(#{params[:type]}) = ?", params[:value].strip.downcase)
+        @contacts = @contacts.where("LOWER(contacts.cache_search) LIKE ?", "% " + params[:value].strip.downcase + " %")
       end
 
       @contacts = @contacts.limit(5)
