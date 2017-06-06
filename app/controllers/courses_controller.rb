@@ -240,6 +240,9 @@ class CoursesController < ApplicationController
   def course_phrases_form
     @course = params[:course_id].present? ? Course.find(params[:course_id]) : Course.new
     @phrases = Phrase.active_phrases.includes(:subjects).where(subjects: {id: params[:value].split("_")[1]})
+    @course.phrases.each do |pp|
+      @phrases << pp if !@phrases.include?(pp)
+    end
 
     render layout: nil
   end
