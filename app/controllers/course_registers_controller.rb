@@ -1,10 +1,10 @@
 class CourseRegistersController < ApplicationController
   include CourseRegistersHelper
-  
+
   load_and_authorize_resource
-  
+
   before_action :set_course_register, only: [:part_info, :delivery_print, :delete, :show, :edit, :update, :destroy]
-  
+
   # GET /course_registers
   # GET /course_registers.json
   def index
@@ -22,11 +22,11 @@ class CourseRegistersController < ApplicationController
   def new
     @course_register = CourseRegister.new
     @contact = !params[:contact_id].present? ? Contact.new : Contact.find(params[:contact_id])
-    
+
     @course_register.payment_type = @contact.payment_type
     @course_register.sponsored_company = @contact.referrer if !@contact.referrer.nil?
-    
-    
+
+
     @course_register.created_date = Time.now.strftime("%d-%b-%Y")
     @course_register.debt_date = Time.now.strftime("%d-%b-%Y")
     @course_register.mailing_address = @contact.default_mailing_address
@@ -42,21 +42,21 @@ class CourseRegistersController < ApplicationController
   # POST /course_registers.json
   def create
     @course_register = CourseRegister.new(course_register_params)
-    @course_register.user = current_user    
+    @course_register.user = current_user
     @course_register.update_contacts_courses(params[:contacts_courses])
     @course_register.update_books_contacts(params[:books_contacts], nil, params[:intake]) if !params[:books_contacts].nil?
-    
+
     @course_register.account_manager = @course_register.contact.account_manager
-    
+
     authorize! :add_course, @course_register.contact
-    
+
     respond_to do |format|
-      if @course_register.save    
+      if @course_register.save
         Contact.find(@course_register.contact.id).update_info
-        
-        @course_register.update_status("create", current_user)        
+
+        @course_register.update_status("create", current_user)
         @course_register.save_draft(current_user)
-        
+
         @tab = {url: {controller: "contacts", action: "edit", id: @course_register.contact.id, tab_page: 1, tab: "course_registration"}, title: @course_register.contact.display_name+(@course_register.contact.related_contacts.empty? ? "" : " #"+@course_register.contact.id.to_s)}
         format.html { render "/home/close_tab", layout: nil }
         format.json { render action: 'show', status: :created, location: @course_register }
@@ -72,23 +72,23 @@ class CourseRegistersController < ApplicationController
   def update
     @course_register.update_contacts_courses(params[:contacts_courses]) if !params[:contacts_courses].nil?
     @course_register.update_books_contacts(params[:books_contacts], nil, params[:intake]) if !params[:books_contacts].nil?
-    
+
     respond_to do |format|
       if @course_register.save and @course_register.update(course_register_params)
-        
+
         Contact.find(@course_register.contact.id).update_info
-        
+
         @course_register.update_statuses
-        
-        @course_register.update_status("update", current_user)        
+
+        @course_register.update_status("update", current_user)
         @course_register.save_draft(current_user)
-        
+
         # update payment status
         @course_register.all_payment_records.each do |pr|
           pr.update_statuses
           pr.update_cache_search
-        end        
-        
+        end
+
         @tab = {url: {controller: "contacts", action: "edit", id: @course_register.contact.id, tab_page: 1, tab: "course_registration"}, title: @course_register.contact.display_name+(@course_register.contact.related_contacts.empty? ? "" : " #"+@course_register.contact.id.to_s)}
         format.html { render "/home/close_tab", layout: nil }
         format.json { head :no_content }
@@ -108,149 +108,154 @@ class CourseRegistersController < ApplicationController
       format.json { head :no_content }
     end
   end
-  
+
   def datatable
     result = CourseRegister.datatable(params, current_user)
-    
+
     result[:items].each_with_index do |item, index|
-      actions = render_course_register_actions(item)      
+      actions = render_course_register_actions(item)
       result[:result]["data"][index][result[:actions_col]] = actions
     end
-    
+
     render json: result[:result]
   end
-  
+
   def student_course_registers
     result = CourseRegister.student_course_registers(params, current_user)
-    
+
     result[:items].each_with_index do |item, index|
-      actions = render_course_register_actions(item)      
+      actions = render_course_register_actions(item)
       result[:result]["data"][index][result[:actions_col]] = actions
     end
-    
+
     render json: result[:result]
   end
-  
+
   ########## BEGIN REVISION ###############
-  
+
   def approve_new
     authorize! :approve_new, @course_register
-    
+
     respond_to do |format|
       if @course_register.approve_new(current_user)
         Contact.find(@course_register.contact.id).update_info
-        
+
         format.html { render "/course_registers/approved", layout: nil }
         format.json { render action: 'show', status: :created, location: @course_register }
       else
         format.html { render "/course_registers/not_valid", layout: nil }
         format.json { render action: 'show', status: :created, location: @course_register }
       end
-      
+
     end
-    
-    
+
+
   end
-  
+
   def approve_update
     authorize! :approve_update, @course_register
-    
+
     respond_to do |format|
       if @course_register.approve_update(current_user)
         Contact.find(@course_register.contact.id).update_info
-        
+
         format.html { render "/course_registers/approved", layout: nil }
         format.json { render action: 'show', status: :created, location: @course_register }
       else
         format.html { render "/course_registers/not_valid", layout: nil }
         format.json { render action: 'show', status: :created, location: @course_register }
       end
-      
+
     end
   end
-  
+
   def approve_delete
     authorize! :approve_delete, @course_register
-    
+
     @course_register.approve_delete(current_user)
-    
+
     Contact.find(@course_register.contact.id).update_info
-    
+
     respond_to do |format|
       format.html { render "/course_registers/deleted", layout: nil }
       format.json { render action: 'show', status: :created, location: @course_register }
     end
   end
-  
+
   def undo_delete
     authorize! :undo_delete, @course_register
-    
+
     @course_register.undo_delete(current_user)
-    
+
     respond_to do |format|
       if @course_register.undo_delete(current_user)
         Contact.find(@course_register.contact.id).update_info
-        
+
         format.html { render "/course_registers/approved", layout: nil }
         format.json { render action: 'show', status: :created, location: @course_register }
       else
         format.html { render "/course_registers/not_valid", layout: nil }
         format.json { render action: 'show', status: :created, location: @course_register }
       end
-      
+
     end
   end
-  
+
   def approve_all
     authorize! :approve_all, CourseRegister
-    
+
     if params[:ids].present?
       if !params[:check_all_page].nil?
         params[:intake_year] = params["filter"]["intake(1i)"] if params["filter"].present?
         params[:intake_month] = params["filter"]["intake(2i)"] if params["filter"].present?
-        
+
         if params[:is_individual] == "false"
           params[:contact_types] = nil
-        end        
-        
+        end
+
         @course_registers = CourseRegister.filter(params, current_user)
       else
         @course_registers = CourseRegister.where(id: params[:ids])
       end
     end
-    
-    @course_registers.each do |cr|
-      cr.approve_delete(current_user) if current_user.can?(:approve_delete, cr)
-      cr.approve_new(current_user) if current_user.can?(:approve_new, cr)
-      cr.approve_update(current_user) if current_user.can?(:approve_update, cr)
-      
-      Contact.find(cr.contact.id).update_info
+
+    if @course_registers.count < 51
+      @course_registers.each do |cr|
+        cr.approve_delete(current_user) if current_user.can?(:approve_delete, cr)
+        cr.approve_new(current_user) if current_user.can?(:approve_new, cr)
+        cr.approve_update(current_user) if current_user.can?(:approve_update, cr)
+
+        Contact.find(cr.contact.id).update_info
+      end
+    else
+      render text: "<span class='text-danger'>Error! Can not approve too many course registrations!</span>"
+      return
     end
-    
+
     respond_to do |format|
       format.html { render "/course_registers/approved", layout: nil }
       format.json { render action: 'show', status: :created, location: @course_register }
     end
   end
-  
+
   def approved
     render layout: "content"
   end
-  
+
   def field_history
     @drafts = @course_register.field_history(params[:type])
-    
+
     render layout: nil
   end
 
   def delete
-    
+
     respond_to do |format|
       if @course_register.delete
         @course_register.save_draft(current_user)
-        
+
         Contact.find(@course_register.contact.id).update_info
-        
+
         format.html { render "/course_registers/deleted", layout: nil }
         format.json { head :no_content }
       else
@@ -259,7 +264,7 @@ class CourseRegistersController < ApplicationController
       end
     end
   end
-  
+
   ########## BEGIN REVISION ###############
 
   def export_student_course
@@ -267,78 +272,78 @@ class CourseRegistersController < ApplicationController
       if !params[:check_all_page].nil?
         params[:intake_year] = params["filter"]["intake(1i)"] if params["filter"].present?
         params[:intake_month] = params["filter"]["intake(2i)"] if params["filter"].present?
-        
+
         @course_registers = CourseRegister.filter(params, current_user)
       else
         @course_registers = CourseRegister.where(id: params[:ids])
       end
-    end      
+    end
     render layout: "content"
   end
-  
+
   def add_stocks
     if params[:ids].present?
       if !params[:check_all_page].nil?
         params[:intake_year] = params["filter"]["intake(1i)"] if params["filter"].present?
         params[:intake_month] = params["filter"]["intake(2i)"] if params["filter"].present?
-        
+
         if params[:is_individual] == "false"
           params[:contact_types] = nil
-        end        
-        
+        end
+
         @contacts = Contact.filters(params, current_user)
       else
         @contacts = Contact.where(id: params[:ids])
       end
     end
-    
-    
+
+
     if params[:courses].present? and !Course.find(params[:courses]).courses_phrases.empty?
       phrase_pattern = (Course.find(params[:courses]).courses_phrases.map {|cp| "contacts.cache_transferred_courses_phrases LIKE '%[#{cp.id.to_s}]%'"}).join(" OR ")
       @contacts = @contacts.select("*, CASE WHEN (#{phrase_pattern}) THEN 0 WHEN contacts.cache_courses LIKE '%[#{params[:courses]},half]%' THEN 1 ELSE 2 END AS transferred_order")
       @contacts = @contacts.order("transferred_order, name")
     end
-    
-    
+
+
     @course = params[:courses].present? ? Course.find(params[:courses]) : nil
-    
-    @course_register = CourseRegister.new    
-    
+
+    @course_register = CourseRegister.new
+
     render layout: "content"
   end
-  
-  def do_add_stocks    
+
+  def do_add_stocks
     params[:contact_ids].each do |cid|
       @course_register = CourseRegister.new(course_register_params)
       @course_register.user = current_user
       @course_register.contact_id = cid
-      @course_register.update_books_contacts(params[:books_contacts], params[:course_id], params[:intake]) if !params[:books_contacts].nil?      
+      @course_register.update_books_contacts(params[:books_contacts], params[:course_id], params[:intake]) if !params[:books_contacts].nil?
       @course_register.account_manager_id = Contact.find(cid).account_manager
       @course_register.account_manager = Contact.find(cid).account_manager
-      
+
       if !@course_register.books_contacts.empty?
         @course_register.save
-        @course_register.add_status("active")        
+        @course_register.add_status("active")
         @course_register.save_draft(current_user)
         @course_register.contact.update_info
       end
     end
-    
+
     respond_to do |format|
         format.html { redirect_to params[:tab_page].present? ? "/home/close_tab" : @course_register, notice: 'Course register was successfully created.' }
         format.json { render action: 'show', status: :created, location: @course_register }
     end
   end
-  
+
   def delivery_print
     @books_contacts = @course_register.books_contacts
-    
+
     @list = []
     row = nil
     @books_contacts.each_with_index do |bc,index|
       if row.nil? || row[:contact] != bc.contact || row[:address] != bc.course_register.display_mailing_address
         @list << row if !row.nil?
-        
+
         row = {}
         row[:contact] = bc.contact
         row[:address] = bc.course_register.display_mailing_address
@@ -351,13 +356,13 @@ class CourseRegistersController < ApplicationController
             row[:list][bc.contact_id.to_s+"_"+bc.book_id.to_s].quantity = bc.remain
           else
             row[:list][bc.contact_id.to_s+"_"+bc.book_id.to_s].quantity += bc.remain
-          end         
+          end
         end
       end
-      
+
       @list << row if @books_contacts.count == index+1
     end
-    
+
     render  :pdf => "delivery_"+@course_register.created_at.strftime("%d_%b_%Y"),
             :template => 'books/delivery_note.pdf.erb',
             :layout => nil,
@@ -372,7 +377,7 @@ class CourseRegistersController < ApplicationController
                           :right  => 0},
             }
   end
-  
+
   def part_info
     item = @course_register
     render json: {

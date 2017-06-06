@@ -1,64 +1,64 @@
 class User < ActiveRecord::Base
   include PgSearch
-  
+
   # Include default devise modules. Others available are:
   # :confirmable, :lockable, :timeoutable and :omniauthable
   devise :database_authenticatable, :registerable,
          :recoverable, :rememberable, :trackable, :validatable
-  
+
   mount_uploader :image, AvatarUploader
-  
+
   has_many :contacts
-  
+
   has_many :assignments, :dependent => :destroy
   has_many :roles, :through => :assignments
-  
+
   has_many :notifications, :dependent => :destroy, :foreign_key => "user_id"
-  
+
   has_many :course_types
   has_many :subjects
   has_many :students, class_name: "Contact", :foreign_key => "account_manager_id"
   has_many :activities
   has_many :manage_activities, class_name: "Activity", :foreign_key => "account_manager_id"
-  
+
   belongs_to :user, class_name: "User"
-  
+
   #validates :first_name, presence: true
   #validates :last_name, presence: true
   validates :email, :presence => true, :uniqueness => true
-  
+
   def active_for_authentication?
     # Uncomment the below debug statement to view the properties of the returned self model values.
     # logger.debug self.to_yaml
 
     super && status == 1
   end
-  
+
   def self.main_users
     self.order("name")
   end
-  
+
   def self.active_users
     self.main_users.where(status: 1)
   end
-  
+
   def ability
     @ability ||= Ability.new(self)
   end
   delegate :can?, :cannot?, :to => :ability
-  
+
   def has_role?(role_sym)
     roles.any? { |r| r.name == role_sym }
   end
-  
+
   def higher?(role)
     User.role_name_to_level(role) < self.level
   end
-  
+
   def lower?(role)
     User.role_name_to_level(role) > self.level
   end
-    
+
   def level
     roles.each do |r|
       if self.has_role?("admin")
@@ -73,10 +73,10 @@ class User < ActiveRecord::Base
         return User.role_name_to_level("user")
       else
         return User.role_name_to_level("none")
-      end      
+      end
     end
   end
-  
+
   def self.role_name_to_level(role)
     if role == "admin"
       return 5
@@ -92,7 +92,7 @@ class User < ActiveRecord::Base
       return 0
     end
   end
-  
+
   #def name
   #  if !first_name.nil?
   #    first_name + " " + last_name
@@ -100,7 +100,7 @@ class User < ActiveRecord::Base
   #    email.gsub(/@(.+)/,'')
   #  end
   #end
-  
+
   def short_name
     #if !first_name.nil?
     #  first_name + " " + last_name.split(" ").first
@@ -109,7 +109,7 @@ class User < ActiveRecord::Base
     #end
     name
   end
-  
+
   def add_role(role)
     if self.has_role?(role.name)
       return false
@@ -117,24 +117,24 @@ class User < ActiveRecord::Base
       self.roles << role
     end
   end
-  
+
   def work_time_by_month(month, year)
     return (Checkinout.get_work_time_by_month(self, month, year)/3600).round(2).to_s
   end
-  
+
   def addition_time(month, year)
     return ((Checkinout.get_work_time_by_month(self, month, year)/3600).round(2)-Checkinout.default_hours_per_month)
   end
-  
+
   def addition_time_formatted(month, year)
     add_time = self.addition_time(month, year).round(2)
     if add_time < 0
       return "<span class='red'>"+add_time.to_s+"</span>"
     else
       return "<span class='green'>"+add_time.to_s+"</span>"
-    end    
+    end
   end
-  
+
   def checkinouts_by_month(month, year)
     time_string = year.to_s+"-"+month.to_s
     checks = []
@@ -143,13 +143,13 @@ class User < ActiveRecord::Base
       if time.strftime("%m").to_i == month && time.wday != 0
         esxit = Checkinout.where(user_id: self.ATT_No, check_date: time.to_date)
         if esxit.count > 0
-          checks << esxit.first        
+          checks << esxit.first
         end
-      end      
+      end
     end
     return checks
   end
-  
+
   def avatar_path(version = nil)
     if self.image_url.nil?
       return "public/img/avatar.jpg"
@@ -159,20 +159,20 @@ class User < ActiveRecord::Base
       return self.image_url
     end
   end
-  
+
   def avatar(version = nil)
     ActionView::Base.send(:include, Rails.application.routes.url_helpers)
     link_helper = ActionController::Base.helpers
-    
+
     link_helper.url_for(controller: "users", action: "avatar", id: self.id, type: version)
   end
-  
+
   def self.current_user
     Thread.current[:current_user]
   end
-  
+
   pg_search_scope :search,
-                against: [:name, :first_name, :last_name],                
+                against: [:name, :first_name, :last_name],
                 using: {
                     tsearch: {
                       dictionary: 'english',
@@ -180,46 +180,46 @@ class User < ActiveRecord::Base
                       prefix: true
                     }
                 }
-  
+
   def self.full_text_search(q)
     result = self.order("name").where(status: 1)
     result = result.search(q) if q.present?
     result = result.limit(50).map {|model| {:id => model.id, :text => model.name} }
-    
+
     return result
   end
-  
+
   def notification_unread_count
     notifications.where(viewed: 0).count
   end
-  
+
   def notification_top
     notifications.where(viewed: 0).order("created_at DESC").limit(20)
   end
-  
+
   def self.backup_system(params)
     System.backup(params)
   end
-  
+
   def display_statuses
     s = status == 1 ? "active" : "deleted"
     result = ["<span title=\"\" class=\"badge user-role badge-info contact-status #{s}\">#{s}</span>"]
     result.join(" ").html_safe
   end
 
-                
+
   def self.datatable(params, user)
     ActionView::Base.send(:include, Rails.application.routes.url_helpers)
-    link_helper = ActionController::Base.helpers    
-    
+    link_helper = ActionController::Base.helpers
+
     @records = self.all
-    
+
     if params["status"].present?
       @records = @records.where(status: params["status"])
     end
-    
+
     @records = @records.search(params["search"]["value"]) if !params["search"]["value"].empty?
-    
+
     if !params["order"].nil?
       case params["order"]["0"]["column"]
       when "1"
@@ -233,13 +233,13 @@ class User < ActiveRecord::Base
     else
       order = "users.name"
     end
-    
+
     @records = @records.order(order) if !order.nil?
-    
+
     total = @records.count
     @records = @records.limit(params[:length]).offset(params["start"])
     data = []
-    
+
     actions_col = 6
     @records.each do |item|
       item = [
@@ -252,24 +252,24 @@ class User < ActiveRecord::Base
               '',
             ]
       data << item
-      
+
     end
-    
+
     result = {
               "drawn" => params[:drawn],
               "recordsTotal" => total,
               "recordsFiltered" => total
     }
     result["data"] = data
-    
+
     return {result: result, items: @records, actions_col: actions_col}
-    
+
   end
-  
+
   def display_staff_col
     user.nil? ? "" : user.staff_col
   end
-  
+
   def roles_name
     names = []
     roles.order("name").each do |r|
@@ -277,52 +277,52 @@ class User < ActiveRecord::Base
     end
     return names.join(" ").html_safe
   end
-  
+
   def quick_info
     info = email
     info += "<br />Mobile: #{mobile}" if mobile.present?
-    
+
     return info.html_safe
   end
-  
+
   def activity_log(from_date, to_date)
     ActionView::Base.send(:include, Rails.application.routes.url_helpers)
     link_helper = ActionController::Base.helpers
-    
+
     history = []
-    
+
     # Note Log
-    
-    
+
+
     return history.sort {|a,b| b[:date] <=> a[:date]}
   end
-  
+
   def staff_col
     ActionView::Base.send(:include, Rails.application.routes.url_helpers)
     link_helper = ActionController::Base.helpers
-    
+
     link_helper.link_to("<img class=\"round-ava\" src=\"#{self.avatar(:square)}\" width=\"35\" /><br /><span class=\"user-name\" />#{self.short_name}</span>".html_safe, {controller: "users", action: "show", id: self.id}, title: self.name, class: "fancybox.ajax fancybox_link")
   end
-  
+
   def user_link(title=nil)
     ActionView::Base.send(:include, Rails.application.routes.url_helpers)
     link_helper = ActionController::Base.helpers
-    
+
     title = title.nil? ? name : title
-    
+
     link_helper.link_to(title, {controller: "users", action: "edit", id: id, tab_page: 1}, class: "tab_page", title: name)
   end
-  
+
   def self.restore_system(params)
     rails_env = params[:environment]
     bk_dir = Setting.get("backup_dir")
     database = YAML.load_file('config/database.yml')[rails_env]["database"]
-    
+
     `mkdir tmp` if !File.directory?("tmp")
     `mkdir tmp/backup` if !File.directory?("tmp/backup")
-    
+
     file_upload = params[:upload]
-    
+
     # SAVE TO TMP
     name =  file_upload['datafile'].original_filename
     directory = "tmp/backup"
@@ -330,24 +330,24 @@ class User < ActiveRecord::Base
     path = File.join(directory, name)
     # write the file
     File.open(path, "wb") { |f| f.write(file_upload['datafile'].read) }
-    
+
     # CHECK PACKAGE
     puts `rm -rf tmp/backup#{bk_dir} && unzip #{path} -d tmp/backup/`
-    
+
     if File.directory?("tmp/backup#{bk_dir}/#{name.gsub(".zip","")}/uploads") && params[:file].present?
       puts `rm -rf uploads && mkdir uploads && cp -a tmp/backup#{bk_dir}/#{name.gsub(".zip","")}/uploads/. uploads/`
     end
-    
+
     if File.exist?("tmp/backup#{bk_dir}/#{name.gsub(".zip","")}/data.dump") && params[:database].present?
       puts `RAILS_ENV=#{rails_env} rake mytask:drop_all_table && RAILS_ENV=#{rails_env} rake db:migrate && psql #{database} < tmp/backup#{bk_dir}/#{name.gsub(".zip","")}/data.dump`
     end
-    
+
     puts 'RAILS_ENV=#{rails_env} rake mytask:drop_all_table && psql #{database} < tmp/backup#{bk_dir}/#{name.gsub(".zip","")}/data.dump'
-    
+
     `rm -rf tmp/backup#{bk_dir} && rm #{path}`
-    
+
   end
-  
+
   # "Book"
   # "BookData"
   # "Companies"
@@ -373,10 +373,10 @@ class User < ActiveRecord::Base
     file_name =  file.original_filename
     file_path = File.join(dir, file_name)
     File.open(file_path, "wb") { |f| f.write(file.read) }
-    
+
     database = Mdb.open(file_path)
     result = {contacts: [], course_types: [], subjects: [], subjects_tmp: [], users: []}
-    
+
     #### STUDENT
     #database[:Student].each do |row|
     #  contact = Contact.new
@@ -391,12 +391,12 @@ class User < ActiveRecord::Base
     #  contact.phone = row[:StudentHomePhone]
     #  contact.fax = row[:StudentFax]
     #  contact.sex = row[:StudentTitle] == "2" ? "female" : "male"
-    #  
-    #                    
+    #
+    #
     #  result[:contacts] << contact
     #end
     #
-    ### COURSE TYPE ### SAVED ### 
+    ### COURSE TYPE ### SAVED ###
     CourseType.destroy_all
     database[:CourseType].each do |row|
       item = CourseType.new
@@ -407,26 +407,26 @@ class User < ActiveRecord::Base
       item.save
       item.add_status("active")
       item.save_draft(User.first)
-    
+
       result[:course_types] << item
     end
-    
-    # SUBJECT ### SAVED ### 
+
+    # SUBJECT ### SAVED ###
     Subject.destroy_all
     database[:Subject].each do |row|
       item = Subject.new
       item.tmp_SubjectID = row[:SubjectID]
-      
+
       if !row[:SubjectID].split(row[:CourseID])[1].nil?
         subject_name = User.remove_head_draft(row[:SubjectID].split(row[:CourseID])[1])
         item.name = subject_name
-        
+
         # find course type
         ct = CourseType.where(short_name: row[:SubjectID].split(row[:CourseID])[0]).first
         if !ct.nil?
           # find exist subject
           s = Subject.where("LOWER(name) = ?",subject_name.downcase).first
-          
+
           if !s.nil?
             s.course_types << ct if !s.course_types.include?(ct)
             #s.save
@@ -436,15 +436,15 @@ class User < ActiveRecord::Base
             item.add_status("active")
             item.save_draft(User.first)
           end
-          
+
         end
       end
-      
-      
+
+
       result[:subjects] << item
       result[:subjects_tmp] << row
     end
-    
+
     ### USER
     User.where.not(tmp_ConsultantID: nil).destroy_all
     database[:COUNSULTANT].each_with_index do |row,index|
@@ -453,20 +453,20 @@ class User < ActiveRecord::Base
       #item.first_name = row[:ConsultantName].split(" ").last
       #item.last_name = row[:ConsultantName].split(" ")
       item.name = row[:ConsultantName].strip
-    
+
       item.roles << Role.where(name: "user").first
       # item.roles << Role.where(name: "education_consultant").first
-      
+
       item.save
-      
-    
+
+
       result[:users] << item
     end
-    
-    
+
+
     return result
   end
-  
+
   def self.remove_head_draft(s)
     count = 1
     r = s
@@ -480,41 +480,41 @@ class User < ActiveRecord::Base
     end
     return r.strip
   end
-  
+
   def self.get_cima_report(year, month, course_types)
     courses = Course.all_courses
                       .where(course_type_id: course_types)
                       .where(for_exam_year: year)
                       .where(for_exam_month: month)
-                      
+
     subjects = Subject.active_subjects.includes(:course_types).where(course_types: {id: course_types})
-    
+
     conds = []
     courses.each do |c|
       conds << "contacts.cache_courses LIKE '%[#{c.id.to_s},%'"
     end
     students = !conds.empty? ? Contact.main_contacts.where("contacts.status IS NOT NULL AND contacts.status NOT LIKE ?", "%[deleted]%").where(conds.join(" OR ")).order("name") : []
-                                    
+
     report = []
     students.each do |student|
       has_course = false
-      
+
       row = {}
       row["student"] = student
       row["subjects"] = []
       subjects.each do |subject|
         s_row = {}
         s_row["subject"] = subject
-        
+
         arr = []
         student.active_courses_with_phrases.each do |r|
           arr << r[:course].name if courses.include?(r[:course]) && !r[:course].upfront && course_types.include?(r[:course].course_type_id.to_s) && r[:course].subject.id == subject.id && !r[:course].no_report_contacts.include?(student)
         end
         #ccs = student.active_contacts_courses.where(report: true).includes(:course).where(courses: {subject_id: subject.id})
         s_row["count"] = arr.join("\n") if !arr.empty?
-        
+
         row["subjects"] << s_row
-        
+
         has_course = true if !arr.empty?
       end
       report << row if has_course
@@ -522,46 +522,46 @@ class User < ActiveRecord::Base
 
     return {data: report, subjects: subjects}
   end
-  
+
   def self.get_acca_report(year, month, course_types)
     courses = Course.all_courses
                       .where(course_type_id: course_types)
                       .where(for_exam_year: year)
                       .where(for_exam_month: month)
-                      
+
     subjects = Subject.active_subjects.includes(:course_types).where(course_types: {id: course_types})
-        
+
     conds = []
     courses.each do |c|
       conds << "contacts.cache_courses LIKE '%[#{c.id.to_s},%'"
     end
     students = !conds.empty? ? Contact.main_contacts.where("contacts.status IS NOT NULL AND contacts.status NOT LIKE ?", "%[deleted]%").where(conds.join(" OR ")).order("name") : []
-                                    
+
     report = []
     students.each do |student|
       has_course = false
-      
+
       row = {}
       row["student"] = student
       row["subjects"] = []
       subjects.each do |subject|
         s_row = {}
         s_row["subject"] = subject
-        
+
         arr = []
         student.active_courses_with_phrases.each do |r|
           arr << r[:course].name if courses.include?(r[:course]) && !r[:course].upfront && course_types.include?(r[:course].course_type_id.to_s) && r[:course].subject.id == subject.id && !r[:course].no_report_contacts.include?(student)
         end
         #ccs = student.active_contacts_courses.where(report: true).includes(:course).where(courses: {subject_id: subject.id})
         s_row["count"] = arr.join("\n") if !arr.empty?
-        
+
         row["subjects"] << s_row if s_row["count"].present?
-        
+
         has_course = true if !arr.empty?
       end
       report << row if has_course
     end
-                      
+
     return {data: report, subjects: subjects}
   end
 
@@ -570,9 +570,9 @@ class User < ActiveRecord::Base
     #file_name =  file.original_filename
     #file_path = File.join(dir, file_name)
     #File.open(file_path, "wb") { |f| f.write(file.read) }
-    
+
     database = Mdb.open(file_path)
-    
+
     OldBook.import_old_book(database)
     OldBookDatum.import_old_book_data(database)
     OldCompany.import_old_company(database)
@@ -589,16 +589,16 @@ class User < ActiveRecord::Base
     OldTag.import_old_tag(database)
     OldUserLevel.import_old_user_level(database)
     OldUserRole.import_old_user_role(database)
-    
+
     # import consultant
     # self.import_from_old_consultant
-    
+
     # import contact
     # Contact.import_contact_from_old_student
-    
+
     # update company
     # Contact.update_company_info_from_old_system
-    
+
     return true
   end
 
@@ -611,37 +611,37 @@ class User < ActiveRecord::Base
         #item.first_name = row[:ConsultantName].split(" ").last
         #item.last_name = row[:ConsultantName].split(" ")
         item.name = row.consultant_name.strip
-      
+
         item.roles << Role.where(name: "user").first
         # item.roles << Role.where(name: "education_consultant").first
         uu = User.where(:email => "admin@ftmsglobal.edu.vn").first
         uu = User.first if uu.nil?
         item.user_id = uu.id
-        
+
         item.save
-        
+
       end
     end
   end
-  
+
   def self.status_options
     [
       ["Active","1"],
       ["Deleted","0"],
-      ["All",""]      
+      ["All",""]
     ]
   end
-  
+
   def self.statistics(users, from_date, to_date)
     from_date = from_date.beginning_of_day
     to_date = to_date.end_of_day
     user_ids = users.map(&:id)
-    
+
     course_types = CourseType.main_course_types.order("short_name")
     course_types << CourseType.new(id: -1, short_name: "Defer/Transfer")
     course_types << CourseType.new(id: -2, short_name: "Custom payment")
     course_type_ids = course_types.map(&:id)
-      
+
     # prepaire array
     users_statistics = {}
     users.each do |u|
@@ -672,7 +672,7 @@ class User < ActiveRecord::Base
       end
       users_statistics[u.id] = row
     end
-    
+
     # sales
     total = 0.0
     @records = PaymentRecord.includes(:course_register => :contact)
@@ -680,7 +680,7 @@ class User < ActiveRecord::Base
                           .where(status: 1)
                           .where(course_registers: {account_manager_id: user_ids})
                           .where("payment_records.payment_date >= ? AND payment_records.payment_date <= ? ", from_date, to_date).uniq
-    
+
     @records.each do |pr|
       pr.payment_record_details.each do |prd|
         if !prd.contacts_course.nil?
@@ -691,8 +691,9 @@ class User < ActiveRecord::Base
           users_statistics[pr.course_register.account_manager_id][:sales] += prd.real_amount
         end
       end
+      puts "1111111111111111111111111111111111111111111111111111111111111111111111111111"
     end
-    
+
     # transfer sales
     @records = PaymentRecord.includes(:transfer => :contact)
                           .where(transfers: {parent_id: nil}).where("transfers.status IS NOT NULL AND transfers.status NOT LIKE ?", "%[deleted]%")
@@ -702,9 +703,11 @@ class User < ActiveRecord::Base
     @records.each do |pr|
         users_statistics[pr.contact.account_manager_id][:details][-1][:sales] += pr.amount if users_statistics[pr.contact.account_manager_id][:details][-1].present?
         users_statistics[pr.contact.account_manager_id][:sales] += pr.amount
+
+        puts "222222222222222222222222222222222222222222222222222222222222222222222222222222"
     end
-    
-    
+
+
     ## company sales
     @records = PaymentRecord.where(status: 1)
                           .where.not(company_id: nil)
@@ -714,9 +717,11 @@ class User < ActiveRecord::Base
       pr.payment_record_details.each do |prd|
         users_statistics[pr.account_manager_id][:details][prd.course_type_id][:sales] += prd.real_amount if users_statistics[pr.account_manager_id][:details][prd.course_type_id].present?
         users_statistics[pr.account_manager_id][:sales] += prd.real_amount
+
+        puts "3333333333333333333333333333333333333333333333333333333333333333333333333333333"
       end
     end
-    
+
     ## custom payments
     @records = PaymentRecord.includes(:paid_contact)
                           .where(status: 1)
@@ -726,104 +731,111 @@ class User < ActiveRecord::Base
     @records.each do |pr|
       users_statistics[pr.paid_contact.account_manager_id][:details][-2][:sales] += pr.amount
       users_statistics[pr.paid_contact.account_manager_id][:details][-2][:cutom_payment_contacts] << {contact: pr.contact, amount: pr.amount}
-      
+
       users_statistics[pr.paid_contact.account_manager_id][:sales] += pr.amount
+
+      puts "44444444444444444444444444444444444444444444444444444444444444444444444444444444444"
     end
-    
-    
-    # receivable
-              #contacts courses
-              contacts_courses = ContactsCourse.includes(:course_register, :course => :course_type)
-                                                .where(course_registers: {parent_id: nil}).where("course_registers.status IS NOT NULL AND course_registers.status NOT LIKE ?", "%[deleted]%")
-                                                .where(course_types: {id: course_type_ids})
-                                                .where(course_registers: {account_manager_id: user_ids})
-                                                .where("course_registers.created_at <= ? ", to_date)
-              
-              contacts_courses.each do |cc|                
-                if !cc.course_register.paid?(to_date.end_of_day)
-                  if users_statistics[cc.course_register.account_manager_id][:details][cc.course.course_type_id].present?
-                    users_statistics[cc.course_register.account_manager_id][:details][cc.course.course_type_id][:receivable] += cc.remain(nil, to_date)
-                    users_statistics[cc.course_register.account_manager_id][:details][cc.course.course_type_id][:receivable_contacts] << cc.contact
-                  end
-                  users_statistics[cc.course_register.account_manager_id][:receivable] += cc.remain(from_date, to_date)
-                end
-              end
-              
-              
-              
-              #books courses
-              books_contacts = BooksContact.includes(:course_register, :book => :course_type)
-                                                .where(course_registers: {parent_id: nil}).where("course_registers.status IS NOT NULL AND course_registers.status NOT LIKE ?", "%[deleted]%")
-                                                .where(course_types: {id: course_type_ids})
-                                                .where(course_registers: {account_manager_id: user_ids})
-                                                .where("course_registers.created_at <= ? ", to_date)
-              
-              books_contacts.each do |cc|                
-                if !cc.course_register.paid?(to_date.end_of_day)
-                  if users_statistics[cc.course_register.account_manager_id][:details][cc.book.course_type_id].present?
-                    users_statistics[cc.course_register.account_manager_id][:details][cc.book.course_type_id][:receivable] += cc.remain_amount(nil, to_date)
-                    users_statistics[cc.course_register.account_manager_id][:details][cc.book.course_type_id][:receivable_contacts] << cc.contact
-                  end
-                  users_statistics[cc.course_register.account_manager_id][:receivable] += cc.remain_amount(nil, to_date)
-                end
-              end
-              
-    
-              #transfers
-              transfers = Transfer.includes(:contact).where(parent_id: nil).where("transfers.status IS NOT NULL AND transfers.status NOT LIKE ?", "%[deleted]%")
-                                                .where(contacts: {account_manager_id: user_ids})
-                                                .where("transfers.created_at <= ? ", to_date)
-                                     
-              transfers.each do |tsf|
-                if tsf.remain(nil, to_date) != 0.0 
-                  if users_statistics[tsf.contact.account_manager_id][:details][tsf.course.course_type_id].present?
-                    users_statistics[tsf.contact.account_manager_id][:details][-1][:receivable] += tsf.remain(nil, to_date)
-                    users_statistics[tsf.contact.account_manager_id][:details][-1][:receivable_contacts] << tsf.contact
-                  end
-                  users_statistics[tsf.contact.account_manager_id][:receivable] += tsf.remain(nil, to_date)
-                end
-              end
-                
+
+
+    ## receivable
+    #          #contacts courses
+    #          contacts_courses = ContactsCourse.includes(:course_register, :course => :course_type)
+    #                                            .where(course_registers: {parent_id: nil}).where("course_registers.status IS NOT NULL AND course_registers.status NOT LIKE ?", "%[deleted]%")
+    #                                            .where(course_types: {id: course_type_ids})
+    #                                            .where(course_registers: {account_manager_id: user_ids})
+    #                                            .where("course_registers.created_at <= ? ", to_date)
+    #
+    #          contacts_courses.each do |cc|
+    #            if !cc.course_register.paid?(to_date.end_of_day)
+    #              if users_statistics[cc.course_register.account_manager_id][:details][cc.course.course_type_id].present?
+    #                users_statistics[cc.course_register.account_manager_id][:details][cc.course.course_type_id][:receivable] += cc.remain(nil, to_date)
+    #                users_statistics[cc.course_register.account_manager_id][:details][cc.course.course_type_id][:receivable_contacts] << cc.contact
+    #              end
+    #              users_statistics[cc.course_register.account_manager_id][:receivable] += cc.remain(from_date, to_date)
+    #            end
+    #
+    #            puts "5555555555555555555555555555555555555555555555555555555555555555555555555555"
+    #          end
+    #
+    #
+    #
+    #          #books courses
+    #          books_contacts = BooksContact.includes(:course_register, :book => :course_type)
+    #                                            .where(course_registers: {parent_id: nil}).where("course_registers.status IS NOT NULL AND course_registers.status NOT LIKE ?", "%[deleted]%")
+    #                                            .where(course_types: {id: course_type_ids})
+    #                                            .where(course_registers: {account_manager_id: user_ids})
+    #                                            .where("course_registers.created_at <= ? ", to_date)
+    #
+    #          books_contacts.each do |cc|
+    #            if !cc.course_register.paid?(to_date.end_of_day)
+    #              if users_statistics[cc.course_register.account_manager_id][:details][cc.book.course_type_id].present?
+    #                users_statistics[cc.course_register.account_manager_id][:details][cc.book.course_type_id][:receivable] += cc.remain_amount(nil, to_date)
+    #                users_statistics[cc.course_register.account_manager_id][:details][cc.book.course_type_id][:receivable_contacts] << cc.contact
+    #              end
+    #              users_statistics[cc.course_register.account_manager_id][:receivable] += cc.remain_amount(nil, to_date)
+    #            end
+    #            puts "666666666666666666666666666666666666666666666666666666666666666666666666666666666"
+    #          end
+    #
+    #
+    #          #transfers
+    #          transfers = Transfer.includes(:contact).where(parent_id: nil).where("transfers.status IS NOT NULL AND transfers.status NOT LIKE ?", "%[deleted]%")
+    #                                            .where(contacts: {account_manager_id: user_ids})
+    #                                            .where("transfers.created_at <= ? ", to_date)
+    #
+    #          transfers.each do |tsf|
+    #            if tsf.remain(nil, to_date) != 0.0
+    #              if users_statistics[tsf.contact.account_manager_id][:details][tsf.course.course_type_id].present?
+    #                users_statistics[tsf.contact.account_manager_id][:details][-1][:receivable] += tsf.remain(nil, to_date)
+    #                users_statistics[tsf.contact.account_manager_id][:details][-1][:receivable_contacts] << tsf.contact
+    #              end
+    #              users_statistics[tsf.contact.account_manager_id][:receivable] += tsf.remain(nil, to_date)
+    #            end
+    #
+    #            puts "777777777777777777777777777777777777777777777777777777777777777777777777777777777777777"
+    #          end
+
     # Inquiry # Student
-        @contacts = Contact.main_contacts.includes(:contact_types, :course_types)
-                            .where(creator_id: user_ids)
-                            .where(is_individual: true)
-                            .where("contacts.created_at >= ? AND contacts.created_at <= ? ", from_date, to_date)
-        
-        @contacts.each do |c|
-          course_types.each do |ct|
-              transform = 0            
-              if c.course_types.include?(ct) && c.contact_types.include?(ContactType.inquiry)
-                users_statistics[c.creator_id][:details][ct.id][:inquiry] += 1
-                users_statistics[c.creator_id][:inquiry] += 1
-                
-                # find transform revision
-                transform_revision_count = c.revisions.includes(:contact_types)
-                                                      .where(contact_types: {id: ContactType.student.id})
-                                                      .where("contacts.created_at >= ? AND contacts.created_at <= ? ", from_date, to_date)
-                                                      .count
-                if transform_revision_count > 0
-                  transform = 1
-                end
-              end
-              if c.contact_types.include?(ContactType.inquiry) && c.course_types.empty?
-                users_statistics[c.creator_id][:inquiry] += 1
-              end
-              
-              if c.cache_course_type_ids.present? && c.cache_course_type_ids.include?("[#{ct.id}]") && c.contact_types.include?(ContactType.student)          
-                users_statistics[c.creator_id][:details][ct.id][:student] += 1
-                users_statistics[c.creator_id][:student] += 1
-              end
-              
-              users_statistics[c.creator_id][:details][ct.id][:inquiry] -= transform
-              users_statistics[c.creator_id][:inquiry] -= transform
-              users_statistics[c.creator_id][:details][ct.id][:student] += transform
-              users_statistics[c.creator_id][:student] += transform
-          end
-        end
-    
-        
-        
+    #    @contacts = Contact.main_contacts.includes(:contact_types, :course_types)
+    #                        .where(creator_id: user_ids)
+    #                        .where(is_individual: true)
+    #                        .where("contacts.created_at >= ? AND contacts.created_at <= ? ", from_date, to_date)
+    #
+    #    @contacts.each do |c|
+    #      course_types.each do |ct|
+    #          transform = 0
+    #          if c.course_types.include?(ct) && c.contact_types.include?(ContactType.inquiry)
+    #            users_statistics[c.creator_id][:details][ct.id][:inquiry] += 1
+    #            users_statistics[c.creator_id][:inquiry] += 1
+    #
+    #            # find transform revision
+    #            transform_revision_count = c.revisions.includes(:contact_types)
+    #                                                  .where(contact_types: {id: ContactType.student.id})
+    #                                                  .where("contacts.created_at >= ? AND contacts.created_at <= ? ", from_date, to_date)
+    #                                                  .count
+    #            if transform_revision_count > 0
+    #              transform = 1
+    #            end
+    #          end
+    #          if c.contact_types.include?(ContactType.inquiry) && c.course_types.empty?
+    #            users_statistics[c.creator_id][:inquiry] += 1
+    #          end
+    #
+    #          if c.cache_course_type_ids.present? && c.cache_course_type_ids.include?("[#{ct.id}]") && c.contact_types.include?(ContactType.student)
+    #            users_statistics[c.creator_id][:details][ct.id][:student] += 1
+    #            users_statistics[c.creator_id][:student] += 1
+    #          end
+    #
+    #          users_statistics[c.creator_id][:details][ct.id][:inquiry] -= transform
+    #          users_statistics[c.creator_id][:inquiry] -= transform
+    #          users_statistics[c.creator_id][:details][ct.id][:student] += transform
+    #          users_statistics[c.creator_id][:student] += transform
+    #      end
+    #    end
+
+
+
         # Paper
         paper = 0
         @papers = ContactsCourse.includes(:course_register, :contact, :course => :course_type)
@@ -831,13 +843,15 @@ class User < ActiveRecord::Base
                             .where(course_registers: {account_manager_id: user_ids})
                             .where(course_types: {id: course_type_ids})
                             .where("course_registers.created_at >= ? AND course_registers.created_at <= ? ", from_date, to_date)
-        
+
         @papers.each do |cc|
           users_statistics[cc.course_register.account_manager_id][:details][cc.course.course_type_id][:paper] += 1
           users_statistics[cc.course_register.account_manager_id][:paper] += 1
+
+          puts "5555555555555555555555555555555555555555555555555555555555555555555555555555"
         end
-        
-        
+
+
         # Notelog count
         users.each do |u|
           users_statistics[u.id][:note] = u.manage_activities
@@ -845,7 +859,7 @@ class User < ActiveRecord::Base
                                             .count
         end
 
-        
+
         all_total = {note: 0,paper: 0,inquiry: 0,student: 0,sales: 0.0,receivable: 0.0}
         users_statistics.each do |u|
           all_total[:note] += u[1][:note]
@@ -854,20 +868,22 @@ class User < ActiveRecord::Base
           all_total[:student] += u[1][:student]
           all_total[:sales] += u[1][:sales]
           all_total[:receivable] += u[1][:receivable]
-          
+
           u[1][:details].each do |ct|
             users_statistics[u[0]][:details][ct[0]][:show] = false if ct[1][:paper]+ct[1][:sales]+ct[1][:receivable]+ct[1][:inquiry]+ct[1][:student] == 0
           end
+
+          puts "6666666666666666666666666666666666666666666666666666666666666666666666666666666"
         end
-        
-    
+
+
     return {data: users_statistics, total: all_total}
   end
-  
+
   def get_sales_target(report_period)
     return 0.0 if report_period.nil?
     target = SalesTarget.where(staff_id: self.id).where(status: "active").where(report_period_id: report_period.id).last
     return target.nil? ? 0.0 : target.amount
   end
-  
+
 end

@@ -512,10 +512,13 @@ class ContactsController < ApplicationController
         c.approve_update(current_user) if current_user.can?(:approve_update, c)
         c.approve_education_consultant(current_user) if current_user.can?(:approve_education_consultant, c)
       end
+    else
+      render text: "<span class='text-danger'>Error! Can not select too many contacts!</span>"
+      return
     end
 
     respond_to do |format|
-      format.html { render "/course_registers/approved", layout: nil }
+      format.html { render "/contacts/approved", layout: nil }
       format.json { render action: 'show', status: :created, location: @course_register }
     end
   end
