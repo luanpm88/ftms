@@ -824,8 +824,10 @@ class ContactsController < ApplicationController
       break
     end
 
-    if @contacts.count > 15 or !valid_com
+    if !valid_com
       render text: "<span style=\"color: red\">Invalid companies selected! Make sure selected items are company and the same contact.</span>"
+    elsif @contacts.count > 50
+      render text: "<span style=\"color: red\">Invalid companies selected! Too many companies. Maximum 50 records per request.</span>"
     else
       contact = Contact.merge_companies(@contacts)
 
