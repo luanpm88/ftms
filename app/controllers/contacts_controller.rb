@@ -813,6 +813,11 @@ class ContactsController < ApplicationController
         params[:contact_types] = nil
       end
 
+      if params[:datatable_search_keyword].present?
+        params["search"] = {}
+        params["search"]["value"] = params[:datatable_search_keyword]
+      end
+
       @contacts = Contact.filters(params, current_user)
     else
       @contacts = Contact.where(id: params[:ids])
