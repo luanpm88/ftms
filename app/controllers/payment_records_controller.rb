@@ -1,11 +1,11 @@
 class PaymentRecordsController < ApplicationController
   include PaymentRecordsHelper
   include CourseRegistersHelper
-  
+
   load_and_authorize_resource
-  
+
   before_action :set_payment_record, only: [:company_paid_list, :part_info, :show, :edit, :update, :destroy]
-  
+
   def part_info
     item = @payment_record
     render json: {
@@ -25,7 +25,7 @@ class PaymentRecordsController < ApplicationController
   def index
     @payment_records = PaymentRecord.all
   end
-  
+
   def payment_list
     #code
   end
@@ -40,7 +40,7 @@ class PaymentRecordsController < ApplicationController
     @payment_record = PaymentRecord.new
     @course_register = CourseRegister.find(params[:course_register_id])
     @payment_record.course_register = @course_register
-    
+
     @payment_record.payment_date = Time.now
     @payment_record.debt_date = Time.now
   end
@@ -64,7 +64,7 @@ class PaymentRecordsController < ApplicationController
         if params[:note_log].present?
           @payment_record.course_register.contact.activities.create(user_id: current_user.id, note: params[:note_log]) if params[:note_log].present?
         end
-        
+
         #if !transfer.nil?
           @tab = {url: {controller: "contacts", action: "edit", id: @payment_record.course_register.contact.id, tab_page: 1, tab: "course_registration"}, title: @payment_record.course_register.contact.display_name+(@payment_record.course_register.contact.related_contacts.empty? ? "" : " #"+@payment_record.course_register.contact.id.to_s)}
         #end
@@ -81,14 +81,14 @@ class PaymentRecordsController < ApplicationController
   # PATCH/PUT /payment_records/1.json
   def update
     @payment_record.update_payment_record_detail_amount(params[:payment_record_details]) if params[:payment_record_details].present?
-    
+
     respond_to do |format|
       if @payment_record.update(payment_record_params)
         @payment_record.update_statuses
         @payment_record.update_cache_search
         @payment_record.update_course_register_statuses
         @payment_record.company.update_info
-        
+
         @tab = {url: {controller: "payment_records", action: "index", tab_page: 1, tab: "course_registration"}, title: "Payment Record"}
         format.html { render "/home/close_tab", layout: nil }
         format.json { render action: 'show', status: :created, location: @payment_record }
@@ -98,26 +98,26 @@ class PaymentRecordsController < ApplicationController
       end
     end
   end
-  
+
   def datatable
     result = PaymentRecord.datatable(params, current_user)
-    
+
     result[:items].each_with_index do |item, index|
-      actions = render_payment_record_actions(item)      
+      actions = render_payment_record_actions(item)
       result[:result]["data"][index][result[:actions_col]] = actions
     end
-    
+
     render json: result[:result]
   end
-  
+
   def datatable_payment_list
     result = CourseRegister.payment_list(params, current_user)
-    
+
     result[:items].each_with_index do |item, index|
-      actions = render_course_register_actions(item)      
+      actions = render_course_register_actions(item)
       result[:result]["data"][index][result[:actions_col]] = actions
     end
-    
+
     render json: result[:result]
   end
 
@@ -130,7 +130,7 @@ class PaymentRecordsController < ApplicationController
       format.json { head :no_content }
     end
   end
-  
+
   def print
     render  :pdf => "payment_"+@payment_record.payment_date.strftime("%d_%b_%Y"),
             :template => 'payment_records/print.pdf.erb',
@@ -146,22 +146,22 @@ class PaymentRecordsController < ApplicationController
                           :right  => 0},
             }
   end
-  
+
   def trash
     @payment_record.trash
-    
+
     respond_to do |format|
       format.html { render "/payment_records/deleted", layout: nil }
       format.json { render action: 'show', status: :created, location: @phrase }
     end
   end
-  
+
   def company_paid_list
     @course_registers = @payment_record.course_registers
-    
+
     render layout: "content"
   end
-  
+
   def company_pay
     @old_record = PaymentRecord.find(params[:id]) if params[:id].present?
     if @old_record.nil?
@@ -169,11 +169,11 @@ class PaymentRecordsController < ApplicationController
         if !params[:check_all_page].nil?
           params[:intake_year] = params["filter"]["intake(1i)"] if params["filter"].present?
           params[:intake_month] = params["filter"]["intake(2i)"] if params["filter"].present?
-          
+
           if params[:is_individual] == "false"
             params[:contact_types] = nil
-          end        
-          
+          end
+
           @course_registers = CourseRegister.filter(params, current_user)
         else
           @course_registers = CourseRegister.where(id: params[:ids])
@@ -187,14 +187,14 @@ class PaymentRecordsController < ApplicationController
     else
       @course_registers = @old_record.course_registers
     end
-    
-    
-    
+
+
+
     course_type_ids = []
     @course_type_count= {}
     @stock_count = {}
     @display_count = {}
-    @course_registers.each do |cr|        
+    @course_registers.each do |cr|
       cr.contacts_courses.each do |cc|
         course_type_ids << cc.course.course_type_id
         @course_type_count[cc.course.course_type_id] = @course_type_count[cc.course.course_type_id].nil? ? 1 : @course_type_count[cc.course.course_type_id]+1
@@ -204,16 +204,16 @@ class PaymentRecordsController < ApplicationController
         @stock_count[bc.book.course_type_id] = @stock_count[bc.book.course_type_id].nil? ? 1 : @stock_count[bc.book.course_type_id]+1
       end
     end
-    
-    
-    
+
+
+
     @course_types = CourseType.where(id: course_type_ids).order("short_name")
-    
-    @payment_record = PaymentRecord.new    
+
+    @payment_record = PaymentRecord.new
     @payment_record.payment_date = Time.now
     @payment_record.debt_date = Time.now
 
-    
+
     render layout: "content"
   end
 
@@ -222,23 +222,23 @@ class PaymentRecordsController < ApplicationController
     @payment_record.user = current_user
     @payment_record.status = 1
     @payment_record.update_company_payment_record_details(params[:payment_record_details]) if params[:payment_record_details].present?
-    
+
     @payment_record.course_register_ids = "["+params[:course_register_ids].join("][")+"]" if !params[:old_record_id].present?
 
     respond_to do |format|
       if @payment_record.save
-        #save old record        
+        #save old record
         if params[:old_record_id].present?
           @payment_record.save_old_record(params[:old_record_id])
         end
-        
+
         # create note log
         if params[:note_log].present?
           @payment_record.contact.activities.create(user_id: current_user.id, note: params[:note_log]) if params[:note_log].present?
         end
-        
-               
-        
+
+
+
         @tab = {url: {controller: "payment_records", action: "index", tab_page: 1, tab: "course_registration"}, title: "Payment Record"}
         format.html { render "/home/close_tab", layout: nil }
         format.json { render action: 'show', status: :created, location: @payment_record }
@@ -248,7 +248,7 @@ class PaymentRecordsController < ApplicationController
       end
     end
   end
-  
+
   def print_payment_list
     if params[:payment_record_id].present?
       @course_registers = PaymentRecord.find(params[:payment_record_id]).course_registers
@@ -256,51 +256,51 @@ class PaymentRecordsController < ApplicationController
       if !params[:check_all_page].nil?
         params[:intake_year] = params["filter"]["intake(1i)"] if params["filter"].present?
         params[:intake_month] = params["filter"]["intake(2i)"] if params["filter"].present?
-        
+
         params["payment_statuses"] = "receivable"
-        
+
         if params[:is_individual] == "false"
           params[:contact_types] = nil
-        end        
-        
+        end
+
         @course_registers = CourseRegister.filter(params, current_user)
       else
         @course_registers = CourseRegister.where(id: params[:ids])
       end
-      
-      
+
+
     end
-    
+
     # order by contact name
     @course_registers = @course_registers.includes(:contact).order("contacts.name, course_registers.contact_id")
-    
-    
+
+
     # render company payment list
-    paper_ids = []      
+    paper_ids = []
     @list = []
-    @course_registers.each do |cr|        
+    @course_registers.each do |cr|
         cr.contacts_courses.each do |cc|
           row = {}
           row[:contact_name] = cc.contact.name
           row[:course] = cc.course.display_name
           row[:phrases] = Phrase.where(id: cc.courses_phrases.includes(:phrase).map(&:phrase_id)).order("name").map(&:"name").join("; ")
-          row[:company] = !cr.sponsored_company.nil? ? cr.sponsored_company.name : ""          
-          
-          row[:papers] = {}          
-          row[:papers][cc.course.subject_id] = "X"          
+          row[:company] = !cr.sponsored_company.nil? ? cr.sponsored_company.name : ""
+
+          row[:papers] = {}
+          row[:papers][cc.course.subject_id] = "X"
           paper_ids << cc.course.subject_id
-          
+
           ## check intakes filter
           #is_in_intake = intakes_filters.nil? ? true : intakes_filters.include?("#{cc.course.intake.strftime("%m")}-#{cc.course.intake.strftime("%Y")}")
-          
+
           if (params[:course_types].present? && !params[:course_types].include?(cc.course.course_type_id.to_s)) || (params[:subjects].present? && !params[:subjects].include?(cc.course.subject_id.to_s))
           else
             @list << row # if is_in_intake
           end
         end
     end
-    
-    @course_registers.each do |cr|        
+
+    @course_registers.each do |cr|
       cr.books_contacts.each do |bc|
         # get intake
         if bc.intake.present?
@@ -308,18 +308,18 @@ class PaymentRecordsController < ApplicationController
         else
           intake = "##"
         end
-        
+
         # check intake
         if params.nil? or !params["intakes"].present? or (!params.nil? and params["intakes"].present? and params["intakes"].split(',').include?(intake))
             row = {}
             row[:contact_name] = bc.contact.name
             row[:stock] = bc.book.display_name
-            row[:company] = !cr.sponsored_company.nil? ? cr.sponsored_company.name : ""         
-            
-            row[:papers] = {}          
-            row[:papers][bc.book.subject_id] = "X"          
-            paper_ids << bc.book.subject_id         
-            
+            row[:company] = !cr.sponsored_company.nil? ? cr.sponsored_company.name : ""
+
+            row[:papers] = {}
+            row[:papers][bc.book.subject_id] = "X"
+            paper_ids << bc.book.subject_id
+
             if (params[:course_types].present? && !params[:course_types].include?(bc.book.course_type_id.to_s)) || (params[:subjects].present? && !params[:subjects].include?(bc.book.subject_id.to_s))
             else
               @list << row
@@ -327,10 +327,10 @@ class PaymentRecordsController < ApplicationController
         end
       end
     end
-    
+
     @papers = Subject.where(id: paper_ids).order("name")
-    
-    
+
+
     respond_to do |format|
       format.html {render "company_paid_list.html.erb"}
       format.xls
@@ -342,7 +342,7 @@ class PaymentRecordsController < ApplicationController
           :footer => {
              :center => "",
              :left => "",
-             :right => "",               
+             :right => "",
              :page_size => "A4",
              :margin  => {:top    => 0, # default 10 (mm)
                         :bottom => 0,
@@ -351,22 +351,22 @@ class PaymentRecordsController < ApplicationController
           }
       }
     end
-    
-    
+
+
   end
-  
+
   def pay_transfer
     @payment_record = PaymentRecord.new(payment_record_params)
     @payment_record.user = current_user
     @payment_record.status = 1
-    
+
     respond_to do |format|
       if @payment_record.save
         # create note log
         if params[:note_log].present?
           @payment_record.transfer.contact.activities.create(user_id: current_user.id, note: params[:note_log]) if params[:note_log].present?
         end
-        
+
         @tab = {url: {controller: "contacts", action: "edit", id: @payment_record.transfer.contact.id, tab_page: 1, tab: "transfer"}, title: @payment_record.transfer.contact.display_name}
         format.html { render "/home/close_tab", layout: nil }
         format.json { render action: 'show', status: :created, location: @payment_record }
@@ -376,38 +376,40 @@ class PaymentRecordsController < ApplicationController
       end
     end
   end
-  
+
   def export_list
     if params[:ids].present?
       if !params[:check_all_page].nil?
         params[:intake_year] = params["filter"]["intake(1i)"] if params["filter"].present?
         params[:intake_month] = params["filter"]["intake(2i)"] if params["filter"].present?
-        
+
         if params[:is_individual] == "false"
           params[:contact_types] = nil
         end
-        
+
         @items = PaymentRecord.filter(params, current_user)
       else
         @items = PaymentRecord.where(id: params[:ids])
       end
-      
+
       @items = @items.order("payment_records.payment_date DESC")
-      
-      
+
+
       #log = UserLog.new(user_id: current_user.id, title: "Export Payment List")
       #log.render_content(@items, params)
       #log.save
-      
-      
+
+
       respond_to do |format|
         format.html
         format.xls
       end
-    end      
+    end
   end
-  
-  
+
+  def course_report
+  end
+
 
   private
     # Use callbacks to share common setup or constraints between actions.

@@ -1,0 +1,51 @@
+<div class="grid simple payment-record-filter">
+    <div class="grid-body no-border filters">
+        <%= form_tag(course_report_payment_records_path(tab_page:1, format: 'xls'), target: '_blank') do %>
+            <div class="row order-filters">
+                <div class="col-md-2">
+                    <h4>From Date</h4>
+                    <div class="date_select_filter">
+                    <div class="input-with-icon  right">
+                        <div class="input-append success date col-md-10 no-padding" style="width: 100%">
+                            <%= text_field_tag :from_date, nil, :class => "datetime form-control" %>
+                            <span class="add-on"><span class="arrow"></span><i class="icon-th"></i></span>
+                        </div>
+                        <br style="clear: both" />
+
+                    </div>
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <h4>To Date</h4>
+                    <div class="date_select_filter">
+                    <div class="input-with-icon  right">
+                        <div class="input-append success date col-md-10 no-padding" style="width: 100%">
+                            <%= text_field_tag :to_date, Time.now.strftime("%d-%b-%Y"), :class => "datetime form-control" %>
+                            <span class="add-on"><span class="arrow"></span><i class="icon-th"></i></span>
+                        </div>
+                        <br style="clear: both" />
+                    </div>
+                    </div>
+                </div>
+
+                <div class="col-md-2">
+                  <h4>Bank Account</h4>
+                        <div class="input-with-icon  right">
+                             <i class=""></i>
+                             <div class="input-with_add_butz">
+                                  <%= select_tag 'bank_account', options_for_select(BankAccount.active_bank_accounts.collect{ |u| [u.name, u.id] }), :include_blank => 'All', class: "modern_select width100" %>
+                             </div>
+                        </div>
+                </div>
+                <div class="col-md-5">
+                    <h4>Course</h4>
+                    <input style="width:100%;margin-bottom: 5px;" name="courses[]" data="<%= courses_path(format: "json") %>" class="select2-ajax-courses multiple" />
+                </div>
+                <div class="col-md-1">
+                    <h4 style="color: #fff">.</h4>
+                    <button class="btn btn-primary">Export</button>
+                </div>
+            </div>
+        <% end %>
+    </div>
+</div>

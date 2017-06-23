@@ -11,12 +11,12 @@ class Ability
     #     can :read, :all
     #   end
     #
-    # The first argument to `can` is the action you are giving the user 
+    # The first argument to `can` is the action you are giving the user
     # permission to do.
     # If you pass :manage it will apply to every action. Other common actions
     # here are :read, :create, :update and :destroy.
     #
-    # The second argument is the resource the user can perform the action on. 
+    # The second argument is the resource the user can perform the action on.
     # If you pass :all it will apply to every resource. Otherwise pass a Ruby
     # class of the resource.
     #
@@ -28,7 +28,7 @@ class Ability
     #
     # See the wiki for details:
     # https://github.com/ryanb/cancan/wiki/Defining-Abilities
-    
+
     # Handle the case where we don't have a current_user i.e. the user is a guest
     user ||= User.new
 
@@ -36,10 +36,10 @@ class Ability
     # cannot :destroy, Contact
     # cannot :manage , Comment
     # can    :read   , Tag , released: true
-    
+
     #can :manage, Order, :salesperson_id => user.id
     #can :manage, SupplierOrder, :salesperson_id => user.id
-    
+
     if user.has_role? "admin"
         can :read, User
         can :create, User
@@ -47,75 +47,75 @@ class Ability
         can :delete, User do |u|
           u.status == 1
         end
-      
+
         can :backup, User
         can :backup, User
-        
+
         can :restore, User
         can :restore, User
-        
+
         can :download_backup, User
         can :delete_backup, User
-        
+
         can :datatable, User
-        
+
         can :import_from_old_system, User
         can :import_from_old_system, User
-        
+
         can :system_setting, User
         can :system_setting, User
-        
+
         can :destroy, Activity do |a|
           a.deleted == 0
         end
     end
-    
+
     if user.has_role? "user"
-      can :user_guide, User      
+      can :user_guide, User
       can :statistic, User
       can :statistics_enhanced, User
       can :download_statistics, User
       can :online_report, User
-      
+
       can :read, OldTag
       can :read, OldLinkStudent
       can :delete, OldTag
-      
+
       can :book_features, User
       can :report_features, User
-      
+
       can :read_notification, Notification
-      
+
       can :read, User
       can :datatable, User
-     
+
       can :read, City
       can :read, State
       can :read, Country
       can :select_tag, City
-      
+
       can :logo, Contact
-      
+
       can :show, User
       can :avatar, User
       can :course_features, User
-      
+
       can :activity_log, User do |u|
         u == user
       end
-      
+
       can :read, Contact
       can :datatable, Contact
       can :create, Contact
       can :update_tag, Contact
       can :course_students, Contact
-      can :seminar_students, Contact      
+      can :seminar_students, Contact
       can :related_info_box, Contact
       can :field_history, Contact
       can :ajax_quick_info, Contact
       can :add_course, Contact do |c|
         !c.statuses.include?("deleted")
-      end      
+      end
       can :update, Contact
       #do |c|
         #!c.statuses.include?("deleted")
@@ -125,20 +125,20 @@ class Ability
       end
       can :transfer_money_history, Contact
       can :transfer_hour_history, Contact
-      
-      
+
+
       if user.has_role? "export_contact_excel"
         can :export_list, Contact
       end
-      
+
       if user.has_role? "export_contact_mobile"
-        can :export_mobiles, Contact      
+        can :export_mobiles, Contact
       end
-      
+
       if user.has_role? "export_contact_email"
         can :export_emails, Contact
       end
-        
+
       can :merge_contacts, Contact
       can :merge_companies, Contact
       can :merge_contacts_datatable, Contact
@@ -156,7 +156,7 @@ class Ability
       can :not_related_contacts, Contact
       can :add_tags, Contact
       can :remove_tags, Contact
-      
+
       can :datatable, Course
       can :read, Course
       can :create, Course
@@ -179,7 +179,7 @@ class Ability
       can :delete_all, Course
       can :intake_options, Course
       can :print_list, Course
-      
+
       can :datatable, CourseType
       can :read, CourseType
       can :create, CourseType
@@ -192,8 +192,8 @@ class Ability
       can :field_history, CourseType
       can :approve_all, CourseType
       can :delete_all, CourseType
-      
-      
+
+
       ## STOCK TYPE
       can :datatable, StockType
       can :read, StockType
@@ -208,9 +208,9 @@ class Ability
       can :field_history, StockType
       can :approve_all, StockType
       can :update_order, StockType
-      
-      
-      
+
+
+
       # Subject
       can :datatable, Subject
       can :read, Subject
@@ -226,15 +226,15 @@ class Ability
       can :field_history, Subject
       can :approve_all, Subject
       can :delete_all, Subject
-      
-      
+
+
       can :datatable, Book
       can :student_books, Book
       can :read, Book
       can :create, Book
       can :stock_select, Book
       can :volumn_checkboxs, Book
-      can :stock_price_form, Book      
+      can :stock_price_form, Book
       can :update, Book
       #do |c|
       #  !c.statuses.include?("delete_pending") && !c.statuses.include?("deleted")
@@ -246,12 +246,12 @@ class Ability
       can :stock_form_list, Book
       can :delivery, Book
       can :import_export, Book
-      can :delivery_note, Book      
+      can :delivery_note, Book
       can :delivery_counting, Book
       can :stock_statistics, Book
       can :statistics, Book
-      can :approve_all, Book      
-      
+      can :approve_all, Book
+
       can :datatable, BooksContact
       can :check_upfront, BooksContact
       can :upfront_book_select_box, BooksContact
@@ -259,8 +259,8 @@ class Ability
       can :remove, BooksContact
       can :cancel, BooksContact
       can :export_list, BooksContact
-      
-      
+
+
       can :view, ContactTag
       can :datatable, ContactTag
       can :read, ContactTag
@@ -274,15 +274,15 @@ class Ability
       end
       can :field_history, ContactTag
       can :approve_all, ContactTag
-      
-      
+
+
       can :datatable, Seminar
       can :student_seminars, Seminar
       can :read, Seminar
       can :create, Seminar
       can :add_contacts, Seminar
       can :remove_contacts, Seminar
-      can :check_contact, Seminar      
+      can :check_contact, Seminar
       can :seminar_features, Seminar
       can :import_list, Seminar
       can :do_import_list, Seminar
@@ -295,8 +295,8 @@ class Ability
       end
       can :field_history, Seminar
       can :approve_all, Seminar
-      
-      
+
+
       # Phrase
       can :datatable, Phrase
       can :read, Phrase
@@ -312,8 +312,8 @@ class Ability
       can :field_history, Phrase
       can :approve_all, Phrase
       can :delete_all, Phrase
-      
-      
+
+
       can :datatable, DiscountProgram
       can :read, DiscountProgram
       can :create, DiscountProgram
@@ -327,15 +327,15 @@ class Ability
       can :field_history, DiscountProgram
       can :approve_all, DiscountProgram
       can :delete_all, DiscountProgram
-      
-      
+
+
       can :datatable, BankAccount
-      can :read, BankAccount      
+      can :read, BankAccount
       can :field_history, BankAccount
       can :approve_all, BankAccount
-      
+
       can :courses_phrases_select, CoursesPhrase
-      
+
       can :datatable, Delivery
       can :read, Delivery
       can :create, Delivery
@@ -344,18 +344,18 @@ class Ability
       can :trash, Delivery do |d|
         d.user == user
       end
-      
-      
+
+
       can :read, DeliveryDetail
       can :create, DeliveryDetail
-      
+
       can :datatable, StockUpdate
       can :read, StockUpdate
       can :create, StockUpdate
       can :import_export_form_list, StockUpdate
       can :import_export, StockUpdate
       can :approve_all, StockUpdate
-      
+
       can :datatable, PaymentRecord
       can :read, PaymentRecord
       can :create, PaymentRecord
@@ -368,7 +368,7 @@ class Ability
       can :part_info, PaymentRecord
       can :export_list, PaymentRecord
       can :add_custom_payment, Contact
-      
+
       can :datatable, Activity
       can :read, Activity
       can :create, Activity
@@ -378,7 +378,7 @@ class Ability
       can :change, Activity do |a|
         a.user == user
       end
-      
+
       can :datatable, Transfer
       can :read, Transfer
       can :create, Transfer
@@ -395,11 +395,11 @@ class Ability
       can :transfer_hour, Transfer
       can :do_transfer_hour, Transfer
       can :approve_all, Transfer
-      
+
       can :pay_by_credit, Transfer do |t|
         !t.paid? and t.contact.budget_money > 0.0
       end
-      
+
       can :datatable, CourseRegister
       can :student_course_registers, CourseRegister
       can :read, CourseRegister
@@ -432,10 +432,10 @@ class Ability
       can :delivery_print, CourseRegister do |cr|
         !cr.delivered?
       end
-      can :part_info, CourseRegister      
-      
+      can :part_info, CourseRegister
+
       can :print_payment_list, PaymentRecord
-      
+
       can :read, ReportPeriod
       can :datatable, ReportPeriod
       can :create, ReportPeriod
@@ -447,19 +447,19 @@ class Ability
       end
       can :undo_delete, ReportPeriod do |c|
         c.status == 'deleted' #and c.user_id == user.id
-      end      
-      
+      end
+
       can :read, SalesTarget
       can :datatable, SalesTarget
-      
+
       # for testing
       can :delete_all, BooksContact
       can :remove_company, Contact
     end
-    
+
     if user.has_role? "education_consultant"
       can :approved, Contact
-      
+
       can :approve_new, Contact do |c|
         c.statuses.include?("new_pending") && c.account_manager  == user && c.current.user.lower?("education_consultant")
       end
@@ -470,7 +470,7 @@ class Ability
         c.statuses.include?("delete_pending") && c.account_manager  == user && c.current.user.lower?("education_consultant")
       end
       can :approve_all, Contact
-      
+
       ## COURSE REGISTER
       can :approved, CourseRegister
       can :approve_new, CourseRegister do |c|
@@ -483,11 +483,11 @@ class Ability
         c.statuses.include?("delete_pending") && c.account_manager  == user && c.current.user.lower?("education_consultant")
       end
       can :approve_all, CourseRegister
-      
+
       can :approve_delete, Activity do |c|
         c.deleted == 1 && c.contact.account_manager  == user && c.user.lower?("education_consultant")
       end
-      
+
       # Company pay
       can :company_pay, PaymentRecord do |pr|
         !pr.company_id.nil? && !pr.paid?
@@ -503,15 +503,15 @@ class Ability
       can :company_paid_list, PaymentRecord do |pr|
         !pr.company.nil?
       end
-      
+
       can :pay, Transfer do |t|
         !t.paid?
       end
     end
-    
+
     if user.has_role?("storage_manager") || user.has_role?("manager") || user.has_role?("admin")
       can :deliver_all, Book
-      
+
       ## STOCK TYPE
       can :approved, StockType
       can :approve_new, StockType do |c|
@@ -526,9 +526,9 @@ class Ability
       can :undo_delete, StockType do |c|
         c.statuses.include?("delete_pending")
       end
-      
+
       can :approve_all, StockType
-      
+
       ## BOOK
       can :approved, Book
       can :approve_new, Book do |c|
@@ -545,10 +545,10 @@ class Ability
       end
       can :approve_all, Book
       can :delete_all, Book
-      
+
       can :delete_all, BooksContact
     end
-    
+
     if user.has_role?("accountant") || user.has_role?("manager") || user.has_role?("admin")
       can :create, BankAccount
       can :update, BankAccount do |c|
@@ -557,7 +557,7 @@ class Ability
       can :delete, BankAccount do |c|
         !c.statuses.include?("delete_pending") && !c.statuses.include?("deleted")
       end
-      
+
       can :company_pay, PaymentRecord do |pr|
         !pr.company_id.nil? && !pr.paid?
       end
@@ -573,24 +573,25 @@ class Ability
         !pr.company.nil?
       end
       can :view_all, PaymentRecord
-      
+      can :course_report, PaymentRecord
+
       can :pay, Transfer do |t|
         !t.paid?
       end
-      
+
       can :pay_by_credit, Transfer do |t|
         !t.paid? and t.contact.budget_money > 0.0
       end
-      
+
     end
-    
+
     if user.has_role?("manager") || user.has_role?("admin")
       can :create, User
       can :update, User
-      
+
       can :read, UserLog
       can :datatable, UserLog
-      
+
       ## COURSE TYPE
       can :approved, Subject
       can :approve_new, Subject do |c|
@@ -605,9 +606,9 @@ class Ability
       can :undo_delete, Subject do |c|
         c.statuses.include?("delete_pending")
       end
-      
-      
-      can :approved, Course      
+
+
+      can :approved, Course
       can :approve_new, Course do |c|
         c.statuses.include?("new_pending")
       end
@@ -616,12 +617,12 @@ class Ability
       end
       can :approve_delete, Course do |c|
         c.statuses.include?("delete_pending") # && c.contacts_courses.empty?
-      end      
+      end
       can :undo_delete, Course do |c|
         c.statuses.include?("delete_pending")
       end
-      
-      
+
+
       ## COURSE TYPE
       can :approved, CourseType
       can :approve_new, CourseType do |c|
@@ -636,11 +637,11 @@ class Ability
       can :undo_delete, CourseType do |c|
         c.statuses.include?("delete_pending")
       end
-      
-      
+
+
       can :approved, Contact
       can :field_history, Contact
-      
+
       can :approve_new, Contact do |c|
         c.statuses.include?("new_pending")
       end
@@ -655,12 +656,12 @@ class Ability
       end
       can :undo_delete, Contact do |c|
         c.statuses.include?("delete_pending") || c.statuses.include?("deleted")
-      end      
+      end
       can :approve_all, Contact
-      
+
       can :delete_all, Contact
-      
-      
+
+
       ## CONTACT TAG
       can :approved, ContactTag
       can :approve_new, ContactTag do |c|
@@ -672,8 +673,8 @@ class Ability
       can :approve_delete, ContactTag do |c|
         c.statuses.include?("delete_pending")
       end
-      
-      
+
+
       ## COURSE REGISTER
       can :approved, CourseRegister
       can :approve_new, CourseRegister do |c|
@@ -689,8 +690,8 @@ class Ability
         c.statuses.include?("delete_pending")
       end
       can :approve_all, CourseRegister
-      
-      
+
+
       ## PHRASES
       can :approved, Phrase
       can :approve_new, Phrase do |c|
@@ -705,8 +706,8 @@ class Ability
       can :undo_delete, Phrase do |c|
         c.statuses.include?("delete_pending")
       end
-      
-      
+
+
       ## DISCOUNT PROGRAM
       can :approved, DiscountProgram
       can :approve_new, DiscountProgram do |c|
@@ -721,9 +722,9 @@ class Ability
       can :undo_delete, DiscountProgram do |c|
         c.statuses.include?("delete_pending") || c.statuses.include?("deleted")
       end
-      
-      
-      
+
+
+
       ## SEMINAR
       can :approved, Seminar
       can :approve_new, Seminar do |c|
@@ -738,9 +739,9 @@ class Ability
       can :undo_delete, Seminar do |c|
         c.statuses.include?("delete_pending")
       end
-      
-      
-      
+
+
+
       ## BANK ACCOUNT
       can :approved, BankAccount
       can :approve_new, BankAccount do |c|
@@ -755,24 +756,24 @@ class Ability
       can :undo_delete, BankAccount do |c|
         c.statuses.include?("delete_pending")
       end
-      
-      
-      
+
+
+
       can :courses_phrases_select, CoursesPhrase
-      
+
       can :datatable, Delivery
       can :read, Delivery
       can :create, Delivery
       can :print, Delivery
       can :delivery_list, Delivery
       can :trash, Delivery
-      
+
       can :read, DeliveryDetail
       can :create, DeliveryDetail
-      
+
       can :read, StockUpdate
       can :create, StockUpdate
-      
+
       can :datatable, PaymentRecord
       can :read, PaymentRecord
       can :create, PaymentRecord
@@ -788,7 +789,7 @@ class Ability
       can :company_pay_remain, PaymentRecord do |pr|
         !pr.company.nil? && !pr.paid?
       end
-      
+
       can :datatable, Activity
       can :read, Activity
       can :create, Activity
@@ -802,7 +803,7 @@ class Ability
         c.deleted == 1
       end
       can :approve_all, Activity
-      
+
       ## TRANSFER
       can :approved, Transfer
       can :approve_new, Transfer do |c|
@@ -813,19 +814,19 @@ class Ability
       end
       can :approve_delete, Transfer do |c|
         c.statuses.include?("delete_pending")
-      end      
+      end
       can :undo_delete, Transfer do |c|
         c.statuses.include?("delete_pending")
-      end      
-      
+      end
+
       can :report_toggle, ContactsCourse
-      
+
       can :remove, BooksContact
-      
-      
+
+
       can :manage, ReportPeriod
       can :manage, SalesTarget
-      
+
       can :update, PaymentRecord do |o|
         !o.company.nil?
       end
