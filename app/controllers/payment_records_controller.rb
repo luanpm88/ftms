@@ -416,10 +416,14 @@ class PaymentRecordsController < ApplicationController
 
       @the_courses = Course.where(id: params[:the_courses].split(',')).map {|t| {id: t.id.to_s, text: t.display_name}}
       @the_courses = @the_courses.to_json
+
+      File.open('course_report_'+current_user.id.to_s+'.tmp', 'w') {|f| f.write(YAML.dump(@records)) }
     end
     respond_to do |format|
         format.html
-        format.xls
+        format.xls {
+          @records = YAML.load(File.read('course_report_'+current_user.id.to_s+'.tmp'))
+        }
       end
   end
 

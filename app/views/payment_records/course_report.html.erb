@@ -43,7 +43,10 @@
 <% if @records.present? %>
     <div class="row">
         <div class="col-md-12">
-            <table class="table table-striped no-more-tables">
+            <div class="text-left">
+                <a href="<%= course_report_payment_records_path(format: 'xls') %>" target="_blank" class="btn btn-primary">Export (Excel)</a>
+            </div>
+            <table class="table table-striped no-more-tables no-filter">
                 <thead>
                     <tr>
                         <td>Gender</td>

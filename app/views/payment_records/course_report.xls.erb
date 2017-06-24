@@ -9,12 +9,7 @@
       <Row>
         <Cell><Data ss:Type="String">Gender</Data></Cell>
         <Cell><Data ss:Type="String">Full Name</Data></Cell>
-        <Cell><Data ss:Type="String">Company</Data></Cell>
-        <Cell><Data ss:Type="String">Description</Data></Cell>
-        <Cell><Data ss:Type="String">DOB</Data></Cell>
-        <Cell><Data ss:Type="String">Address</Data></Cell>
         <Cell><Data ss:Type="String">Email</Data></Cell>
-        <Cell><Data ss:Type="String">Phone</Data></Cell>
         <Cell><Data ss:Type="String">Mobile</Data></Cell>
         <Cell><Data ss:Type="String">Course</Data></Cell>
         <Cell><Data ss:Type="String">Money</Data></Cell>
@@ -23,25 +18,36 @@
         <Cell><Data ss:Type="String">Bank Ref</Data></Cell>
         <Cell><Data ss:Type="String">Defer/Transfer</Data></Cell>
       </Row>
-    <% [1].each do |item| %>
+      <% total = 0.0 %>
+      <% @records.each do |prd| %>
+        <% contact = prd.contacts_course.contact %>
+        <% course = prd.contacts_course.course %>
+        <% pr = prd.payment_record %>
+        <Row>
+            <Cell><Data ss:Type="String"><%= contact.sex == "female" ? "[Ms]" : "[Mr]" %></Data></Cell>
+            <Cell><Data ss:Type="String"><%= contact.name.titleize %></Data></Cell>
+            <Cell><Data ss:Type="String"><%= contact.email %><%= (";"+contact.email_2s.join(";")).html_safe if !contact.email_2s.empty? %></Data></Cell>
+            <Cell><Data ss:Type="String"><%= contact.mobile %><%= (";"+contact.mobile_2s.join(";")).html_safe if !contact.mobile_2s.empty? %></Data></Cell>
+            <Cell><Data ss:Type="String"><%= course.display_name %></Data></Cell>
+            <Cell><Data ss:Type="String"><%= format_price(prd.real_amount) %><% total += prd.real_amount %></Data></Cell>
+            <Cell><Data ss:Type="String"><%= pr.payment_date.strftime("%d-%b-%Y") %></Data></Cell>
+            <Cell><Data ss:Type="String"><%= pr.bank_account_name %></Data></Cell>
+            <Cell><Data ss:Type="String"><%= pr.bank_ref %></Data></Cell>
+            <Cell><Data ss:Type="String">Defer/Transfer</Data></Cell>
+        </Row>
+      <% end %>
       <Row>
-        <Cell><Data ss:Type="String"><%= @records %></Data></Cell>
-        <Cell><Data ss:Type="String">Full Name</Data></Cell>
-        <Cell><Data ss:Type="String">Company</Data></Cell>
-        <Cell><Data ss:Type="String">Description</Data></Cell>
-        <Cell><Data ss:Type="String">DOB</Data></Cell>
-        <Cell><Data ss:Type="String">Address</Data></Cell>
-        <Cell><Data ss:Type="String">Email</Data></Cell>
-        <Cell><Data ss:Type="String">Phone</Data></Cell>
-        <Cell><Data ss:Type="String">Mobile</Data></Cell>
-        <Cell><Data ss:Type="String">Course</Data></Cell>
-        <Cell><Data ss:Type="String">Money</Data></Cell>
-        <Cell><Data ss:Type="String">Payment Date</Data></Cell>
-        <Cell><Data ss:Type="String">Bank Account</Data></Cell>
-        <Cell><Data ss:Type="String">Bank Ref</Data></Cell>
-        <Cell><Data ss:Type="String">Defer/Transfer</Data></Cell>
+          <Cell><Data ss:Type="String"></Data></Cell>
+          <Cell><Data ss:Type="String"></Data></Cell>
+          <Cell><Data ss:Type="String"></Data></Cell>
+          <Cell><Data ss:Type="String"></Data></Cell>
+          <Cell><Data ss:Type="String">Total:</Data></Cell>
+          <Cell><Data ss:Type="String"><%= format_price(total) %></Data></Cell>
+          <Cell><Data ss:Type="String"></Data></Cell>
+          <Cell><Data ss:Type="String"></Data></Cell>
+          <Cell><Data ss:Type="String"></Data></Cell>
+          <Cell><Data ss:Type="String"></Data></Cell>
       </Row>
-    <% end %>
     </Table>
   </Worksheet>
 </Workbook>
