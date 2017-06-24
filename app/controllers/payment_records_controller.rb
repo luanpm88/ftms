@@ -408,7 +408,7 @@ class PaymentRecordsController < ApplicationController
   end
 
   def course_report
-    @from_date = params[:from_date].present? ? params[:from_date].to_date.beginning_of_date : nil
+    @from_date = params[:from_date].present? ? params[:from_date].to_date.beginning_of_day : nil
     @to_date =  params[:to_date].present? ? params[:to_date].to_date.end_of_day : Time.now
 
     if params[:the_courses].present?
