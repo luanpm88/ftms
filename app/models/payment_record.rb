@@ -636,4 +636,25 @@ class PaymentRecord < ActiveRecord::Base
     return course_register.nil? ? false : course_register.transferred?
   end
 
+  # get course report
+  def self.get_course_report(params)
+    from_date = params[:from_date].present? ? params[:from_date].to_date.beginning_of_date : nil
+    to_date =  params[:to_date].present? ? params[:to_date].to_date.end_of_day : Time.now
+
+    prds = PaymentRecordDetail.includes(:payment_record, :contacts_course => [:course, :contact])
+      .where(payment_records: {status: 1})
+      .where.not(contacts_course_id: nil)
+      .where(courses: {id: params[:the_courses].split(',')})
+    if from_date.present?
+      prds = prds.where("payment_records.payment_date >= ?", from_date.beginning_of_day)
+    end
+    if to_date.present?
+      prds = prds.where("payment_records.payment_date <= ?", to_date.end_of_day)
+    end
+
+    prds = prds.order("contacts.name")
+
+    return prds
+  end
+
 end

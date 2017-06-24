@@ -408,6 +408,19 @@ class PaymentRecordsController < ApplicationController
   end
 
   def course_report
+    @from_date = params[:from_date].present? ? params[:from_date].to_date.beginning_of_date : nil
+    @to_date =  params[:to_date].present? ? params[:to_date].to_date.end_of_day : Time.now
+
+    if params[:the_courses].present?
+      @records = PaymentRecord.get_course_report(params)
+
+      @the_courses = Course.where(id: params[:the_courses].split(',')).map {|t| {id: t.id.to_s, text: t.display_name}}
+      @the_courses = @the_courses.to_json
+    end
+    respond_to do |format|
+        format.html
+        format.xls
+      end
   end
 
 

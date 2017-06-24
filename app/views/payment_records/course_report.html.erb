@@ -1,13 +1,13 @@
 <div class="grid simple payment-record-filter">
     <div class="grid-body no-border filters">
-        <%= form_tag(course_report_payment_records_path(tab_page:1, format: 'xls'), target: '_blank') do %>
+        <%= form_tag(course_report_payment_records_path(tab_page:1)) do %>
             <div class="row order-filters">
                 <div class="col-md-2">
                     <h4>From Date</h4>
                     <div class="date_select_filter">
                     <div class="input-with-icon  right">
                         <div class="input-append success date col-md-10 no-padding" style="width: 100%">
-                            <%= text_field_tag :from_date, nil, :class => "datetime form-control" %>
+                            <%= text_field_tag :from_date, (!@from_date.present? ? nil : @from_date.strftime("%d-%b-%Y")), :class => "datetime form-control" %>
                             <span class="add-on"><span class="arrow"></span><i class="icon-th"></i></span>
                         </div>
                         <br style="clear: both" />
@@ -20,26 +20,16 @@
                     <div class="date_select_filter">
                     <div class="input-with-icon  right">
                         <div class="input-append success date col-md-10 no-padding" style="width: 100%">
-                            <%= text_field_tag :to_date, Time.now.strftime("%d-%b-%Y"), :class => "datetime form-control" %>
+                            <%= text_field_tag :to_date, @to_date.strftime("%d-%b-%Y"), :class => "datetime form-control" %>
                             <span class="add-on"><span class="arrow"></span><i class="icon-th"></i></span>
                         </div>
                         <br style="clear: both" />
                     </div>
                     </div>
                 </div>
-
-                <div class="col-md-2">
-                  <h4>Bank Account</h4>
-                        <div class="input-with-icon  right">
-                             <i class=""></i>
-                             <div class="input-with_add_butz">
-                                  <%= select_tag 'bank_account', options_for_select(BankAccount.active_bank_accounts.collect{ |u| [u.name, u.id] }), :include_blank => 'All', class: "modern_select width100" %>
-                             </div>
-                        </div>
-                </div>
-                <div class="col-md-5">
+                <div class="col-md-7">
                     <h4>Course</h4>
-                    <input style="width:100%;margin-bottom: 5px;" name="courses[]" data="<%= courses_path(format: "json") %>" class="select2-ajax-courses multiple" />
+                    <input values="<%= @the_courses %>" style="width:100%;margin-bottom: 5px;" name="the_courses" data="<%= courses_path(format: "json") %>" class="select2-ajax-courses multiple" />
                 </div>
                 <div class="col-md-1">
                     <h4 style="color: #fff">.</h4>
@@ -49,3 +39,76 @@
         <% end %>
     </div>
 </div>
+
+<% if @records.present? %>
+    <div class="row">
+        <div class="col-md-12">
+            <table class="table table-striped no-more-tables">
+                <thead>
+                    <tr>
+                        <td>Gender</td>
+                        <td>Full Name</td>
+                        <!--<td>Company</td>-->
+                        <!--<td>DOB</td>-->
+                        <!--<td>Address</td>-->
+                        <td>Email/Mobile</td>
+                        <td>Course</td>
+                        <td>Money</td>
+                        <td>Payment Date</td>
+                        <td>Bank Account</td>
+                        <td>Bank Ref</td>
+                        <td>Defer/Transfer</td>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% total = 0.0 %>
+                    <% @records.each do |prd| %>
+                        <% contact = prd.contacts_course.contact %>
+                        <% course = prd.contacts_course.course %>
+                        <% pr = prd.payment_record %>
+                        <tr>
+                            <td><%= contact.sex == "female" ? "[Ms]" : "[Mr]" %></td>
+                            <td><%= contact.name.titleize %></td>
+                            <!--<td><%= contact.referrer.name if !contact.referrer.nil? %></td>-->
+                            <!--<td><%= contact.birthday.strftime("%d-%b-%Y") if !contact.birthday.nil? %></td>-->
+                            <!--<td><%= contact.address %></td>-->
+                            <td><%= contact.email %><%= ("<br>"+contact.email_2s.join("<br>")).html_safe if !contact.email_2s.empty? %>
+                            <br><%= contact.mobile %><%= ("<br>"+contact.mobile_2s.join("<br>")).html_safe if !contact.mobile_2s.empty? %></td>
+                            <td><%= course.display_name %></td>
+                            <td><%= format_price(prd.real_amount) %><% total += prd.real_amount %></td>
+                            <td><%= pr.payment_date.strftime("%d-%b-%Y") %></td>
+                            <td><%= pr.bank_account_name %></td>
+                            <td><%= pr.bank_ref %></td>
+                            <td>Defer/Transfer</td>
+                        </tr>
+                    <% end %>
+                    <tr>
+                        <td></td>
+                        <td></td>
+                        <!--<td></td>-->
+                        <!--<td></td>-->
+                        <!--<td></td>-->
+                        <td></td>
+                        <td>Total:</td>
+                        <td><strong><%= format_price(total) %></strong></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+<% elsif request.post? %>
+    <div class="alert alert-warning">No records found!</div>
+<% end %>
+
+<script>
+	 $(document).ready(function() {
+		  $('.select2-ajax-courses').each(function() {
+				  vs = JSON.parse($(this).attr('values'))
+				  $(this).select2('data', vs)
+		  });
+	 });
+</script>
