@@ -738,101 +738,101 @@ class User < ActiveRecord::Base
     end
 
 
-    ## receivable
-    #          #contacts courses
-    #          contacts_courses = ContactsCourse.includes(:course_register, :course => :course_type)
-    #                                            .where(course_registers: {parent_id: nil}).where("course_registers.status IS NOT NULL AND course_registers.status NOT LIKE ?", "%[deleted]%")
-    #                                            .where(course_types: {id: course_type_ids})
-    #                                            .where(course_registers: {account_manager_id: user_ids})
-    #                                            .where("course_registers.created_at <= ? ", to_date)
-    #
-    #          contacts_courses.each do |cc|
-    #            if !cc.course_register.paid?(to_date.end_of_day)
-    #              if users_statistics[cc.course_register.account_manager_id][:details][cc.course.course_type_id].present?
-    #                users_statistics[cc.course_register.account_manager_id][:details][cc.course.course_type_id][:receivable] += cc.remain(nil, to_date)
-    #                users_statistics[cc.course_register.account_manager_id][:details][cc.course.course_type_id][:receivable_contacts] << cc.contact
-    #              end
-    #              users_statistics[cc.course_register.account_manager_id][:receivable] += cc.remain(from_date, to_date)
-    #            end
-    #
-    #            puts "5555555555555555555555555555555555555555555555555555555555555555555555555555"
-    #          end
-    #
-    #
-    #
-    #          #books courses
-    #          books_contacts = BooksContact.includes(:course_register, :book => :course_type)
-    #                                            .where(course_registers: {parent_id: nil}).where("course_registers.status IS NOT NULL AND course_registers.status NOT LIKE ?", "%[deleted]%")
-    #                                            .where(course_types: {id: course_type_ids})
-    #                                            .where(course_registers: {account_manager_id: user_ids})
-    #                                            .where("course_registers.created_at <= ? ", to_date)
-    #
-    #          books_contacts.each do |cc|
-    #            if !cc.course_register.paid?(to_date.end_of_day)
-    #              if users_statistics[cc.course_register.account_manager_id][:details][cc.book.course_type_id].present?
-    #                users_statistics[cc.course_register.account_manager_id][:details][cc.book.course_type_id][:receivable] += cc.remain_amount(nil, to_date)
-    #                users_statistics[cc.course_register.account_manager_id][:details][cc.book.course_type_id][:receivable_contacts] << cc.contact
-    #              end
-    #              users_statistics[cc.course_register.account_manager_id][:receivable] += cc.remain_amount(nil, to_date)
-    #            end
-    #            puts "666666666666666666666666666666666666666666666666666666666666666666666666666666666"
-    #          end
-    #
-    #
-    #          #transfers
-    #          transfers = Transfer.includes(:contact).where(parent_id: nil).where("transfers.status IS NOT NULL AND transfers.status NOT LIKE ?", "%[deleted]%")
-    #                                            .where(contacts: {account_manager_id: user_ids})
-    #                                            .where("transfers.created_at <= ? ", to_date)
-    #
-    #          transfers.each do |tsf|
-    #            if tsf.remain(nil, to_date) != 0.0
-    #              if users_statistics[tsf.contact.account_manager_id][:details][tsf.course.course_type_id].present?
-    #                users_statistics[tsf.contact.account_manager_id][:details][-1][:receivable] += tsf.remain(nil, to_date)
-    #                users_statistics[tsf.contact.account_manager_id][:details][-1][:receivable_contacts] << tsf.contact
-    #              end
-    #              users_statistics[tsf.contact.account_manager_id][:receivable] += tsf.remain(nil, to_date)
-    #            end
-    #
-    #            puts "777777777777777777777777777777777777777777777777777777777777777777777777777777777777777"
-    #          end
+    # receivable
+              #contacts courses
+              contacts_courses = ContactsCourse.includes(:course_register, :course => :course_type)
+                                                .where(course_registers: {parent_id: nil}).where("course_registers.status IS NOT NULL AND course_registers.status NOT LIKE ?", "%[deleted]%")
+                                                .where(course_types: {id: course_type_ids})
+                                                .where(course_registers: {account_manager_id: user_ids})
+                                                .where("course_registers.created_at <= ? ", to_date)
 
-    # Inquiry # Student
-    #    @contacts = Contact.main_contacts.includes(:contact_types, :course_types)
-    #                        .where(creator_id: user_ids)
-    #                        .where(is_individual: true)
-    #                        .where("contacts.created_at >= ? AND contacts.created_at <= ? ", from_date, to_date)
-    #
-    #    @contacts.each do |c|
-    #      course_types.each do |ct|
-    #          transform = 0
-    #          if c.course_types.include?(ct) && c.contact_types.include?(ContactType.inquiry)
-    #            users_statistics[c.creator_id][:details][ct.id][:inquiry] += 1
-    #            users_statistics[c.creator_id][:inquiry] += 1
-    #
-    #            # find transform revision
-    #            transform_revision_count = c.revisions.includes(:contact_types)
-    #                                                  .where(contact_types: {id: ContactType.student.id})
-    #                                                  .where("contacts.created_at >= ? AND contacts.created_at <= ? ", from_date, to_date)
-    #                                                  .count
-    #            if transform_revision_count > 0
-    #              transform = 1
-    #            end
-    #          end
-    #          if c.contact_types.include?(ContactType.inquiry) && c.course_types.empty?
-    #            users_statistics[c.creator_id][:inquiry] += 1
-    #          end
-    #
-    #          if c.cache_course_type_ids.present? && c.cache_course_type_ids.include?("[#{ct.id}]") && c.contact_types.include?(ContactType.student)
-    #            users_statistics[c.creator_id][:details][ct.id][:student] += 1
-    #            users_statistics[c.creator_id][:student] += 1
-    #          end
-    #
-    #          users_statistics[c.creator_id][:details][ct.id][:inquiry] -= transform
-    #          users_statistics[c.creator_id][:inquiry] -= transform
-    #          users_statistics[c.creator_id][:details][ct.id][:student] += transform
-    #          users_statistics[c.creator_id][:student] += transform
-    #      end
-    #    end
+              contacts_courses.each do |cc|
+                if !cc.course_register.paid?(to_date.end_of_day)
+                  if users_statistics[cc.course_register.account_manager_id][:details][cc.course.course_type_id].present?
+                    users_statistics[cc.course_register.account_manager_id][:details][cc.course.course_type_id][:receivable] += cc.remain(nil, to_date)
+                    users_statistics[cc.course_register.account_manager_id][:details][cc.course.course_type_id][:receivable_contacts] << cc.contact
+                  end
+                  users_statistics[cc.course_register.account_manager_id][:receivable] += cc.remain(from_date, to_date)
+                end
+
+                puts "5555555555555555555555555555555555555555555555555555555555555555555555555555"
+              end
+
+
+
+              #books courses
+              books_contacts = BooksContact.includes(:course_register, :book => :course_type)
+                                                .where(course_registers: {parent_id: nil}).where("course_registers.status IS NOT NULL AND course_registers.status NOT LIKE ?", "%[deleted]%")
+                                                .where(course_types: {id: course_type_ids})
+                                                .where(course_registers: {account_manager_id: user_ids})
+                                                .where("course_registers.created_at <= ? ", to_date)
+
+              books_contacts.each do |cc|
+                if !cc.course_register.paid?(to_date.end_of_day)
+                  if users_statistics[cc.course_register.account_manager_id][:details][cc.book.course_type_id].present?
+                    users_statistics[cc.course_register.account_manager_id][:details][cc.book.course_type_id][:receivable] += cc.remain_amount(nil, to_date)
+                    users_statistics[cc.course_register.account_manager_id][:details][cc.book.course_type_id][:receivable_contacts] << cc.contact
+                  end
+                  users_statistics[cc.course_register.account_manager_id][:receivable] += cc.remain_amount(nil, to_date)
+                end
+                puts "666666666666666666666666666666666666666666666666666666666666666666666666666666666"
+              end
+
+
+              #transfers
+              transfers = Transfer.includes(:contact).where(parent_id: nil).where("transfers.status IS NOT NULL AND transfers.status NOT LIKE ?", "%[deleted]%")
+                                                .where(contacts: {account_manager_id: user_ids})
+                                                .where("transfers.created_at <= ? ", to_date)
+
+              transfers.each do |tsf|
+                if tsf.remain(nil, to_date) != 0.0
+                  if users_statistics[tsf.contact.account_manager_id][:details][tsf.course.course_type_id].present?
+                    users_statistics[tsf.contact.account_manager_id][:details][-1][:receivable] += tsf.remain(nil, to_date)
+                    users_statistics[tsf.contact.account_manager_id][:details][-1][:receivable_contacts] << tsf.contact
+                  end
+                  users_statistics[tsf.contact.account_manager_id][:receivable] += tsf.remain(nil, to_date)
+                end
+
+                puts "777777777777777777777777777777777777777777777777777777777777777777777777777777777777777"
+              end
+
+     Inquiry # Student
+        @contacts = Contact.main_contacts.includes(:contact_types, :course_types)
+                            .where(creator_id: user_ids)
+                            .where(is_individual: true)
+                            .where("contacts.created_at >= ? AND contacts.created_at <= ? ", from_date, to_date)
+
+        @contacts.each do |c|
+          course_types.each do |ct|
+              transform = 0
+              if c.course_types.include?(ct) && c.contact_types.include?(ContactType.inquiry)
+                users_statistics[c.creator_id][:details][ct.id][:inquiry] += 1
+                users_statistics[c.creator_id][:inquiry] += 1
+
+                # find transform revision
+                transform_revision_count = c.revisions.includes(:contact_types)
+                                                      .where(contact_types: {id: ContactType.student.id})
+                                                      .where("contacts.created_at >= ? AND contacts.created_at <= ? ", from_date, to_date)
+                                                      .count
+                if transform_revision_count > 0
+                  transform = 1
+                end
+              end
+              if c.contact_types.include?(ContactType.inquiry) && c.course_types.empty?
+                users_statistics[c.creator_id][:inquiry] += 1
+              end
+
+              if c.cache_course_type_ids.present? && c.cache_course_type_ids.include?("[#{ct.id}]") && c.contact_types.include?(ContactType.student)
+                users_statistics[c.creator_id][:details][ct.id][:student] += 1
+                users_statistics[c.creator_id][:student] += 1
+              end
+
+              users_statistics[c.creator_id][:details][ct.id][:inquiry] -= transform
+              users_statistics[c.creator_id][:inquiry] -= transform
+              users_statistics[c.creator_id][:details][ct.id][:student] += transform
+              users_statistics[c.creator_id][:student] += transform
+          end
+        end
 
 
 
