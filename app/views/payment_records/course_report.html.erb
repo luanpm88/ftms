@@ -60,30 +60,74 @@
                         <td>Payment Date</td>
                         <td>Bank Account</td>
                         <td>Bank Ref</td>
-                        <td>Defer/Transfer</td>
+                        <td>Defer/Transfer From</td>
                     </tr>
                 </thead>
                 <tbody>
                     <% total = 0.0 %>
-                    <% @records.each do |prd| %>
-                        <% contact = prd.contacts_course.contact %>
-                        <% course = prd.contacts_course.course %>
-                        <% pr = prd.payment_record %>
-                        <tr>
-                            <td><%= contact.sex == "female" ? "[Ms]" : "[Mr]" %></td>
-                            <td><%= contact.name.titleize %></td>
-                            <!--<td><%= contact.referrer.name if !contact.referrer.nil? %></td>-->
-                            <!--<td><%= contact.birthday.strftime("%d-%b-%Y") if !contact.birthday.nil? %></td>-->
-                            <!--<td><%= contact.address %></td>-->
-                            <td><%= contact.email %><%= ("<br>"+contact.email_2s.join("<br>")).html_safe if !contact.email_2s.empty? %>
-                            <br><%= contact.mobile %><%= ("<br>"+contact.mobile_2s.join("<br>")).html_safe if !contact.mobile_2s.empty? %></td>
-                            <td><%= course.display_name %></td>
-                            <td><%= format_price(prd.real_amount) %><% total += prd.real_amount %></td>
-                            <td><%= pr.payment_date.strftime("%d-%b-%Y") %></td>
-                            <td><%= pr.bank_account_name %></td>
-                            <td><%= pr.bank_ref %></td>
-                            <td>Defer/Transfer</td>
-                        </tr>
+                    <% @records.each do |contact| %>
+                        <% @courses.each do |course| %>
+                            <% if (contact.active_courses_with_phrases.map {|c| c[:course].id}).include?(course.id) %>
+                                <% if contact.find_related_payment_record_details(course).each do |prd| %>
+                                    <% pr = prd.payment_record %>
+                                    <tr>
+                                        <td><%= contact.id %><%= contact.sex == "female" ? "[Ms]" : "[Mr]" %></td>
+                                        <td><%= contact.name.titleize %></td>
+                                        <!--<td><%= contact.referrer.name if !contact.referrer.nil? %></td>-->
+                                        <!--<td><%= contact.birthday.strftime("%d-%b-%Y") if !contact.birthday.nil? %></td>-->
+                                        <!--<td><%= contact.address %></td>-->
+                                        <td><%= contact.email %><%= ("<br>"+contact.email_2s.join("<br>")).html_safe if !contact.email_2s.empty? %>
+                                        <br><%= contact.mobile %><%= ("<br>"+contact.mobile_2s.join("<br>")).html_safe if !contact.mobile_2s.empty? %></td>
+                                        <td><%= course.display_name %></td>
+                                        <td><%= format_price(prd.real_amount) %></td>
+                                        <td><%= pr.payment_date.strftime("%d-%b-%Y") %></td>
+                                        <td><%= pr.bank_account_name %></td>
+                                        <td><%= pr.bank_ref %></td>
+                                        <td></td>
+                                    </tr>
+                                    <% total += prd.real_amount %>
+                                <% end.empty? %>
+                                    <% if !contact.active_received_transfers.where(to_course_id: course.id).empty? %>
+                                        <% from_course = Course.find(contact.active_received_transfers.where(to_course_id: course.id).first.course_id) %>
+                                        <% if contact.find_related_payment_record_details(from_course).each do |prd| %>
+                                            <% pr = prd.payment_record %>
+                                            <tr>
+                                                <td><%= contact.id %><%= contact.sex == "female" ? "[Ms]" : "[Mr]" %></td>
+                                                <td><%= contact.name.titleize %></td>
+                                                <!--<td><%= contact.referrer.name if !contact.referrer.nil? %></td>-->
+                                                <!--<td><%= contact.birthday.strftime("%d-%b-%Y") if !contact.birthday.nil? %></td>-->
+                                                <!--<td><%= contact.address %></td>-->
+                                                <td><%= contact.email %><%= ("<br>"+contact.email_2s.join("<br>")).html_safe if !contact.email_2s.empty? %>
+                                                <br><%= contact.mobile %><%= ("<br>"+contact.mobile_2s.join("<br>")).html_safe if !contact.mobile_2s.empty? %></td>
+                                                <td><%= course.display_name %></td>
+                                                <td><%= format_price(prd.real_amount) %></td>
+                                                <td><%= pr.payment_date.strftime("%d-%b-%Y") %></td>
+                                                <td><%= pr.bank_account_name %></td>
+                                                <td><%= pr.bank_ref %></td>
+                                                <td><%= from_course.display_name %></td>
+                                            </tr>
+                                            <% total += prd.real_amount %>
+                                        <% end.empty? %>
+                                            <tr>
+                                                <td><%= contact.id %><%= contact.sex == "female" ? "[Ms]" : "[Mr]" %></td>
+                                                <td><%= contact.name.titleize %></td>
+                                                <!--<td><%= contact.referrer.name if !contact.referrer.nil? %></td>-->
+                                                <!--<td><%= contact.birthday.strftime("%d-%b-%Y") if !contact.birthday.nil? %></td>-->
+                                                <!--<td><%= contact.address %></td>-->
+                                                <td><%= contact.email %><%= ("<br>"+contact.email_2s.join("<br>")).html_safe if !contact.email_2s.empty? %>
+                                                <br><%= contact.mobile %><%= ("<br>"+contact.mobile_2s.join("<br>")).html_safe if !contact.mobile_2s.empty? %></td>
+                                                <td><%= course.display_name %></td>
+                                                <td></td>
+                                                <td></td>
+                                                <td></td>
+                                                <td></td>
+                                                <td></td>
+                                            </tr>
+                                        <% end %>
+                                    <% end %>
+                                <% end %>
+                            <% end %>
+                        <% end %>
                     <% end %>
                     <tr>
                         <td></td>

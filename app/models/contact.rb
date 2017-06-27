@@ -3074,4 +3074,17 @@ class Contact < ActiveRecord::Base
     self.update_info
   end
 
+  def find_related_payment_record_details(course, from_date=nil)
+    prds = PaymentRecordDetail.includes(:payment_record, :contacts_course => [:course, :contact])
+      .where(payment_records: {status: 1})
+      .where.not(contacts_course_id: nil)
+      .where(courses: {id: course.id})
+      .where(contacts: {id: self.id})
+    if from_date.present?
+      prds = prds.where("payment_records.payment_date >= ?", from_date.beginning_of_day)
+    end
+
+    return prds
+  end
+
 end

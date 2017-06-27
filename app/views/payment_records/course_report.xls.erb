@@ -16,26 +16,67 @@
         <Cell><Data ss:Type="String">Payment Date</Data></Cell>
         <Cell><Data ss:Type="String">Bank Account</Data></Cell>
         <Cell><Data ss:Type="String">Bank Ref</Data></Cell>
-        <Cell><Data ss:Type="String">Defer/Transfer</Data></Cell>
+        <Cell><Data ss:Type="String">Defer/Transfer from</Data></Cell>
       </Row>
       <% total = 0.0 %>
-      <% @records.each do |prd| %>
-        <% contact = prd.contacts_course.contact %>
-        <% course = prd.contacts_course.course %>
-        <% pr = prd.payment_record %>
-        <Row>
-            <Cell><Data ss:Type="String"><%= contact.sex == "female" ? "[Ms]" : "[Mr]" %></Data></Cell>
-            <Cell><Data ss:Type="String"><%= contact.name.titleize %></Data></Cell>
-            <Cell><Data ss:Type="String"><%= contact.email %><%= (";"+contact.email_2s.join(";")).html_safe if !contact.email_2s.empty? %></Data></Cell>
-            <Cell><Data ss:Type="String"><%= contact.mobile %><%= (";"+contact.mobile_2s.join(";")).html_safe if !contact.mobile_2s.empty? %></Data></Cell>
-            <Cell><Data ss:Type="String"><%= course.display_name %></Data></Cell>
-            <Cell><Data ss:Type="String"><%= format_price(prd.real_amount) %><% total += prd.real_amount %></Data></Cell>
-            <Cell><Data ss:Type="String"><%= pr.payment_date.strftime("%d-%b-%Y") %></Data></Cell>
-            <Cell><Data ss:Type="String"><%= pr.bank_account_name %></Data></Cell>
-            <Cell><Data ss:Type="String"><%= pr.bank_ref %></Data></Cell>
-            <Cell><Data ss:Type="String">Defer/Transfer</Data></Cell>
-        </Row>
+
+
+      <% @data[:records].each do |contact| %>
+          <% @data[:courses].each do |course| %>
+              <% if (contact.active_courses_with_phrases.map {|c| c[:course].id}).include?(course.id) %>
+                  <% if contact.find_related_payment_record_details(course).each do |prd| %>
+                      <% pr = prd.payment_record %>
+                      <Row>
+                          <Cell><Data ss:Type="String"><%= contact.sex == "female" ? "[Ms]" : "[Mr]" %></Data></Cell>
+                          <Cell><Data ss:Type="String"><%= contact.name.titleize %></Data></Cell>
+                          <Cell><Data ss:Type="String"><%= contact.email %><%= (";"+contact.email_2s.join(";")).html_safe if !contact.email_2s.empty? %></Data></Cell>
+                          <Cell><Data ss:Type="String"><%= contact.mobile %><%= (";"+contact.mobile_2s.join(";")).html_safe if !contact.mobile_2s.empty? %></Data></Cell>
+                          <Cell><Data ss:Type="String"><%= course.display_name %></Data></Cell>
+                          <Cell><Data ss:Type="String"><%= format_price(prd.real_amount) %></Data></Cell>
+                          <Cell><Data ss:Type="String"><%= pr.payment_date.strftime("%d-%b-%Y") %></Data></Cell>
+                          <Cell><Data ss:Type="String"><%= pr.bank_account_name %></Data></Cell>
+                          <Cell><Data ss:Type="String"><%= pr.bank_ref %></Data></Cell>
+                          <Cell><Data ss:Type="String"></Data></Cell>
+                      </Row>
+                      <% total += prd.real_amount %>
+                  <% end.empty? %>
+                      <% if !contact.active_received_transfers.where(to_course_id: course.id).empty? %>
+                          <% from_course = Course.find(contact.active_received_transfers.where(to_course_id: course.id).first.course_id) %>
+                          <% if contact.find_related_payment_record_details(from_course).each do |prd| %>
+                              <% pr = prd.payment_record %>
+                              <Row>
+                                  <Cell><Data ss:Type="String"><%= contact.sex == "female" ? "[Ms]" : "[Mr]" %></Data></Cell>
+                                  <Cell><Data ss:Type="String"><%= contact.name.titleize %></Data></Cell>
+                                  <Cell><Data ss:Type="String"><%= contact.email %><%= (";"+contact.email_2s.join(";")).html_safe if !contact.email_2s.empty? %></Data></Cell>
+                                  <Cell><Data ss:Type="String"><%= contact.mobile %><%= (";"+contact.mobile_2s.join(";")).html_safe if !contact.mobile_2s.empty? %></Data></Cell>
+                                  <Cell><Data ss:Type="String"><%= course.display_name %></Data></Cell>
+                                  <Cell><Data ss:Type="String"><%= format_price(prd.real_amount) %></Data></Cell>
+                                  <Cell><Data ss:Type="String"><%= pr.payment_date.strftime("%d-%b-%Y") %></Data></Cell>
+                                  <Cell><Data ss:Type="String"><%= pr.bank_account_name %></Data></Cell>
+                                  <Cell><Data ss:Type="String"><%= pr.bank_ref %></Data></Cell>
+                                  <Cell><Data ss:Type="String"><%= from_course.display_name %></Data></Cell>
+                              </Row>
+                              <% total += prd.real_amount %>
+                          <% end.empty? %>
+                              <Row>
+                                  <Cell><Data ss:Type="String"><%= contact.sex == "female" ? "[Ms]" : "[Mr]" %></Data></Cell>
+                                  <Cell><Data ss:Type="String"><%= contact.name.titleize %></Data></Cell>
+                                  <Cell><Data ss:Type="String"><%= contact.email %><%= (";"+contact.email_2s.join(";")).html_safe if !contact.email_2s.empty? %></Data></Cell>
+                                  <Cell><Data ss:Type="String"><%= contact.mobile %><%= (";"+contact.mobile_2s.join(";")).html_safe if !contact.mobile_2s.empty? %></Data></Cell>
+                                  <Cell><Data ss:Type="String"><%= course.display_name %></Data></Cell>
+                                  <Cell><Data ss:Type="String"></Data></Cell>
+                                  <Cell><Data ss:Type="String"></Data></Cell>
+                                  <Cell><Data ss:Type="String"></Data></Cell>
+                                  <Cell><Data ss:Type="String"></Data></Cell>
+                                  <Cell><Data ss:Type="String"></Data></Cell>
+                              </Row>
+                          <% end %>
+                      <% end %>
+                  <% end %>
+              <% end %>
+          <% end %>
       <% end %>
+
       <Row>
           <Cell><Data ss:Type="String"></Data></Cell>
           <Cell><Data ss:Type="String"></Data></Cell>
