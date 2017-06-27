@@ -2,7 +2,7 @@
     <div class="grid-body no-border filters">
         <%= form_tag(course_report_payment_records_path(tab_page:1)) do %>
             <div class="row order-filters">
-                <div class="col-md-2">
+                <!--<div class="col-md-2">
                     <h4>From Date</h4>
                     <div class="date_select_filter">
                     <div class="input-with-icon  right">
@@ -17,21 +17,20 @@
                 </div>
                 <div class="col-md-2">
                     <h4>To Date</h4>
-                    <div class="date_select_filter">
+                    <div class="">
                     <div class="input-with-icon  right">
-                        <div class="input-append success date col-md-10 no-padding" style="width: 100%">
-                            <%= text_field_tag :to_date, @to_date.strftime("%d-%b-%Y"), :class => "datetime form-control" %>
-                            <span class="add-on"><span class="arrow"></span><i class="icon-th"></i></span>
+                        <div class="input-append success col-md-10 no-padding" style="width: 100%">
+                            <strong><%= @to_date.strftime("%d-%b-%Y") %></strong>
                         </div>
                         <br style="clear: both" />
                     </div>
                     </div>
-                </div>
-                <div class="col-md-7">
+                </div>-->
+                <div class="col-md-8">
                     <h4>Course</h4>
                     <input values="<%= @the_courses %>" style="width:100%;margin-bottom: 5px;" name="the_courses" data="<%= courses_path(format: "json") %>" class="select2-ajax-courses multiple" />
                 </div>
-                <div class="col-md-1">
+                <div class="col-md-4">
                     <h4 style="color: #fff">.</h4>
                     <button class="btn btn-primary">Export</button>
                 </div>
