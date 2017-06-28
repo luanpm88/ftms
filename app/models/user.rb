@@ -796,7 +796,7 @@ class User < ActiveRecord::Base
                 puts "777777777777777777777777777777777777777777777777777777777777777777777777777777777777777"
               end
 
-     Inquiry # Student
+     #Inquiry # Student
         @contacts = Contact.main_contacts.includes(:contact_types, :course_types)
                             .where(creator_id: user_ids)
                             .where(is_individual: true)
