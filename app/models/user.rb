@@ -800,6 +800,7 @@ class User < ActiveRecord::Base
         @contacts = Contact.main_contacts.includes(:contact_types, :course_types)
                             .where(creator_id: user_ids)
                             .where(is_individual: true)
+                            .where(tmp_StudentID: nil)
                             .where("contacts.created_at >= ? AND contacts.created_at <= ? ", from_date, to_date)
 
         @contacts.each do |c|
