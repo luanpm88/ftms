@@ -9,19 +9,19 @@
       <div class="page-title"> <i class="icon-edit"></i>
         <h3><span class="semi-bold">User Statistic</span></h3>
       </div>
-      
+
       <div class="grid simple ">
-		
-		
+
+
         <form id="user-sales-statistic-filters-form" action="<%= url_for({controller: "users", action: "statistics_enhanced"})%>">
 				<% if params[:tab_page] %>
 						 <%= hidden_field_tag "tab_page", 1 %>
 				<% end %>
                   <div class="grid-body no-border filters sales_statistic-filter">
                   <div class="row order-filters">
-                      
+
                       <div class="col-md-5">
-                        <h4>Report period</h4>							
+                        <h4>Report period</h4>
                         <div class="date_select_filter">
                           <input name="report_period" data="<%= report_periods_path(format: "json") %>" class="select2-ajax-report-periods width100" value="<%= @report_period.id if !@report_period.nil? %>" text="<%= @report_period.display_name if !@report_period.nil? %>" />
                         </div>
@@ -35,7 +35,7 @@
                                   <span class="add-on"><span class="arrow"></span><i class="icon-th"></i></span>
                                 </div>
                                 <br style="clear: both" />
-                                
+
                               </div>
                               </div>
                           </div>
@@ -53,8 +53,8 @@
                           </div>
                         </div>
                       </div>
-                    
-                      
+
+
                       <% if !current_user.lower?("manager") %>
                           <div class="col-md-4">
                             <h4>Consultant</h4>
@@ -79,20 +79,20 @@
                   </div>
         </form>
 	  </div>
-    
+
   <% if params[:calculate].present? %>
       <hr >
       <div class="row">
             <div class="col-md-12">
           <%= link_to 'Print', download_statistics_users_path(format: "pdf", report_period: params[:report_period], from_date: @from_date, to_date: @to_date, users: params[:users]), :class => 'btn btn-primary btn-cons', target: "_blank" %>
           <%= link_to 'Print (Excel)', download_statistics_users_path(format: "xls", report_period: params[:report_period], from_date: @from_date, to_date: @to_date, users: params[:users]), :class => 'btn btn-primary btn-cons', target: "_blank" %>
-                <div class="grid simple ">                  
-                    <div class="grid-body no-border">                       
+                <div class="grid simple ">
+                    <div class="grid-body no-border">
                           <table class="table no-more-tables no-filter">
                                 <thead>
-                                    <tr>                                                
+                                    <tr>
                                         <th>Consultant</th>
-                      
+
                                         <th class="text-center">Program</th>
                       <th class="text-center">Note Log</th>
                                         <th class="text-right">Sales</th>
@@ -103,9 +103,9 @@
                       <% end %>
                       <th class="text-center">Paper</th>
                       <th class="text-center">New Inquiry</th>
-                      <th class="text-center">New Student</th>									  
+                      <th class="text-center">New Student</th>
                       <th width="1%" class="text-center">
-                      
+
                       </th>
                                     </tr>
                                 </thead>
@@ -114,12 +114,12 @@
                       <td class="text-center"><strong class=" paid"><%= format_price(@result[:total][:note]) %></strong></td>
                       <td class="text-right"><strong class=" paid"><%= format_price(@result[:total][:sales]) %></strong></td>
                       <td class="text-right"><strong class=" paid"><%= format_price(@result[:total][:receivable]) %></strong></td>
-                      
+
                       <% if !@report_period.nil? %>
                         <td class="text-right"></td>
                         <td class="text-right nowrap"></td>
                       <% end %>
-                      
+
                       <td class="text-center"><strong class=" paid"><%= format_price(@result[:total][:paper]) %></strong></td>
                       <td class="text-center"><strong class=" paid"><%= format_price(@result[:total][:inquiry]) %></strong></td>
                       <td class="text-center"><strong class=" paid"><%= format_price(@result[:total][:student]) %></strong></td>
@@ -131,9 +131,9 @@
                           <td>
                               <%= user_values[:user].name %>
                           </td>
-                          
+
                           <td class="text-center">
-                              
+
                               All</td>
                           <td class="text-center">
                               <strong><%= format_price(user_values[:note]) %></strong>
@@ -144,15 +144,15 @@
                           <td class="text-right">
                               <strong><%= format_price(user_values[:receivable]) %></strong>
                           </td>
-                          
+
                           <% if !@report_period.nil? %>
                             <td class="text-right"><strong><%= format_price(user_values[:user].get_sales_target(@report_period)) %></strong></td>
                             <td class="text-right nowrap"><strong><%= format_price(user_values[:user].get_sales_target(@report_period)-user_values[:sales]) %></strong></td>
                           <% end %>
-                          
+
                           <td class="text-center">
                               <strong><%= user_values[:paper] %></strong>
-                          </td>												
+                          </td>
                           <td class="text-center">
                               <strong><%= user_values[:inquiry] %></strong>
                           </td>
@@ -169,7 +169,7 @@
                       </tr>
                       <% user_values[:details].each do |row2| %>
                         <% ct_id, ct_values = row2 %>
-                          <% if true %>
+                          <% if ct_values[:show] %>
                             <tr class="details_row detail-u-<%= user_id %>" style="display: none">
                                 <td>
 					<%= user_values[:user].name %>
@@ -182,7 +182,7 @@
                                     <%= format_price(ct_values[:sales]) %>
 				    <div>
                                         <% ct_values[:cutom_payment_contacts].uniq.each do |c| %>
-                                          <div><%= c[:contact].contact_link %><br />(<%= format_price(c[:amount]) %>)</div>		
+                                          <div><%= c[:contact].contact_link %><br />(<%= format_price(c[:amount]) %>)</div>
                                         <% end %>
                                     </div>
                                 </td>
@@ -192,7 +192,7 @@
                                     </strong>
                                     <div>
                                         <% ct_values[:receivable_contacts].uniq.each do |c| %>
-                                          <div><%= c.contact_link %></div>		
+                                          <div><%= c.contact_link %></div>
                                         <% end %>
                                     </div>
                                 </td>
@@ -202,7 +202,7 @@
                                 <% end %>
                                 <td class="text-center">
                                     <%= ct_values[:paper] %>
-                                </td>													  
+                                </td>
                                 <td class="text-center">
                                     <%= ct_values[:inquiry] %>
                                 </td>
@@ -213,17 +213,17 @@
                             </tr>
                           <% end %>
                       <% end %>
-                      
+
                     <% end %>
-                  
-                  
-                  
+
+
+
                             </table>
                     </div>
                 </div>
-    
+
             </div>
-    
+
         </div>
-	  
+
   <% end %>
