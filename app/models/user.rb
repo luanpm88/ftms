@@ -745,7 +745,7 @@ class User < ActiveRecord::Base
                                                 .where(course_types: {id: course_type_ids})
                                                 .where(course_registers: {account_manager_id: user_ids})
                                                 .where("course_registers.created_at <= ? ", to_date)
-                                                .where("course_registers.created_at >= ? ", from_date)
+                                                # .where("course_registers.created_at >= ? ", from_date)
 
               contacts_courses.each do |cc|
                 if !cc.course_register.paid?(to_date.end_of_day)
@@ -768,7 +768,7 @@ class User < ActiveRecord::Base
                                                 .where(course_types: {id: course_type_ids})
                                                 .where(course_registers: {account_manager_id: user_ids})
                                                 .where("course_registers.created_at <= ? ", to_date)
-                                                .where("course_registers.created_at >= ? ", from_date)
+                                                # .where("course_registers.created_at >= ? ", from_date)
 
               books_contacts.each do |cc|
                 if !cc.course_register.paid?(to_date.end_of_day)
@@ -787,7 +787,7 @@ class User < ActiveRecord::Base
               transfers = Transfer.includes(:contact).where(parent_id: nil).where("transfers.status IS NOT NULL AND transfers.status NOT LIKE ? AND transfers.cache_payment_status LIKE ?", "%[deleted]%", "%receivable%")
                                                 .where(contacts: {account_manager_id: user_ids})
                                                 .where("transfers.created_at <= ? ", to_date)
-                                                .where("transfers.created_at >= ? ", from_date)
+                                                # .where("transfers.created_at >= ? ", from_date)
 
               transfers.each do |tsf|
                 if tsf.remain(nil, to_date) != 0.0
