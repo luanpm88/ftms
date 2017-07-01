@@ -855,7 +855,7 @@ class User < ActiveRecord::Base
           users_statistics[cc.course_register.account_manager_id][:details][cc.course.course_type_id][:paper] += 1
           users_statistics[cc.course_register.account_manager_id][:paper] += 1
 
-          puts "5555555555555555555555555555555555555555555555555555555555555555555555555555"
+          puts "8888888888888888888888888888888888888888888888888888888888888888888888888888888"
         end
 
 
@@ -880,7 +880,7 @@ class User < ActiveRecord::Base
             users_statistics[u[0]][:details][ct[0]][:show] = false if ct[1][:paper]+ct[1][:sales]+ct[1][:receivable]+ct[1][:inquiry]+ct[1][:student] == 0
           end
 
-          puts "6666666666666666666666666666666666666666666666666666666666666666666666666666666"
+          puts "9999999999999999999999999999999999999999999999999999999999999999999999999999999"
         end
 
 
