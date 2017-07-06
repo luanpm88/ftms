@@ -11,11 +11,11 @@
           <Cell><Data ss:Type="String">Company</Data></Cell>
           <Cell><Data ss:Type="String">Adress</Data></Cell>
           <Cell><Data ss:Type="String">Email</Data></Cell>
-          <Cell><Data ss:Type="String">Phone</Data></Cell>        
+          <Cell><Data ss:Type="String">Phone</Data></Cell>
           <Cell><Data ss:Type="String">Mobile</Data></Cell>
           <Cell><Data ss:Type="String">Remark to admin</Data></Cell>
           <Cell><Data ss:Type="String">EC</Data></Cell>
-          <Cell><Data ss:Type="String">Total.Contacts</Data></Cell>          
+          <Cell><Data ss:Type="String">Total.Contacts</Data></Cell>
           <% CourseType.active_course_types.each do |ct| %>
             <Cell><Data ss:Type="String"><%= ct.short_name %></Data></Cell>
           <% end %>
@@ -27,9 +27,10 @@
           <Cell><Data ss:Type="String">DOB</Data></Cell>
           <Cell><Data ss:Type="String">Adress</Data></Cell>
           <Cell><Data ss:Type="String">Email</Data></Cell>
-          <Cell><Data ss:Type="String">Phone</Data></Cell>        
+          <Cell><Data ss:Type="String">Phone</Data></Cell>
           <Cell><Data ss:Type="String">Mobile</Data></Cell>
           <Cell><Data ss:Type="String">Remark to admin</Data></Cell>
+          <Cell><Data ss:Type="String">ACCA Reg No</Data></Cell>
         <% end %>
       </Row>
     <% @contacts.each do |contact| %>
@@ -42,7 +43,7 @@
           <Cell><Data ss:Type="String"><%= contact.mobile %><%= (";"+contact.mobile_2s.join(";")) if !contact.mobile_2s.empty? %></Data></Cell>
           <Cell><Data ss:Type="String"><%= contact.remark_to_admin %></Data></Cell>
           <Cell><Data ss:Type="String"><%= contact.account_manager_list %></Data></Cell>
-          <Cell><Data ss:Type="String"><%= contact.company_contacts.count.to_s %></Data></Cell>          
+          <Cell><Data ss:Type="String"><%= contact.company_contacts.count.to_s %></Data></Cell>
           <% CourseType.active_course_types.each do |ct| %>
             <Cell><Data ss:Type="String"><%= contact.students_by_course_type(ct.id).count %></Data></Cell>
           <% end %>
@@ -57,7 +58,7 @@
           <Cell><Data ss:Type="String"><%= contact.phone %></Data></Cell>
           <Cell><Data ss:Type="String"><%= contact.mobile %><%= (";"+contact.mobile_2s.join(";")) if !contact.mobile_2s.empty? %></Data></Cell>
           <Cell><Data ss:Type="String"><%= contact.remark_to_admin %></Data></Cell>
-        <% end %>
+          <Cell><Data ss:Type="String"><% if !contact.base_items.empty? %><% contact.base_items.each do |item| %><% if item["course_type"].present? and item["course_type"].short_name == 'ACCA' %><%= item["name"] %><% end %><% end %><% end %><% end %></Data></Cell>
       </Row>
     <% end %>
     </Table>
