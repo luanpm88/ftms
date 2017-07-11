@@ -159,7 +159,7 @@ class PaymentRecord < ActiveRecord::Base
     @records.each do |item|
       item = [
               "<div item_id=\"#{item.id.to_s}\" class=\"main_part_info checkbox check-default\"><input name=\"ids[]\" id=\"checkbox#{item.id}\" type=\"checkbox\" value=\"#{item.id}\"><label for=\"checkbox#{item.id}\"></label></div>",
-              item.contact.contact_link+"<br>#{item.note}".html_safe,
+              item.contact.contact_link,
               "",
               "",
               "",
@@ -279,7 +279,7 @@ class PaymentRecord < ActiveRecord::Base
         students[cr.contact_id] = students[cr.contact_id].nil? ? 1 : students[cr.contact_id] + 1
       end
 
-      return "Student count: #{students.count.to_s}; Paper count: #{paper_count.to_s}"
+      return "Student count: #{students.count.to_s}; Paper count: #{paper_count.to_s}"+"#{self.note}".html_safe
     elsif !transfer.nil?
       "Defer/Transfer at [#{transfer.created_at.strftime("%d-%b-%Y")}]"
     elsif !contact_id.nil?
@@ -298,7 +298,7 @@ class PaymentRecord < ActiveRecord::Base
         students[cr.contact_id] = students[cr.contact_id].nil? ? 1 : students[cr.contact_id] + 1
       end
 
-      return "<span class=\"text-nowrap\">Student count: <strong>#{students.count.to_s}</strong></span><br /><span class=\"text-nowrap\">Paper count: <strong>#{paper_count.to_s}<strong></span>"
+      return "<span class=\"text-nowrap\">Student count: <strong>#{students.count.to_s}</strong></span><br /><span class=\"text-nowrap\">Paper count: <strong>#{paper_count.to_s}</strong></span>"+"<br><br>#{self.note}".html_safe
     elsif !transfer.nil?
       "Defer/Transfer at [#{transfer.created_at.strftime("%d-%b-%Y")}]"
     elsif !contact_id.nil?
