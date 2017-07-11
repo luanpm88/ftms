@@ -159,7 +159,7 @@ class PaymentRecord < ActiveRecord::Base
     @records.each do |item|
       item = [
               "<div item_id=\"#{item.id.to_s}\" class=\"main_part_info checkbox check-default\"><input name=\"ids[]\" id=\"checkbox#{item.id}\" type=\"checkbox\" value=\"#{item.id}\"><label for=\"checkbox#{item.id}\"></label></div>",
-              item.contact.contact_link,
+              item.contact.contact_link+"<br>#{item.note}".html_safe,
               "",
               "",
               "",
