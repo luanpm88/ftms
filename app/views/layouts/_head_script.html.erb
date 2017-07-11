@@ -3602,7 +3602,8 @@
 				var form = $(".listing_form")
 				var link = $(this)
 				if (typeof($(this).attr("type")) != 'undefined' && $(this).attr("type") == "tab") {
-					parent.openTab(link.attr("rel")+"&"+form.serialize(), link.attr("title"))
+					var seee = form.serialize().replace(/&reason=&/g,"&").replace(/&books_contact_id=\d+/g,"");
+					parent.openTab(link.attr("rel")+"&"+seee, link.attr("title"))
 				} else if(typeof($(this).attr("type")) != 'undefined' && $(this).attr("type") == "ajax") {
 					$.ajax({
 							type: "POST",
