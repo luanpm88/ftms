@@ -649,7 +649,7 @@ class Course < ActiveRecord::Base
   end
 
   def set_statuses(arr)
-    self.update_column(:status, "["+arr.join("][")+"]")
+    self.update_attribute(:status, "["+arr.join("][")+"]")
   end
 
   def add_status(st)
