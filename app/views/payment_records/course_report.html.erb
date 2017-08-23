@@ -143,6 +143,22 @@
                                                 <% end %>
                                             <% end %>
                                         <% end %>
+                                    <% else %>
+                                        <tr>
+                                            <td><%= contact.id %><%= contact.sex == "female" ? "[Ms]" : "[Mr]" %></td>
+                                            <td><%= contact.name.titleize %></td>
+                                            <!--<td><%= contact.referrer.name if !contact.referrer.nil? %></td>-->
+                                            <!--<td><%= contact.birthday.strftime("%d-%b-%Y") if !contact.birthday.nil? %></td>-->
+                                            <!--<td><%= contact.address %></td>-->
+                                            <td><%= contact.email %><%= ("<br>"+contact.email_2s.join("<br>")).html_safe if !contact.email_2s.empty? %>
+                                            <br><%= contact.mobile %><%= ("<br>"+contact.mobile_2s.join("<br>")).html_safe if !contact.mobile_2s.empty? %></td>
+                                            <td><%= course.display_name %></td>
+                                            <td>0</td>
+                                            <td></td>
+                                            <td></td>
+                                            <td></td>
+                                            <td></td>
+                                        </tr>
                                     <% end %>
                                 <% end %>
                             <% end %>
