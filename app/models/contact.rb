@@ -2227,7 +2227,15 @@ class Contact < ActiveRecord::Base
               exist = true
             end
           end
-          origin << {full_course: transfer.to_full_course,remain: 0,contacts_courses: [],course: course, courses_phrases: courses_phrases, hour: transfer.to_course_hour, money: transfer.to_course_money, created_at: transfer.created_at} if exist == false
+          origin << {full_course: transfer.to_full_course,
+            remain: 0,
+            contacts_courses: [],
+            course: course,
+            courses_phrases: courses_phrases,
+            hour: (transfer.to_full_course == true ? transfer.to_course.total_hour : transfer.to_course_hour),
+            money: transfer.to_course_money,
+            created_at: transfer.created_at
+          } if exist == false
 
 
         end
