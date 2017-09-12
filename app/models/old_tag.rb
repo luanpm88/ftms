@@ -1,5 +1,7 @@
 class OldTag < ActiveRecord::Base
 
+	has_many :contacts, foreign_key: 'tmp_StudentID', primary_key: 'student_id'
+
 	def self.import_old_tag(database)
 		OldTag.destroy_all
 		database[:Tags].each do |row|
@@ -11,7 +13,7 @@ class OldTag < ActiveRecord::Base
 		end
 	end
 
-	def self.full_text_search(params)    
+	def self.full_text_search(params)
 		tags = self.select(:tag_name).order("tag_name")
 		tags = tags.where("LOWER(old_tags.tag_name) LIKE ?", "%#{params[:q].strip.downcase}%") if params[:q].present?
 		tags = tags.uniq.limit(50)

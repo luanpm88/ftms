@@ -3,7 +3,7 @@ class OldTagsController < ApplicationController
 
   def index
     #@books = Book.all
-    
+
     respond_to do |format|
       format.html
       format.json {
@@ -11,13 +11,17 @@ class OldTagsController < ApplicationController
       }
     end
   end
-  
+
   # DELETE /phrases/1
   # DELETE /phrases/1.json
   def delete
     @phrase = OldTag.find(params[:id])
     @phrase.destroy
-    
+
+    @phrase.contacts.each do |c|
+      c.update_cache_old_tags
+    end
+
     render nothing: true
   end
 
