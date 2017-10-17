@@ -31,6 +31,8 @@
           <Cell><Data ss:Type="String">Mobile</Data></Cell>
           <Cell><Data ss:Type="String">Remark to admin</Data></Cell>
           <Cell><Data ss:Type="String">ACCA Reg No</Data></Cell>
+          <Cell><Data ss:Type="String">Courses</Data></Cell>
+          <Cell><Data ss:Type="String">EC</Data></Cell>
         <% end %>
       </Row>
     <% @contacts.each do |contact| %>
@@ -59,6 +61,8 @@
           <Cell><Data ss:Type="String"><%= contact.mobile %><%= (";"+contact.mobile_2s.join(";")) if !contact.mobile_2s.empty? %></Data></Cell>
           <Cell><Data ss:Type="String"><%= contact.remark_to_admin %></Data></Cell>
           <Cell><Data ss:Type="String"><% if !contact.base_items.empty? %><% contact.base_items.each do |item| %><% if item["course_type"].present? and item["course_type"].short_name == 'ACCA' %><%= item["name"] %><% end %><% end %><% end %><% end %></Data></Cell>
+          <Cell><Data ss:Type="String"><%= (contact.active_courses_with_phrases.map {|c| c[:course].name }).join('; ') %></Data></Cell>
+          <Cell><Data ss:Type="String"><%= !contact.account_manager.nil? ? contact.account_manager.name : "" %></Data></Cell>
       </Row>
     <% end %>
     </Table>
