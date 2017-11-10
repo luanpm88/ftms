@@ -487,6 +487,9 @@ class CourseRegister < ActiveRecord::Base
     # @records = @records.search(params["search"]["value"]) if !params["search"]["value"].empty?
     @records = @records.where("LOWER(course_registers.cache_search) LIKE ?", "%#{params["search"]["value"].unaccent.strip.downcase}%") if params["search"].present? && !params["search"]["value"].empty?
 
+    # not dhow deleted contact
+    @records = @records.joins(:contact).where("contacts.status IS NOT NULL AND contacts.status NOT LIKE ?", "%[deleted]%")
+
     if !params["order"].nil?
       case params["order"]["0"]["column"]
       when false

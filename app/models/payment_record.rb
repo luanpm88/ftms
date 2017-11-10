@@ -402,7 +402,10 @@ class PaymentRecord < ActiveRecord::Base
   end
 
   def self.datatable_payment_list(params, user)
-    @records = ContactsCourse.joins(:course_register, :contact).where("course_registers.parent_id IS NULL").where("course_registers.status LIKE ?", "%[active]%")
+    @records = ContactsCourse.joins(:course_register, :contact)
+      .where("contacts.status IS NOT NULL AND contacts.status NOT LIKE ?", "%[deleted]%")
+      .where("course_registers.parent_id IS NULL")
+      .where("course_registers.status LIKE ?", "%[active]%")
 
     course_ids = nil
     if params["intake_year"].present? && params["intake_month"].present?
