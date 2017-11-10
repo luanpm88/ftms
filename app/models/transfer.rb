@@ -379,7 +379,9 @@ class Transfer < ActiveRecord::Base
 
   def display_statuses
     return "" if statuses.empty?
-    result = statuses.map {|s| "<span title=\"Last updated: #{last_updated.created_at.strftime("%d-%b-%Y, %I:%M %p")}; By: #{last_updated.user.name}\" class=\"badge user-role badge-info contact-status #{s}\">#{s}</span>"}
+    result = statuses.map {|s|
+      (last_updated.present? ? "<span title=\"Last updated: #{last_updated.created_at.strftime("%d-%b-%Y, %I:%M %p")}; By: #{last_updated.user.name}\" class=\"badge user-role badge-info contact-status #{s}\">#{s}</span>" : '')
+    }
     result.join(" ").html_safe
   end
 
