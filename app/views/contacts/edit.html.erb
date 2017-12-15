@@ -10,7 +10,10 @@
 		  <i class="icon-user"></i>
 		  <h3 class="nowrap mbt-5"><span class="semi-bold"><%= @contact.display_name %></span>
 		  <br />
-		  <%= "Approved at: #{@contact.created_at.strftime("%d-%b-%Y %I:%M %p")};
+              <% if @contact.draft? %>
+                    <%=  (@contact.statuses.reject { |c| c.empty? }).join(',') %> /
+              <% end %>
+		  <%= "updated at: #{@contact.created_at.strftime("%d-%b-%Y %I:%M %p")};
 		   by: #{@contact.editor.name}" if @contact.draft? %></h3>
 
 		</div>
@@ -19,7 +22,7 @@
 
 		<div class="top-buts">
 				<%= render_contacts_actions(@contact, "big") if !@contact.draft? %>
-				<%= render_history_actions(@contact) %>
+				<%= render_all_history_actions(@contact) %>
 		</div>
 		<div>
 				<%= @contact.display_statuses if !@contact.draft? %>

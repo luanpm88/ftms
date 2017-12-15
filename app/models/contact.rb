@@ -1547,12 +1547,13 @@ class Contact < ActiveRecord::Base
   end
 
   def last_updated
+    return nil if self.draft?
     return current if older.nil? or current.statuses.include?("new_pending") or current.statuses.include?("education_consultant_pending") or current.statuses.include?("update_pending") or current.statuses.include?("delete_pending")
     return older
   end
 
   def editor
-    return last_updated.nil? ? self : last_updated.user
+    return last_updated.nil? ? self.user : last_updated.user
   end
 
 
