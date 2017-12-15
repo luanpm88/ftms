@@ -134,7 +134,7 @@ module ContactsHelper
 
       actions = '<div class="text-right but"><div class="btn-group actions">
                     <button class="btn btn-big btn-white btn-demo-space dropdown-toggle" data-toggle="dropdown"><i class="icon-time"></i> Histories <span class="caret"></span></button>'
-      actions += '<ul class="dropdown-menu">'
+      actions += '<ul class="dropdown-menu pull-right">'
 
       item.drafts.order("created_at DESC").each do |d|
         actions += '<li>'+ActionController::Base.helpers.link_to("#{d.created_at.strftime("%d-%b-%Y %I:%M %p")} #{(d.statuses.reject { |c| c.empty? }).join(',')}", {controller: "contacts", action: "edit", id: d.id, tab_page: 1}, title: "[#{d.created_at.strftime("%d-%b-%Y %I:%M %p")}] #{d.display_name}", class: "tab_page")+'</li>'
