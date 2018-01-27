@@ -441,7 +441,7 @@ class Transfer < ActiveRecord::Base
       while recent.statuses.include?("delete_pending") || recent.statuses.include?("deleted")
         recent = recent.older
       end
-      self.update_column(:status, recent.status)
+      self.update_attribute(:status, recent.status)
 
       self.check_statuses
 
@@ -471,7 +471,7 @@ class Transfer < ActiveRecord::Base
   end
 
   def set_statuses(arr)
-    self.update_column(:status, "["+arr.join("][")+"]")
+    self.update_attribute(:status, "["+arr.join("][")+"]")
   end
 
   def add_status(st)
@@ -870,6 +870,7 @@ class Transfer < ActiveRecord::Base
     if self.course.course_type_id
       result = result.where(course_type_id: self.course.course_type_id)
     end
+
     if self.course.subject_id
       result = result.where(subject_id: self.course.subject_id)
     end
@@ -906,7 +907,5 @@ class Transfer < ActiveRecord::Base
     self.update_cache_search
     self.update_contact_info
   end
-
-
 
 end
