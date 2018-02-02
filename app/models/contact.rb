@@ -1949,9 +1949,7 @@ class Contact < ActiveRecord::Base
     #result += active_payment_records.sum(:amount)
 
     # transfer credit
-    # result -= active_transfers.sum(:credit_money)
-
-    result -= active_payment_records.where.not(transfer_id: nil).sum(:amount)
+    result -= active_transfers.sum(:credit_money)
 
     return result
   end
@@ -2020,26 +2018,26 @@ class Contact < ActiveRecord::Base
       logs << row
     end
 
-    # custom payment
-    active_payment_records.where.not(transfer_id: nil).each do |t|
-      row = {}
-      row[:datetime] = t.created_at
-      row[:content] = "Pay defer/transfer fee by credit"
-      row[:creator] = t.user.staff_col
-      row[:sign] = "+"
-      row[:money] = t.amount
-      logs << row
-    end
-
-    #active_transfers.each do |t|
+    ## custom payment
+    #active_payment_records.where.not(transfer_id: nil).each do |t|
     #  row = {}
     #  row[:datetime] = t.created_at
     #  row[:content] = "Pay defer/transfer fee by credit"
     #  row[:creator] = t.user.staff_col
-    #  row[:sign] = "-"
-    #  row[:money] = t.credit_money
+    #  row[:sign] = "+"
+    #  row[:money] = t.amount
     #  logs << row
     #end
+
+    active_transfers.each do |t|
+      row = {}
+      row[:datetime] = t.created_at
+      row[:content] = "Pay defer/transfer fee by credit"
+      row[:creator] = t.user.staff_col
+      row[:sign] = "-"
+      row[:money] = t.credit_money
+      logs << row
+    end
 
     return (logs.sort! { |a,b| a[:datetime] <=> b[:datetime] })
   end
