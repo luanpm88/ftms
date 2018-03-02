@@ -708,6 +708,20 @@ class Contact < ActiveRecord::Base
     return result
   end
 
+  def account_manager_name
+    if is_individual
+      result = !account_manager.nil? ? account_manager.short_name : ""
+    else
+      arr = []
+      contacts.each do |c|
+        arr << c.account_manager if !c.account_manager.nil? && !arr.include?(c.account_manager)
+      end
+
+      result = (arr.map {|u| u.short_name}).join(", ")
+    end
+    return result
+  end
+
   def account_manager_list
     if is_individual
       result = !account_manager.nil? ? account_manager.name : ""
