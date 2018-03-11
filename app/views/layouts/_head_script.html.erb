@@ -4376,6 +4376,21 @@
 				type: 'iframe'
 			});
 		});
+		
+		// fancybox link
+		$(document).on("click", ".form-actions .btn, .one_click_btn", function(e) {
+			if ($(this).closest('form').valid()) {
+				$(this).addClass('btn-disabled');
+				$(this).addClass('btn-warning');
+				$(this).html('... loading');
+			}
+		});
+		
+		$(document).on("click", ".form-actions .btn.btn-disabled, .one_click_btn.btn-disabled", function(e) {
+			e.preventDefault();
+			e.stopPropagation();
+			e.stopImmediatePropagation();
+		});
 
 	})
 
