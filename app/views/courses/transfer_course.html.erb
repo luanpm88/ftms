@@ -3,19 +3,19 @@
               <div class="grid simple">
                 <div class="grid-titles no-border">
                   <h4>Defer/Transfer <span class="semi-bold">Course</span></h4>
-                  
-                </div>     
-                
+
+                </div>
+
                 <div class="grid-body no-border transfer_course_from">
                   <%= form_for(@transfer) do |f| %>
-					
+
 					<%= hidden_field_tag("tab_page", 1) if params[:tab_page] %>
 					<%= f.hidden_field :contact_id %>
-					
+
 					<div class="row column-seperation">
 						 <div class="col-md-6">
-                            <h3>From</h3>           
-                            
+                            <h3>From</h3>
+
 
                             <div class="form-group">
                                <label class="form-label"><label>Contact</label></label>
@@ -27,12 +27,12 @@
 								   </div>
                                </div>
                             </div>
-							
+
 							<div class="form-group transfer_course_box">
 								   <div class="form-group">
 											<label class="form-label"><%= f.label :course %></label>
 											<span class="help">(required)</span>
-											<div class="input-with-icon  right">                                       
+											<div class="input-with-icon  right">
 												 <i class=""></i>
 												 <div class="input-with_add_but">
 													  <%= link_to '<i class="icon-plus"></i>'.html_safe, new_course_path(tab_page: 1), title: "New Course", :class => 'btn btn-sm btn-small btn-white tab_page' %>
@@ -40,75 +40,75 @@
 												 </div>
 											</div>
 								   </div>
-								   
+
 								   <div class="course_phrases_list"></div>
-	
+
 							</div>
-                           
+
 						 </div>
 						 <div class="col-md-6">
 							  <h3>To</h3>
-							  
-							  
-							  
+
+
+
 							  <div class="transfer_to_box">
-						 
-							  
-						 
+
+
+
 							  </div>
-						 
+
 						 </div>
 					</div>
-					
+
 					<hr />
-					
+
 					<div class="row">
 						 <div class="col-md-6">
 							  <h3>Admin Fee <span style="font-size: 16px; color: #888">(required)</span></h3>
-							  <div class="form-group">                                    
-                                    <div class="input-with-iconz right">                                       
+							  <div class="form-group">
+                                    <div class="input-with-iconz right">
                                          <i class=""></i>
                                           <div class="input-with_add_butz">
                                             <%= f.text_field "admin_fee", class: "form-control price_input price_discount required" %>
                                           </div>
                                     </div>
 							  </div>
-							  
+
 						 </div>
 						 <div class="col-md-6">
 							  <h3>Note</h3>
 							  <div class="form-group">
 								   <span class="help"></span>
-								   
-								   <div class="input-with-icon  right">                                       
+
+								   <div class="input-with-icon  right">
 										   <i class=""></i>
 										   <%= f.text_area :note, :class => "form-control", style: "height: 160px" %>
 								   </div>
 							  </div>
 						 </div>
 					</div>
-					
-					
-					
-					
+
+
+
+
 					<div class="row">
-						 
+
 					</div>
-					
-                      <div class="form-actions">  
+
+                      <div class="form-actions">
                            <div class="pull-right">
-                              <button type="submit" class="btn btn-success btn-cons"><i class="icon-ok"></i> Save</button>
+                              <button type="submit" class="btn btn-success btn-cons one_click_btn"><i class="icon-ok"></i> Save</button>
 
                             <%= link_to 'Cancel', users_path, :class => "btn btn-white btn-cons cancel-but" %>
                          </div>
                       </div>
 
-							  
+
 					<% end %>
 			   </div>
 			 </div>
             </div>
-			
+
       </div>
 
 <script>
