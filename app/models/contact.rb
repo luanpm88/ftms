@@ -708,6 +708,20 @@ class Contact < ActiveRecord::Base
     return result
   end
 
+  def account_manager_name
+    if is_individual
+      result = !account_manager.nil? ? account_manager.short_name : ""
+    else
+      arr = []
+      contacts.each do |c|
+        arr << c.account_manager if !c.account_manager.nil? && !arr.include?(c.account_manager)
+      end
+
+      result = (arr.map {|u| u.short_name}).join(", ")
+    end
+    return result
+  end
+
   def account_manager_list
     if is_individual
       result = !account_manager.nil? ? account_manager.name : ""
@@ -2019,10 +2033,10 @@ class Contact < ActiveRecord::Base
     end
 
     ## custom payment
-    #active_payment_records.each do |t|
+    #active_payment_records.where.not(transfer_id: nil).each do |t|
     #  row = {}
     #  row[:datetime] = t.created_at
-    #  row[:content] = "Custom payment"
+    #  row[:content] = "Pay defer/transfer fee by credit"
     #  row[:creator] = t.user.staff_col
     #  row[:sign] = "+"
     #  row[:money] = t.amount

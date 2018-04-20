@@ -852,7 +852,7 @@ class Transfer < ActiveRecord::Base
         hour_id = self.course.course_type_id.to_s+"-"+self.course.subject_id.to_s
         self.to_contact.budget_hour[hour_id].to_f >= self.hour # && false
       elsif self.to_type == "money"
-        self.to_contact.budget_money >= self.money # && false
+        self.to_contact.budget_money >= self.money.to_f - self.credit_money.to_f # && false
       else
         false
       end

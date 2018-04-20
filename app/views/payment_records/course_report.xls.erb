@@ -11,6 +11,7 @@
         <Cell><Data ss:Type="String">Full Name</Data></Cell>
         <Cell><Data ss:Type="String">Email</Data></Cell>
         <Cell><Data ss:Type="String">Mobile</Data></Cell>
+        <Cell><Data ss:Type="String">EC</Data></Cell>
         <Cell><Data ss:Type="String">Course</Data></Cell>
         <Cell><Data ss:Type="String">Money</Data></Cell>
         <Cell><Data ss:Type="String">Payment Date</Data></Cell>
@@ -31,6 +32,7 @@
                           <Cell><Data ss:Type="String"><%= contact.name.titleize %></Data></Cell>
                           <Cell><Data ss:Type="String"><%= contact.email %><%= (";"+contact.email_2s.join(";")).html_safe if !contact.email_2s.empty? %></Data></Cell>
                           <Cell><Data ss:Type="String"><%= contact.mobile %><%= (";"+contact.mobile_2s.join(";")).html_safe if !contact.mobile_2s.empty? %></Data></Cell>
+                          <Cell><Data ss:Type="String"><%= contact.account_manager_name %></Data></Cell>
                           <Cell><Data ss:Type="String"><%= course.display_name %></Data></Cell>
                           <Cell><Data ss:Type="String"><%= format_price(prd.real_amount) %></Data></Cell>
                           <Cell><Data ss:Type="String"><%= pr.payment_date.strftime("%d-%b-%Y") %></Data></Cell>
@@ -49,6 +51,7 @@
                                   <Cell><Data ss:Type="String"><%= contact.name.titleize %></Data></Cell>
                                   <Cell><Data ss:Type="String"><%= contact.email %><%= (";"+contact.email_2s.join(";")).html_safe if !contact.email_2s.empty? %></Data></Cell>
                                   <Cell><Data ss:Type="String"><%= contact.mobile %><%= (";"+contact.mobile_2s.join(";")).html_safe if !contact.mobile_2s.empty? %></Data></Cell>
+                                  <Cell><Data ss:Type="String"><%= contact.account_manager_name %></Data></Cell>
                                   <Cell><Data ss:Type="String"><%= course.display_name %></Data></Cell>
                                   <Cell><Data ss:Type="String"><%= format_price(prd.real_amount) %></Data></Cell>
                                   <Cell><Data ss:Type="String"><%= pr.payment_date.strftime("%d-%b-%Y") %></Data></Cell>
@@ -67,6 +70,7 @@
                                           <Cell><Data ss:Type="String"><%= contact.name.titleize %></Data></Cell>
                                           <Cell><Data ss:Type="String"><%= contact.email %><%= (";"+contact.email_2s.join(";")).html_safe if !contact.email_2s.empty? %></Data></Cell>
                                           <Cell><Data ss:Type="String"><%= contact.mobile %><%= (";"+contact.mobile_2s.join(";")).html_safe if !contact.mobile_2s.empty? %></Data></Cell>
+                                          <Cell><Data ss:Type="String"><%= contact.account_manager_name %></Data></Cell>
                                           <Cell><Data ss:Type="String"><%= course.display_name %></Data></Cell>
                                           <Cell><Data ss:Type="String"><%= format_price(prd.real_amount) %></Data></Cell>
                                           <Cell><Data ss:Type="String"><%= pr.payment_date.strftime("%d-%b-%Y") %></Data></Cell>
@@ -81,6 +85,7 @@
                                           <Cell><Data ss:Type="String"><%= contact.name.titleize %></Data></Cell>
                                           <Cell><Data ss:Type="String"><%= contact.email %><%= (";"+contact.email_2s.join(";")).html_safe if !contact.email_2s.empty? %></Data></Cell>
                                           <Cell><Data ss:Type="String"><%= contact.mobile %><%= (";"+contact.mobile_2s.join(";")).html_safe if !contact.mobile_2s.empty? %></Data></Cell>
+                                          <Cell><Data ss:Type="String"><%= contact.account_manager_name %></Data></Cell>
                                           <Cell><Data ss:Type="String"><%= course.display_name %></Data></Cell>
                                           <Cell><Data ss:Type="String">0</Data></Cell>
                                           <Cell><Data ss:Type="String"></Data></Cell>
@@ -97,6 +102,7 @@
                               <Cell><Data ss:Type="String"><%= contact.name.titleize %></Data></Cell>
                               <Cell><Data ss:Type="String"><%= contact.email %><%= (";"+contact.email_2s.join(";")).html_safe if !contact.email_2s.empty? %></Data></Cell>
                               <Cell><Data ss:Type="String"><%= contact.mobile %><%= (";"+contact.mobile_2s.join(";")).html_safe if !contact.mobile_2s.empty? %></Data></Cell>
+                              <Cell><Data ss:Type="String"><%= contact.account_manager_name %></Data></Cell>
                               <Cell><Data ss:Type="String"><%= course.display_name %></Data></Cell>
                               <Cell><Data ss:Type="String">0</Data></Cell>
                               <Cell><Data ss:Type="String"></Data></Cell>
@@ -111,6 +117,7 @@
       <% end %>
 
       <Row>
+          <Cell><Data ss:Type="String"></Data></Cell>
           <Cell><Data ss:Type="String"></Data></Cell>
           <Cell><Data ss:Type="String"></Data></Cell>
           <Cell><Data ss:Type="String"></Data></Cell>
