@@ -540,16 +540,21 @@ class ContactsController < ApplicationController
         @contacts = Contact.where(id: params[:ids])
       end
     end
-
-    @contacts.each do |c|
-      c.delete
-      c.save_draft(current_user)
-      c.approve_delete(current_user) if current_user.can?(:approve_delete, c)
-    end
-
-    respond_to do |format|
-      format.html { render "/course_registers/approved", layout: nil }
-      format.json { render action: 'show', status: :created, location: @course_register }
+    
+    if @contacts.count <= 200
+      @contacts.each do |c|
+        c.delete
+        c.save_draft(current_user)
+        c.approve_delete(current_user) if current_user.can?(:approve_delete, c)
+      end
+  
+      respond_to do |format|
+        format.html { render "/course_registers/approved", layout: nil }
+        format.json { render action: 'show', status: :created, location: @course_register }
+      end
+    else
+      render text: "<span class='text-danger'>Error! Can not delete too many contacts!</span>"
+      return
     end
   end
 
