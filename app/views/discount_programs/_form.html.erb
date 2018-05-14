@@ -83,10 +83,16 @@
 											<label class="form-label"><%= f.label :discount %></label>
 											<span class="help">(required)</span>
 											<%= render "field_history", drafts: @discount_program.field_history("rate"), type: "rate" %>
-											<div class="input-with-icon  right">                                       
-												<i class=""></i>
-												  <%= f.text_field :rate, :class => "form-control number_input required text-right" %>
-											</div>
+                                                       <% if @discount_program.id.nil? or @discount_program.contacts.count == 0 %>
+                                                            <div class="input-with-icon  right">                                       
+                                                                 <i class=""></i>
+                                                                 <%= f.text_field :rate, :class => "form-control number_input required text-right" %>
+                                                            </div>
+                                                       <% else %>
+                                                            <div>
+                                                                 <strong><%= @discount_program.rate %></strong>
+                                                            </div>
+                                                       <% end %>
 										</div>
 									  </div>
 									  <div class="col-md-4">
@@ -94,15 +100,21 @@
 											<label class="form-label"><%= f.label :type %></label>
 											<span class="help">(required)</span>
 											<%= render "field_history", drafts: @discount_program.field_history("type_name"), type: "type_name" %>
-											<div class="input-with-icon right">                                       
-												<i class=""></i>
-												  <div class="input-with-icon right">
-													   <select name="discount_program[type_name]" class="modern_select width100 required">
-															 <option <%= 'selected="selected"' if @discount_program.type_name == "percent" %> value="percent">Percent (%)</option>
-															 <option <%= 'selected="selected"' if @discount_program.type_name == "amount" %> value="amount">Amount (<%= Setting.get("currency_code") %>)</option>
-													   </select>
-												  </div>
-											</div>
+                                                       <% if @discount_program.id.nil? or @discount_program.contacts.count == 0 %>
+                                                            <div class="input-with-icon right">                                       
+                                                                 <i class=""></i>
+                                                                   <div class="input-with-icon right">
+                                                                         <select name="discount_program[type_name]" class="modern_select width100 required">
+                                                                                 <option <%= 'selected="selected"' if @discount_program.type_name == "percent" %> value="percent">Percent (%)</option>
+                                                                                 <option <%= 'selected="selected"' if @discount_program.type_name == "amount" %> value="amount">Amount (<%= Setting.get("currency_code") %>)</option>
+                                                                         </select>
+                                                                   </div>
+                                                            </div>
+                                                       <% else %>
+                                                            <div>
+                                                                 <strong><%= @discount_program.type_name == "percent" ? 'Percent (%)' : "Amount #{Setting.get("currency_code")}"  %></strong>
+                                                            </div>
+                                                       <% end %>                                                            
 										</div>
 									  </div>
 							  </div>
