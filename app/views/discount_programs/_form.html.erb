@@ -83,7 +83,7 @@
 											<label class="form-label"><%= f.label :discount %></label>
 											<span class="help">(required)</span>
 											<%= render "field_history", drafts: @discount_program.field_history("rate"), type: "rate" %>
-                                                       <% if @discount_program.id.nil? %>
+                                                       <% if @discount_program.id.nil? or @discount_program.contacts.count == 0 %>
                                                             <div class="input-with-icon  right">                                       
                                                                  <i class=""></i>
                                                                  <%= f.text_field :rate, :class => "form-control number_input required text-right" %>
@@ -100,7 +100,7 @@
 											<label class="form-label"><%= f.label :type %></label>
 											<span class="help">(required)</span>
 											<%= render "field_history", drafts: @discount_program.field_history("type_name"), type: "type_name" %>
-                                                       <% if @discount_program.id.nil? %>
+                                                       <% if @discount_program.id.nil? or @discount_program.contacts.count == 0 %>
                                                             <div class="input-with-icon right">                                       
                                                                  <i class=""></i>
                                                                    <div class="input-with-icon right">
