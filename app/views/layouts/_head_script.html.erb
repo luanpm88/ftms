@@ -4379,11 +4379,20 @@
 
 		// fancybox link
 		$(document).on("click", ".one_click_btn", function(e) {
+			var label = $(this).html();
+			
 			if ($(this).closest('form').valid()) {
 				$(this).addClass('btn-disabled');
 				$(this).addClass('btn-warning');
 				$(this).html('Loading... Please wait!');
+				$(this).closest('form').submit();
 			}
+			
+			setTimeout(function() {
+				$(this).removeClass('btn-disabled');
+				$(this).removeClass('btn-warning');
+				$(this).html(label);
+			}, 1000)
 		});
 
 		$(document).on("click", ".one_click_btn.btn-disabled", function(e) {
