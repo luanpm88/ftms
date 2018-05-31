@@ -1184,7 +1184,11 @@ class Contact < ActiveRecord::Base
   def update_cache
     types = contact_types.map{|t| t.id}
     types_cache = types.empty? ? "" : "["+types.join("][")+"]"
-    self.update_column(:contact_types_cache, types_cache)
+    if self.id.present?
+      self.update_column(:contact_types_cache, types_cache)
+    else
+      self.contact_types_cache = types_cache
+    end
   end
 
   def logo_path(version = nil)
