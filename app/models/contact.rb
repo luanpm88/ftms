@@ -3104,6 +3104,7 @@ class Contact < ActiveRecord::Base
       .where.not(contacts_course_id: nil)
       .where(courses: {id: course.id})
       .where(contacts: {id: self.id})
+      .where("payment_record_details.amount IS NOT NULL AND payment_record_details.amount > ?", 0)
     if from_date.present?
       prds = prds.where("payment_records.payment_date >= ?", from_date.beginning_of_day)
     end
