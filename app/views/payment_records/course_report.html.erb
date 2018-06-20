@@ -57,6 +57,7 @@
                         <td>EC</td>
                         <td>Course</td>
                         <td class="text-right">Money</td>
+                        <td class="text-right">Receivable</td>
                         <td>Payment Date</td>
                         <td>Bank Account</td>
                         <td>Bank Ref</td>
@@ -81,6 +82,7 @@
                                         <td><%= contact.account_manager_name %></td>
                                         <td><%= course.display_name %></td>
                                         <td class="text-right"><%= format_price(prd.real_amount) %></td>
+                                        <td class="text-right"><%= format_price(prd.remain_amount) %></td>
                                         <td><%= pr.payment_date.strftime("%d-%b-%Y") %></td>
                                         <td><%= pr.bank_account_name %></td>
                                         <td><%= pr.bank_ref %></td>
@@ -103,6 +105,7 @@
                                                 <td><%= contact.account_manager_name %></td>
                                                 <td><%= course.display_name %></td>
                                                 <td class="text-right"><%= format_price(prd.real_amount) %></td>
+                                                <td class="text-right"><%= format_price(prd.remain_amount) %></td>
                                                 <td><%= pr.payment_date.strftime("%d-%b-%Y") %></td>
                                                 <td><%= pr.bank_account_name %></td>
                                                 <td><%= pr.bank_ref %></td>
@@ -125,6 +128,7 @@
                                                         <td><%= contact.account_manager_name %></td>
                                                         <td><%= course.display_name %></td>
                                                         <td class="text-right"><%= format_price(prd.real_amount) %></td>
+                                                        <td class="text-right"><%= format_price(prd.remain_amount) %></td>
                                                         <td><%= pr.payment_date.strftime("%d-%b-%Y") %></td>
                                                         <td><%= pr.bank_account_name %></td>
                                                         <td><%= pr.bank_ref %></td>
@@ -139,6 +143,7 @@
                                                         <br><%= contact.mobile %><%= ("<br>"+contact.mobile_2s.join("<br>")).html_safe if !contact.mobile_2s.empty? %></td>
                                                         <td><%= contact.account_manager_name %></td>
                                                         <td><%= course.display_name %></td>
+                                                        <td></td>
                                                         <td></td>
                                                         <td></td>
                                                         <td></td>
@@ -159,6 +164,7 @@
                                             <br><%= contact.mobile %><%= ("<br>"+contact.mobile_2s.join("<br>")).html_safe if !contact.mobile_2s.empty? %></td>
                                             <td><%= contact.account_manager_name %></td>
                                             <td><%= course.display_name %></td>
+                                            <td class="text-right">0</td>
                                             <td class="text-right">0</td>
                                             <td></td>
                                             <td></td>

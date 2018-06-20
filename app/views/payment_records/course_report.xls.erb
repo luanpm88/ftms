@@ -14,6 +14,7 @@
         <Cell><Data ss:Type="String">EC</Data></Cell>
         <Cell><Data ss:Type="String">Course</Data></Cell>
         <Cell><Data ss:Type="String">Money</Data></Cell>
+        <Cell><Data ss:Type="String">Receivable</Data></Cell>
         <Cell><Data ss:Type="String">Payment Date</Data></Cell>
         <Cell><Data ss:Type="String">Bank Account</Data></Cell>
         <Cell><Data ss:Type="String">Bank Ref</Data></Cell>
@@ -35,6 +36,7 @@
                           <Cell><Data ss:Type="String"><%= contact.account_manager_name %></Data></Cell>
                           <Cell><Data ss:Type="String"><%= course.display_name %></Data></Cell>
                           <Cell><Data ss:Type="String"><%= format_price(prd.real_amount) %></Data></Cell>
+                          <Cell><Data ss:Type="String"><%= format_price(prd.remain_amount) %></Data></Cell>
                           <Cell><Data ss:Type="String"><%= pr.payment_date.strftime("%d-%b-%Y") %></Data></Cell>
                           <Cell><Data ss:Type="String"><%= pr.bank_account_name %></Data></Cell>
                           <Cell><Data ss:Type="String"><%= pr.bank_ref %></Data></Cell>
@@ -54,6 +56,7 @@
                                   <Cell><Data ss:Type="String"><%= contact.account_manager_name %></Data></Cell>
                                   <Cell><Data ss:Type="String"><%= course.display_name %></Data></Cell>
                                   <Cell><Data ss:Type="String"><%= format_price(prd.real_amount) %></Data></Cell>
+                                  <Cell><Data ss:Type="String"><%= format_price(prd.remain_amount) %></Data></Cell>
                                   <Cell><Data ss:Type="String"><%= pr.payment_date.strftime("%d-%b-%Y") %></Data></Cell>
                                   <Cell><Data ss:Type="String"><%= pr.bank_account_name %></Data></Cell>
                                   <Cell><Data ss:Type="String"><%= pr.bank_ref %></Data></Cell>
@@ -73,6 +76,7 @@
                                           <Cell><Data ss:Type="String"><%= contact.account_manager_name %></Data></Cell>
                                           <Cell><Data ss:Type="String"><%= course.display_name %></Data></Cell>
                                           <Cell><Data ss:Type="String"><%= format_price(prd.real_amount) %></Data></Cell>
+                                          <Cell><Data ss:Type="String"><%= format_price(prd.remain_amount) %></Data></Cell>
                                           <Cell><Data ss:Type="String"><%= pr.payment_date.strftime("%d-%b-%Y") %></Data></Cell>
                                           <Cell><Data ss:Type="String"><%= pr.bank_account_name %></Data></Cell>
                                           <Cell><Data ss:Type="String"><%= pr.bank_ref %></Data></Cell>
@@ -87,6 +91,7 @@
                                           <Cell><Data ss:Type="String"><%= contact.mobile %><%= (";"+contact.mobile_2s.join(";")).html_safe if !contact.mobile_2s.empty? %></Data></Cell>
                                           <Cell><Data ss:Type="String"><%= contact.account_manager_name %></Data></Cell>
                                           <Cell><Data ss:Type="String"><%= course.display_name %></Data></Cell>
+                                          <Cell><Data ss:Type="String">0</Data></Cell>
                                           <Cell><Data ss:Type="String">0</Data></Cell>
                                           <Cell><Data ss:Type="String"></Data></Cell>
                                           <Cell><Data ss:Type="String"></Data></Cell>
@@ -104,6 +109,7 @@
                               <Cell><Data ss:Type="String"><%= contact.mobile %><%= (";"+contact.mobile_2s.join(";")).html_safe if !contact.mobile_2s.empty? %></Data></Cell>
                               <Cell><Data ss:Type="String"><%= contact.account_manager_name %></Data></Cell>
                               <Cell><Data ss:Type="String"><%= course.display_name %></Data></Cell>
+                              <Cell><Data ss:Type="String">0</Data></Cell>
                               <Cell><Data ss:Type="String">0</Data></Cell>
                               <Cell><Data ss:Type="String"></Data></Cell>
                               <Cell><Data ss:Type="String"></Data></Cell>

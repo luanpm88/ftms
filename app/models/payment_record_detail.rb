@@ -22,4 +22,8 @@ class PaymentRecordDetail < ActiveRecord::Base
     
     return amount
   end
+  
+  def remain_amount
+    self.contacts_course.remain
+  end
 end
