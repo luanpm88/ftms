@@ -578,7 +578,7 @@ class Course < ActiveRecord::Base
   end
 
   def last_updated
-    return current if older.nil? or current.statuses.include?("new_pending") or current.statuses.include?("education_consultant_pending") or current.statuses.include?("update_pending") or current.statuses.include?("delete_pending")
+    return current if current.present? and (older.nil? or current.statuses.include?("new_pending") or current.statuses.include?("education_consultant_pending") or current.statuses.include?("update_pending") or current.statuses.include?("delete_pending"))
     return older
   end
 
