@@ -316,7 +316,7 @@ class Contact < ActiveRecord::Base
     if params[:tags].present?
       cond = []
       params[:tags].each do |t|
-        cond << "contacts.cache_search LIKE '%[tag:#{ContactTag.find(t).name}]%'"
+        cond << "contacts.cache_search LIKE '%[tag:#{ContactTag.find(t).name.gsub('%', '\\%')}]%'"
       end
       @records = @records.where(cond.join(" OR "))
     end
