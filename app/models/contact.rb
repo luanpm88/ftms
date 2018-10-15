@@ -3111,5 +3111,50 @@ class Contact < ActiveRecord::Base
 
     return prds
   end
+  
+  def self.doidauso
+    dauso = {
+      '84162': '8432',
+      '84163': '8433',
+      '84164': '8434',
+      '84165': '8435',
+      '84166': '8436',
+      '84167': '8437',
+      '84168': '8438',
+      '84169': '8439',
+      '84120': '8470',
+      '84121': '8479',
+      '84122': '8477',
+      '84126': '8476',
+      '84128': '8478',
+      '84123': '8483',
+      '84124': '8484',
+      '84125': '8485',
+      '84127': '8481',
+      '84129': '8482',
+      '84186': '8456',
+      '84188': '8458',
+      '84199': '8459',
+    }
+    
+    Contact.all.each do |c|
+      has_number = false
+      dauso.each do |key, value|
+        key = key.to_s
+        value = value.to_s
+        if c.mobile.include?(key) or c.mobile_2.include?(key)
+          c.mobile = c.mobile.gsub(/^#{key}/, value) if c.mobile.present?
+          c.mobile_2 = c.mobile_2.gsub(/^#{key}/, value) if c.mobile_2.present?
+          c.mobile_2 = c.mobile_2.gsub(/,#{key}/, ",#{value}") if c.mobile_2.present?
+          
+          has_number = true
+        end
+      end
+      puts c.mobile.to_s + "," + c.mobile_2.to_s if has_number
+      
+      sleep(1)
+    end
+    
+  end
 
 end
