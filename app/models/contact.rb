@@ -3142,7 +3142,7 @@ class Contact < ActiveRecord::Base
       dauso.each do |key, value|
         key = key.to_s
         value = value.to_s
-        if c.mobile.include?(key) or c.mobile_2.include?(key)
+        if c.mobile.to_s.include?(key) or c.mobile_2.to_s.include?(key)
           c.mobile = c.mobile.gsub(/^#{key}/, value) if c.mobile.present?
           c.mobile_2 = c.mobile_2.gsub(/^#{key}/, value) if c.mobile_2.present?
           c.mobile_2 = c.mobile_2.gsub(/,#{key}/, ",#{value}") if c.mobile_2.present?
@@ -3150,9 +3150,10 @@ class Contact < ActiveRecord::Base
           has_number = true
         end
       end
-      puts c.mobile.to_s + "," + c.mobile_2.to_s if has_number
-      
-      sleep(1)
+      if has_number
+        c.save
+        puts c.mobile.to_s + "," + c.mobile_2.to_s 
+      end
     end
     
   end
