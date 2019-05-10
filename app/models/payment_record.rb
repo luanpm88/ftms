@@ -304,7 +304,7 @@ class PaymentRecord < ActiveRecord::Base
     elsif !contact_id.nil?
       "<span class='text-nowrap'>[Custom payment]</span><br /><br />" + self.note
     else
-      course_register.course_list(false)+course_register.book_list(false)
+      course_register.course_list(false)+course_register.book_list(false)+"#{self.note}"
     end
   end
 
