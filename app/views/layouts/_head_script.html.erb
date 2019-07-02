@@ -4379,26 +4379,32 @@
 
 		// fancybox link
 		$(document).on("click", ".one_click_btn", function(e) {
+			e.preventDefault();
+			e.stopPropagation();
+			e.stopImmediatePropagation();
+			
 			var label = $(this).html();
+			var button = $(this);
 			
 			if ($(this).closest('form').valid()) {
 				$(this).addClass('btn-disabled');
 				$(this).addClass('btn-warning');
 				$(this).html('Loading... Please wait!');
+				$(this).closest('form').submit();
 			}
 			
-			setTimeout(function() {
-				$(this).removeClass('btn-disabled');
-				$(this).removeClass('btn-warning');
-				$(this).html(label);
-			}, 1000)
+			//setTimeout(function() {
+			//	button.removeClass('btn-disabled');
+			//	button.removeClass('btn-warning');
+			//	button.html(label);
+			//}, 1000)
 		});
 
-		$(document).on("click", ".one_click_btn.btn-disabled", function(e) {
-			e.preventDefault();
-			e.stopPropagation();
-			e.stopImmediatePropagation();
-		});
+		//$(document).on("click", ".one_click_btn.btn-disabled", function(e) {
+		//	e.preventDefault();
+		//	e.stopPropagation();
+		//	e.stopImmediatePropagation();
+		//});
 
 	})
 
