@@ -675,8 +675,12 @@ class Transfer < ActiveRecord::Base
 
     return str
   end
-
+  
   def update_statuses
+    TransferJob.perform_later('update_statuses', self.id)
+  end
+  
+  def do_update_statuses
     # payment
     self.update_column(:cache_payment_status, self.payment_status.join(","))
 
@@ -699,8 +703,12 @@ class Transfer < ActiveRecord::Base
 
     return line.join("")
   end
-
+  
   def update_cache_search
+    TransferJob.perform_later('update_cache_search', self.id)
+  end
+
+  def do_update_cache_search
     return false if !self.parent_id.nil?
 
     str = []

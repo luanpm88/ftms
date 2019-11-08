@@ -170,8 +170,12 @@ class Contact < ActiveRecord::Base
       c.update_info
     end
   end
-
+  
   def update_info
+    ContactJob.perform_later('update_info', self.id)
+  end
+  
+  def do_update_info
     self.update_cache_course_type_ids
     self.update_cache_intakes
     self.update_cache_subjects
