@@ -56,6 +56,8 @@ GEM
       coffee-script-source
       execjs
     coffee-script-source (1.9.1.1)
+    concurrent-ruby (1.0.5)
+    connection_pool (2.2.1)
     daemons (1.2.3)
     declarative (0.0.10)
     declarative-option (0.1.0)
@@ -152,6 +154,8 @@ GEM
       arel
     public_suffix (3.0.1)
     rack (1.6.4)
+    rack-protection (1.5.3)
+      rack
     rack-test (0.6.3)
       rack (>= 1.0)
     rails (4.2.3)
@@ -180,6 +184,7 @@ GEM
       thor (>= 0.18.1, < 2.0)
     rake (10.4.2)
     rdoc (4.3.0)
+    redis (3.3.3)
     ref (1.0.5)
     representable (3.0.4)
       declarative (< 0.1.0)
@@ -206,6 +211,11 @@ GEM
     sdoc (0.4.1)
       json (~> 1.7, >= 1.7.7)
       rdoc (~> 4.0)
+    sidekiq (4.2.10)
+      concurrent-ruby (~> 1.0)
+      connection_pool (~> 2.2, >= 2.2.0)
+      rack-protection (>= 1.5.0)
+      redis (~> 3.2, >= 3.2.1)
     signet (0.8.1)
       addressable (~> 2.3)
       faraday (~> 0.9)
@@ -278,6 +288,7 @@ DEPENDENCIES
   roo-xls
   sass-rails (~> 4.0.0)
   sdoc
+  sidekiq
   sixarm_ruby_unaccent (>= 1.1.1, < 2)
   therubyracer
   thin

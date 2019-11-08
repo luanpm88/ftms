@@ -64,3 +64,4 @@ gem 'mdb'
 gem "sixarm_ruby_unaccent", ">= 1.1.1", "< 2"
 gem 'unidecoder'
 gem 'google_drive'
+gem 'sidekiq'

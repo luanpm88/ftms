@@ -24,6 +24,8 @@ module Hkerp
     config.active_record.default_timezone = :local
     config.active_record.time_zone_aware_attributes = false
     
-    config.active_record.schema_format = :sql    
+    config.active_record.schema_format = :sql
+    
+    config.active_job.queue_adapter = :sidekiq
   end
 end
