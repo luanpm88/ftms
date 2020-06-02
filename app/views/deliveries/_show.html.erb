@@ -101,6 +101,9 @@
       </td>
       <td colspan="2">
         <%= @delivery.course_register.contact.mobile %>
+        <% if @delivery.course_register.contact.mobile_2.present? %>
+          ; <%= @delivery.course_register.contact.mobile_2 %>
+        <% end %>
       </td>
     </tr>
   </table>
