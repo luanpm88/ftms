@@ -363,11 +363,7 @@ class ContactsController < ApplicationController
     if params[:type] == "add"
       @contact.contact_tags << contact_tag if !@contact.contact_tags.include?(contact_tag)
     else
-      n_tags = []
-      @contact.contact_tags.each do |tag|
-        n_tags << tag if contact_tag != tag
-      end
-      @contact.update_attribute(:contact_tag_ids, n_tags.map(&:id))
+      @contact.remove_tag(contact_tag)
     end
     @contact.save
     @contact.update_cache_search
