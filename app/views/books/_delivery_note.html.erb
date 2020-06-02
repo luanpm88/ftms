@@ -104,6 +104,9 @@
                 </td>
                 <td colspan="2">
                   <%= row[:contact].mobile %>
+                  <% if row[:contact].mobile_2.present? %>
+                    ; <%= row[:contact].mobile_2 %>
+                  <% end %>
                 </td>
               </tr>
             </table>
