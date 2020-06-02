@@ -56,7 +56,6 @@ class Contact < ActiveRecord::Base
   belongs_to :creator, :class_name => "User"
 
   has_and_belongs_to_many :course_types
-  has_many :contacts_course_types
 
   has_many :contacts_lecturer_course_types
   has_many :lecturer_course_types, :through => :contacts_lecturer_course_types, :source => :course_type
