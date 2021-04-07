@@ -164,7 +164,7 @@
 											 <div class="col-md-12">
 												  <div class="row-fluid user-role user">
 													<div class="checkbox check-info">
-													  <input type="checkbox" checked="checked" value="<%= Role.get("user").id %>" id="role_<%= Role.get("user").id %>" name="user[role_ids][]">
+													  <input type="checkbox" checked value="<%= Role.get("user").id %>" id="role_<%= Role.get("user").id %>" name="user[role_ids][]">
 													  <label for="role_<%= Role.get("user").id %>">User</label>
 													</div>
 												  </div>
@@ -193,7 +193,7 @@
 										</div>
 										<hr style="margin-top: 0" />
 										<div class="row">											 
-											 <div class="col-md-5">
+											 <div class="col-md-3">
 												  <div class="row-fluid user-role education_consultant">
 													<div class="checkbox check-info">
 													  <input type="checkbox" <%= 'checked="checked"'.html_safe if @user.has_role?("education_consultant") %> value="<%= Role.get("education_consultant").id %>" id="role_<%= Role.get("education_consultant").id %>" name="user[role_ids][]">
@@ -209,7 +209,7 @@
 													</div>
 												  </div>
 											 </div>
-											 <div class="col-md-4">
+											 <div class="col-md-3">
 												  <div class="row-fluid user-role storage_manager">
 													<div class="checkbox check-info">
 													  <input type="checkbox" <%= 'checked="checked"'.html_safe if @user.has_role?("storage_manager") %> value="<%= Role.get("storage_manager").id %>" id="role_<%= Role.get("storage_manager").id %>" name="user[role_ids][]">
@@ -217,6 +217,14 @@
 													</div>
 												  </div>
 											 </div>
+                                            <div class="col-md-5">
+                                                <div class="row-fluid user-role education_consultant">
+                                                  <div class="checkbox check-info">
+                                                    <input type="checkbox" <%= 'checked="checked"'.html_safe if @user.has_role?("junior_education_consultant") %> value="<%= Role.get("junior_education_consultant").id %>" id="role_<%= Role.get("junior_education_consultant").id %>" name="user[role_ids][]">
+                                                    <label for="role_<%= Role.get("education_consultant").id %>">Junior Education consultant</label>
+                                                  </div>
+                                                </div>
+                                            </div>
 										</div>
 										<hr style="margin-top: 0" />
 										<div class="row">
@@ -281,7 +289,7 @@
 											   </div>
 											 </div>
 										</div>
-								   </div>
+                                    </div>
 							  </div>
 						 </div>
 						 
