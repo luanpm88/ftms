@@ -750,7 +750,7 @@ class User < ActiveRecord::Base
               contacts_courses.each do |cc|
                 if !cc.course_register.paid?(to_date.end_of_day)
                   remain = cc.remain(nil, to_date)
-                  if users_statistics[cc.course_register.account_manager_id][:details][cc.course.course_type_id].present?
+                  if remain > 0 and users_statistics[cc.course_register.account_manager_id][:details][cc.course.course_type_id].present?
                     users_statistics[cc.course_register.account_manager_id][:details][cc.course.course_type_id][:receivable] += remain
                     users_statistics[cc.course_register.account_manager_id][:details][cc.course.course_type_id][:receivable_contacts] << cc.contact
                   end
@@ -758,9 +758,8 @@ class User < ActiveRecord::Base
                 end
 
                 puts "5555555555555555555555555555555555555555555555555555555555555555555555555555"
+
               end
-
-
 
               #books courses
               books_contacts = BooksContact.includes(:course_register, :book => :course_type)
@@ -773,7 +772,7 @@ class User < ActiveRecord::Base
               books_contacts.each do |cc|
                 if !cc.course_register.paid?(to_date.end_of_day)
                   remain = cc.remain_amount(nil, to_date)
-                  if users_statistics[cc.course_register.account_manager_id][:details][cc.book.course_type_id].present?
+                  if remain > 0 and users_statistics[cc.course_register.account_manager_id][:details][cc.book.course_type_id].present?
                     users_statistics[cc.course_register.account_manager_id][:details][cc.book.course_type_id][:receivable] += remain
                     users_statistics[cc.course_register.account_manager_id][:details][cc.book.course_type_id][:receivable_contacts] << cc.contact
                   end
@@ -792,7 +791,7 @@ class User < ActiveRecord::Base
               transfers.each do |tsf|
                 if tsf.remain(nil, to_date) != 0.0
                   remain = tsf.remain(nil, to_date)
-                  if users_statistics[tsf.contact.account_manager_id][:details][tsf.course.course_type_id].present?
+                  if remain > 0 and users_statistics[tsf.contact.account_manager_id][:details][tsf.course.course_type_id].present?
                     users_statistics[tsf.contact.account_manager_id][:details][-1][:receivable] += remain
                     users_statistics[tsf.contact.account_manager_id][:details][-1][:receivable_contacts] << tsf.contact
                   end

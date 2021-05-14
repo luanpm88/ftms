@@ -96,7 +96,7 @@ class System < ActiveRecord::Base
   def self.upload_backup_to_google_drive(params)
     bk_dir = Setting.get("backup_dir")
     root_dir = params[:dir].present? ? params[:dir] : ""
-    revision_max = Setting.get("dropbox_backup_revision_count").strip.to_i
+    revision_max = 4
     backup_folder_name = 'ftms_hcm'
 
     latest_backup_file = nil
