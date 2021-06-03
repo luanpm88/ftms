@@ -15,7 +15,7 @@ class UserLog < ActiveRecord::Base
                   
   def self.datatable(params, user)
  
-    @records = self.all
+    @records = self.where(visible: true)
     
     if params["user"].present?
       @records = @records.where(user_id: params["user"])
