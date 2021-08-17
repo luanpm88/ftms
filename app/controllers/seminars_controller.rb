@@ -142,7 +142,7 @@ class SeminarsController < ApplicationController
     if params[:rows].present?
       params[:rows].each do |row|
         if row[1]["check"].present? && row[1]["check"] == "true"        
-          contact = Contact.new(is_individual: true, name: row[1]["name"], email: row[1]["email"], mobile: row[1]["mobile"], note: row[1]["note"])
+          contact = Contact.new(is_individual: true, name: row[1]["name"], email: row[1]["email"], mobile: row[1]["mobile"], note: row[1]["note"], source: row[1]["source"])
           contact.user = current_user
           
           # multi mobile

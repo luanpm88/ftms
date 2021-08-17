@@ -50,6 +50,7 @@
            <Cell ss:StyleID="s63"><Data ss:Type="String">ACCA Reg No</Data></Cell>
            <Cell ss:StyleID="s63"><Data ss:Type="String">Courses</Data></Cell>
            <Cell ss:StyleID="s63"><Data ss:Type="String">EC</Data></Cell>
+           <Cell ss:StyleID="s63"><Data ss:Type="String">Source</Data></Cell>
         <% end %>
       </Row>
     <% @contacts.each_with_index do |contact,index| %>
@@ -87,6 +88,7 @@
            <Cell ss:StyleID="s63"><Data ss:Type="String"><% if !contact.base_items.empty? %><% contact.base_items.each do |item| %><% if item["course_type"].present? and item["course_type"].short_name == 'ACCA' %><%= item["name"] %><% end %><% end %><% end %></Data></Cell>
            <Cell ss:StyleID="s63"><Data ss:Type="String"><%= (contact.active_courses_with_phrases.map {|c| c[:course].name }).join('; ') %></Data></Cell>
            <Cell ss:StyleID="s63"><Data ss:Type="String"><%= !contact.account_manager.nil? ? contact.account_manager.name : "" %></Data></Cell>
+           <Cell ss:StyleID="s63"><Data ss:Type="String"><%= contact.source %></Data></Cell>
         <% end %>
       </Row>
     <% end %>

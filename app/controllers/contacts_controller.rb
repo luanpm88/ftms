@@ -179,6 +179,7 @@ class ContactsController < ApplicationController
 
 
     respond_to do |format|
+      puts s_params
       if @contact.update(s_params)
         #if params[:contact_tag].present?
         #  @contact.update_tag(@contact_tag, current_user)
@@ -924,7 +925,7 @@ class ContactsController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def contact_params
-      params.require(:contact).permit(:remark_to_admin, :bases, :mailing_address, :preferred_mailing, :account_manager_id, :base_id, :base_password, :invoice_required, :invoice_info_id, :payment_type, :preferred_mailing, :birthday, :sex, :referrer_id, :is_individual, :mobile_2, :first_name, :last_name, :image, :city_id, :website, :name, :phone, :mobile, :fax, :email, :address, :tax_code, :note, :account_number, :bank, :contact_type_id, :email_2 => [], :parent_ids => [], :agent_ids => [], :company_ids => [], :contact_type_ids => [], :course_type_ids => [], :lecturer_course_type_ids => [], :contact_tag_ids => [])
+      params.require(:contact).permit(:source, :remark_to_admin, :bases, :mailing_address, :preferred_mailing, :account_manager_id, :base_id, :base_password, :invoice_required, :invoice_info_id, :payment_type, :preferred_mailing, :birthday, :sex, :referrer_id, :is_individual, :mobile_2, :first_name, :last_name, :image, :city_id, :website, :name, :phone, :mobile, :fax, :email, :address, :tax_code, :note, :account_number, :bank, :contact_type_id, :email_2 => [], :parent_ids => [], :agent_ids => [], :company_ids => [], :contact_type_ids => [], :course_type_ids => [], :lecturer_course_type_ids => [], :contact_tag_ids => [])
     end
 
     # Never trust parameters from the scary internet, only allow the white list through.

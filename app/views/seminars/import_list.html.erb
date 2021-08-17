@@ -44,6 +44,7 @@
 												<th>Mobile</th>
 												<th>Email</th>
 												<th>Background</th>
+												<th>Source</th>
 												<th class="text-center">Present?</th>
 												<th class="text-center">Status</th>
 												<th class="text-right" width="1%">Actions</th>
@@ -70,6 +71,9 @@
 														</td>
 														<td>
 																<%= text_area_tag "rows["+index.to_s+"][note]", row[:background], class: "form-control" %>
+														</td>
+														<td>
+																<%= text_area_tag "rows["+index.to_s+"][source]", row[:source], class: "form-control" %>
 														</td>
 														<td class="text-center">
 																<% if row[:present].present? %>
