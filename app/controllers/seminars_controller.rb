@@ -212,6 +212,16 @@ class SeminarsController < ApplicationController
           contact.course_types << @seminar.course_type if !contact.course_types.include?(@seminar.course_type)
           
           contact.set_present_in_seminar(@seminar, row[1]["present"])
+
+          # addition source
+          if row[1]["source"].present?
+            if contact.source.present?
+              contact.source = contact.source + ',' + row[1]["source"]
+            else
+              contact.source = row[1]["source"]
+            end
+            contact.save
+          end
         end
       end
     end
