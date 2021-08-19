@@ -51,6 +51,8 @@
            <Cell ss:StyleID="s63"><Data ss:Type="String">Courses</Data></Cell>
            <Cell ss:StyleID="s63"><Data ss:Type="String">EC</Data></Cell>
            <Cell ss:StyleID="s63"><Data ss:Type="String">Source</Data></Cell>
+           <Cell ss:StyleID="s63"><Data ss:Type="String">TYPE:PROGRAM</Data></Cell>
+           <Cell ss:StyleID="s63"><Data ss:Type="String">CREATED_AT:BY</Data></Cell>
         <% end %>
       </Row>
     <% @contacts.each_with_index do |contact,index| %>
@@ -89,6 +91,8 @@
            <Cell ss:StyleID="s63"><Data ss:Type="String"><%= (contact.active_courses_with_phrases.map {|c| c[:course].name }).join('; ') %></Data></Cell>
            <Cell ss:StyleID="s63"><Data ss:Type="String"><%= !contact.account_manager.nil? ? contact.account_manager.name : "" %></Data></Cell>
            <Cell ss:StyleID="s63"><Data ss:Type="String"><%= contact.source %></Data></Cell>
+           <Cell ss:StyleID="s63"><Data ss:Type="String"><%= contact.course_types_name_col_raw %></Data></Cell>
+           <Cell ss:StyleID="s63"><Data ss:Type="String"><%= contact.created_at.strftime("%d-%b-%Y")+"; "+contact.user_name %></Data></Cell>
         <% end %>
       </Row>
     <% end %>

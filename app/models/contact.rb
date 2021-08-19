@@ -932,10 +932,25 @@ class Contact < ActiveRecord::Base
     return result.join("<br />")
   end
 
+  def course_types_name_col_raw
+    result = []
+    result << "Student: #{joined_course_types_name}#{display_old_student_course_types_raw}" if contact_types.include?(ContactType.student)
+    result << "Inquiry: #{course_types.map(&:short_name).join(", ")}" if contact_types.include?(ContactType.inquiry)
+    result << "Lecturer: #{lecturer_course_types.map(&:short_name).join(", ")}" if contact_types.include?(ContactType.lecturer)
+
+    return result.join(" | ")
+  end
+
   def display_old_student_course_types
     return "" if !old_student_course_type_ids.present?
     ct_ids = old_student_course_type_ids.to_s.split("][").map {|s| s.gsub("[","").gsub("]","")}
     return "<div><span class=\"nowrap col_label\">Old program(s):</span> #{(CourseType.where(id: ct_ids).map(&:short_name).join(", "))}</div>"
+  end
+
+  def display_old_student_course_types_raw
+    return "" if !old_student_course_type_ids.present?
+    ct_ids = old_student_course_type_ids.to_s.split("][").map {|s| s.gsub("[","").gsub("]","")}
+    return "[ Old program(s): #{(CourseType.where(id: ct_ids).map(&:short_name).join(", "))} ]"
   end
 
   def referrer_link
@@ -2158,6 +2173,10 @@ class Contact < ActiveRecord::Base
 
   def staff_col
     account_manager.nil? ? "" : account_manager.staff_col
+  end
+
+  def user_name
+    user.nil? ? "" : user.short_name
   end
 
   def user_staff_col
