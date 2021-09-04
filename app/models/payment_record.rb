@@ -662,6 +662,8 @@ class PaymentRecord < ActiveRecord::Base
     end
     records = Contact.main_contacts.where(conds.join(" OR "))
 
+    records = records.where("contacts.status IS NOT NULL AND contacts.status NOT LIKE ?","%[deleted]%")
+
     records = records.order("contacts.name")
 
     return records
