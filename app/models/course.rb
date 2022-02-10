@@ -108,7 +108,7 @@ class Course < ActiveRecord::Base
       end
     end
     result = result.search(params[:q]) if params[:q].present?
-    result = result.limit(80).map {|model| {:id => model.id, :text => model.display_name} }
+    result = result.limit(100).map {|model| {:id => model.id, :text => model.display_name} }
   end
 
   def course_exist
