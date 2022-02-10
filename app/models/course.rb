@@ -32,15 +32,15 @@ class Course < ActiveRecord::Base
   after_save :update_cache_last_date
 
   pg_search_scope :search,
-                  against: [:description],
-                  associated_against: {
-                    course_type: [:name, :short_name],
-                    subject: [:name]
-                  },
+                  against: [:description, :cache_search],
+                  # associated_against: {
+                  #   course_type: [:name, :short_name],
+                  #   subject: [:name]
+                  # },
                   using: {
                       tsearch: {
                         dictionary: 'english',
-                        any_word: true,
+                        any_word: false,
                         prefix: true
                       }
                   }
@@ -108,7 +108,7 @@ class Course < ActiveRecord::Base
       end
     end
     result = result.search(params[:q]) if params[:q].present?
-    result = result.limit(50).map {|model| {:id => model.id, :text => model.display_name} }
+    result = result.limit(80).map {|model| {:id => model.id, :text => model.display_name} }
   end
 
   def course_exist
