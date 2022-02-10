@@ -881,6 +881,7 @@ class Course < ActiveRecord::Base
     return false if !self.parent_id.nil?
 
     str = []
+    str << name
     str << display_intake
     str << program_paper_name
     str << courses_phrase_list
