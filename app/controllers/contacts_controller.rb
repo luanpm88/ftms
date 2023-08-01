@@ -408,6 +408,34 @@ class ContactsController < ApplicationController
     end
   end
 
+  def export_list_note_log
+    if params[:ids].present?
+      if !params[:check_all_page].nil?
+        params[:intake_year] = params["filter"]["intake(1i)"] if params["filter"].present?
+        params[:intake_month] = params["filter"]["intake(2i)"] if params["filter"].present?
+
+        if params[:is_individual] == "false"
+          params[:contact_types] = nil
+        end
+
+        @contacts = Contact.filters(params, current_user)
+      else
+        @contacts = Contact.where(id: params[:ids])
+      end
+
+
+      log = UserLog.new(user_id: current_user.id, title: "Export Contact List")
+      log.render_content(@contacts, params)
+      log.save
+
+
+      respond_to do |format|
+        format.html
+        format.xls
+      end
+    end
+  end
+
   def related_info_box
     @contacts = nil
 

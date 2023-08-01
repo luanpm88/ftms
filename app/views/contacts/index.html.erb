@@ -30,6 +30,9 @@
 									<% if can? :export_list, Contact %>
 										<li><a href="#" rel="<%= export_list_contacts_path(format: "xls") %>">Export List (Excel)</a></li>
 									<% end %>
+                                    <% if can? :export_list, Contact %>
+										<li><a href="#" rel="<%= export_list_note_log_contacts_path(format: "xls") %>">Export List (+note logs)</a></li>
+									<% end %>
 									<% if can? :export_mobiles, Contact %>
 										<li><a href="#" rel="<%= export_mobiles_contacts_path(format: "xls") %>">Export Mobiles</a></li>
 									<% end %>
