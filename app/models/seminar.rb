@@ -255,7 +255,7 @@ class Seminar < ActiveRecord::Base
       bg += "Major: #{row["Major "].to_s.strip}\n" if row["Major "].present?
       bg += "Year: #{row["Year"].to_s.strip}\n" if row["Year"].present?
 
-      item = {name: row["Fullname"], company: row["Company"], mobile: row["Mobile"], email: row["Email"], present: row["Status"], background: bg}
+      item = {name: row["Fullname"], company: row["Company"], mobile: row["Mobile"], email: row["Email"], present: row["Status"], background: bg, source: row["Source"]}
       item[:mobiles] = ((item[:mobile].to_s.split(/[\,\n;]/)).map {|m| Contact.format_mobile(m.to_i)})
       item[:emails] = ((item[:email].to_s.split(/[\,\n;]/)).map {|m| m.to_s.strip.downcase})
 

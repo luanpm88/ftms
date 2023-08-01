@@ -3,12 +3,11 @@
         <%= form_tag(course_report_payment_records_path(tab_page:1)) do %>
             <div class="row order-filters">
                 <!--<div class="col-md-2">
-                    <h4>From Date</h4>
+                    <h4>All upfront</h4>
                     <div class="date_select_filter">
-                    <div class="input-with-icon  right">
-                        <div class="input-append success date col-md-10 no-padding" style="width: 100%">
-                            <%= text_field_tag :from_date, (!@from_date.present? ? nil : @from_date.strftime("%d-%b-%Y")), :class => "datetime form-control" %>
-                            <span class="add-on"><span class="arrow"></span><i class="icon-th"></i></span>
+                    <div class="input-with-iconx  right">
+                        <div class="input-appendx success datxe col-md-10 no-padding" style="width: 100%">
+                            <input type="checkbox" value="1" name="all_upfront">
                         </div>
                         <br style="clear: both" />
 

@@ -411,8 +411,13 @@ class PaymentRecordsController < ApplicationController
     @from_date = params[:from_date].present? ? params[:from_date].to_date.beginning_of_day : nil
     @to_date =  params[:to_date].present? ? params[:to_date].to_date.end_of_day : Time.now
 
-    if params[:the_courses].present?
-      @courses = Course.where(id: params[:the_courses].split(','))
+    if params[:all_upfront].present?
+      @courses = Course.main_courses.where('id IN ('+ (params[:the_courses].present? ? params[:the_courses] : '(0)') +') OR upfront = true')
+    elsif params[:the_courses].present?
+      @courses = Course.main_courses.where(id: params[:the_courses].split(','))
+    end
+
+    if @courses.present?
 
       @records = PaymentRecord.get_course_report(params)
 

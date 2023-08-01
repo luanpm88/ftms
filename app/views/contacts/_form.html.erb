@@ -29,6 +29,7 @@
 												<li><strong>Phone:</strong>  <%= params[:import_phone] %></li>
 												<li><strong>Email:</strong>  <%= params[:import_email] %></li>
 												<li><strong>Background:</strong>  <%= params[:import_background] %></li>
+												<li><strong>Source:</strong>  <%= params[:import_source] %></li>
 											</ul>
 										</div>
 									<% end %>
@@ -803,6 +804,16 @@
 															</ul>
 													  <% end %>
 
+												 </div>
+
+												 <div class="form-group">
+													  <label class="form-label">
+															<%= f.label :source %>
+													  </label>
+													  <div class="input-with-icon right">
+															  <i class=""></i>
+															  <%= f.text_area :source, :class => "form-control", style: "height: 50px" %>
+													  </div>
 												 </div>
 
 											</div>

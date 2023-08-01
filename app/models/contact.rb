@@ -55,6 +55,7 @@ class Contact < ActiveRecord::Base
   belongs_to :account_manager, :class_name => "User"
   belongs_to :creator, :class_name => "User"
 
+  has_many :contacts_course_types
   has_and_belongs_to_many :course_types
 
   has_many :contacts_lecturer_course_types
@@ -325,16 +326,16 @@ class Contact < ActiveRecord::Base
       @records = @records.where(cond.join(" OR "))
     end
 
-    if params["course_types"].present? && !params[:base_status].present?
+    if params[:course_types].present? && !params[:base_status].present?
       conds = []
-      params["course_types"].each do |ccid|
+      params[:course_types].each do |ccid|
         conds << "contacts.cache_course_type_ids LIKE '%[#{ccid}]%'"
         conds << "contacts.old_student_course_type_ids LIKE '%[#{ccid}]%'"
       end
 
       @records = @records.joins("LEFT JOIN contacts_course_types ON contacts_course_types.contact_id = contacts.id")
       #@records = @records.joins("LEFT JOIN contacts_lecturer_course_types ON contacts_lecturer_course_types.contact_id = contacts.id")
-      conds << "contacts_course_types.course_type_id IN (#{params["course_types"].join(", ")})"
+      conds << "contacts_course_types.course_type_id IN (#{params[:course_types].join(", ")})"
       #conds << "contacts_lecturer_course_types.course_type_id IN (#{params["course_types"].join(", ")})"
 
       @records = @records.where(conds.join(" OR "))
@@ -931,10 +932,25 @@ class Contact < ActiveRecord::Base
     return result.join("<br />")
   end
 
+  def course_types_name_col_raw
+    result = []
+    result << "Student: #{joined_course_types_name}#{display_old_student_course_types_raw}" if contact_types.include?(ContactType.student)
+    result << "Inquiry: #{course_types.map(&:short_name).join(", ")}" if contact_types.include?(ContactType.inquiry)
+    result << "Lecturer: #{lecturer_course_types.map(&:short_name).join(", ")}" if contact_types.include?(ContactType.lecturer)
+
+    return result.join(" | ")
+  end
+
   def display_old_student_course_types
     return "" if !old_student_course_type_ids.present?
     ct_ids = old_student_course_type_ids.to_s.split("][").map {|s| s.gsub("[","").gsub("]","")}
     return "<div><span class=\"nowrap col_label\">Old program(s):</span> #{(CourseType.where(id: ct_ids).map(&:short_name).join(", "))}</div>"
+  end
+
+  def display_old_student_course_types_raw
+    return "" if !old_student_course_type_ids.present?
+    ct_ids = old_student_course_type_ids.to_s.split("][").map {|s| s.gsub("[","").gsub("]","")}
+    return "[ Old program(s): #{(CourseType.where(id: ct_ids).map(&:short_name).join(", "))} ]"
   end
 
   def referrer_link
@@ -2159,6 +2175,10 @@ class Contact < ActiveRecord::Base
     account_manager.nil? ? "" : account_manager.staff_col
   end
 
+  def user_name
+    user.nil? ? "" : user.short_name
+  end
+
   def user_staff_col
     user.nil? ? "" : user.staff_col
   end
@@ -3160,7 +3180,40 @@ class Contact < ActiveRecord::Base
         puts c.mobile.to_s + "," + c.mobile_2.to_s 
       end
     end
-    
   end
 
+  def get_data
+    JSON.parse(self.data)
+  end
+
+  def update_data(hash)
+    d = self.get_data
+    d = d.merge(hash)
+    self.data = d.to_json
+    self.save
+  end
+
+  def update_course_types_count
+    cts = {}
+    CourseType.active_course_types.each do |ct|
+      groups = self.students_by_course_type(ct.id).group(:account_manager_id).select("account_manager_id, COUNT(*) as count").map {|c| [c.account_manager.name, c["count"]]}
+      if groups.each_with_index do |g,ii|
+        cts[ct.id] = ""
+        cts[ct.id] += "&#10;" if ii != 0
+        cts[ct.id] += "(#{g[1]}) #{g[0]}"
+      end.empty?
+        cts[ct.id] = 0
+      end
+    end
+
+    self.update_data({"c.cache_course_types_count": cts})
+  end
+
+  def self.update_course_types_count
+    total = Contact.where(is_individual: false).main_contacts.where('status LIKE ?', '%[active]%').count
+    Contact.where(is_individual: false).main_contacts.where('status LIKE ?', '%[active]%').each_with_index do |c,index|
+      c.update_course_types_count
+      puts index.to_s + "/" + total.to_s + " - " + c.id.to_s
+    end
+  end
 end

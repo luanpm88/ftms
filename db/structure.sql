@@ -624,7 +624,9 @@ CREATE TABLE contacts (
     cache_books text,
     remark_to_admin text,
     cache_old_courses text,
-    cache_old_tags text
+    cache_old_tags text,
+    data text DEFAULT '{}'::text,
+    source text
 );
 
 
@@ -2607,7 +2609,8 @@ CREATE TABLE user_logs (
     title character varying,
     content text,
     created_at timestamp without time zone NOT NULL,
-    updated_at timestamp without time zone NOT NULL
+    updated_at timestamp without time zone NOT NULL,
+    visible boolean DEFAULT true
 );
 
 
@@ -4677,4 +4680,10 @@ INSERT INTO schema_migrations (version) VALUES ('20161111041052');
 INSERT INTO schema_migrations (version) VALUES ('20170509030742');
 
 INSERT INTO schema_migrations (version) VALUES ('20170509031023');
+
+INSERT INTO schema_migrations (version) VALUES ('20210311124556');
+
+INSERT INTO schema_migrations (version) VALUES ('20210601014532');
+
+INSERT INTO schema_migrations (version) VALUES ('20210817080156');
 

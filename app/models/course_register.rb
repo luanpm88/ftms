@@ -506,6 +506,8 @@ class CourseRegister < ActiveRecord::Base
 
     total = @records.count
     @records = @records.limit(params[:length]).offset(params["start"])
+    
+    
 
     data = []
 

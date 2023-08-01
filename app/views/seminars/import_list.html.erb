@@ -44,6 +44,7 @@
 												<th>Mobile</th>
 												<th>Email</th>
 												<th>Background</th>
+												<th>Source</th>
 												<th class="text-center">Present?</th>
 												<th class="text-center">Status</th>
 												<th class="text-right" width="1%">Actions</th>
@@ -70,6 +71,9 @@
 														</td>
 														<td>
 																<%= text_area_tag "rows["+index.to_s+"][note]", row[:background], class: "form-control" %>
+														</td>
+														<td>
+																<%= text_area_tag "rows["+index.to_s+"][source]", row[:source], class: "form-control" %>
 														</td>
 														<td class="text-center">
 																<% if row[:present].present? %>
@@ -140,6 +144,13 @@
 																	<td>
 																				<%= contact.display_note %>
 																		</td>
+																	<td>
+																		<% if !contact.seminars.include?(@seminar) %>
+																			<%= hidden_field_tag "contacts["+contact.id.to_s+"][source]", row[:source] %>
+																			<div style="color:red"><%= row[:source] %></div>
+																			<%= contact.source %>
+																		<% end %>
+																	</td>
 																	<td class="text-center">
 																		<% if row[:present].present? %>
 																			<a class="check-radio ajax-check-radio" href="#"><i class="true icon-check"></i></a>
@@ -169,6 +180,7 @@
 																				import_phone: row[:mobiles].join(";"),
 																				import_email: row[:emails].join(";"),
 																				import_background: row[:background],
+																				import_source: row[:source],
 																			}, class: "", title: contact.display_name) %>
 																		</span>
 
