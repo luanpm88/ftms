@@ -238,4 +238,9 @@ class ContactsCourse < ActiveRecord::Base
     end
   end
 
+  def update_full_courses_phrases
+    if self.full_course == true
+      self.courses_phrase_ids = "["+self.course.courses_phrases.map(&:id).join("][")+"]" if !self.course.courses_phrases.nil? and !self.course.upfront
+    end
+  end
 end
