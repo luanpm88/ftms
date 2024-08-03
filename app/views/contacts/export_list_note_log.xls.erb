@@ -1,0 +1,87 @@
+<?xml version="1.0"?>
+<Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet"
+  xmlns:o="urn:schemas-microsoft-com:office:office"
+  xmlns:x="urn:schemas-microsoft-com:office:excel"
+  xmlns:ss="urn:schemas-microsoft-com:office:spreadsheet"
+  xmlns:html="http://www.w3.org/TR/REC-html40">
+  <Styles>
+    <Style ss:ID="Default" ss:Name="Normal">
+     <Alignment ss:Vertical="Bottom"/>
+     <Borders/>
+     <Font ss:FontName="Calibri" x:Family="Swiss" ss:Size="11" ss:Color="#000000"/>
+     <Interior/>
+     <NumberFormat/>
+     <Protection/>
+    </Style>
+    <Style ss:ID="s62">
+     <Alignment ss:Vertical="Bottom" ss:WrapText="1"/>
+    </Style>
+    <Style ss:ID="s63">
+     <Alignment ss:Vertical="Top"/>
+    </Style>
+   </Styles>
+  <Worksheet ss:Name="Sheet1">
+    <Table>
+      <Row>
+        <% if params[:is_individual] == "false" %>
+           <Cell ss:StyleID="s63"><Data ss:Type="String">Company</Data></Cell>
+           <Cell ss:StyleID="s63"><Data ss:Type="String">Email</Data></Cell>
+           <Cell ss:StyleID="s63"><Data ss:Type="String">Phone</Data></Cell>
+           <Cell ss:StyleID="s63"><Data ss:Type="String">Mobile</Data></Cell>
+           <Cell ss:StyleID="s63"><Data ss:Type="String">EC</Data></Cell>
+           <Cell ss:StyleID="s63"><Data ss:Type="String">NoteLog</Data></Cell>
+           <Cell ss:StyleID="s63"><Data ss:Type="String">NoteLog</Data></Cell>
+           <Cell ss:StyleID="s63"><Data ss:Type="String">NoteLog</Data></Cell>
+           <Cell ss:StyleID="s63"><Data ss:Type="String">NoteLog</Data></Cell>
+           <Cell ss:StyleID="s63"><Data ss:Type="String">NoteLog</Data></Cell>
+           <Cell ss:StyleID="s63"><Data ss:Type="String">NoteLog</Data></Cell>
+           <Cell ss:StyleID="s63"><Data ss:Type="String">NoteLog</Data></Cell>
+           <Cell ss:StyleID="s63"><Data ss:Type="String">NoteLog</Data></Cell>
+           <Cell ss:StyleID="s63"><Data ss:Type="String">NoteLog</Data></Cell>
+           <Cell ss:StyleID="s63"><Data ss:Type="String">NoteLog</Data></Cell>
+        <% else %>
+           <Cell ss:StyleID="s63"><Data ss:Type="String">Gender</Data></Cell>
+           <Cell ss:StyleID="s63"><Data ss:Type="String">Full Name</Data></Cell>
+           <Cell ss:StyleID="s63"><Data ss:Type="String">Email</Data></Cell>
+           <Cell ss:StyleID="s63"><Data ss:Type="String">Phone</Data></Cell>
+           <Cell ss:StyleID="s63"><Data ss:Type="String">Mobile</Data></Cell>
+           <Cell ss:StyleID="s63"><Data ss:Type="String">EC</Data></Cell>
+           <Cell ss:StyleID="s63"><Data ss:Type="String">NoteLog</Data></Cell>
+           <Cell ss:StyleID="s63"><Data ss:Type="String">NoteLog</Data></Cell>
+           <Cell ss:StyleID="s63"><Data ss:Type="String">NoteLog</Data></Cell>
+           <Cell ss:StyleID="s63"><Data ss:Type="String">NoteLog</Data></Cell>
+           <Cell ss:StyleID="s63"><Data ss:Type="String">NoteLog</Data></Cell>
+           <Cell ss:StyleID="s63"><Data ss:Type="String">NoteLog</Data></Cell>
+           <Cell ss:StyleID="s63"><Data ss:Type="String">NoteLog</Data></Cell>
+           <Cell ss:StyleID="s63"><Data ss:Type="String">NoteLog</Data></Cell>
+           <Cell ss:StyleID="s63"><Data ss:Type="String">NoteLog</Data></Cell>
+           <Cell ss:StyleID="s63"><Data ss:Type="String">NoteLog</Data></Cell>
+        <% end %>
+      </Row>
+    <% @contacts.each do |contact| %>
+      <Row>
+        <% if params[:is_individual] == "false" %>
+           <Cell ss:StyleID="s63"><Data ss:Type="String"><%= contact.name.titleize %></Data></Cell>
+           <Cell ss:StyleID="s63"><Data ss:Type="String"><%= contact.email %><%= (";"+contact.email_2s.join(";")) if !contact.email_2s.empty? %></Data></Cell>
+           <Cell ss:StyleID="s63"><Data ss:Type="String"><%= contact.phone %></Data></Cell>
+           <Cell ss:StyleID="s63"><Data ss:Type="String"><%= contact.mobile %><%= (";"+contact.mobile_2s.join(";")) if !contact.mobile_2s.empty? %></Data></Cell>
+           <Cell ss:StyleID="s63"><Data ss:Type="String"><%= contact.account_manager_list %></Data></Cell>
+           <% contact.activities.order('updated_at desc').limit(10).each do |log| %>
+                <Cell ss:StyleID="s63"><Data ss:Type="String">[<%= log.created_at.strftime("%d-%b-%Y, %I:%M %p") %>] <%= ActionView::Base.full_sanitizer.sanitize(log.note) %></Data></Cell>
+           <% end %>
+        <% else %>
+           <Cell ss:StyleID="s63"><Data ss:Type="String"><%= contact.sex == "female" ? "[Ms]" : "[Mr]" %></Data></Cell>
+           <Cell ss:StyleID="s63"><Data ss:Type="String"><%= contact.name.titleize %></Data></Cell>
+           <Cell ss:StyleID="s63"><Data ss:Type="String"><%= contact.email %><%= (";"+contact.email_2s.join(";")) if !contact.email_2s.empty? %></Data></Cell>
+           <Cell ss:StyleID="s63"><Data ss:Type="String"><%= contact.phone %></Data></Cell>
+           <Cell ss:StyleID="s63"><Data ss:Type="String"><%= contact.mobile %><%= (";"+contact.mobile_2s.join(";")) if !contact.mobile_2s.empty? %></Data></Cell>
+           <Cell ss:StyleID="s63"><Data ss:Type="String"><%= !contact.account_manager.nil? ? contact.account_manager.name : "" %></Data></Cell>
+           <% contact.activities.order('updated_at desc').limit(10).each do |log| %>
+                <Cell ss:StyleID="s63"><Data ss:Type="String">[<%= log.created_at.strftime("%d-%b-%Y, %I:%M %p") %>] <%= ActionView::Base.full_sanitizer.sanitize(log.note) %></Data></Cell>
+           <% end %>
+        <% end %>
+      </Row>
+    <% end %>
+    </Table>
+  </Worksheet>
+</Workbook>

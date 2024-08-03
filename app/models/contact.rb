@@ -173,7 +173,8 @@ class Contact < ActiveRecord::Base
   end
   
   def update_info
-    ContactJob.perform_later('update_info', self.id)
+    # ContactJob.perform_later('update_info', self.id)
+    self.do_update_info
   end
   
   def do_update_info

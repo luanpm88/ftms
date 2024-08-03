@@ -502,6 +502,7 @@ Hkerp::Application.routes.draw do
       get :course_students
       get :seminar_students
       post :export_list
+      post :export_list_note_log
       get :related_info_box
 
       get :delete

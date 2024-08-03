@@ -129,6 +129,7 @@ class Ability
 
       if user.has_role? "export_contact_excel"
         can :export_list, Contact
+        can :export_list_note_log, Contact
       end
 
       if user.has_role? "export_contact_mobile"

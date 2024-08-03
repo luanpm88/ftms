@@ -96,8 +96,8 @@ class System < ActiveRecord::Base
   def self.upload_backup_to_google_drive(params)
     bk_dir = Setting.get("backup_dir")
     root_dir = params[:dir].present? ? params[:dir] : ""
-    revision_max = 4
-    backup_folder_name = 'ftms_hcm'
+    revision_max = 5
+    backup_folder_name = 'ftms_hn'
 
     latest_backup_file = nil
     (Dir.glob("#{bk_dir}/*").sort{|a,b| b <=> a}).each do |f|

@@ -230,6 +230,7 @@ class DiscountProgram < ActiveRecord::Base
   end
 
   def last_updated
+    return self if current.nil?
     return current if older.nil? or current.statuses.include?("new_pending") or current.statuses.include?("education_consultant_pending") or current.statuses.include?("update_pending") or current.statuses.include?("delete_pending")
     return older
   end
