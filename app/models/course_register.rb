@@ -95,13 +95,25 @@ class CourseRegister < ActiveRecord::Base
 
   def update_contacts_courses(cids)
     contact = self.contact
-
+    puts cids
     cids.each do |row|
       if row[1]["course_id"].present?
         cc = row[1]["id"].present? ? ContactsCourse.find(row[1]["id"]) : self.contacts_courses.new
         cc.course_id = row[1]["course_id"]
         cc.contact_id = contact.id
         cc.full_course = row[1]["full_course"]
+
+        # upfront valid until
+        course = Course.find(row[1]["course_id"])
+        if course.upfront
+          date = row[1]["upfront_valid_until"]["date"]
+          # time = row[1]["upfront_valid_until"]["time"].empty? ? Time.now.strftime("%H:%M") : row[1]["upfront_valid_until"]["time"]
+          if date.present? && !date.empty?
+            # datetime_str = "#{date} #{time}"
+            datetime_str = "#{date}"
+            cc.upfront_valid_until = DateTime.parse(datetime_str).end_of_day
+          end
+        end
 
         if cc.full_course == true
           cc.courses_phrase_ids = "["+cc.course.courses_phrases.map(&:id).join("][")+"]" if !cc.course.courses_phrases.nil? and !cc.course.upfront
@@ -647,7 +659,9 @@ class CourseRegister < ActiveRecord::Base
       full_course = (row[:contacts_course].full_course == true and row[:course].upfront != true) ? " <span class=\"active\">[full]</span>" : ""
 
       arr << "<div class=\"#{(row[:contacts_course].is_write_off? ? "write_off" : "")}\" title=\"#{(row[:contacts_course].is_write_off? ? "write-off: #{ApplicationController.helpers.format_price(row[:contacts_course].write_off_amount)} #{Setting.get("currency_code")}" : "")}\">"
-      arr << "<div class=\"nowrap\"><strong>"+row[:course].display_name+full_course+"</strong> <div>#{row[:course].report_toggle(self)}</div></div>"
+      arr << "<div class=\"nowrap\"><strong>"+row[:course].display_name+full_course+"</strong></div>"
+      arr << '<div>'+row[:contacts_course].display_upfront_valid_until+'</div>' if row[:course].upfront
+      arr << "<div>#{row[:course].report_toggle(self)}</div>"
       arr << "<div class=\"courses_phrases_list\">"+Course.render_courses_phrase_list(row[:courses_phrases],row[:contacts_course])+"</div>" if phrase_list
       arr << "</div>"
 

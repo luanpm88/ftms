@@ -1,5 +1,5 @@
 class ContactsCoursesController < ApplicationController
-  before_action :set_contacts_course, only: [:report_toggle, :show, :edit, :update, :destroy]
+  before_action :set_contacts_course, only: [:edit_upfront_valid_until, :report_toggle, :show, :edit, :update, :destroy]
 
   # GET /contacts_courses
   # GET /contacts_courses.json
@@ -67,6 +67,21 @@ class ContactsCoursesController < ApplicationController
     render layout: nil
   end
 
+  def edit_upfront_valid_until
+    @contacts_course.upfront_valid_until
+
+    if @contacts_course.course.upfront
+      date = params[:upfront_valid_until]["date"]
+      if date.present? && !date.empty?
+        datetime_str = "#{date}"
+        @contacts_course.upfront_valid_until = DateTime.parse(datetime_str).end_of_day
+      end
+      @contacts_course.save
+    end
+
+    render layout: nil
+  end
+
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_contacts_course
@@ -75,6 +90,6 @@ class ContactsCoursesController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def contacts_course_params
-      params.require(:contacts_course).permit(:contact_id, :course_id, :course_register_id)
+      params.require(:contacts_course).permit(:contact_id, :course_id, :course_register_id, :upfront_valid_until)
     end
 end

@@ -265,6 +265,7 @@ class Course < ActiveRecord::Base
     @course_ids = @courses.map(&:id)
 
     @all_courses =  @student.active_courses_with_phrases
+    
 
     @records = []
     @all_courses.each do |c|
@@ -287,10 +288,16 @@ class Course < ActiveRecord::Base
                   "<br /><strong>by:</strong><br />"+(item[:contacts_courses].map{|cc| ContactsCourse.find(cc.id).course_register.user.staff_col}).join("<br />")
       created_at_col = (!item[:contacts_courses].present? and last_transfer.present?) ? @student.active_received_transfers.where(to_course_id: item[:course].id).last.created_at.strftime("%d-%b-%Y") :
                   (item[:contacts_courses].map{|cc| ContactsCourse.find(cc.id).course_register.created_at.strftime("%d-%b-%Y")}).join("<br />")
+
+      display_upfront_valid_until = (item[:contacts_courses].select{ |cc| cc.course.upfront }.map{|cc| ContactsCourse.find(cc.id).display_upfront_valid_until}).join("<br />")
+
+      if item[:transfer] and item[:upfront]
+        display_upfront_valid_until = item[:transfer].display_upfront_valid_until
+      end
       itemz = [
               '<div class="text-left nowrap">'+item[:course].display_intake+"</div>",
               '<div class="text-left nowrap">'+item[:course].program_paper_name+"</div>",
-              '<div class="text-left">'+@student.display_active_course(item[:course].id)+"</div>",
+              '<div class="text-left">'+@student.display_active_course(item[:course].id)+display_upfront_valid_until+"</div>",
               '<div class="text-center">'+item[:course].display_for_exam+"</div>",
               '<div class="text-center nowrap">'+item[:course].display_lecturer+"</div>",
               '<div class="text-center">'+transferred+created_at_col+by_staff+"</div>",

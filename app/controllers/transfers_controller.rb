@@ -1,9 +1,9 @@
 class TransfersController < ApplicationController
   include TransfersHelper
   
-  load_and_authorize_resource
+  # load_and_authorize_resource
   
-  before_action :set_transfer, only: [:pay_by_credit, :pay, :delete, :show, :edit, :update, :destroy]
+  before_action :set_transfer, only: [:edit_upfront_valid_until, :pay_by_credit, :pay, :delete, :show, :edit, :update, :destroy]
 
   # GET /transfers
   # GET /transfers.json
@@ -50,6 +50,15 @@ class TransfersController < ApplicationController
 
     
     @transfer.from_hour = params[:from_hours].to_json if params[:from_hours].present?
+
+    # save to course upfront valid until
+    if Course.find(params[:transfer][:to_course_id]).upfront
+      date = params[:transfer][:upfront_valid_until][:date]
+      if date.present? && !date.empty?
+        datetime_str = "#{date}"
+        @transfer.upfront_valid_until = DateTime.parse(datetime_str).end_of_day
+      end
+    end
 
     respond_to do |format|
       if @transfer.save
@@ -255,6 +264,24 @@ class TransfersController < ApplicationController
       format.json { render action: 'show', status: :created, location: @course_type }
     end
   end
+
+  def edit_upfront_valid_until
+    @transfer.upfront_valid_until
+
+    render json: @transfer
+    # render nothing: true
+
+    # if @transfer.to_course.upfront
+    #   date = params[:upfront_valid_until]["date"]
+    #   if date.present? && !date.empty?
+    #     datetime_str = "#{date}"
+    #     @transfer.upfront_valid_until = DateTime.parse(datetime_str).end_of_day
+    #   end
+    #   @transfer.save
+    # end
+
+    # render layout: nil
+  end
   
   private
     # Use callbacks to share common setup or constraints between actions.
@@ -264,6 +291,6 @@ class TransfersController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def transfer_params
-      params.require(:transfer).permit(:money_credit, :full_course, :to_full_course, :note, :hour_money, :from_hour, :to_type, :to_course_hour, :to_course_money, :to_course_id, :course_id, :admin_fee, :transfer_for, :contact_id, :to_contact_id, :user_id, :transfer_date, :hour, :money, :courses_phrase_ids => [])
+      params.require(:transfer).permit(:money_credit, :full_course, :to_full_course, :note, :hour_money, :from_hour, :to_type, :to_course_hour, :to_course_money, :to_course_id, :course_id, :admin_fee, :transfer_for, :contact_id, :to_contact_id, :user_id, :transfer_date, :hour, :money, :courses_phrase_ids => [], :upfront_valid_until => [:date])
     end
 end

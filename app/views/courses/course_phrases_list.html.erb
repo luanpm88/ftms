@@ -1,5 +1,40 @@
 					
 					
+					<% if @course.upfront %>
+						<div class="row">
+							<div class="col-md-6">
+								<div class="form-group">
+										<label for="upfront_valid_until" class="control-label">Upfront Valid Until (Date)</label>
+										<div class="">
+											<div style="display:flex;align-items:center;">
+												<input type="date" class="form-control required"
+													name="transfer[upfront_valid_until][date]"
+													id="upfront_valid_until"
+												/>
+											</div>
+										</div>
+								</div>
+							</div>
+							<%
+=begin%>
+ <div class="col-md-6 d-none">
+								<div class="form-group">
+										<label for="upfront_valid_until" class="control-label">(Time)</label>
+										<div class="">
+											<div style="display:flex;align-items:center;">
+												<input type="time" class="form-control"
+													name="transfer[upfront_valid_until][time]"
+													id="upfront_valid_until"
+												/>
+											</div>
+										</div>
+								</div>
+							</div> 
+<%
+=end%>
+						</div>
+					<% end %>
+					
 					<div class="form-group">
 						<label class="form-label"><label>
 							<%= @type == "from" ? "Course Detail" : "Transferred Amount" %>
@@ -60,7 +95,6 @@
 									
 									
 									<div class="input-with-icon right phrase_list_container">
-										
 										<% if !@course.upfront && !@course.courses_phrases.empty? %>
 											<label class="form-label"><label>Phrase List
 												<% if @type == "to" %>

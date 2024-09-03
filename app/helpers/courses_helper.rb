@@ -56,8 +56,13 @@ module CoursesHelper
       group_1 = 0      
 
       if can? :transfer_course, item
-        actions += '<li>'+ActionController::Base.helpers.link_to('Defer/Transfer', {controller: "courses", action: "transfer_course", contact_id: contact_id, id: item.id, tab_page: 1}, title: "#{Contact.find(contact_id).name}: Defer/Transfer [#{item.display_name}]", class: "tab_page")+'</li>'
-        group_1 += 1
+        contact = Contact.find(contact_id)
+        cData = contact.active_courses_with_phrases.find { |p| p[:course].id == item.id }
+        
+        if !cData[:course].upfront? || (cData[:upfront_valid_until].present? and cData[:upfront_valid_until] >= Time.now)
+          actions += '<li>'+ActionController::Base.helpers.link_to('Defer/Transfer', {controller: "courses", action: "transfer_course", contact_id: contact_id, id: item.id, tab_page: 1}, title: "#{Contact.find(contact_id).name}: Defer/Transfer [#{item.display_name}]", class: "tab_page")+'</li>'
+          group_1 += 1
+        end
       end
       
       actions += '<li class="divider"></li>' if group_1 > 0

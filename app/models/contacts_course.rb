@@ -243,4 +243,33 @@ class ContactsCourse < ActiveRecord::Base
       self.courses_phrase_ids = "["+self.course.courses_phrases.map(&:id).join("][")+"]" if !self.course.courses_phrases.nil? and !self.course.upfront
     end
   end
+
+  def is_upfront_expired
+    self.course.upfront && self.upfront_valid_until < Time.now
+  end
+
+  def display_upfront_valid_until
+    ActionView::Base.send(:include, Rails.application.routes.url_helpers)
+    link_helper = ActionController::Base.helpers
+    
+    edit_url = link_helper.url_for(controller: "contacts_courses", action: "edit_upfront_valid_until", id: self.id)
+
+    value = (self.upfront_valid_until.present? and !self.upfront_valid_until.nil?) ? self.upfront_valid_until.strftime("%Y-%m-%d") : ""
+
+    edit = '<a href="'+edit_url+'" data-value="'+value+'" data-control="edit-upfront-valid-until">
+        <span class="badge badge-secondary" style="margin-bottom:2px;margin-left:2px;">
+          <i class="icon icon-pencil"></i> Edit
+        </span>
+      </a>'
+
+    if self.upfront_valid_until.nil?
+      '<span class="badge badge-important" style="margin-bottom:2px;">Upfront Expiration Not Set!</span>' + edit
+    else
+      if self.is_upfront_expired
+        '<span class="badge badge-important" style="margin-bottom:2px;">Upfront Expired</span>' + edit
+      else
+        '<span class="badge badge-info" style="margin-bottom:2px;">Valid Until: ' + value +'</span>' + edit
+      end
+    end
+  end
 end

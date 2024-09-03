@@ -1,5 +1,39 @@
 <script>
 
+	function removeMaskLoading() {
+		$('.mask-loading-effect').remove();
+	}
+
+	function addMaskLoading(text, callback, options) {
+		removeMaskLoading();
+		var wait = 400;
+		
+		if (typeof(text) === 'undefined') {
+			text = '';
+		}
+
+		if (typeof(options) === 'undefined') {
+			options = {};
+		}
+
+		if (typeof(options.wait) !== 'undefined') {
+			wait = options.wait;
+		}
+		
+		var div = $('<div>').html(`<div class="mask-loading-effect"><div class="content">
+			<div class="mask-loading mb-3"><div class="lds-ellipsis"><div></div><div></div><div></div><div></div></div></div>
+			`+text+`</div><div>`
+		);
+		
+		$('body').append(div);
+		
+		div.fadeIn(400, function() {
+			if (typeof(callback) !== 'undefined') {
+				setTimeout(function() { callback(); }, wait);
+			}
+		});
+	}
+
 	function fullCourseCheck() {
 		$(".phrase_list_container").each(function() {
 			var container = $(this)
@@ -4406,7 +4440,110 @@
 		//	e.stopImmediatePropagation();
 		//});
 
+		// Edit upfront expiration date
+		$(document).on("click", '[data-control="edit-upfront-valid-until"]', function(e) {
+			e.preventDefault();
+
+			var url = $(this).attr('href');
+
+			new EditUpfrontValidUntil({
+				url: url,
+				button: $(this),
+				value: $(this).attr('data-value'),
+			});
+		});
+
 	})
 
+	var EditUpfrontValidUntil = class {
+		constructor(options) {
+			this.url = options.url;
+			this.button = options.button;
+			this.value = options.value;
+			this.modal = this.initModal();
 
+			this.events();
+		}
+
+		getForm() {
+			return this.modal.find('form');
+		}
+
+		initModal() {
+			var modal = $('<div class="modal fade" role="dialog">');
+			modal.html(`
+				<div class="modal-dialog">
+					<!-- Modal content-->
+					<div class="modal-content">
+						<%= form_tag("", {class: "edit-upfront-expired-date", method: "post"}) do |f| %>
+							<div class="modal-header">
+								<button type="button" class="close" data-dismiss="modal">&times;</button>
+								<h4 class="modal-title">Edit Upfront Expiration</h4>
+							</div>
+							<div class="modal-body">
+								
+									<div class="form-group" style="margin-bottom:0;">
+										<label for="upfront_valid_until" class="control-label">Upfront Valid Until (Date)</label>
+										<div class="">
+											<div style="display:flex;align-items:center;">
+												<input type="date" class="form-control"
+													required
+													value="`+this.value+`"
+													name="upfront_valid_until[date]"
+												/>
+											</div>
+										</div>
+									</div>
+								
+							</div>
+							<div class="modal-footer">
+								<button type="submit" class="btn btn-primary">Save</button>
+								<button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+							</div>
+						<% end %>
+					</div>
+				</div>
+			`);
+
+			window.parent.$('body').append(modal);
+
+			modal.modal('show');
+			
+			return modal;
+		}
+
+		events() {
+			var _this = this;
+
+			this.getForm().on('submit', function(e) {
+				e.preventDefault();
+
+				_this.save();
+			});
+		}
+
+		save() {
+			var _this = this;
+			var data = this.getForm().serialize();
+
+			window.parent.addMaskLoading();
+
+			$.ajax({
+				url : this.url,
+				type: "POST",
+				data: data,
+				success:function(data, textStatus, jqXHR)
+				{
+					_this.reloadList();
+					_this.modal.modal('hide');
+				}
+			}).always(function() {
+				window.parent.removeMaskLoading();
+			});
+		}
+
+		reloadList() {
+			this.button.parents("table").dataTable().fnDraw(true);
+		}
+	}
 </script>

@@ -685,7 +685,8 @@ CREATE TABLE contacts_courses (
     hour numeric,
     money numeric,
     additional_money numeric,
-    full_course boolean
+    full_course boolean,
+    upfront_valid_until timestamp without time zone
 );
 
 
@@ -2576,7 +2577,8 @@ CREATE TABLE transfers (
     full_course boolean,
     to_full_course boolean,
     credit_money numeric,
-    money_credit numeric
+    money_credit numeric,
+    upfront_valid_until timestamp without time zone
 );
 
 
@@ -4686,4 +4688,8 @@ INSERT INTO schema_migrations (version) VALUES ('20210311124556');
 INSERT INTO schema_migrations (version) VALUES ('20210601014532');
 
 INSERT INTO schema_migrations (version) VALUES ('20210817080156');
+
+INSERT INTO schema_migrations (version) VALUES ('20240804022025');
+
+INSERT INTO schema_migrations (version) VALUES ('20240827090222');
 

@@ -68,6 +68,9 @@ Hkerp::Application.routes.draw do
       post :approve_all
 
       get :pay_by_credit
+
+      get :edit_upfront_valid_until
+      post :edit_upfront_valid_until
     end
   end
   resources :activities do
@@ -244,6 +247,9 @@ Hkerp::Application.routes.draw do
   resources :contacts_courses do
     collection do
       get :report_toggle
+
+      get :edit_upfront_valid_until
+      post :edit_upfront_valid_until
     end
   end
   resources :course_registers do

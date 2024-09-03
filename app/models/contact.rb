@@ -2202,6 +2202,9 @@ class Contact < ActiveRecord::Base
       row[:remain] = ContactsCourse.find(cc.id).remain
       row[:courses_phrases] = ContactsCourse.find(cc.id).courses_phrases
       row[:created_at] = ContactsCourse.find(cc.id).course_register.created_at
+      row[:upfront] = ContactsCourse.find(cc.id).upfront
+      row[:upfront_valid_until] = ContactsCourse.find(cc.id).upfront_valid_until
+      row[:transfer] = nil
       origin << row
     end
 
@@ -2264,6 +2267,9 @@ class Contact < ActiveRecord::Base
               row[:courses_phrases] += transfer.to_courses_phrases
               row[:courses_phrases] = row[:courses_phrases].uniq
               row[:full_course] = transfer.to_full_course
+              row[:upfront] = transfer.to_course.upfront
+              row[:upfront_valid_until] = transfer.upfront_valid_until
+              row[:transfer] = transfer
 
               exist = true
             end
@@ -2275,7 +2281,10 @@ class Contact < ActiveRecord::Base
             courses_phrases: courses_phrases,
             hour: (transfer.to_full_course == true ? transfer.to_course.total_hour : transfer.to_course_hour),
             money: transfer.to_course_money,
-            created_at: transfer.created_at
+            created_at: transfer.created_at,
+            upfront: transfer.to_course.upfront,
+            upfront_valid_until: transfer.upfront_valid_until,
+            transfer: transfer,
           } if exist == false
 
 
@@ -2306,6 +2315,9 @@ class Contact < ActiveRecord::Base
         merged_courses[item[:course].id][:remain] = item[:remain]
         merged_courses[item[:course].id][:courses_phrases] = item[:courses_phrases]
         merged_courses[item[:course].id][:created_at] = item[:created_at]
+        merged_courses[item[:course].id][:upfront] = item[:upfront]
+        merged_courses[item[:course].id][:upfront_valid_until] = item[:upfront_valid_until]
+        merged_courses[item[:course].id][:transfer] = item[:transfer]
       else
         merged_courses[item[:course].id][:contacts_courses] += item[:contacts_courses]
         merged_courses[item[:course].id][:remain] += item[:remain]
@@ -2313,6 +2325,9 @@ class Contact < ActiveRecord::Base
         merged_courses[item[:course].id][:money] = item[:money]
         merged_courses[item[:course].id][:courses_phrases] = item[:courses_phrases]
         merged_courses[item[:course].id][:created_at] = item[:created_at]
+        merged_courses[item[:course].id][:upfront] = item[:upfront]
+        merged_courses[item[:course].id][:upfront_valid_until] = item[:upfront_valid_until]
+        merged_courses[item[:course].id][:transfer] = item[:transfer]
       end
     end
 

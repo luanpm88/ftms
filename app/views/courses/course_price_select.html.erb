@@ -1,3 +1,34 @@
+<% if @course.upfront %>
+     <div class="row">
+          <div class="col-md-6">
+               <div class="form-group">
+                    <label for="upfront_valid_until" class="control-label">Upfront Valid Until (Date)</label>
+                    <div class="">
+                         <div style="display:flex;align-items:center;">
+                              <input type="date" class="form-control"
+                                   name="contacts_courses[<%= params[:number].to_s %>][upfront_valid_until][date]"
+                                   id="upfront_valid_until"
+                              />
+                         </div>
+                    </div>
+               </div>
+          </div>
+          <div class="col-md-6">
+               <div class="form-group">
+                    <label for="upfront_valid_until" class="control-label">(Time)</label>
+                    <div class="">
+                         <div style="display:flex;align-items:center;">
+                              <input type="time" class="form-control"
+                                   name="contacts_courses[<%= params[:number].to_s %>][upfront_valid_until][time]"
+                                   id="upfront_valid_until"
+                              />
+                         </div>
+                    </div>
+               </div>
+          </div>
+     </div>
+<% end %>
+
 <div class="row">
      <div class="col-md-5">
           <div class="form-group">
