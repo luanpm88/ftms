@@ -263,10 +263,10 @@ class ContactsCourse < ActiveRecord::Base
       </a>'
 
     if self.upfront_valid_until.nil?
-      '<span class="badge badge-important" style="margin-bottom:2px;">Upfront Expiration Not Set!</span>' + edit
+      '<span class="badge badge-warning" style="margin-bottom:2px;">Upfront Expiration Not Set!</span>' + edit
     else
       if self.is_upfront_expired
-        '<span class="badge badge-important" style="margin-bottom:2px;">Upfront Expired</span>' + edit
+        '<span class="badge badge-important" style="margin-bottom:2px;">Upfront Expired On: ' + value +'</span>' + edit
       else
         '<span class="badge badge-info" style="margin-bottom:2px;">Valid Until: ' + value +'</span>' + edit
       end
