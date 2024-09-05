@@ -661,7 +661,7 @@ class CourseRegister < ActiveRecord::Base
       arr << "<div class=\"#{(row[:contacts_course].is_write_off? ? "write_off" : "")}\" title=\"#{(row[:contacts_course].is_write_off? ? "write-off: #{ApplicationController.helpers.format_price(row[:contacts_course].write_off_amount)} #{Setting.get("currency_code")}" : "")}\">"
       arr << "<div class=\"nowrap\"><strong>"+row[:course].display_name+full_course+"</strong></div>"
       arr << '<div>'+row[:contacts_course].display_upfront_valid_until+'</div>' if row[:course].upfront
-      arr << "<div>#{row[:course].report_toggle(self)}</div>"
+      arr << "<div>#{row[:course].report_toggle(self.contact)}</div>"
       arr << "<div class=\"courses_phrases_list\">"+Course.render_courses_phrase_list(row[:courses_phrases],row[:contacts_course])+"</div>" if phrase_list
       arr << "</div>"
 
