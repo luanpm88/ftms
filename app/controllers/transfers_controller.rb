@@ -3,7 +3,7 @@ class TransfersController < ApplicationController
   
   # load_and_authorize_resource
   
-  before_action :set_transfer, only: [:edit_upfront_valid_until, :pay_by_credit, :pay, :delete, :show, :edit, :update, :destroy]
+  before_action :set_transfer, only: [:field_history, :approve_delete, :undo_delete, :approve_new, :approve_update, :edit_upfront_valid_until, :pay_by_credit, :pay, :delete, :show, :edit, :update, :destroy]
 
   # GET /transfers
   # GET /transfers.json
