@@ -52,6 +52,7 @@ class TransfersController < ApplicationController
     @transfer.from_hour = params[:from_hours].to_json if params[:from_hours].present?
 
     # save to course upfront valid until
+    @transfer.upfront_valid_until = nil
     if Course.find(params[:transfer][:to_course_id]).upfront
       date = params[:transfer][:upfront_valid_until][:date]
       if date.present? && !date.empty?
