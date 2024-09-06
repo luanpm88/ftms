@@ -267,21 +267,16 @@ class TransfersController < ApplicationController
   end
 
   def edit_upfront_valid_until
-    @transfer.upfront_valid_until
+    if @transfer.to_course.upfront
+      date = params[:upfront_valid_until]["date"]
+      if date.present? && !date.empty?
+        datetime_str = "#{date}"
+        @transfer.upfront_valid_until = DateTime.parse(datetime_str).end_of_day
+      end
+      @transfer.save
+    end
 
-    render json: @transfer
-    # render nothing: true
-
-    # if @transfer.to_course.upfront
-    #   date = params[:upfront_valid_until]["date"]
-    #   if date.present? && !date.empty?
-    #     datetime_str = "#{date}"
-    #     @transfer.upfront_valid_until = DateTime.parse(datetime_str).end_of_day
-    #   end
-    #   @transfer.save
-    # end
-
-    # render layout: nil
+    render nothing: true
   end
   
   private
