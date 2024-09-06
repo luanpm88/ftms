@@ -105,7 +105,7 @@ class CourseRegister < ActiveRecord::Base
 
         # upfront valid until
         course = Course.find(row[1]["course_id"])
-        if course.upfront
+        if course.upfront and row[1]["upfront_valid_until"].present?
           date = row[1]["upfront_valid_until"]["date"]
           # time = row[1]["upfront_valid_until"]["time"].empty? ? Time.now.strftime("%H:%M") : row[1]["upfront_valid_until"]["time"]
           if date.present? && !date.empty?
