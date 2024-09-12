@@ -53,7 +53,7 @@ class TransfersController < ApplicationController
 
     # save to course upfront valid until
     @transfer.upfront_valid_until = nil
-    if Course.find(params[:transfer][:to_course_id]).upfront
+    if params[:transfer][:to_course_id].present? and Course.find(params[:transfer][:to_course_id]).upfront
       date = params[:transfer][:upfront_valid_until][:date]
       if date.present? && !date.empty?
         datetime_str = "#{date}"
